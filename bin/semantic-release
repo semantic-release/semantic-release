@@ -12,14 +12,18 @@ var argv = require('minimist')(process.argv.slice(2), {
   }
 })
 
+var npmArgv = process.env.npm_config_argv
+npmArgv = npmArgv ? JSON.parse(npmArgv).cooked : []
+
 if (~argv._.indexOf('pre')) {
-  // The prepublish script is also executed when the package's dependencies are installed
-  // In this case we abort the command and do nothing.
-  var npmArgv = process.env.npm_config_argv
-  if (npmArgv) {
-    npmArgv = JSON.parse(npmArgv)
-    if (~npmArgv.cooked.indexOf('install')) process.exit(0)
-  }
+  var publish = false
+
+  // see src/restart.js
+  if (~npmArgv.indexOf('--semantic-release-rerun')) process.exit(0)
+  // the `prepublish` hook is also executed when the package is installed
+  // in this case we abort the command and do nothing.
+  if (~npmArgv.indexOf('install')) process.exit(0)
+  if (~npmArgv.indexOf('publish')) publish = true
 
   console.log('Determining new version')
 
@@ -35,6 +39,7 @@ if (~argv._.indexOf('pre')) {
     }
 
     console.log('Publishing v' + result)
+    if (publish) require('../src/restart')()
   })
 }
 
@@ -43,6 +48,12 @@ if (~argv._.indexOf('post')) {
     if (err) {
       console.log('Something went wrong.')
       throw err
+    }
+
+    // see src/restart.js
+    if (~npmArgv.indexOf('--semantic-release-rerun')) {
+      console.log('Everything is alright :) npm will now print an error message that you can safely ignore.')
+      process.exit(1)
     }
   })
 }
