@@ -17,7 +17,7 @@ For maximum comfort you can automate this inside your `package.json`:
 
 ```json
 "scripts": {
-  "prepublish": "semantic-release pre"
+  "prepublish": "semantic-release pre",
   "postpublish": "semantic-release post"
 }
 ```
