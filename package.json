@@ -1,7 +1,7 @@
 {
   "name": "semantic-release",
   "description": "semantic semver compliant package publishing",
-  "version": "0.0.3",
+  "version": "0.0.5",
   "author": "Stephan Bönnemann <stephan@boennemann.me>",
   "bin": "./bin/semantic-release",
   "bugs": {
