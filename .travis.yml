@@ -6,7 +6,7 @@ cache:
   directories:
   - node_modules
 notifications:
-  emails: false
+  email: false
 deploy:
   provider: npm
   email: stephan@boennemann.me
