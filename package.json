@@ -33,8 +33,8 @@
     "url": "https://github.com/boennemann/semantic-release.git"
   },
   "scripts": {
-    "prepublish": "semantic-release pre",
-    "postpublish": "semantic-release post",
+    "prepublish": "./bin/semantic-release pre",
+    "postpublish": "./bin/semantic-release post",
     "test": "standard"
   }
 }
