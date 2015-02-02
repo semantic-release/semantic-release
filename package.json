@@ -1,6 +1,7 @@
 {
   "name": "semantic-release",
   "description": "semantic semver compliant package publishing",
+  "version": "0.0.0",
   "author": "Stephan Bönnemann <stephan@boennemann.me>",
   "bin": "./bin/semantic-release",
   "bugs": {
@@ -33,8 +34,8 @@
     "url": "https://github.com/boennemann/semantic-release.git"
   },
   "scripts": {
-    "prepublish": "./bin/semantic-release pre",
     "postpublish": "./bin/semantic-release post",
+    "prepublish": "./bin/semantic-release pre",
     "test": "standard"
   }
 }
