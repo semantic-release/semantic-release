@@ -10,6 +10,7 @@ notifications:
 deploy:
   provider: npm
   email: stephan@boennemann.me
+  skip_cleanup: true
   api_key:
     secure: Lq1FZweaNr/Ah8M7h3oWQ59HTswzvcksTUfzWb/dpqNn5FECN9I+4gi79EQPD62ZbJDCuDHY0EEEDLdnaB1z8N7kOj1RtmvC1k0teTEXFsGBPS4evXakRj+AfoBAGsTaXHqBYBOvYBxJT2Md/UoOgPSQjtAdZSNsmoFb1xkngQ0=
   on:
