@@ -13,6 +13,14 @@ var argv = require('minimist')(process.argv.slice(2), {
 })
 
 if (~argv._.indexOf('pre')) {
+  // The prepublish script is also executed when the package's dependencies are installed
+  // In this case we abort the command and do nothing.
+  var npmArgv = process.env.npm_config_argv
+  if (npmArgv) {
+    npmArgv = JSON.parse(npmArgv)
+    if (~npmArgv.cooked.indexOf('install')) process.exit(0)
+  }
+
   console.log('Determining new version')
 
   return require('../src/pre')(argv, function (err, result) {
