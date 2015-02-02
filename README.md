@@ -13,14 +13,17 @@ npm i semantic-release
 
 Run `semantic-release pre` right before `npm publish` and `semantic-release post` right after. 
 
-The post hook is automatable in `package.json` with a "postpublish" script:
+For maximum comfort you can automate this inside your `package.json`:
+
 ```json
 "scripts": {
+  "prepublish": "semantic-release pre"
   "postpublish": "semantic-release post"
 }
 ```
 
-This is currently not possible for the "prepublish" hook. See [npm/npm#7118](https://github.com/npm/npm/issues/7118).
+Note: Even though `semantic-release` works around a limitation in npm's "prepublish" hook using it prints an error that you can *safely ignore*.
+See [npm/npm#7118](https://github.com/npm/npm/issues/7118).
 
 MIT License
 2015 Stephan Bönnemann
