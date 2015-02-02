@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 'use strict'
 
+var confirm = require('confirm-simple')
+
 var argv = require('minimist')(process.argv.slice(2), {
   alias: {
     d: 'debug',
@@ -23,37 +25,51 @@ if (~argv._.indexOf('pre')) {
   // the `prepublish` hook is also executed when the package is installed
   // in this case we abort the command and do nothing.
   if (~npmArgv.indexOf('install')) process.exit(0)
-  if (~npmArgv.indexOf('publish')) publish = true
 
-  console.log('Determining new version')
+  return confirmCI(function () {
+    if (~npmArgv.indexOf('publish')) publish = true
 
-  return require('../src/pre')(argv, function (err, result) {
-    if (err) {
-      console.log('Something went wrong.')
-      throw err
-    }
+    console.log('Determining new version')
 
-    if (!result) {
-      console.log('Nothing changed. Not publishing.')
-      process.exit(1)
-    }
+    require('../src/pre')(argv, function (err, result) {
+      if (err) {
+        console.log('Something went wrong.')
+        throw err
+      }
 
-    console.log('Publishing v' + result)
-    if (publish) require('../src/restart')()
+      if (!result) {
+        console.log('Nothing changed. Not publishing.')
+        process.exit(1)
+      }
+
+      console.log('Publishing v' + result)
+      if (publish) require('../src/restart')()
+    })
   })
 }
 
 if (~argv._.indexOf('post')) {
-  return require('../src/post')(argv, function (err) {
-    if (err) {
-      console.log('Something went wrong.')
-      throw err
-    }
+  return confirmCI(function () {
+    require('../src/post')(argv, function (err) {
+      if (err) {
+        console.log('Something went wrong.')
+        throw err
+      }
 
-    // see src/restart.js
-    if (~npmArgv.indexOf('--semantic-release-rerun')) {
-      console.log('Everything is alright :) npm will now print an error message that you can safely ignore.')
-      process.exit(1)
-    }
+      // see src/restart.js
+      if (~npmArgv.indexOf('--semantic-release-rerun')) {
+        console.log('Everything is alright :) npm will now print an error message that you can safely ignore.')
+        process.exit(1)
+      }
+    })
+  })
+}
+
+function confirmCI (cb) {
+  if (process.env.CI) return cb(null, true)
+
+  confirm('Not running in a CI enviroment. Are you sure you want to run this hook?', function (ok) {
+    if (!ok) process.exit(1)
+    cb(null, ok)
   })
 }

@@ -8,6 +8,7 @@
     "url": "https://github.com/boennemann/semantic-release/issues"
   },
   "dependencies": {
+    "confirm-simple": "^1.0.3",
     "conventional-changelog": "0.0.11",
     "github": "^0.2.3",
     "minimist": "^1.1.0",
