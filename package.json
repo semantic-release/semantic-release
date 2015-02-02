@@ -11,6 +11,7 @@
     "confirm-simple": "^1.0.3",
     "conventional-changelog": "0.0.11",
     "github": "^0.2.3",
+    "github-url-from-git": "^1.4.0",
     "minimist": "^1.1.0",
     "parse-github-repo-url": "^1.0.0",
     "semver": "^4.2.0"

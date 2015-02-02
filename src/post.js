@@ -5,7 +5,8 @@ var readFile = require('fs').readFileSync
 
 var changelog = require('conventional-changelog')
 var GitHubApi = require('github')
-var parse = require('parse-github-repo-url')
+var parseSlug = require('parse-github-repo-url')
+var parseUrl = require('github-url-from-git')
 
 var github = new GitHubApi({
   version: '3.0.0'
@@ -19,7 +20,7 @@ module.exports = function (options, cb) {
 
   changelog({
     version: pkg.version,
-    repository: repository,
+    repository: parseUrl(repository),
     file: false
   }, function(err, log) {
     if (err) return cb(err)
@@ -27,7 +28,7 @@ module.exports = function (options, cb) {
     exec('git rev-parse HEAD', function(err, hash) {
       if (err) return cb(err)
 
-      var ghRepo = parse(repository)
+      var ghRepo = parseSlug(repository)
       var release = {
         owner: ghRepo[0],
         repo: ghRepo[1],
