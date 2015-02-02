@@ -72,7 +72,7 @@ if (~argv._.indexOf('post')) {
 }
 
 function confirmCI (cb) {
-  if (process.env.CI) return cb(null, true)
+  if (process.env.CI || argv.ci === false) return cb(null, true)
 
   confirm('Not running in a CI enviroment. Are you sure you want to run this hook?', function (ok) {
     if (!ok) process.exit(1)
