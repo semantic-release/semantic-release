@@ -11,13 +11,16 @@ npm i semantic-release
 
 `semantic-release` provides "prepublish" and "postpublish" hooks so you automatically release the correct version.
 
-Add this to your `package.json` for maximum comfort:
+Run `semantic-release pre` right before `npm publish` and `semantic-release post` right after. 
+
+The post hook is automatable in `package.json` with a "postpublish" script:
 ```json
 "scripts": {
-  "prepublish": "semantic-release pre",
   "postpublish": "semantic-release post"
 }
 ```
+
+This is currently not possible for the "prepublish" hook. See [npm/npm#7118](https://github.com/npm/npm/issues/7118).
 
 MIT License
 2015 Stephan Bönnemann

@@ -7,6 +7,8 @@ cache:
   - node_modules
 notifications:
   email: false
+before_deploy:
+  - ./bin/semantic-release pre
 deploy:
   provider: npm
   email: stephan@boennemann.me
