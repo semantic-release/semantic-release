@@ -11,6 +11,7 @@
     "abbrev": "^1.0.5",
     "confirm-simple": "^1.0.3",
     "conventional-changelog": "0.0.11",
+    "error-first-handler": "^1.0.1",
     "github": "^0.2.3",
     "github-url-from-git": "^1.4.0",
     "minimist": "^1.1.0",
