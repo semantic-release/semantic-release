@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 'use strict'
 
+var abbrev = require('abbrev')
 var confirm = require('confirm-simple')
 
 var argv = require('minimist')(process.argv.slice(2), {
@@ -14,6 +15,10 @@ var argv = require('minimist')(process.argv.slice(2), {
   }
 })
 
+function findAbbrev (argv, command) {
+  return argv.some(Object.prototype.hasOwnProperty.bind(abbrev(command)))
+}
+
 var npmArgv = process.env.npm_config_argv
 npmArgv = npmArgv ? JSON.parse(npmArgv).cooked : []
 
@@ -24,7 +29,7 @@ if (~argv._.indexOf('pre')) {
   if (~npmArgv.indexOf('--semantic-release-rerun')) process.exit(0)
   // the `prepublish` hook is also executed when the package is installed
   // in this case we abort the command and do nothing.
-  if (~npmArgv.indexOf('install')) process.exit(0)
+  if (findAbbrev(npmArgv, 'install')) process.exit(0)
 
   return confirmCI(function () {
     if (~npmArgv.indexOf('publish')) publish = true
