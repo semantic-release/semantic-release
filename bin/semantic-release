@@ -3,8 +3,9 @@
 
 var abbrev = require('abbrev')
 var confirm = require('confirm-simple')
+var minimist = require('minimist')
 
-var argv = require('minimist')(process.argv.slice(2), {
+var argv = minimist(process.argv.slice(2), {
   alias: {
     d: 'debug',
     dry: 'debug',
@@ -15,14 +16,15 @@ var argv = require('minimist')(process.argv.slice(2), {
   }
 })
 
-var npmArgv = process.env.npm_config_argv
-npmArgv = npmArgv ? JSON.parse(npmArgv).cooked : []
+var npmArgv = process.env.npm_config_argv ?
+  minimist(JSON.parse(process.env.npm_config_argv).cooked) :
+  {_: []}
 
 if (~argv._.indexOf('pre')) {
   var publish = false
 
   // see src/restart.js
-  if (~npmArgv.indexOf('--semantic-release-rerun')) process.exit(0)
+  if (npmArgv['semantic-release-rerun']) process.exit(0)
   // the `prepublish` hook is also executed when the package is installed
   // in this case we abort the command and do nothing.
   if (isAbbrev(npmArgv, 'install')) process.exit(0)
@@ -65,7 +67,7 @@ if (~argv._.indexOf('post')) {
       }
 
       // see src/restart.js
-      if (~npmArgv.indexOf('--semantic-release-rerun')) {
+      if (npmArgv['semantic-release-rerun']) {
         console.log('Everything is alright :) npm will now print an error message that you can safely ignore.')
       }
     })
@@ -82,5 +84,5 @@ function confirmCI (cb) {
 }
 
 function isAbbrev (argv, command) {
-  return argv.some(Object.prototype.hasOwnProperty.bind(abbrev(command)))
+  return argv._.some(Object.prototype.hasOwnProperty.bind(abbrev(command)))
 }
