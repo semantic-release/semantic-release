@@ -2,8 +2,6 @@
 
 cat .tmp/sinopia.pid | xargs kill
 
-cat .tmp/registry | xargs npm config set registry
-
 cp .tmp/.npmrc ~/.npmrc
 
 rm -rf .tmp

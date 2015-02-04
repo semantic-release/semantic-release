@@ -8,10 +8,6 @@ mkdir -p .tmp/modules
 
 sleep 0.5
 
-npm config get registry >> .tmp/registry
-
 cp ~/.npmrc .tmp/.npmrc
 
 cp tests/.npmrc ~/.npmrc
-
-npm config set registry http://127.0.0.1:4873/
