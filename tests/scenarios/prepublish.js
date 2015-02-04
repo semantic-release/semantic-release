@@ -23,6 +23,7 @@ module.exports = function (test, createModule) {
         nixt()
           .cwd(cwd)
           .env('CI', true)
+          .env('npm_config_registry', 'http://127.0.0.1:4873/')
           .exec('git commit --allow-empty -m "' + message + '"')
           .run('npm run prepublish')
           .code(code)

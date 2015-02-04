@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 mkdir -p .tmp/modules
 
 ./node_modules/.bin/sinopia ./tests/config.yml & echo $! >> .tmp/sinopia.pid
@@ -12,4 +14,4 @@ cp ~/.npmrc .tmp/.npmrc
 
 cp tests/.npmrc ~/.npmrc
 
-npm config set registry http://localhost:4873/
+npm config set registry http://127.0.0.1:4873/
