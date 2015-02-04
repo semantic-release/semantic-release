@@ -5,6 +5,7 @@ set -e
 mkdir -p .tmp/modules
 
 ./node_modules/.bin/sinopia ./tests/config.yml & echo $! >> .tmp/sinopia.pid
+./node_modules/.bin/github-release-fake-server -p 4343 & echo $! >> .tmp/ghrs.pid
 
 sleep 0.5
 

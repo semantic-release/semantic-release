@@ -2,6 +2,8 @@
 
 cat .tmp/sinopia.pid | xargs kill
 
+cat .tmp/ghrs.pid | xargs kill
+
 cp .tmp/.npmrc ~/.npmrc
 
 rm -rf .tmp
