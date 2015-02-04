@@ -21,8 +21,11 @@
   "devDependencies": {
     "lodash.defaults": "^3.0.0",
     "nano-uid": "^0.2.0",
+    "nixt": "^0.4.1",
+    "sinopia": "^1.0.0",
     "standard": "^2.3.1",
-    "sinopia": "^1.0.0"
+    "tap-spec": "^2.2.0",
+    "tape": "^3.5.0"
   },
   "engines": {
     "node": "^0.10.0",
@@ -49,6 +52,6 @@
     "posttest": "./bin/post-test",
     "prepublish": "./bin/semantic-release pre",
     "pretest": "./bin/pre-test",
-    "test": "standard"
+    "test": "standard && node tests | tap-spec"
   }
 }
