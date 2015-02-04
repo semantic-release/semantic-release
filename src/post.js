@@ -11,7 +11,10 @@ var parseUrl = require('github-url-from-git')
 var efh = require('../lib/error').efh
 
 var github = new GitHubApi({
-  version: '3.0.0'
+  version: '3.0.0',
+  protocol: process.env.GHRS_PROTO || 'https',
+  host: process.env.GHRS_HOST || 'api.github.com',
+  port: process.env.GHRS_PORT || 443
 })
 
 module.exports = function (options, cb) {
