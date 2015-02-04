@@ -1,0 +1,17 @@
+storage: ../.tmp/.storage
+
+auth:
+  htpasswd:
+    file: ./.htpasswd
+
+uplinks:
+  npmjs:
+    url: https://registry.npmjs.org/
+
+logs:
+  - {type: stdout, format: pretty, level: silent}
+
+packages:
+  '*':
+    allow_access: all
+    allow_publish: all

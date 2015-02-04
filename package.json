@@ -19,7 +19,8 @@
     "semver": "^4.2.0"
   },
   "devDependencies": {
-    "standard": "^2.3.1"
+    "standard": "^2.3.1",
+    "sinopia": "^1.0.0"
   },
   "homepage": "https://github.com/boennemann/semantic-release",
   "keywords": [
@@ -38,8 +39,10 @@
     "url": "https://github.com/boennemann/semantic-release.git"
   },
   "scripts": {
-    "prepublish": "./bin/semantic-release pre",
     "postpublish": "./bin/semantic-release post",
+    "posttest": "./bin/post-test",
+    "prepublish": "./bin/semantic-release pre",
+    "pretest": "./bin/pre-test",
     "test": "standard"
   }
 }
