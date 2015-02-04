@@ -11,10 +11,12 @@ var argv = minimist(process.argv.slice(2), {
   alias: {
     d: 'debug',
     dry: 'debug',
-    t: 'token'
+    t: 'token',
+    g: 'github-url'
   },
   default: {
-    token: process.env.GH_TOKEN || process.env.TOKEN || process.env.GITHUB_TOKEN
+    token: process.env.GH_TOKEN || process.env.TOKEN || process.env.GITHUB_TOKEN,
+    'github-url': process.env.GH_URL
   }
 })
 
