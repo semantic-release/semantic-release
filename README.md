@@ -8,12 +8,7 @@
 ```bash
 npm i semantic-release
 ```
-
-`semantic-release` provides "prepublish" and "postpublish" hooks so you automatically release the correct version.
-
-Run `semantic-release pre` right before `npm publish` and `semantic-release post` right after. 
-
-For maximum comfort you can automate this inside your `package.json`:
+You *need* to set it up inside your `package.json`:
 
 ```json
 "scripts": {
@@ -22,7 +17,7 @@ For maximum comfort you can automate this inside your `package.json`:
 }
 ```
 
-Note: Even though `semantic-release` works around a limitation in npm's "prepublish" hook using it prints an error that you can *safely ignore*.
+Note: `semantic-release` works around a limitation in npm's "prepublish" hook. Once a version is published it prints an error that you can *safely ignore*.
 See [npm/npm#7118](https://github.com/npm/npm/issues/7118).
 
 MIT License
