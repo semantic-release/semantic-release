@@ -7,10 +7,10 @@ var efh = require('error-first-handler')
 var defaults = require('lodash.defaults')
 var uid = require('nano-uid')()
 
-module.exports = function (pkg) {
+module.exports = function (input) {
   var cb = Array.prototype.pop.call(arguments)
   uid.generate(5, efh(cb)(function (id) {
-    var pkg = defaults((typeof pkg === 'object' ? pkg : {}), {
+    var pkg = defaults((typeof input === 'object' ? input : {}), {
       name: id,
       version: '0.0.0',
       devDependencies: {
