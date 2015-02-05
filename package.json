@@ -12,14 +12,16 @@
     "confirm-simple": "^1.0.3",
     "conventional-changelog": "0.0.11",
     "error-first-handler": "^1.0.1",
+    "git-node": "^0.1.1",
     "github": "^0.2.3",
     "github-url-from-git": "^1.4.0",
     "minimist": "^1.1.0",
     "parse-github-repo-url": "^1.0.0",
+    "request": "^2.53.0",
     "semver": "^4.2.0"
   },
   "devDependencies": {
-    "github-release-fake-server": "^1.1.1",
+    "github-release-fake-server": "^1.2.0",
     "lodash.defaults": "^3.0.0",
     "nano-uid": "^0.2.0",
     "nixt": "^0.4.1",
