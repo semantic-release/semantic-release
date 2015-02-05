@@ -4,6 +4,8 @@ set -e
 
 mkdir -p .tmp/modules
 
+export DEBUG=ghrs:cli
+
 ./node_modules/.bin/sinopia ./tests/config.yml & echo $! >> .tmp/sinopia.pid
 ./node_modules/.bin/github-release-fake-server -p 4343 & echo $! >> .tmp/ghrs.pid
 
