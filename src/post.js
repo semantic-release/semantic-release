@@ -1,10 +1,10 @@
 'use strict'
 
-var exec = require('child_process').exec
 var readFile = require('fs').readFileSync
 var url = require('url')
 
 var changelog = require('conventional-changelog')
+var git = require('git-node')
 var GitHubApi = require('github')
 var parseSlug = require('parse-github-repo-url')
 var parseUrl = require('github-url-from-git')
@@ -31,7 +31,7 @@ module.exports = function (options, cb) {
     repository: parseUrl(repository),
     file: false
   }, efh(cb)(function (log) {
-    exec('git rev-parse HEAD', efh(cb)(function (hash) {
+    git.repo('./.git').loadAs('commit', 'HEAD', efh(cb)(function (commit, hash) {
       var ghRepo = parseSlug(repository)
       var release = {
         owner: ghRepo[0],
