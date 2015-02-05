@@ -9,7 +9,19 @@ cache:
 notifications:
   email: false
 before_install:
- - npm i -g npm@^2.0.0
+- npm i -g npm@^2.0.0
+before_script:
+- curl -Lo travis_after_all.py https://raw.github.com/dmakhno/travis_after_all/master/travis_after_all.py
+after_success:
+- python travis_after_all.py
+- export $(cat .to_export_back)
+after_failure:
+- python travis_after_all.py
+- export $(cat .to_export_back)
+before_deploy:
+- rm -f travis_after_all.py
+after_script:
+- echo leader=$BUILD_LEADER status=$BUILD_AGGREGATE_STATUS
 deploy:
   provider: npm
   email: stephan@boennemann.me
@@ -19,3 +31,4 @@ deploy:
   on:
     branch: master
     repo: boennemann/semantic-release
+    condition: "$BUILD_LEADER = YES"
