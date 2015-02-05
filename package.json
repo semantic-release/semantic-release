@@ -31,8 +31,9 @@
     "tape": "^3.5.0"
   },
   "engines": {
-    "node": "^0.10.0",
-    "npm": "^2.0.0"
+    "iojs": "^1",
+    "node": "^0.10",
+    "npm": "^2"
   },
   "homepage": "https://github.com/boennemann/semantic-release",
   "keywords": [
