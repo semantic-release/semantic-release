@@ -27,7 +27,7 @@ Before `npm` actually gets to publish a new version `semantic-release`'s `prepub
 
 - Analyze the commits since the last version was published
 - Decide on the release type (`major`|`minor`|`patch`) or abort if nothing changed
-- Get the last version published from the registry
+- Get the last published version from the registry
 - Increase the last version with the determined type
 - Write the new version to the package
 
@@ -56,6 +56,8 @@ First of all you need to install `semantic-release` and save it as a `devDepende
 npm i -D semantic-release
 ```
 
+### Scripts
+
 Now you need to set up your `scripts` inside the `package.json`:
 
 ```json
@@ -67,7 +69,15 @@ Now you need to set up your `scripts` inside the `package.json`:
 
 Note: If you have already configured `scripts` for `prepublish` or `postpublish` you can just execute them one after another. For example: `"semantic-release pre && npm run 6to5"`.
 
-Now the `npm` part is done and you need to set up your CI server.
+### Version
+
+It would be preferable not to have a version field in the `package.json` at all, but due to an `npm` limitation it is required to have a _not yet published_ version in there [npm/npm#7118](https://github.com/npm/npm/issues/7118). For new packages it is recommended to set it to `0.0.0` and leave it like that forever, or you can have some fun with pre-release flags and build metadata (`0.0.0+team.semver`) until `npm` _hopefully_ removes its limitations.
+
+### Repository
+
+You must define your GitHub repository in the `package.json`s [repository field](https://docs.npmjs.com/files/package.json#repository). 
+
+### CI Server
 
 Inside your `.travis.yml`:
 ```yml 
@@ -102,5 +112,41 @@ Note: You should [encrypt](http://docs.travis-ci.com/user/environment-variables/
 
 Note: If you have a more sophisticated build with multiple jobs you should have a look at [travis-after-all](https://github.com/dmakhno/travis_after_all), which is also configured for this [package](.travis.yml).
 
-MIT License
-Stephan Bönnemann
+## ITYM*FAQ*LT
+> I think you might frequently ask questions like these
+
+### Why is the `package.json`'s version not updated in my repository?
+
+The `npm` docs even state:
+
+> The most important things in your package.json are the name and version fields. Those are actually required, and your package won't install without them.
+> -- [npm docs](https://docs.npmjs.com/files/package.json#version)
+
+While this entirely true the version number doesn't have to be checked into source control. `semantic-release` takes care of the version field right before `npm publish` uses it – and this is the only point when it _really_ is required. 
+
+### Can I run this on my own machine rather than on a CI server?
+
+Of course you can, but this doesn't mean you should. Running your tests on an independent machine before releasing software is a crucial part of this workflow. Also it is a pain to set this up locally, with GitHub tokens lying around and everything.
+
+### Can I manually trigger the release of a specific version?
+
+You can trigger a release by pushing to your repository. You deliberately can not trigger a _specific_ version release, because this is the whole point of `semantic-release`. Start your packages with `1.0.0` and semver on.  
+
+Note: pre-release flags are kind of an exeption here and a solution for them is being thought of. If you have one please open an issue. For the time being: Have a look at the next question.
+
+### How do I get back to good ol' `npm publish`?
+
+`npm` offers the `--no-scripts` flag. Doing `npm publish --no-scripts` doesn't execute the `prepublish` and `postpublish` scripts.
+
+### Is it _really_ a good idea to release on every push?
+
+It is indeed a great idea because it _forces_ you to follow best practices. If you don't feel comfortable making every passing feature or fix on your master branch addressable via `npm` you probably aren't treating your master right. Have a look at [branch workflows](https://guides.github.com/introduction/flow/index.html). If you still think you should have control over the exact point in time of your release, e.g. because you are following a release schedule, configure your CI server to release only on the `production`/`deploy`/`release` branch and push your code there in certain intervals.
+
+### Why should I trust `semantic-release` with my releases? What if it breaks?
+
+`semantic-release` has a full integration-test suite that tests _actual_ `npm` publishes and _actual_ GitHub Releases (with private registry/API) on node.js `^0.10`, `^0.12` and io.js `^1`. A new version won't get published if it doesn't pass on all these engines. 
+
+## License
+
+MIT License 
+2015 © Stephan Bönnemann and [contributors](https://github.com/boennemann/semantic-release/graphs/contributors)
