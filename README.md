@@ -112,6 +112,7 @@ You must define your GitHub repository in the `package.json`s [repository field]
 ### CI Server
 
 Inside your `.travis.yml`:
+
 ```yml 
 language: node_js
 node_js:
@@ -123,6 +124,7 @@ cache:
 notifications:
   email: false
 env:
+  # Get your token here: https://github.com/settings/tokens/new
   # Encrypt this. See notes.
   global: GH_TOKEN=<github-access-token-with-acceess-to-your-repo>
 deploy:
@@ -138,6 +140,7 @@ deploy:
     branch: master
     repo: <user>/<repo>
 ```
+
 Note: For once this isn't tied to a specific service, but example configuration is shown for [Travis CI](https://travis-ci.org/). Feel free to contribute configuration of other servers or services.
 
 Note: You should [encrypt](http://docs.travis-ci.com/user/environment-variables/#sts=Secure Variables) your api keys and tokens.
