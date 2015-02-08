@@ -84,13 +84,23 @@ Note: `semantic-release` works around a limitation in `npm`'s `prepublish` step.
 
 First of all you need to install `semantic-release` and save it as a `devDependency`.
 
+### Installation
+
 ```bash
 npm i -D semantic-release
 ```
 
-### Scripts
+### Package
 
-Now you need to set up your `scripts` inside the `package.json`:
+```bash
+./node_modules/.bin/semantic-release setup
+```
+
+What this does:
+
+#### Scripts
+
+The setup command configures `scripts` inside the `package.json`:
 
 ```json
 "scripts": {
@@ -99,15 +109,15 @@ Now you need to set up your `scripts` inside the `package.json`:
 }
 ```
 
-Note: If you have already configured `scripts` for `prepublish` or `postpublish` you can just execute them one after another. For example: `"semantic-release pre && npm run 6to5"`.
+Note: If you have already configured `scripts` for `prepublish` or `postpublish` they're just executed one after another. For example: `"npm run 6to5 && semantic-release pre"`.
 
-### Version
+#### Version
 
-It would be preferable not to have a version field in the `package.json` at all, but due to an `npm` limitation it is required to have a _not yet published_ version in there [npm/npm#7118](https://github.com/npm/npm/issues/7118). For new packages it is recommended to set it to `0.0.0` and leave it like that forever, or you can have some fun with pre-release flags and build metadata (`0.0.0+team.semver`) until `npm` _hopefully_ removes its limitations.
+It would be preferable not to have a version field in the `package.json` at all, but due to an `npm` limitation it is required to have a _not yet published_ version in there [npm/npm#7118](https://github.com/npm/npm/issues/7118). Because of this the version gets changed to `"0.0.0-semantically-released"` until `npm` _hopefully_ removes its limitations.
 
-### Repository
+#### Repository
 
-You must define your GitHub repository in the `package.json`s [repository field](https://docs.npmjs.com/files/package.json#repository). 
+If you haven't defined your GitHub repository in the `package.json`s [repository field](https://docs.npmjs.com/files/package.json#repository) the remote `origin`'s repository is used. 
 
 ### CI Server
 
