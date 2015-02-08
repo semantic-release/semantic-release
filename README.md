@@ -17,7 +17,7 @@ The goal of this package is to remove humans from version numbers and releases. 
 
 ## How does this work?
 
-Conventions, conventions, conventions. Instead of dumping funny lols into our commit messages, we can take some time to think about what we changed in the codebase and write it down. Following formalized conventions it this then possible to not only generate a meaningful changelog, but to determine the next semantic version to release. Currently the only supported style is the [AngularJS Commit Message Convention](https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/edit) style, but feel free to formalize your own style, write a parser for it, and send a PR to this package. 
+Conventions, conventions, conventions. Instead of dumping [funny lols](http://whatthecommit.com/) into our commit messages, we can take some time to think about what we changed in the codebase and write it down. Following formalized conventions it this then possible to not only generate a meaningful changelog, but to determine the next semantic version to release. Currently the only supported style is the [AngularJS Commit Message Convention](https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/edit) style, but feel free to formalize your own style, write a parser for it, and send a PR to this package. 
 
 The preferred configuration is the "try to release on every push" mode. What it does is that everytime a build passes `npm publish` is executed. 
 
@@ -110,6 +110,10 @@ Note: For once this isn't tied to a specific service, but example configuration 
 
 Note: You should [encrypt](http://docs.travis-ci.com/user/environment-variables/#sts=Secure Variables) your api keys and tokens.
 
+Note: Your CI environment has to export `CI=true` in order for `semantic-release` not to automatically perform a dry run. Travis CI does this by default. 
+
+Note: It is crucial that your CI server also fetches all tags when checking out your repository. Travis CI does this by default. 
+
 Note: If you have a more sophisticated build with multiple jobs you should have a look at [travis-after-all](https://github.com/dmakhno/travis_after_all), which is also configured for this [package](.travis.yml).
 
 ## ITYM*FAQ*LT
@@ -122,11 +126,15 @@ The `npm` docs even state:
 > The most important things in your package.json are the name and version fields. Those are actually required, and your package won't install without them.
 > -- [npm docs](https://docs.npmjs.com/files/package.json#version)
 
-While this entirely true the version number doesn't have to be checked into source control. `semantic-release` takes care of the version field right before `npm publish` uses it – and this is the only point when it _really_ is required. 
+While this entirely true the version number doesn't have to be checked into source control. `semantic-release` takes care of the version field right before `npm publish` uses it – and this is the only point when it _really_ is required.
+
+### Is there a way to preview which version would currently get published?
+
+If you're running `npm publish` locally `semantic-release` automatically performs a dry run. This does log the version that would currently get published, but only if you `git fetch --tags` before.
 
 ### Can I run this on my own machine rather than on a CI server?
 
-Of course you can, but this doesn't mean you should. Running your tests on an independent machine before releasing software is a crucial part of this workflow. Also it is a pain to set this up locally, with GitHub tokens lying around and everything.
+Of course you can, but this doesn't mean you should. Running your tests on an independent machine before releasing software is a crucial part of this workflow. Also it is a pain to set this up locally, with GitHub tokens lying around and everything. That said, you can either set the environment variable `CI=true`, or run the scripts with `--debug=false` explicitly. Don't forget to export `GH_TOKEN=your_token` as well.
 
 ### Can I manually trigger the release of a specific version?
 
@@ -140,7 +148,7 @@ Note: pre-release flags are kind of an exeption here and a solution for them is 
 
 ### Is it _really_ a good idea to release on every push?
 
-It is indeed a great idea because it _forces_ you to follow best practices. If you don't feel comfortable making every passing feature or fix on your master branch addressable via `npm` you probably aren't treating your master right. Have a look at [branch workflows](https://guides.github.com/introduction/flow/index.html). If you still think you should have control over the exact point in time of your release, e.g. because you are following a release schedule, configure your CI server to release only on the `production`/`deploy`/`release` branch and push your code there in certain intervals.
+It is indeed a great idea because it _forces_ you to follow best practices. If you don't feel comfortable making every passing feature or fix on your master branch addressable via `npm` you might not treat your master right. Have a look at [branch workflows](https://guides.github.com/introduction/flow/index.html). If you still think you should have control over the exact point in time of your release, e.g. because you are following a release schedule, configure your CI server to release only on the `production`/`deploy`/`release` branch and push your code there in certain intervals.
 
 ### Why should I trust `semantic-release` with my releases? What if it breaks?
 
