@@ -69,6 +69,12 @@ if (~argv._.indexOf('post')) {
   }))
 }
 
+if (~argv._.indexOf('setup')) {
+  require('../src/setup')()
+  console.log('"package.json" is set up properly. Now configure your CI server.')
+  console.log('https://github.com/boennemann/semantic-release#ci-server')
+}
+
 function isAbbrev (argv, command) {
   return argv._.some(Object.prototype.hasOwnProperty.bind(abbrev(command)))
 }
