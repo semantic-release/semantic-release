@@ -14,7 +14,9 @@ var argv = minimist(process.argv.slice(2), {
     t: 'token',
     g: 'github-url'
   },
+  booleans: ['debug'],
   default: {
+    debug: !process.env.CI,
     token: process.env.GH_TOKEN || process.env.TOKEN || process.env.GITHUB_TOKEN,
     'github-url': process.env.GH_URL
   }
@@ -31,46 +33,37 @@ if (~argv._.indexOf('pre')) {
   // in this case we abort the command and do nothing.
   if (isAbbrev(npmArgv, 'install')) process.exit(0)
 
-  return confirmCI(function () {
-    console.log('Determining new version')
+  if (argv.debug) console.log('This is a dry run')
 
-    var publish = false
-    if (isAbbrev(npmArgv, 'publish')) publish = true
+  console.log('Determining new version')
 
-    require('../src/pre')(argv, efh(function (result) {
-      if (!result) {
-        console.log('Nothing changed. Not publishing.')
-        process.exit(1)
-      }
+  var publish = false
+  if (isAbbrev(npmArgv, 'publish')) publish = true
 
-      console.log('Publishing v' + result)
-      if (!publish) process.exit(0)
+  require('../src/pre')(argv, efh(function (result) {
+    if (!result) {
+      console.log('Nothing changed. Not publishing.')
+      process.exit(1)
+    }
 
-      require('../src/restart')(efh(function () {
-        process.exit(1)
-      }))
+    console.log('Publishing v' + result)
+    if (!publish) process.exit(0)
+
+    if (argv.debug) process.exit(1)
+
+    require('../src/restart')(efh(function () {
+      process.exit(1)
     }))
-  })
+  }))
 }
 
 if (~argv._.indexOf('post')) {
-  return confirmCI(function () {
-    require('../src/post')(argv, efh(function () {
-      // see src/restart.js
-      if (npmArgv['semantic-release-rerun']) {
-        console.log('Everything is alright :) npm will now print an error message that you can safely ignore.')
-      }
-    }))
-  })
-}
-
-function confirmCI (cb) {
-  if (process.env.CI || argv.ci === false) return cb(null, true)
-
-  confirm('Not running in a CI enviroment. Are you sure you want to run this hook?', function (ok) {
-    if (!ok) process.exit(1)
-    cb(null, ok)
-  })
+  require('../src/post')(argv, efh(function () {
+    // see src/restart.js
+    if (npmArgv['semantic-release-rerun']) {
+      console.log('Everything is alright :) npm will now print an error message that you can safely ignore.')
+    }
+  }))
 }
 
 function isAbbrev (argv, command) {

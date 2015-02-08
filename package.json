@@ -9,7 +9,6 @@
   },
   "dependencies": {
     "abbrev": "^1.0.5",
-    "confirm-simple": "^1.0.3",
     "conventional-changelog": "0.0.11",
     "error-first-handler": "^1.0.1",
     "git-node": "^0.1.1",
