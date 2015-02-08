@@ -31,7 +31,7 @@ if (~argv._.indexOf('pre')) {
   if (npmArgv['semantic-release-rerun']) process.exit(0)
   // the `prepublish` hook is also executed when the package is installed
   // in this case we abort the command and do nothing.
-  if (isAbbrev(npmArgv, 'install')) process.exit(0)
+  if (isAbbrev(npmArgv, 'install') || isAbbrev(npmArgv, 'link')) process.exit(0)
 
   if (argv.debug) console.log('This is a dry run')
 
