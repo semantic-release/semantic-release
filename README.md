@@ -19,6 +19,38 @@ The goal of this package is to remove humans from version numbers and releases. 
 
 Conventions, conventions, conventions. Instead of dumping [funny lols](http://whatthecommit.com/) into our commit messages, we can take some time to think about what we changed in the codebase and write it down. Following formalized conventions it this then possible to not only generate a meaningful changelog, but to determine the next semantic version to release. Currently the only supported style is the [AngularJS Commit Message Convention](https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/edit) style, but feel free to formalize your own style, write a parser for it, and send a PR to this package. 
 
+```
+<type>(<scope>): <subject>
+<BLANK LINE>
+<body>
+```
+
+Examples:
+
+```
+feat(ruler): add inches as well as centimeters
+```
+
+```
+fix(protractor): fix 90 degrees counting as 91 degrees
+```
+
+```
+fix(pen): use blue ink instead of red ink
+
+BREAKING CHANGE: Pen now uses blue ink instead of red.
+
+To migrate, change your code from the following:
+
+`pen.draw('blue')`
+
+To:
+
+`pen.draw('red')`
+```
+
+[Synopsis](https://github.com/ajoslin/conventional-changelog/blob/master/CONVENTIONS.md)
+
 The preferred configuration is the "try to release on every push" mode. What it does is that everytime a build passes `npm publish` is executed. 
 
 ### The `prepublish` step
