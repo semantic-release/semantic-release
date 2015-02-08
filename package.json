@@ -3,7 +3,7 @@
   "description": "automated semver compliant package publishing",
   "version": "0.0.0-note.that.this.is.not.the.actual.version",
   "author": "Stephan Bönnemann <stephan@boennemann.me>",
-  "bin": "./bin/semantic-release",
+  "bin": "./bin/semantic-release.js",
   "bugs": {
     "url": "https://github.com/boennemann/semantic-release/issues"
   },
@@ -54,9 +54,9 @@
     "url": "https://github.com/boennemann/semantic-release.git"
   },
   "scripts": {
-    "postpublish": "./bin/semantic-release post",
+    "postpublish": "./bin/semantic-release.js post",
     "posttest": "./bin/post-test",
-    "prepublish": "./bin/semantic-release pre",
+    "prepublish": "./bin/semantic-release.js pre",
     "pretest": "./bin/pre-test",
     "test": "standard && node tests | tap-spec"
   }
