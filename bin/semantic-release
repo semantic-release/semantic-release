@@ -2,7 +2,6 @@
 'use strict'
 
 var abbrev = require('abbrev')
-var confirm = require('confirm-simple')
 var minimist = require('minimist')
 
 var efh = require('../lib/error').standard
