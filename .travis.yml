@@ -32,4 +32,4 @@ deploy:
   on:
     branch: master
     repo: boennemann/semantic-release
-    condition: "$BUILD_LEADER = YES"
+    condition: "$BUILD_LEADER$BUILD_AGGREGATE_STATUS = YESothers_succeeded"
