@@ -40,6 +40,9 @@ if (~argv._.indexOf('pre')) {
   var publish = false
   if (isAbbrev(npmArgv, 'publish')) publish = true
 
+  // require a correct setup during publish
+  if (publish && !argv.debug && !require('../src/verify')(argv)) process.exit(1)
+
   require('../src/pre')(argv, efh(function (result) {
     if (!result) {
       console.log('Nothing changed. Not publishing.')
