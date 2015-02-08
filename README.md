@@ -1,5 +1,5 @@
 # semantic-release
-[![Build Status](https://travis-ci.org/boennemann/semantic-release.svg)](https://travis-ci.org/boennemann/semantic-release)
+[![Build Status](https://travis-ci.org/boennemann/semantic-release.svg?branch=master)](https://travis-ci.org/boennemann/semantic-release)
 [![Dependency Status](https://david-dm.org/boennemann/semantic-release.svg)](https://david-dm.org/boennemann/semantic-release)
 [![devDependency Status](https://david-dm.org/boennemann/semantic-release/dev-status.svg)](https://david-dm.org/boennemann/semantic-release#info=devDependencies)
 
