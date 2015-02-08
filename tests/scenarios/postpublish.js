@@ -25,18 +25,31 @@ module.exports = function (test, createModule) {
     }
   }, efh()(function (name, cwd) {
     test('postpublish', function (t) {
-      t.test('publish new version to github releases', function (t) {
-        t.plan(1)
-
-        nixt()
+      var base = nixt()
           .cwd(cwd)
           .env('CI', true)
           .env('GH_URL', 'http://127.0.0.1:4343/')
           .env('GH_TOKEN', '***')
           .exec('git commit --allow-empty -m "feat(cool): the next big thing"')
-          .run('npm run postpublish')
           .code(0)
           .stdout(/> semantic-release post\n\nGenerating changelog from.*\nParsed/m)
+
+      t.test('publish new version to github releases', function (t) {
+        t.plan(1)
+
+        base.clone()
+          .run('npm run postpublish')
+          .end(function(err) {
+            t.error(err, 'nixt')
+          })
+      })
+
+      t.test('publish new version (with detached HEAD) to github releases', function (t) {
+        t.plan(1)
+
+        base.clone()
+          .exec('git checkout `git rev-parse HEAD`')
+          .run('npm run postpublish')
           .end(function(err) {
             t.error(err, 'nixt')
           })
@@ -49,7 +62,7 @@ module.exports = function (test, createModule) {
           t.error(err, 'github')
           t.is(res.tag_name, 'v2.0.0', 'version')
           t.is(res.author.login, 'user', 'user')
-          t.ok(/\n\n\n#### Features\n\n\* \*\*cool:\*\* the next big thing/.test(res.body), 'body')
+          t.ok(/\n\n\n#### Features\n\n\* \*\*cool:\*\*\n.*the next big thing/.test(res.body), 'body')
         })
       })
     })
