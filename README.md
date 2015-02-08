@@ -135,7 +135,8 @@ notifications:
   email: false
 env:
   # Get your token here: https://github.com/settings/tokens/new
-  # Encrypt this. See notes.
+  # You should encrypt this:
+  # `travis encrypt GH_TOKEN=<token> --add`
   global: GH_TOKEN=<github-access-token-with-acceess-to-your-repo>
 deploy:
   provider: npm
@@ -143,8 +144,9 @@ deploy:
   # Very important. Don't forget this one.
   skip_cleanup: true
   # Travis currently only supports the old auth key format.
-  # Do `echo -n "username:password" | base64` to get it.
-  # Encrypt this. See notes.
+  # Do `echo -n "<username>:<password>" | base64` to get it.
+  # You should encrypt this:
+  # `travis encrypt $(echo -n "<username>:<password>" | base64) --add deploy.api_key`
   api_key: <npm-api-key>
   on:
     branch: master
