@@ -82,11 +82,13 @@ Note: `semantic-release` works around a limitation in `npm`'s `prepublish` step.
 
 ## How do I set this up?
 
-First of all you need to install `semantic-release` and save it as a `devDependency`.
-
 ### Installation
 
+First of all you need to install `semantic-release` and save it as a `devDependency`.
+
 ```bash
+npm install --save-dev semantic-release
+# Btw, if you're feeling lazy you can just type this – it's the same thing.
 npm i -D semantic-release
 ```
 
