@@ -2,6 +2,8 @@
 
 set -e
 
+[ -d ".tmp" ] && ./bin/post-test
+
 mkdir -p .tmp/modules
 
 export DEBUG=ghrs:cli
