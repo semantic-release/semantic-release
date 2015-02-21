@@ -193,7 +193,7 @@ Note: pre-release flags are kind of an exeption here and a solution for them is 
 
 ### How do I get back to good ol' `npm publish`?
 
-`npm` offers the `--no-scripts` flag. Doing `npm publish --no-scripts` doesn't execute the `prepublish` and `postpublish` scripts.
+`npm` offers the `--ignore-scripts` flag. Doing `npm publish --ignore-scripts` doesn't execute the `prepublish` and `postpublish` scripts.
 
 ### Is it _really_ a good idea to release on every push?
 
