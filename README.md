@@ -11,13 +11,15 @@
 
 This is fully integrated with the `npm` lifecycle, so all you have to do is to setup your CI to `npm publish`.
 
-The goal of this package is to remove humans from version numbers and releases. The [SemVer](http://semver.org/) spec clearly and unambiguously defines when to increase the major, minor or patch part and still we tend to think we're clever when we ignore this, because marketing or something.
+The goal of this package is to remove humans from version numbers and releases. The [SemVer](http://semver.org/) spec clearly and unambiguously defines when to increase the major, minor or patch part. Still we tend to ignore the rules, because we are emotionally attached to version numbers.
 
 ![https://twitter.com/trodrigues/status/509301317467373571](https://cloud.githubusercontent.com/assets/908178/6091690/cc86f58c-aeb8-11e4-94cb-15f15f486cde.png)
 
 ## How does this work?
 
-Conventions, conventions, conventions. Instead of dumping [funny lols](http://whatthecommit.com/) into our commit messages, we can take some time to think about what we changed in the codebase and write it down. Following formalized conventions it this then possible to not only generate a meaningful changelog, but to determine the next semantic version to release. Currently the only supported style is the [AngularJS Commit Message Convention](https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/edit) style, but feel free to formalize your own style, write a parser for it, and send a PR to this package. 
+Conventions, conventions, conventions. Instead of dumping [lols](http://whatthecommit.com/) into our commit messages, we can take some time to think about what we changed in the codebase and write it down. Following formalized conventions it this then possible to not only generate a meaningful changelog, but to determine the next semantic version to release.
+
+Note: Currently the only supported style is the [AngularJS Commit Message Convention](https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/edit) style, but feel free to formalize your own style, write a parser for it, and send a PR to this package. 
 
 ```
 <type>(<scope>): <subject>
