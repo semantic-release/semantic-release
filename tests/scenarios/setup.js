@@ -22,7 +22,7 @@ module.exports = function (test, createModule) {
           .exec('git remote add origin git@github.com:user/repo.git')
           .run('./node_modules/.bin/semantic-release setup')
           .code(0)
-          .end(function(err) {
+          .end(function (err) {
             t.error(err, 'nixt')
 
             var pkg = JSON.parse(readFile(join(cwd, 'package.json')))

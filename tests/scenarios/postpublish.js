@@ -39,7 +39,7 @@ module.exports = function (test, createModule) {
 
         base.clone()
           .run('npm run postpublish')
-          .end(function(err) {
+          .end(function (err) {
             t.error(err, 'nixt')
           })
       })
@@ -50,7 +50,7 @@ module.exports = function (test, createModule) {
         base.clone()
           .exec('git checkout `git rev-parse HEAD`')
           .run('npm run postpublish')
-          .end(function(err) {
+          .end(function (err) {
             t.error(err, 'nixt')
           })
       })

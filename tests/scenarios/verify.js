@@ -25,7 +25,7 @@ module.exports = function (test, createModule) {
             , 'm'
           ))
           .code(1)
-          .end(function(err) {
+          .end(function (err) {
             t.error(err, 'nixt')
           })
       })

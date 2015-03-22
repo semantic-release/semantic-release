@@ -23,7 +23,7 @@ module.exports = function (test, createModule) {
           .run(command)
           .code(0)
           .stdout(/> semantic-release pre\n$/m)
-          .end(function(err) {
+          .end(function (err) {
             t.is(pkg + '', fs.readFileSync(cwd + '/package.json') + '', 'package')
             t.error(err, 'nixt')
           })

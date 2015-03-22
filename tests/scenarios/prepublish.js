@@ -28,7 +28,7 @@ module.exports = function (test, createModule) {
           .run('npm run prepublish')
           .code(code)
           .stdout(/> semantic-release pre\n\nDetermining new version\n/m)
-          .end(function(err) {
+          .end(function (err) {
             t.error(err, 'nixt')
 
             var pkg = JSON.parse(fs.readFileSync(cwd + '/package.json'))
@@ -38,8 +38,8 @@ module.exports = function (test, createModule) {
               return t.error(null, 'no publish')
             }
 
-            exec('npm publish --ignore-scripts', {cwd: cwd}, function(err) {
-              setTimeout(function() {
+            exec('npm publish --ignore-scripts', {cwd: cwd}, function (err) {
+              setTimeout(function () {
                 t.error(err, 'publish')
               }, 300)
             })

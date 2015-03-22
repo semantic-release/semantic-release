@@ -27,7 +27,7 @@ module.exports = function (test, createModule) {
             .run(command)
             .code(1)
             .stdout(/Everything is alright/)
-            .end(function(err) {
+            .end(function (err) {
               t.error(err, 'nixt')
             })
         })

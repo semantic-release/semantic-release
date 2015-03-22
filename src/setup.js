@@ -28,10 +28,7 @@ module.exports = function () {
     var config = ini.decode(fs.readFileSync('./.git/config') + '')
     var repo = config['remote "origin"'].url
 
-    if (repo) pkg.repository = {
-      type: 'git',
-      url: ghUrl(repo)
-    }
+    if (repo) pkg.repository = { type: 'git', url: ghUrl(repo) }
   }
 
   // set up devDependency
