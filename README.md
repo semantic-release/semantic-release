@@ -139,6 +139,7 @@ notifications:
   email: false
 env:
   # Get your token here: https://github.com/settings/tokens/new
+  # Grant the token repo/public_repo scope (all others can be deselected)
   # You should encrypt this:
   # `travis encrypt GH_TOKEN=<token> --add`
   global: GH_TOKEN=<github-access-token-with-acceess-to-your-repo>
