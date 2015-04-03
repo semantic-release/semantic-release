@@ -27,7 +27,7 @@
     "nixt": "^0.4.1",
     "sinopia": "^1.0.0",
     "standard": "^3.2.1",
-    "tap-spec": "^2.2.0",
+    "tap-spec": "^3.0.0",
     "tape": "^3.5.0"
   },
   "engines": {
