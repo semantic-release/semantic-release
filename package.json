@@ -28,7 +28,7 @@
     "sinopia": "^1.0.0",
     "standard": "^3.2.1",
     "tap-spec": "^3.0.0",
-    "tape": "^3.5.0"
+    "tape": "^4.0.0"
   },
   "engines": {
     "iojs": "^1",
