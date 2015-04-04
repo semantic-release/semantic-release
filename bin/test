@@ -1,6 +1,22 @@
-#!/bin/sh
+#!/bin/bash
 
 set -e
+
+npm run test:style
+
+function cleanup {
+  set +e
+
+  cp .tmp/.npmrc ~/.npmrc
+
+  cat .tmp/sinopia.pid | xargs kill
+
+  cat .tmp/ghrs.pid | xargs kill
+
+  rm -rf .tmp
+}
+
+trap cleanup EXIT
 
 [ -d ".tmp" ] && ./bin/post-test
 
@@ -16,3 +32,5 @@ sleep 0.5
 cp ~/.npmrc .tmp/.npmrc
 
 cp tests/.npmrc ~/.npmrc
+
+npm run test:integration

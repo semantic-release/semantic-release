@@ -55,9 +55,9 @@
   },
   "scripts": {
     "postpublish": "./bin/semantic-release.js post",
-    "posttest": "./bin/post-test",
     "prepublish": "./bin/semantic-release.js pre",
-    "pretest": "./bin/pre-test",
-    "test": "standard && node tests | tap-spec"
+    "test:style": "standard",
+    "test:integration": "node tests | tap-spec",
+    "test": "./bin/test"
   }
 }
