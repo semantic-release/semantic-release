@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 'use strict'
 
+var readFile = require('fs').readFileSync
+
 var abbrev = require('abbrev')
 var minimist = require('minimist')
 
@@ -20,6 +22,8 @@ var argv = minimist(process.argv.slice(2), {
     'github-url': process.env.GH_URL
   }
 })
+
+var plugins = JSON.parse(readFile('./package.json')).release || {}
 
 var npmArgv = process.env.npm_config_argv ?
   minimist(JSON.parse(process.env.npm_config_argv).cooked) :
@@ -46,7 +50,7 @@ if (~argv._.indexOf('pre')) {
   // require a correct setup during publish
   if (publish && !argv.debug && !require('../src/verify')(argv)) process.exit(1)
 
-  require('../src/pre')(argv, efh(function (result) {
+  require('../src/pre')(argv, plugins, efh(function (result) {
     if (!result) {
       console.log('Nothing changed. Not publishing.')
       process.exit(1)
