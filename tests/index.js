@@ -4,6 +4,7 @@ var test = require('tape')
 
 var createModule = require('./lib/create-module')
 
+require('./scenarios/custom-analyzer')(test, createModule)
 require('./scenarios/ignore')(test, createModule)
 require('./scenarios/prepublish')(test, createModule)
 require('./scenarios/postpublish')(test, createModule)
