@@ -58,7 +58,8 @@ module.exports = function (test, createModule) {
       t.test('correct data published', function (t) {
         t.plan(4)
 
-        github.releases.getRelease({ owner: 'user', repo: 'repo', id: 1}, function (err, res) {
+        github.releases.getRelease({ owner: 'user', repo: 'repo', id: 1}, function (err, raw) {
+          var res = JSON.parse(raw)
           t.error(err, 'github')
           t.is(res.tag_name, 'v2.0.0', 'version')
           t.is(res.author.login, 'user', 'user')
