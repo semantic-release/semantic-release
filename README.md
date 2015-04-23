@@ -5,65 +5,29 @@
 
 [![NPM](https://nodei.co/npm/semantic-release.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/semantic-release/)
 
-## What is this thing even?
+## What is `semantic-release` about?
 
-`semantic-release` is a toolset to fully automate your package's releases. This will determine not only which version to release, but also when – all without you having to care about it ever again.
+It fully automates your package's releases. It will determine not only which version to release, but also when – all without you wasting [cognitive resources](https://www.youtube.com/watch?v=FKTxC9pl-WM) on it.
 
-This is fully integrated with the `npm` lifecycle, so all you have to do is to setup your CI to `npm publish`.
+It is fully integrated into the `npm` lifecycle, so all you need to do is to configure your CI to regularly `npm publish` (i.e. for every commit).
 
-The goal of this package is to remove humans from version numbers and releases. The [SemVer](http://semver.org/) spec clearly and unambiguously defines when to increase the major, minor or patch part. Still we tend to ignore the rules, because we are emotionally attached to version numbers.
+Removing human descisions and emotions from version numbers and releases – strictly following the [SemVer](http://semver.org/) spec suddenly isn't a problem anymore.
 
 ![https://twitter.com/trodrigues/status/509301317467373571](https://cloud.githubusercontent.com/assets/908178/6091690/cc86f58c-aeb8-11e4-94cb-15f15f486cde.png)
 
-## How does this work?
+## How does it work?
 
-Conventions, conventions, conventions. Instead of dumping [lols](http://whatthecommit.com/) into our commit messages, we can take some time to think about what we changed in the codebase and write it down. Following formalized conventions it this then possible to not only generate a meaningful changelog, but to determine the next semantic version to release.
+Meaningful conventions. Instead of dumping [lols](http://whatthecommit.com/) into our commit messages, we can take some time to think about what we changed in the codebase and write it down. Following formalized conventions it this then possible to not only generate a helpful changelog, but to determine whether a new version should be released.
 
-Note: Currently the only supported style is the [AngularJS Commit Message Convention](https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/edit) style, but feel free to formalize your own style, write a parser for it, and send a PR to this package. 
-
-```
-<type>(<scope>): <subject>
-<BLANK LINE>
-<body>
-```
-
-Examples:
-
-```
-feat(ruler): add inches as well as centimeters
-```
-
-```
-fix(protractor): fix 90 degrees counting as 91 degrees
-```
-
-```
-fix(pen): use blue ink instead of red ink
-
-BREAKING CHANGE: Pen now uses blue ink instead of red.
-
-To migrate, change your code from the following:
-
-`pen.draw('blue')`
-
-To:
-
-`pen.draw('red')`
-```
-
-[Synopsis](https://github.com/ajoslin/conventional-changelog/blob/master/CONVENTIONS.md)
-
-The preferred configuration is the "try to release on every push" mode. What it does is that everytime a build passes `npm publish` is executed. 
+This module ships with the [AngularJS Commit Message Conventions](https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/edit), but you can [easily define your own](https://github.com/boennemann/semantic-release/wiki/commit-analysis).
 
 ### The `prepublish` step
 
 Before `npm` actually gets to publish a new version `semantic-release`'s `prepublish` step does the following:
 
-- Analyze the commits since the last version was published
-- Decide on the release type (`major`|`minor`|`patch`) or abort if nothing changed
-- Get the last published version from the registry
-- Increase the last version with the determined type
-- Write the new version to the package
+- Extract all commits since the last version was published
+- Determine the release type (`major`|`minor`|`patch`) or abort if nothing relevant changed
+- Increase the version number accordingly
 
 ### The `publish` step
 
@@ -74,15 +38,13 @@ Before `npm` actually gets to publish a new version `semantic-release`'s `prepub
 After `npm` published the new version the `postpublish` step does this:
 
 - Generate a changelog
-- Create a new [GitHub Release](https://help.github.com/articles/about-releases/) with the changelog as body
-
-Note: The GitHub Release automatically creates a tag, too.
+- Create a new [GitHub Release](https://help.github.com/articles/about-releases/) and tag with the changelog as body
 
 Note: This is tied to GitHub, feel free to send PRs for other services.
 
 Note: `semantic-release` works around a limitation in `npm`'s `prepublish` step. Once a version is published it prints an error that you can *safely ignore* [npm/npm#7118](https://github.com/npm/npm/issues/7118).
 
-## How do I set this up?
+## How you can set it up
 
 ### Installation
 
@@ -113,7 +75,7 @@ The setup command configures `scripts` inside the `package.json`:
 }
 ```
 
-Note: If you have already configured `scripts` for `prepublish` or `postpublish` they're just executed one after another. For example: `"npm run 6to5 && semantic-release pre"`.
+Note: If you have already configured `scripts` for `prepublish` or `postpublish` they're just executed one after another. For example: `"npm run babelify && semantic-release pre"`.
 
 #### Version
 
@@ -158,7 +120,7 @@ deploy:
     repo: <user>/<repo>
 ```
 
-Note: For once this isn't tied to a specific service, but example configuration is shown for [Travis CI](https://travis-ci.org/). Feel free to contribute configuration of other servers or services.
+Note: This isn't tied to a specific service, but example configuration is provided for [Travis CI](https://travis-ci.org/). Feel free to contribute configuration for other servers or services.
 
 Note: You should [encrypt](http://docs.travis-ci.com/user/environment-variables/#sts=Secure Variables) your api keys and tokens.
 
@@ -178,7 +140,7 @@ The `npm` docs even state:
 > The most important things in your package.json are the name and version fields. Those are actually required, and your package won't install without them.
 > -- [npm docs](https://docs.npmjs.com/files/package.json#version)
 
-While this entirely true the version number doesn't have to be checked into source control. `semantic-release` takes care of the version field right before `npm publish` uses it – and this is the only point when it _really_ is required.
+While this entirely true the version number doesn't have to be checked into source control. `semantic-release` takes care of the version field right before `npm publish` uses it – and this is the only point where it _really_ is required.
 
 ### Is there a way to preview which version would currently get published?
 
@@ -186,13 +148,13 @@ If you're running `npm publish` locally `semantic-release` automatically perform
 
 ### Can I run this on my own machine rather than on a CI server?
 
-Of course you can, but this doesn't mean you should. Running your tests on an independent machine before releasing software is a crucial part of this workflow. Also it is a pain to set this up locally, with GitHub tokens lying around and everything. That said, you can either set the environment variable `CI=true`, or run the scripts with `--debug=false` explicitly. Don't forget to export `GH_TOKEN=your_token` as well.
+Of course you can, but this doesn't necessarly mean you should. Running your tests on an independent machine before releasing software is a crucial part of this workflow. Also it is a pain to set this up locally, with GitHub tokens lying around and everything. That said, you can either set the environment variable `CI=true`, or run the scripts with `--debug=false` explicitly. Don't forget to export `GH_TOKEN=your_token` as well.
 
 ### Can I manually trigger the release of a specific version?
 
 You can trigger a release by pushing to your repository. You deliberately can not trigger a _specific_ version release, because this is the whole point of `semantic-release`. Start your packages with `1.0.0` and semver on.  
 
-Note: pre-release flags are kind of an exeption here and a solution for them is being thought of. If you have one please open an issue. For the time being: Have a look at the next question.
+Note: The default commit message conventions do not support pre-release flags, but you can build this in yourself using [custom analyzers](https://github.com/boennemann/semantic-release/wiki/commit-analysis).
 
 ### How do I get back to good ol' `npm publish`?
 
