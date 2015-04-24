@@ -3,19 +3,19 @@
 var readFile = require('fs').readFileSync
 var url = require('url')
 
-var changelog = require('conventional-changelog')
 var gitHead = require('git-head')
 var GitHubApi = require('github')
 var parseSlug = require('parse-github-repo-url')
-var parseUrl = require('github-url-from-git')
 
 var efh = require('../lib/error').efh
 
-module.exports = function (options, cb) {
+module.exports = function (options, plugins, cb) {
   var pkg = JSON.parse(readFile('./package.json'))
   var repository = pkg.repository ? pkg.repository.url : null
 
   if (!repository) return cb(new Error('Package must have a repository'))
+
+  var notesGenerator = require(plugins.notes || '../lib/release-notes')
 
   var config = options['github-url'] ? url.parse(options['github-url']) : {}
 
@@ -26,11 +26,7 @@ module.exports = function (options, cb) {
     host: config.hostname
   })
 
-  changelog({
-    version: pkg.version,
-    repository: parseUrl(repository),
-    file: false
-  }, efh(cb)(function (log) {
+  notesGenerator(efh(cb)(function (log) {
     gitHead(efh(cb)(function (hash) {
       var ghRepo = parseSlug(repository)
       var release = {

@@ -68,7 +68,7 @@ if (~argv._.indexOf('pre')) {
 }
 
 if (~argv._.indexOf('post')) {
-  require('../src/post')(argv, efh(function () {
+  require('../src/post')(argv, plugins, efh(function () {
     // see src/restart.js
     if (npmArgv['semantic-release-rerun']) {
       console.log('Everything is alright :) npm will now print an error message that you can safely ignore.')
