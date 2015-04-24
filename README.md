@@ -19,7 +19,7 @@ Removing human descisions and emotions from version numbers and releases – str
 
 Meaningful conventions. Instead of dumping [lols](http://whatthecommit.com/) into our commit messages, we can take some time to think about what we changed in the codebase and write it down. Following formalized conventions it this then possible to not only generate a helpful changelog, but to determine whether a new version should be released.
 
-This module ships with the [AngularJS Commit Message Conventions](https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/edit), but you can [easily define your own](https://github.com/boennemann/semantic-release/wiki/commit-analysis).
+This module ships with the [AngularJS Commit Message Conventions](https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/edit), but you can [define your own](https://github.com/boennemann/semantic-release/wiki/commit-analysis).
 
 ### The `prepublish` step
 
@@ -37,8 +37,10 @@ Before `npm` actually gets to publish a new version `semantic-release`'s `prepub
 
 After `npm` published the new version the `postpublish` step does this:
 
-- Generate a changelog
-- Create a new [GitHub Release](https://help.github.com/articles/about-releases/) and tag with the changelog as body
+- Generate release notes
+- Create a new [GitHub Release](https://help.github.com/articles/about-releases/) (including a git tag) with the release notes
+
+Note: The default release notes are a [changelog](https://github.com/ajoslin/conventional-changelog) that is generated from git metadata, using the AngularJS commit conventions. You can [specify your own release note generator](https://github.com/boennemann/semantic-release/wiki/release-note-generation). 
 
 Note: This is tied to GitHub, feel free to send PRs for other services.
 
