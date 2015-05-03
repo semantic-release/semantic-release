@@ -11,7 +11,7 @@ It fully automates your package's releases. It will determine not only which ver
 
 It is fully integrated into the `npm` lifecycle, so all you need to do is to configure your CI to regularly `npm publish` (i.e. for every commit).
 
-Removing human descisions and emotions from version numbers and releases – strictly following the [SemVer](http://semver.org/) spec suddenly isn't a problem anymore.
+It removes human decisions and emotions from version numbers and releases – suddenly, strictly following the [SemVer](http://semver.org/) spec isn't a problem anymore.
 
 ![https://twitter.com/trodrigues/status/509301317467373571](https://cloud.githubusercontent.com/assets/908178/6091690/cc86f58c-aeb8-11e4-94cb-15f15f486cde.png)
 
