@@ -106,7 +106,7 @@ env:
   # Grant the token repo/public_repo scope (all others can be deselected)
   # You should encrypt this:
   # `travis encrypt GH_TOKEN=<token> --add`
-  global: GH_TOKEN=<github-access-token-with-acceess-to-your-repo>
+  global: GH_TOKEN=<github-access-token-with-access-to-your-repo>
 deploy:
   provider: npm
   email: <your-npm-mail@example.com>
