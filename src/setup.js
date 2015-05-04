@@ -38,5 +38,5 @@ module.exports = function () {
     pkg.devDependencies['semantic-release'] = '^' + require('../package.json').version
   }
 
-  fs.writeFileSync('./package.json', JSON.stringify(pkg, null, 2))
+  fs.writeFileSync('./package.json', JSON.stringify(pkg, null, 2) + '\n')
 }
