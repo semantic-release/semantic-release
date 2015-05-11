@@ -44,7 +44,7 @@ Note: The default release notes are a [changelog](https://github.com/ajoslin/con
 
 Note: This is tied to GitHub, feel free to send PRs for other services.
 
-Note: `semantic-release` works around a limitation in `npm`'s `prepublish` step. Once a version is published it prints an error that you can *safely ignore* [npm/npm#7118](https://github.com/npm/npm/issues/7118).
+Note: `semantic-release` works around a limitation in `npm`'s `prepublish` step. Once a version is published it prints a "Could not pack" error that you can *safely ignore* [npm/npm#7118](https://github.com/npm/npm/issues/7118).
 
 ## How you can set it up
 
@@ -101,6 +101,9 @@ cache:
   - node_modules
 notifications:
   email: false
+# See https://github.com/boennemann/semantic-release/issues/18
+before_deploy:
+- npm config set spin false --global
 env:
   # Get your token here: https://github.com/settings/tokens/new
   # Grant the token repo/public_repo scope (all others can be deselected)
