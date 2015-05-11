@@ -20,7 +20,7 @@ module.exports = function (options, plugins, cb) {
       var type = analyzer(commits)
 
       if (!type) return cb(null, null)
-      pkg.version = !res.version ? '1.0.0' : semver.inc(res.version, type)
+      pkg.version = res.version ? semver.inc(res.version, type) : '1.0.0'
       if (!options.debug) fs.writeFileSync(path, JSON.stringify(pkg, null, 2))
 
       cb(null, pkg.version)
