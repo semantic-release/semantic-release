@@ -21,6 +21,7 @@
     "semver": "^4.3.3"
   },
   "devDependencies": {
+    "cracks": "^2.0.0",
     "github-release-fake-server": "^1.3.0",
     "lodash.defaults": "^3.0.0",
     "nano-uid": "^0.2.0",
@@ -59,5 +60,8 @@
     "test:style": "standard",
     "test:integration": "node tests | tap-spec",
     "test": "./bin/test"
+  },
+  "release": {
+    "verification": "cracks"
   }
 }
