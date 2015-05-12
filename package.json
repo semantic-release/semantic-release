@@ -21,7 +21,7 @@
     "semver": "^4.3.3"
   },
   "devDependencies": {
-    "cracks": "^2.0.0",
+    "cracks": "^2.0.1",
     "github-release-fake-server": "^1.3.0",
     "lodash.defaults": "^3.0.0",
     "nano-uid": "^0.2.0",

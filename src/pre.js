@@ -24,11 +24,12 @@ module.exports = function (options, plugins, cb) {
       pkg.version = res.version ? semver.inc(res.version, type) : '1.0.0'
 
       var writePkg = function () {
-        if (!options.debug) fs.writeFileSync(path, JSON.stringify(pkg, null, 2))
+        if (!options.debug) fs.writeFileSync(path, JSON.stringify(pkg, null, 2) + '\n')
         cb(null, pkg.version)
       }
 
-      if (type === 'major' || !plugins.verification) return writePkg()
+      if (!plugins.verification) return writePkg()
+
       var opts = {}
 
       if (typeof plugins.verification === 'string') {
@@ -37,6 +38,11 @@ module.exports = function (options, plugins, cb) {
       if (typeof plugins.verification === 'object') {
         opts = plugins.verification
       }
+
+      opts.type = type
+      opts.commits = commits
+      opts.version = res.version
+      opts.nextVersion = pkg.version
 
       var verification = require(opts.name)
 
