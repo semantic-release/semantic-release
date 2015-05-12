@@ -20,10 +20,30 @@ module.exports = function (options, plugins, cb) {
       var type = analyzer(commits)
 
       if (!type) return cb(null, null)
-      pkg.version = res.version ? semver.inc(res.version, type) : '1.0.0'
-      if (!options.debug) fs.writeFileSync(path, JSON.stringify(pkg, null, 2))
 
-      cb(null, pkg.version)
+      pkg.version = res.version ? semver.inc(res.version, type) : '1.0.0'
+
+      var writePkg = function () {
+        if (!options.debug) fs.writeFileSync(path, JSON.stringify(pkg, null, 2))
+        cb(null, pkg.version)
+      }
+
+      if (type === 'major' || !plugins.verification) return writePkg()
+      var opts = {}
+
+      if (typeof plugins.verification === 'string') {
+        opts.name = plugins.verification
+      }
+      if (typeof plugins.verification === 'object') {
+        opts = plugins.verification
+      }
+
+      var verification = require(opts.name)
+
+      verification(opts, efh(cb)(function (ok) {
+        if (ok) return writePkg()
+        cb('verification failed')
+      }))
     }))
   }))
 }
