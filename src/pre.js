@@ -51,10 +51,11 @@ module.exports = function (options, plugins, cb) {
 
       var verification = require(opts.name)
 
-      verification(opts, efh(cb)(function (ok) {
-        if (ok) return writePkg()
-        cb('verification failed')
-      }))
+      verification(opts, function (error, ok) {
+        if (!error && ok) return writePkg()
+        console.log(error || 'Verification failed')
+        process.exit(1)
+      })
     }))
   }))
 }
