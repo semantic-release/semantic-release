@@ -21,7 +21,12 @@ module.exports = function (options, plugins, cb) {
 
       if (!type) return cb(null, null)
 
-      pkg.version = res.version ? semver.inc(res.version, type) : '1.0.0'
+      if (res.version) {
+        pkg.version = semver.inc(res.version, type)
+      } else {
+        type = 'major'
+        pkg.version = '1.0.0'
+      }
 
       var writePkg = function () {
         if (!options.debug) fs.writeFileSync(path, JSON.stringify(pkg, null, 2) + '\n')
