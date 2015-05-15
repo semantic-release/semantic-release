@@ -38,10 +38,11 @@ module.exports = function (options, plugins, cb) {
       var opts = {}
 
       if (typeof plugins.verification === 'string') {
-        opts.name = plugins.verification
+        opts.path = plugins.verification
       }
       if (typeof plugins.verification === 'object') {
         opts = plugins.verification
+        opts.path = opts.path || opts.name
       }
 
       opts.type = type
@@ -49,7 +50,7 @@ module.exports = function (options, plugins, cb) {
       opts.version = res.version
       opts.nextVersion = pkg.version
 
-      var verification = require(opts.name)
+      var verification = require(opts.path)
 
       console.log('Running verification hook...')
 
