@@ -51,9 +51,11 @@ module.exports = function (options, plugins, cb) {
 
       var verification = require(opts.name)
 
+      console.log('Running verification hook...')
+
       verification(opts, function (error, ok) {
         if (!error && ok) return writePkg()
-        console.log(error || 'Verification failed')
+        console.log('Verification failed' + (error ? ': ' + error : ''))
         process.exit(1)
       })
     }))
