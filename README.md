@@ -171,7 +171,7 @@ It is indeed a great idea because it _forces_ you to follow best practices. If y
 
 ### Why should I trust `semantic-release` with my releases? What if it breaks?
 
-`semantic-release` has a full integration-test suite that tests _actual_ `npm` publishes and _actual_ GitHub Releases (with private registry/API) on node.js `^0.10`, `^0.12` and io.js `^1`. A new version won't get published if it doesn't pass on all these engines. 
+`semantic-release` has a full integration-test suite that tests _actual_ `npm` publishes and _actual_ GitHub Releases (with private registry/API) on node.js `^0.10`, `^0.12` and io.js `^1`, `^2`. A new version won't get published if it doesn't pass on all these engines. 
 
 ## License
 
