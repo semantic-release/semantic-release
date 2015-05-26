@@ -28,8 +28,9 @@
     "lodash.defaults": "^3.0.0",
     "nano-uid": "^0.2.0",
     "nixt": "^0.4.1",
+    "nock": "^2.2.0",
     "sinopia": "^1.0.0",
-    "standard": "^3.2.1",
+    "standard": "^3.11.1",
     "tap-spec": "^3.0.0",
     "tape": "^4.0.0"
   },
