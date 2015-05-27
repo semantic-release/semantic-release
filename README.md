@@ -95,6 +95,9 @@ Inside your `.travis.yml`:
 language: node_js
 node_js:
 - iojs-v1
+# If you have a more sophisticated build with multiple jobs you should have a look at
+# https://github.com/dmakhno/travis_after_all which is also configured for this
+# package. (Check the .travis.yml)
 sudo: false
 cache:
   directories:
@@ -131,9 +134,7 @@ Note: You should [encrypt](http://docs.travis-ci.com/user/environment-variables/
 
 Note: Your CI environment has to export `CI=true` in order for `semantic-release` not to automatically perform a dry run. Travis CI does this by default. 
 
-Note: It is crucial that your CI server also fetches all tags when checking out your repository. Travis CI does this by default. 
-
-Note: If you have a more sophisticated build with multiple jobs you should have a look at [travis-after-all](https://github.com/dmakhno/travis_after_all), which is also configured for this [package](.travis.yml).
+Note: It is crucial that your CI server also fetches all tags when checking out your repository. Travis CI does this by default.
 
 ## ITYM*FAQ*LT
 > I think you might frequently ask questions like these
