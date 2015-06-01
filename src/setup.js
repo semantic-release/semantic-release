@@ -26,6 +26,9 @@ module.exports = function () {
   // set up repository
   if (!pkg.repository || !pkg.repository.url) {
     var config = ini.decode(fs.readFileSync('./.git/config') + '')
+    if (!config['remote "origin"'] || config['remote "origin"'].url) {
+      throw new Error('your package.json does not define a repo URL')
+    }
     var repo = config['remote "origin"'].url
 
     if (repo) pkg.repository = { type: 'git', url: ghUrl(repo) }
