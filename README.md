@@ -9,11 +9,13 @@
 
 It fully automates your package's releases. It will determine not only which version to release, but also when – all without you wasting [cognitive resources](https://www.youtube.com/watch?v=FKTxC9pl-WM) on it.
 
+[![JSConfBP Talk](https://cloud.githubusercontent.com/assets/908178/8032541/e9bf6300-0dd6-11e5-92c9-8a39211368af.png)](https://www.youtube.com/watch?v=tc2UgG5L7WM&index=6&list=PLFZ5NyC0xHDaaTy6tY9p0C0jd_rRRl5Zm)
+
+> This talk gives you a complete introduction to the underlying concepts plus a live demo at the end.
+
 It is fully integrated into the `npm` lifecycle, so all you need to do is to configure your CI to regularly `npm publish` (i.e. for every commit).
 
 It removes human decisions and emotions from version numbers and releases – suddenly, strictly following the [SemVer](http://semver.org/) spec isn't a problem anymore.
-
-![https://twitter.com/trodrigues/status/509301317467373571](https://cloud.githubusercontent.com/assets/908178/6091690/cc86f58c-aeb8-11e4-94cb-15f15f486cde.png)
 
 ## How does it work?
 
@@ -40,7 +42,7 @@ After `npm` published the new version the `postpublish` step does this:
 - Generate release notes
 - Create a new [GitHub Release](https://help.github.com/articles/about-releases/) (including a git tag) with the release notes
 
-Note: The default release notes are a [changelog](https://github.com/ajoslin/conventional-changelog) that is generated from git metadata, using the AngularJS commit conventions. You can [specify your own release note generator](https://github.com/boennemann/semantic-release/wiki/release-note-generation). 
+Note: The default release notes are a [changelog](https://github.com/ajoslin/conventional-changelog) that is generated from git metadata, using the AngularJS commit conventions. You can [specify your own release note generator](https://github.com/boennemann/semantic-release/wiki/release-note-generation).
 
 Note: This is tied to GitHub, feel free to send PRs for other services.
 
@@ -85,13 +87,13 @@ It would be preferable not to have a version field in the `package.json` at all,
 
 #### Repository
 
-If you haven't defined your GitHub repository in the `package.json`s [repository field](https://docs.npmjs.com/files/package.json#repository) the remote `origin`'s repository is used. 
+If you haven't defined your GitHub repository in the `package.json`s [repository field](https://docs.npmjs.com/files/package.json#repository) the remote `origin`'s repository is used.
 
 ### CI Server
 
 Inside your `.travis.yml`:
 
-```yml 
+```yml
 language: node_js
 node_js:
 - iojs-v1
@@ -132,7 +134,7 @@ Note: This isn't tied to a specific service, but example configuration is provid
 
 Note: You should [encrypt](http://docs.travis-ci.com/user/environment-variables/#sts=Secure Variables) your api keys and tokens.
 
-Note: Your CI environment has to export `CI=true` in order for `semantic-release` not to automatically perform a dry run. Travis CI does this by default. 
+Note: Your CI environment has to export `CI=true` in order for `semantic-release` not to automatically perform a dry run. Travis CI does this by default.
 
 Note: It is crucial that your CI server also fetches all tags when checking out your repository. Travis CI does this by default.
 
@@ -172,9 +174,11 @@ It is indeed a great idea because it _forces_ you to follow best practices. If y
 
 ### Why should I trust `semantic-release` with my releases? What if it breaks?
 
-`semantic-release` has a full integration-test suite that tests _actual_ `npm` publishes and _actual_ GitHub Releases (with private registry/API) on node.js `^0.10`, `^0.12` and io.js `^1`, `^2`. A new version won't get published if it doesn't pass on all these engines. 
+`semantic-release` has a full integration-test suite that tests _actual_ `npm` publishes and _actual_ GitHub Releases (with private registry/API) on node.js `^0.10`, `^0.12` and io.js `^1`, `^2`. A new version won't get published if it doesn't pass on all these engines.
 
 ## License
 
-MIT License 
+MIT License
 2015 © Stephan Bönnemann and [contributors](https://github.com/boennemann/semantic-release/graphs/contributors)
+
+![https://twitter.com/trodrigues/status/509301317467373571](https://cloud.githubusercontent.com/assets/908178/6091690/cc86f58c-aeb8-11e4-94cb-15f15f486cde.png)
