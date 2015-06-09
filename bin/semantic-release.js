@@ -31,7 +31,14 @@ var npmArgv = process.env.npm_config_argv ?
 
 if (~argv._.indexOf('pre')) {
   // see src/restart.js
-  if (npmArgv['semantic-release-rerun']) process.exit(0)
+  if (npmArgv['semantic-release-rerun']) {
+    if (!/semantically-released/.test(process.env.npm_package_version)) process.exit(0)
+
+    console.log('There is something wrong with your setup, as a placeholder version is about to be released.')
+    console.log('Please verify that your setup is correct.')
+    console.log('If you think this is a problem with semantic-release please open an issue.')
+    process.exit(1)
+  }
   // the `prepublish` hook is also executed when the package is installed
   // in this case we abort the command and do nothing.
   if (
