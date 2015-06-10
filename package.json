@@ -52,7 +52,7 @@
     "version"
   ],
   "license": "MIT",
-  "main": "index.js",
+  "main": "dist/main.js",
   "optionalDependencies": {
     "babel": "^5.5.6"
   },
@@ -64,8 +64,10 @@
     "url": "https://github.com/boennemann/semantic-release.git"
   },
   "scripts": {
+    "build": "rm -rf dist && mkdir -p dist && babel src --out-dir dist",
     "postpublish": "./bin/semantic-release.js post",
-    "prepublish": "./bin/semantic-release.js pre",
+    "prepublish": "npm run build && ./bin/semantic-release.js pre",
+    "pretest": "npm run build",
     "test": "./bin/test",
     "test:integration": "node tests | tap-spec",
     "test:style": "standard"

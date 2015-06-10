@@ -1,3 +1,7 @@
+# common
 node_modules
 *.log
 .tmp
+
+# build-artifacts
+dist

@@ -1,0 +1,9 @@
+# common
+node_modules
+*.log
+.tmp
+
+# source/config
+src
+*.yml
+.gitignore
