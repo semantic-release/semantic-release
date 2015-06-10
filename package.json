@@ -30,8 +30,8 @@
     "nixt": "^0.4.1",
     "nock": "^2.2.0",
     "sinopia": "^1.0.0",
-    "standard": "^3.11.1",
-    "tap-spec": "^3.0.0",
+    "standard": "^4.0.1",
+    "tap-spec": "^4.0.0",
     "tape": "^4.0.0"
   },
   "engines": {
