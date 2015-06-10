@@ -43,16 +43,22 @@
   "keywords": [
     "author",
     "automation",
-    "release",
-    "publish",
+    "changelog",
     "module",
     "package",
+    "publish",
+    "release",
     "semver",
-    "version",
-    "changelog"
+    "version"
   ],
   "license": "MIT",
   "main": "index.js",
+  "optionalDependencies": {
+    "babel": "^5.5.6"
+  },
+  "release": {
+    "verification": "cracks"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/boennemann/semantic-release.git"
@@ -60,11 +66,8 @@
   "scripts": {
     "postpublish": "./bin/semantic-release.js post",
     "prepublish": "./bin/semantic-release.js pre",
-    "test:style": "standard",
+    "test": "./bin/test",
     "test:integration": "node tests | tap-spec",
-    "test": "./bin/test"
-  },
-  "release": {
-    "verification": "cracks"
+    "test:style": "standard"
   }
 }
