@@ -4,9 +4,9 @@ var fs = require('fs')
 
 var semver = require('semver')
 
-var getCommits = require('../lib/commits')
-var npmInfo = require('../lib/npm-info')
-var efh = require('../lib/error').efh
+var getCommits = require('./lib/commits')
+var npmInfo = require('./lib/npm-info')
+var efh = require('./lib/error').efh
 
 module.exports = function (options, plugins, cb) {
   var path = './package.json'
@@ -16,7 +16,7 @@ module.exports = function (options, plugins, cb) {
 
   npmInfo(pkg.name, efh(cb)(function (res) {
     getCommits(res.gitHead, efh(cb)(function (commits) {
-      var analyzer = require(plugins.analyzer || '../lib/analyzer')
+      var analyzer = require(plugins.analyzer || './lib/analyzer')
       var type = analyzer(commits)
 
       if (!type) return cb(null, null)

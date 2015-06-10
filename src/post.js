@@ -7,7 +7,7 @@ var gitHead = require('git-head')
 var GitHubApi = require('github')
 var parseSlug = require('parse-github-repo-url')
 
-var efh = require('../lib/error').efh
+var efh = require('./lib/error').efh
 
 module.exports = function (options, plugins, cb) {
   var pkg = JSON.parse(readFile('./package.json'))
@@ -15,7 +15,7 @@ module.exports = function (options, plugins, cb) {
 
   if (!repository) return cb(new Error('Package must have a repository'))
 
-  var notesGenerator = require(plugins.notes || '../lib/release-notes')
+  var notesGenerator = require(plugins.notes || './lib/release-notes')
 
   var config = options['github-url'] ? url.parse(options['github-url']) : {}
 

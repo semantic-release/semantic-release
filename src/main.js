@@ -2,7 +2,7 @@
 
 var abbrev = require('abbrev')
 
-var efh = require('../lib/error').standard
+var efh = require('./lib/error').standard
 
 exports.pre = function (argv, npmArgv, plugins) {
   // see src/restart.js
