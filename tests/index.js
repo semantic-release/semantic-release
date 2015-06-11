@@ -4,6 +4,7 @@ var test = require('tape')
 
 var createModule = require('./lib/create-module')
 
+require('./tap/npm-info')(test)
 require('./scenarios/custom-analyzer')(test, createModule)
 require('./scenarios/custom-verification')(test, createModule)
 require('./scenarios/ignore')(test, createModule)
