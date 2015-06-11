@@ -5,6 +5,9 @@ var path = require('path')
 var efh = require('error-first-handler')
 var GitHubApi = require('github')
 var nixt = require('nixt')
+var test = require('tape')
+
+var createModule = require('../lib/create-module')
 
 var github = new GitHubApi({
   version: '3.0.0',
@@ -18,7 +21,7 @@ github.authenticate({
   token: '***'
 })
 
-module.exports = function (test, createModule) {
+module.exports = function () {
   createModule({
     version: '2.0.0',
     repository: {

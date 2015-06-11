@@ -2,8 +2,11 @@
 
 var efh = require('error-first-handler')
 var nixt = require('nixt')
+var test = require('tape')
 
-module.exports = function (test, createModule) {
+var createModule = require('../lib/create-module')
+
+module.exports = function () {
   test('publish', function (t) {
     publishTest(t, 'npm publish', 'pre and post hooks work as a part of publish')
     publishTest(t, 'npm pub', 'pre and post hooks work as a part of publish with abbrevd command')

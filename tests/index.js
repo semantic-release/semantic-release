@@ -1,15 +1,11 @@
 'use strict'
 
-var test = require('tape')
-
-var createModule = require('./lib/create-module')
-
-require('./tap/npm-info')(test)
-require('./scenarios/custom-analyzer')(test, createModule)
-require('./scenarios/custom-verification')(test, createModule)
-require('./scenarios/ignore')(test, createModule)
-require('./scenarios/prepublish')(test, createModule)
-require('./scenarios/postpublish')(test, createModule)
-require('./scenarios/publish')(test, createModule)
-require('./scenarios/verify')(test, createModule)
-require('./scenarios/setup')(test, createModule)
+require('./tap/npm-info')()
+require('./scenarios/custom-analyzer')()
+require('./scenarios/custom-verification')()
+require('./scenarios/ignore')()
+require('./scenarios/prepublish')()
+require('./scenarios/postpublish')()
+require('./scenarios/publish')()
+require('./scenarios/verify')()
+require('./scenarios/setup')()

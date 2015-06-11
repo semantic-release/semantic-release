@@ -1,5 +1,6 @@
 'use strict'
 
+var test = require('tape')
 var nock = require('nock')
 
 var npmInfo = require('../../dist/lib/npm-info.js')
@@ -19,7 +20,7 @@ var defaultModule = {
 
 process.env.npm_config_registry = registry
 
-module.exports = function (test) {
+module.exports = function () {
   test('npm-info', function (t) {
     var regMock = nock(registry, {
       reqheaders: {

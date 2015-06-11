@@ -2,8 +2,11 @@
 
 var efh = require('error-first-handler')
 var nixt = require('nixt')
+var test = require('tape')
 
-module.exports = function (test, createModule) {
+var createModule = require('../lib/create-module')
+
+module.exports = function () {
   test('verify', function (t) {
     createModule({
       repository: {},

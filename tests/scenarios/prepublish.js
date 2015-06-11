@@ -1,10 +1,12 @@
 'use strict'
 
 var efh = require('error-first-handler')
+var test = require('tape')
 
+var createModule = require('../lib/create-module')
 var commitToVersionTest = require('../lib/commit-to-version-test')
 
-module.exports = function (test, createModule) {
+module.exports = function () {
   createModule(efh()(function (name, cwd) {
     test('prepublish', function (t) {
       commitToVersionTest(t, 'refactor: change', '0.0.0', 1, 'abort publish w/o changes', cwd)

@@ -4,8 +4,11 @@ var path = require('path')
 
 var efh = require('error-first-handler')
 var nixt = require('nixt')
+var test = require('tape')
 
-module.exports = function (test, createModule) {
+var createModule = require('../lib/create-module')
+
+module.exports = function () {
   createModule({
     release: {
       verification: path.join(__dirname, '../lib/custom-verification')

@@ -3,10 +3,12 @@
 var path = require('path')
 
 var efh = require('error-first-handler')
+var test = require('tape')
 
+var createModule = require('../lib/create-module')
 var commitToVersionTest = require('../lib/commit-to-version-test')
 
-module.exports = function (test, createModule) {
+module.exports = function () {
   createModule({
     release: {
       analyzer: path.join(__dirname, '../lib/custom-analyzer')
