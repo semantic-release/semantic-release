@@ -20,7 +20,7 @@ module.exports = function (test, createModule) {
         nixt()
           .cwd(cwd)
           .exec('git remote add origin git@github.com:user/repo.git')
-          .run('./node_modules/.bin/semantic-release setup')
+          .run('../../../bin/semantic-release.js setup')
           .code(0)
           .end(function (err) {
             t.error(err, 'nixt')

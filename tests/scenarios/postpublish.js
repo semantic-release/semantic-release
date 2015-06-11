@@ -33,7 +33,7 @@ module.exports = function (test, createModule) {
         t.plan(1)
 
         base.clone()
-          .stdout(/> semantic-release post\n\nGenerating changelog from.*\nParsed/m)
+          .stdout(/semantic-release.js post\n\nGenerating changelog from.*\nParsed/m)
           .run('npm run postpublish')
           .end(function (err) {
             t.error(err, 'nixt')
@@ -44,7 +44,7 @@ module.exports = function (test, createModule) {
         t.plan(1)
 
         base.clone()
-          .stdout(/> semantic-release post\n\nGenerating changelog from.*\nParsed/m)
+          .stdout(/semantic-release.js post\n\nGenerating changelog from.*\nParsed/m)
           .exec('git checkout `git rev-parse HEAD`')
           .run('npm run postpublish')
           .end(function (err) {

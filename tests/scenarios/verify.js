@@ -8,7 +8,7 @@ module.exports = function (test, createModule) {
     createModule({
       repository: {},
       scripts: {
-        prepublish: 'semantic-release pre --no-token'
+        prepublish: '../../../bin/semantic-release.js pre'
       }
     }, efh()(function (name, cwd) {
       t.test('verify package and options before publishing', function (t) {

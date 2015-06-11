@@ -16,7 +16,7 @@ module.exports = function (t, message, version, code, name, cwd) {
       .exec('git commit --allow-empty -m "' + message + '"')
       .run('npm run prepublish')
       .code(code)
-      .stdout(/> semantic-release pre\n\nDetermining new version\n/m)
+      .stdout(/semantic-release.js pre\n\nDetermining new version\n/m)
       .end(function (err) {
         t.error(err, 'nixt')
 

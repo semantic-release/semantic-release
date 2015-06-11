@@ -13,12 +13,9 @@ module.exports = function (input) {
     var pkg = defaults((typeof input === 'object' ? input : {}), {
       name: id,
       version: '0.0.0',
-      devDependencies: {
-        'semantic-release': 'file:../../../'
-      },
       scripts: {
-        prepublish: 'semantic-release pre',
-        postpublish: 'semantic-release post'
+        prepublish: '../../../bin/semantic-release.js pre',
+        postpublish: '../../../bin/semantic-release.js post'
       },
       publishConfig: {
         registry: 'http://localhost:4873/'
@@ -36,8 +33,7 @@ module.exports = function (input) {
       'git add . && ' +
       'git config user.email "integration@test" && ' +
       'git config user.name "Integration Test" && ' +
-      'git commit -m "initial" && ' +
-      'npm install'
+      'git commit -m "initial"'
     , efh(cb)(function (stdout) {
       cb(null, id, cwd)
     }))
