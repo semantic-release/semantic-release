@@ -1,38 +1,36 @@
-'use strict'
+import {readFileSync as readFile } from 'fs'
+import url from 'url'
 
-var readFile = require('fs').readFileSync
-var url = require('url')
+import gitHead from 'git-head'
+import GitHubApi from 'github'
+import parseSlug from 'parse-github-repo-url'
 
-var gitHead = require('git-head')
-var GitHubApi = require('github')
-var parseSlug = require('parse-github-repo-url')
+import { efh } from './lib/error'
 
-var efh = require('./lib/error').efh
-
-module.exports = function (options, plugins, cb) {
-  var pkg = JSON.parse(readFile('./package.json'))
-  var repository = pkg.repository ? pkg.repository.url : null
+export default function (options, plugins, cb) {
+  const pkg = JSON.parse(readFile('./package.json'))
+  const repository = pkg.repository ? pkg.repository.url : null
 
   if (!repository) return cb(new Error('Package must have a repository'))
 
-  var notesGenerator = require(plugins.notes || './lib/release-notes')
+  const notesGenerator = require(plugins.notes || './lib/release-notes')
 
-  var config = options['github-url'] ? url.parse(options['github-url']) : {}
+  const config = options['github-url'] ? url.parse(options['github-url']) : {}
 
-  var github = new GitHubApi({
+  const github = new GitHubApi({
     version: '3.0.0',
     port: config.port,
     protocol: (config.protocol || '').split(':')[0] || null,
     host: config.hostname
   })
 
-  notesGenerator(efh(cb)(function (log) {
-    gitHead(efh(cb)(function (hash) {
-      var ghRepo = parseSlug(repository)
-      var release = {
+  notesGenerator(efh(cb)((log) => {
+    gitHead(efh(cb)((hash) => {
+      const ghRepo = parseSlug(repository)
+      const release = {
         owner: ghRepo[0],
         repo: ghRepo[1],
-        tag_name: 'v' + pkg.version,
+        tag_name: `v${pkg.version}`,
         target_commitish: hash,
         draft: options.debug,
         body: log
@@ -43,9 +41,7 @@ module.exports = function (options, plugins, cb) {
         token: options.token
       })
 
-      github.releases.createRelease(release, efh(cb)(function () {
-        cb(null, true)
-      }))
+      github.releases.createRelease(release, efh(cb)(() => cb(null, true)))
     }))
   }))
 }

@@ -1,13 +1,11 @@
-'use strict'
+import { readFileSync as readFile } from 'fs'
 
-var readFile = require('fs').readFileSync
+import changelog from 'conventional-changelog'
+import parseUrl from 'github-url-from-git'
 
-var changelog = require('conventional-changelog')
-var parseUrl = require('github-url-from-git')
-
-module.exports = function (cb) {
-  var pkg = JSON.parse(readFile('./package.json'))
-  var repository = pkg.repository ? parseUrl(pkg.repository.url) : null
+export default function (cb) {
+  const pkg = JSON.parse(readFile('./package.json'))
+  const repository = pkg.repository ? parseUrl(pkg.repository.url) : null
 
   changelog({
     version: pkg.version,

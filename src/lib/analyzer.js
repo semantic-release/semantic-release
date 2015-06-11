@@ -1,21 +1,15 @@
-'use strict'
+import { parseRawCommit } from 'conventional-changelog/lib/git'
 
-var parseRawCommit = require('conventional-changelog/lib/git').parseRawCommit
-
-module.exports = function (commits) {
-  var type = null
+export default function (commits) {
+  let type = null
 
   commits
 
-  .map(function (commit) {
-    return parseRawCommit(commit.hash + '\n' + commit.message)
-  })
+  .map((commit) => parseRawCommit(`${commit.hash}\n${commit.message}`))
 
-  .filter(function (commit) {
-    return !!commit
-  })
+  .filter((commit) => !!commit)
 
-  .every(function (commit) {
+  .every((commit) => {
     if (commit.breaks.length) {
       type = 'major'
       return false

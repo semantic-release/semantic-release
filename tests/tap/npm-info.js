@@ -2,7 +2,7 @@
 
 var nock = require('nock')
 
-var npmInfo = require('../../lib/npm-info.js')
+var npmInfo = require('../../dist/lib/npm-info.js')
 
 var registry = 'http://registry.npmjs.org/'
 

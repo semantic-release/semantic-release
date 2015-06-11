@@ -1,22 +1,18 @@
-'use strict'
+import { exec } from 'child_process'
 
-var exec = require('child_process').exec
+import { efh } from './error'
 
-var efh = require('./error').efh
-
-module.exports = function (from, cb) {
-  var range = (from ? from + '..' : '') + 'HEAD'
+export default function (from, cb) {
+  const range = (from ? from + '..' : '') + 'HEAD'
   exec(
-    'git log -E --format=%H==SPLIT==%B==END== ' + range,
-    efh(cb)(function (stdout) {
+    `git log -E --format=%H==SPLIT==%B==END== ${range}`,
+    efh(cb)((stdout) => {
       cb(null, String(stdout).split('==END==\n')
 
-      .filter(function (raw) {
-        return !!raw.trim()
-      })
+      .filter((raw) => !!raw.trim())
 
-      .map(function (raw) {
-        var data = raw.split('==SPLIT==')
+      .map((raw) => {
+        const data = raw.split('==SPLIT==')
         return {
           hash: data[0],
           message: data[1]

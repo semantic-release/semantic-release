@@ -1,17 +1,22 @@
-'use strict'
+import abbrev from 'abbrev'
+import { standard as efh } from './lib/error'
 
-var abbrev = require('abbrev')
+import postStep from './post'
+import preStep from './pre'
+import restartStep from './restart'
+import setupStep from './setup'
+import verifyStep from './verify'
 
-var efh = require('./lib/error').standard
-
-exports.pre = function (argv, npmArgv, plugins) {
+export function pre (argv, npmArgv, plugins) {
   // see src/restart.js
   if (npmArgv['semantic-release-rerun']) {
     if (!/semantically-released/.test(process.env.npm_package_version)) process.exit(0)
 
-    console.log('There is something wrong with your setup, as a placeholder version is about to be released.')
-    console.log('Please verify that your setup is correct.')
-    console.log('If you think this is a problem with semantic-release please open an issue.')
+    console.log(
+`There is something wrong with your setup, as a placeholder version is about to be released.
+Please verify that your setup is correct.
+If you think this is a problem with semantic-release please open an issue.`
+    )
     process.exit(1)
   }
   // the `prepublish` hook is also executed when the package is installed
@@ -26,13 +31,12 @@ exports.pre = function (argv, npmArgv, plugins) {
 
   console.log('Determining new version')
 
-  var publish = false
-  if (isAbbrev(npmArgv, 'publish')) publish = true
+  const publish = isAbbrev(npmArgv, 'publish')
 
   // require a correct setup during publish
-  if (publish && !argv.debug && !require('./verify')(argv)) process.exit(1)
+  if (publish && !argv.debug && !verifyStep(argv)) process.exit(1)
 
-  require('./pre')(argv, plugins, efh(function (result) {
+  preStep(argv, plugins, efh((result) => {
     if (!result) {
       console.log('Nothing changed. Not publishing.')
       process.exit(1)
@@ -43,14 +47,12 @@ exports.pre = function (argv, npmArgv, plugins) {
 
     if (argv.debug) process.exit(1)
 
-    require('./restart')(efh(function () {
-      process.exit(1)
-    }))
+    restartStep(efh(() => process.exit(1)))
   }))
 }
 
-exports.post = function (argv, npmArgv, plugins) {
-  require('./post')(argv, plugins, efh(function () {
+export function post (argv, npmArgv, plugins) {
+  postStep(argv, plugins, efh(function () {
     // see src/restart.js
     if (npmArgv['semantic-release-rerun']) {
       console.log('Everything is alright :) npm will now print an error message that you can safely ignore.')
@@ -58,8 +60,8 @@ exports.post = function (argv, npmArgv, plugins) {
   }))
 }
 
-exports.setup = function () {
-  require('./setup')()
+export function setup () {
+  setupStep()
   console.log('"package.json" is set up properly. Now configure your CI server.')
   console.log('https://github.com/boennemann/semantic-release#ci-server')
 }
