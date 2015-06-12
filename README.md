@@ -1,5 +1,6 @@
 # semantic-release
 [![Build Status](https://travis-ci.org/boennemann/semantic-release.svg?branch=master)](https://travis-ci.org/boennemann/semantic-release)
+[![Coverage Status](https://coveralls.io/repos/boennemann/semantic-release/badge.svg)](https://coveralls.io/r/boennemann/semantic-release)
 [![Dependency Status](https://david-dm.org/boennemann/semantic-release.svg)](https://david-dm.org/boennemann/semantic-release)
 [![devDependency Status](https://david-dm.org/boennemann/semantic-release/dev-status.svg)](https://david-dm.org/boennemann/semantic-release#info=devDependencies)
 

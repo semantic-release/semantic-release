@@ -1,15 +1,15 @@
-language: node_js
-node_js:
-- iojs-v2
-- iojs-v1
-- '0.10'
-- '0.12'
 sudo: false
+language: node_js
 cache:
   directories:
   - node_modules
 notifications:
   email: false
+node_js:
+- iojs-v2
+- iojs-v1
+- '0.12'
+- '0.10'
 before_install:
 - npm i -g npm@^2.0.0
 before_script:
@@ -18,6 +18,7 @@ before_script:
 after_success:
 - python travis_after_all.py
 - export $(cat .to_export_back)
+- if [[ $BUILD_LEADER = YES ]]; then npm run coveralls; fi
 after_failure:
 - python travis_after_all.py
 - export $(cat .to_export_back)

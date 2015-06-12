@@ -27,6 +27,7 @@ var plugins = JSON.parse(readFile('./package.json')).release || {}
 
 var main
 
+/* istanbul ignore next */
 try {
   main = require('../dist/main')
 } catch (e) {

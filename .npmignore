@@ -1,8 +1,10 @@
 # common
+coverage
 node_modules
 *.log
-.tmp
+.nyc_output
 .tests
+.tmp
 
 # source/config
 src
