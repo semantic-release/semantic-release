@@ -2,6 +2,7 @@
 node_modules
 *.log
 .tmp
+.tests
 
 # source/config
 src

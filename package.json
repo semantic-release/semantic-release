@@ -67,8 +67,9 @@
     "postpublish": "./bin/semantic-release.js post",
     "prepublish": "npm run build && ./bin/semantic-release.js pre",
     "pretest": "npm run build",
+    "pretest:integration": "rm -rf .tests && mkdir -p .tests && babel tests --out-dir .tests",
     "test": "./bin/test",
-    "test:integration": "tap tests/{scenarios,tap}/*.js",
+    "test:integration": "tap .tests/{scenarios,tap}/*.js",
     "test:style": "standard"
   }
 }
