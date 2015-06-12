@@ -1,20 +1,18 @@
-'use strict'
+const path = require('path')
 
-var path = require('path')
+const efh = require('error-first-handler')
+const nixt = require('nixt')
+const test = require('tap').test
 
-var efh = require('error-first-handler')
-var nixt = require('nixt')
-var test = require('tap').test
+const createModule = require('../lib/create-module')
 
-var createModule = require('../lib/create-module')
-
-test('custom-verification', function (t) {
+test('custom-verification', (t) => {
   createModule({
     release: {
       verification: path.join(__dirname, '../lib/custom-verification')
     }
-  }, efh()(function (name, cwd) {
-    t.test('even commit count', function (t) {
+  }, efh()((name, cwd) => {
+    t.test('even commit count', (t) => {
       t.plan(1)
       nixt()
         .cwd(cwd)
@@ -23,12 +21,10 @@ test('custom-verification', function (t) {
         .exec('git commit --allow-empty -m "feat: commit"')
         .run('npm run prepublish')
         .code(0)
-        .end(function (err) {
-          t.error(err, 'nixt')
-        })
+        .end((err) => t.error(err, 'nixt'))
     })
 
-    t.test('odd commit count', function (t) {
+    t.test('odd commit count', (t) => {
       t.plan(1)
       nixt()
         .cwd(cwd)
@@ -38,9 +34,7 @@ test('custom-verification', function (t) {
         .run('npm run prepublish')
         .code(1)
         .stdout(/Verification failed/)
-        .end(function (err) {
-          t.error(err, 'nixt')
-        })
+        .end((err) => t.error(err, 'nixt'))
     })
   }))
 })

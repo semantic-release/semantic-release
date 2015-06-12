@@ -1,22 +1,20 @@
-'use strict'
+const join = require('path').join
+const readFile = require('fs').readFileSync
 
-var join = require('path').join
-var readFile = require('fs').readFileSync
+const efh = require('error-first-handler')
+const nixt = require('nixt')
+const test = require('tap').test
 
-var efh = require('error-first-handler')
-var nixt = require('nixt')
-var test = require('tap').test
+const createModule = require('../lib/create-module')
 
-var createModule = require('../lib/create-module')
-
-test('setup', function (t) {
+test('setup', (t) => {
   createModule({
     repository: {},
     scripts: {
       postpublish: 'npm run gh-pages'
     }
-  }, efh()(function (name, cwd) {
-    t.test('setup "package.json"', function (t) {
+  }, efh()((name, cwd) => {
+    t.test('setup "package.json"', (t) => {
       t.plan(5)
 
       nixt()
@@ -24,10 +22,10 @@ test('setup', function (t) {
         .exec('git remote add origin git@github.com:user/repo.git')
         .run('../../../bin/semantic-release.js setup')
         .code(0)
-        .end(function (err) {
+        .end((err) => {
           t.error(err, 'nixt')
 
-          var pkg = JSON.parse(readFile(join(cwd, 'package.json')))
+          const pkg = JSON.parse(readFile(join(cwd, 'package.json')))
 
           t.is(pkg.version, '0.0.0-semantically-released', 'version')
           t.is(pkg.repository.url, 'https://github.com/user/repo', 'repo')

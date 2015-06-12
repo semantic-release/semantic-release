@@ -1,15 +1,13 @@
-'use strict'
+const fs = require('fs')
 
-var fs = require('fs')
+const efh = require('error-first-handler')
+const nixt = require('nixt')
+const test = require('tap').test
 
-var efh = require('error-first-handler')
-var nixt = require('nixt')
-var test = require('tap').test
+const createModule = require('../lib/create-module')
 
-var createModule = require('../lib/create-module')
-
-test('ignore', function (t) {
-  createModule(efh()(function (name, cwd) {
+test('ignore', (t) => {
+  createModule(efh()((name, cwd) => {
     ignoreTest(t, cwd, 'npm install', 'not doing anything when the module is installed')
     ignoreTest(t, cwd, 'npm i', 'not doing anything when the module is installed with abbrevd command')
     ignoreTest(t, cwd, 'npm link', 'not doing anything when the module is linked')
@@ -20,18 +18,18 @@ test('ignore', function (t) {
 })
 
 function ignoreTest (t, cwd, command, name) {
-  t.test(name, function (t) {
+  t.test(name, (t) => {
     t.plan(2)
 
-    var pkg = fs.readFileSync(cwd + '/package.json')
+    const pkg = String(fs.readFileSync(cwd + '/package.json'))
 
     nixt()
       .cwd(cwd)
       .run(command)
       .code(0)
       .stdout(/semantic-release.js pre\n$/m)
-      .end(function (err) {
-        t.is(pkg + '', fs.readFileSync(cwd + '/package.json') + '', 'package')
+      .end((err) => {
+        t.is(pkg, String(fs.readFileSync(`${cwd}/package.json`)), 'package')
         t.error(err, 'nixt')
       })
   })

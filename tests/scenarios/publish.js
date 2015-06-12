@@ -1,12 +1,10 @@
-'use strict'
+const efh = require('error-first-handler')
+const nixt = require('nixt')
+const test = require('tap').test
 
-var efh = require('error-first-handler')
-var nixt = require('nixt')
-var test = require('tap').test
+const createModule = require('../lib/create-module')
 
-var createModule = require('../lib/create-module')
-
-test('publish', function (t) {
+test('publish', (t) => {
   publishTest(t, 'npm publish', 'pre and post hooks work as a part of publish')
   publishTest(t, 'npm pub', 'pre and post hooks work as a part of publish with abbrevd command')
 
@@ -16,8 +14,8 @@ test('publish', function (t) {
         type: 'git',
         url: 'http://github.com/user/repo'
       }
-    }, efh()(function (name, cwd) {
-      t.test(testname, function (t) {
+    }, efh()((name, cwd) => {
+      t.test(testname, (t) => {
         t.plan(1)
 
         nixt()
@@ -29,9 +27,7 @@ test('publish', function (t) {
           .run(command)
           .code(1)
           .stdout(/Everything is alright/)
-          .end(function (err) {
-            t.error(err, 'nixt')
-          })
+          .end((err) => t.error(err, 'nixt'))
       })
     }))
   }

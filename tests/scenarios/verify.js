@@ -1,41 +1,37 @@
-'use strict'
+const efh = require('error-first-handler')
+const nixt = require('nixt')
+const test = require('tap').test
 
-var efh = require('error-first-handler')
-var nixt = require('nixt')
-var test = require('tap').test
+const createModule = require('../lib/create-module')
 
-var createModule = require('../lib/create-module')
-
-test('verify', function (t) {
+test('verify', (t) => {
   createModule({
     repository: {},
     scripts: {
       prepublish: '../../../bin/semantic-release.js pre --no-token'
     }
-  }, efh()(function (name, cwd) {
-    t.test('verify package and options before publishing', function (t) {
+  }, efh()((name, cwd) => {
+    t.test('verify package and options before publishing', (t) => {
       t.plan(1)
       nixt()
         .cwd(cwd)
         .env('CI', true)
         .run('npm publish')
         .stderr(new RegExp(
-          'You must define a GitHub token\.\n' +
-          'You must define your GitHub "repository" inside the "package.json"\.\n' +
-          'You must define your "scripts" inside the "package.json"\.'
+`You must define a GitHub token\.
+You must define your GitHub "repository" inside the "package.json"\.
+You must define your "scripts" inside the "package.json"\.`
           , 'm'
         ))
         .code(1)
-        .end(function (err) {
-          t.error(err, 'nixt')
-        })
+        .end((err) => t.error(err, 'nixt'))
     })
   }))
 
   createModule({
     version: '1.0.0-semantically-released'
-  }, efh()(function (name, cwd) {
-    t.test('not publishing placeholder versions', function (t) {
+  }, efh()((name, cwd) => {
+    t.test('not publishing placeholder versions', (t) => {
       t.plan(1)
 
       nixt()
@@ -43,9 +39,7 @@ test('verify', function (t) {
         .env('CI', true)
         .run('npm publish --semantic-release-rerun')
         .code(1)
-        .end(function (err) {
-          t.error(err, 'nixt')
-        })
+        .end((err) => t.error(err, 'nixt'))
     })
   }))
 })
