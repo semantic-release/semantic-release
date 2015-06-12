@@ -1,22 +1,21 @@
-'use strict'
+const { readFileSync } = require('fs')
 
-var fs = require('fs')
-
-var exports = module.exports = function (input) {
-  var options = exports.verifyOptions(input)
-  var pkg = exports.verifyPackage()
-  var travis = exports.verifyTravis()
+let exports = module.exports = function (input) {
+  const options = exports.verifyOptions(input)
+  const pkg = exports.verifyPackage()
+  const travis = exports.verifyTravis()
   return options && pkg && travis
 }
 
 exports.verifyTravis = function () {
+  let travis
   try {
-    var travis = fs.readFileSync('.travis.yml') + ''
+    travis = String(readFileSync('.travis.yml'))
   } catch (e) {
     return true
   }
 
-  var passed = true
+  let passed = true
 
   if (!/\sdeploy:/m.test(travis)) {
     console.error('You should configure deployments inside the ".travis.yml".')
@@ -32,10 +31,11 @@ exports.verifyTravis = function () {
 }
 
 exports.verifyPackage = function () {
-  var passed = true
+  let passed = true
 
+  let pkg
   try {
-    var pkg = fs.readFileSync('./package.json') + ''
+    pkg = String(readFileSync('./package.json'))
   } catch (e) {
     console.error('You must have a "package.json" present.')
     passed = false

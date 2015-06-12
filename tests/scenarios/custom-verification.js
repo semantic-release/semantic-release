@@ -1,45 +1,40 @@
-'use strict'
+const path = require('path')
 
-var path = require('path')
+const efh = require('error-first-handler')
+const nixt = require('nixt')
+const test = require('tap').test
 
-var efh = require('error-first-handler')
-var nixt = require('nixt')
+const createModule = require('../lib/create-module')
 
-module.exports = function (test, createModule) {
+test('custom-verification', (t) => {
   createModule({
     release: {
       verification: path.join(__dirname, '../lib/custom-verification')
     }
-  }, efh()(function (name, cwd) {
-    test('custom-verification', function (t) {
-      t.test('even commit count', function (t) {
-        t.plan(1)
-        nixt()
-          .cwd(cwd)
-          .env('CI', true)
-          .env('npm_config_registry', 'http://127.0.0.1:4873/')
-          .exec('git commit --allow-empty -m "feat: commit"')
-          .run('npm run prepublish')
-          .code(0)
-          .end(function (err) {
-            t.error(err, 'nixt')
-          })
-      })
+  }, efh()((name, cwd) => {
+    t.test('even commit count', (t) => {
+      t.plan(1)
+      nixt()
+        .cwd(cwd)
+        .env('CI', true)
+        .env('npm_config_registry', 'http://127.0.0.1:4873/')
+        .exec('git commit --allow-empty -m "feat: commit"')
+        .run('npm run prepublish')
+        .code(0)
+        .end((err) => t.error(err, 'nixt'))
+    })
 
-      t.test('odd commit count', function (t) {
-        t.plan(1)
-        nixt()
-          .cwd(cwd)
-          .env('CI', true)
-          .env('npm_config_registry', 'http://127.0.0.1:4873/')
-          .exec('git commit --allow-empty -m "feat: commit"')
-          .run('npm run prepublish')
-          .code(1)
-          .stdout(/Verification failed/)
-          .end(function (err) {
-            t.error(err, 'nixt')
-          })
-      })
+    t.test('odd commit count', (t) => {
+      t.plan(1)
+      nixt()
+        .cwd(cwd)
+        .env('CI', true)
+        .env('npm_config_registry', 'http://127.0.0.1:4873/')
+        .exec('git commit --allow-empty -m "feat: commit"')
+        .run('npm run prepublish')
+        .code(1)
+        .stdout(/Verification failed/)
+        .end((err) => t.error(err, 'nixt'))
     })
   }))
-}
+})

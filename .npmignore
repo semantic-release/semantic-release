@@ -6,5 +6,7 @@ node_modules
 .tests
 .tmp
 
-# build-artifacts
-dist
+# source/config
+src
+*.yml
+.gitignore

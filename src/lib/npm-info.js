@@ -1,29 +1,30 @@
-'use strict'
-
-var async = require('async')
-var npmconf = require('npmconf')
-var request = require('request')
+const async = require('async')
+const npmconf = require('npmconf')
+const request = require('request')
 
 module.exports = function (pkgName, cb) {
-  var registry = process.env.npm_config_registry
+  const registry = process.env.npm_config_registry
+
   async.waterfall([
     npmconf.load,
-    function (conf, callback) {
-      var cred = conf.getCredentialsByURI(registry)
-      var reqopts = {
+    (conf, callback) => {
+      const cred = conf.getCredentialsByURI(registry)
+      const reqopts = {
         url: registry + pkgName.replace(/\//g, '%2F'),
         headers: {}
       }
+
       if (cred.token) {
-        reqopts.headers.Authorization = 'Bearer ' + cred.token
+        reqopts.headers.Authorization = `Bearer ${cred.token}`
       } else if (cred.auth) {
-        reqopts.headers.Authorization = 'Basic ' + cred.auth
+        reqopts.headers.Authorization = `Basic ${cred.auth}`
       }
+
       callback(null, reqopts)
     },
     request,
-    function (response, body, callback) {
-      var res = {
+    (response, body, callback) => {
+      let res = {
         version: null,
         gitHead: null,
         pkg: null
@@ -31,7 +32,7 @@ module.exports = function (pkgName, cb) {
 
       if (response.statusCode === 404 || !body) return callback(null, res)
 
-      var pkg = JSON.parse(body)
+      const pkg = JSON.parse(body)
 
       if (pkg.error) return callback(pkg.error)
 

@@ -1,9 +1,7 @@
-'use strict'
-
 module.exports = function (commits) {
-  var type = null
+  let type = null
 
-  commits.every(function (commit) {
+  commits.every((commit) => {
     if (/FOO/.test(commit.message)) {
       type = 'major'
       return false
