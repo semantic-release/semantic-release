@@ -31,8 +31,7 @@
     "nock": "^2.2.0",
     "sinopia": "^1.0.0",
     "standard": "^4.0.1",
-    "tap-spec": "^4.0.0",
-    "tape": "^4.0.0"
+    "tap": "^1.2.0"
   },
   "engines": {
     "iojs": "^1",
@@ -69,7 +68,7 @@
     "prepublish": "npm run build && ./bin/semantic-release.js pre",
     "pretest": "npm run build",
     "test": "./bin/test",
-    "test:integration": "node tests | tap-spec",
+    "test:integration": "tap tests/{scenarios,tap}/*.js",
     "test:style": "standard"
   }
 }
