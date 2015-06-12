@@ -132,7 +132,7 @@ deploy:
 
 Note: This isn't tied to a specific service, but example configuration is provided for [Travis CI](https://travis-ci.org/). Feel free to contribute configuration for other servers or services.
 
-Note: You should [encrypt](http://docs.travis-ci.com/user/environment-variables/#sts=Secure Variables) your api keys and tokens.
+Note: You should [encrypt](http://docs.travis-ci.com/user/environment-variables/#sts=Secure Variables) your api keys and tokens. If this is a new repository, don't forget to [enable it on Travis](https://travis-ci.org/profile) to make encrypt work.
 
 Note: Your CI environment has to export `CI=true` in order for `semantic-release` not to automatically perform a dry run. Travis CI does this by default.
 
