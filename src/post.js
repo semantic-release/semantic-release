@@ -1,14 +1,14 @@
-import {readFileSync as readFile } from 'fs'
-import url from 'url'
+const { readFileSync } = require('fs')
+const url = require('url')
 
-import gitHead from 'git-head'
-import GitHubApi from 'github'
-import parseSlug from 'parse-github-repo-url'
+const gitHead = require('git-head')
+const GitHubApi = require('github')
+const parseSlug = require('parse-github-repo-url')
 
-import { efh } from './lib/error'
+const efh = require('./lib/error').efh
 
-export default function (options, plugins, cb) {
-  const pkg = JSON.parse(readFile('./package.json'))
+module.exports = function (options, plugins, cb) {
+  const pkg = JSON.parse(readFileSync('./package.json'))
   const repository = pkg.repository ? pkg.repository.url : null
 
   if (!repository) return cb(new Error('Package must have a repository'))

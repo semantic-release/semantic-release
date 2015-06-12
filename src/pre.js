@@ -1,12 +1,12 @@
-import fs from 'fs'
+const fs = require('fs')
 
-import semver from 'semver'
+const semver = require('semver')
 
-import getCommits from './lib/commits'
-import npmInfo from './lib/npm-info'
-import { efh } from './lib/error'
+const getCommits = require('./lib/commits')
+const npmInfo = require('./lib/npm-info')
+const { efh } = require('./lib/error')
 
-export default function (options, plugins, cb) {
+module.exports = function (options, plugins, cb) {
   const path = './package.json'
   let pkg = JSON.parse(fs.readFileSync(path))
 

@@ -1,8 +1,8 @@
-import async from 'async'
-import npmconf from 'npmconf'
-import request from 'request'
+const async = require('async')
+const npmconf = require('npmconf')
+const request = require('request')
 
-export default function (pkgName, cb) {
+module.exports = function (pkgName, cb) {
   const registry = process.env.npm_config_registry
 
   async.waterfall([

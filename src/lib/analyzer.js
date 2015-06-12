@@ -1,6 +1,6 @@
-import { parseRawCommit } from 'conventional-changelog/lib/git'
+const { parseRawCommit } = require('conventional-changelog/lib/git')
 
-export default function (commits) {
+module.exports = function (commits) {
   let type = null
 
   commits

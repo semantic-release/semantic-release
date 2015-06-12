@@ -1,13 +1,7 @@
-import abbrev from 'abbrev'
-import { standard as efh } from './lib/error'
+const abbrev = require('abbrev')
+const efh = require('./lib/error').standard
 
-import postStep from './post'
-import preStep from './pre'
-import restartStep from './restart'
-import setupStep from './setup'
-import verifyStep from './verify'
-
-export function pre (argv, npmArgv, plugins) {
+exports.pre = function (argv, npmArgv, plugins) {
   // see src/restart.js
   if (npmArgv['semantic-release-rerun']) {
     if (!/semantically-released/.test(process.env.npm_package_version)) process.exit(0)
@@ -34,9 +28,9 @@ If you think this is a problem with semantic-release please open an issue.`
   const publish = isAbbrev(npmArgv, 'publish')
 
   // require a correct setup during publish
-  if (publish && !argv.debug && !verifyStep(argv)) process.exit(1)
+  if (publish && !argv.debug && !require('./verify')(argv)) process.exit(1)
 
-  preStep(argv, plugins, efh((result) => {
+  require('./pre')(argv, plugins, efh((result) => {
     if (!result) {
       console.log('Nothing changed. Not publishing.')
       process.exit(1)
@@ -47,12 +41,12 @@ If you think this is a problem with semantic-release please open an issue.`
 
     if (argv.debug) process.exit(1)
 
-    restartStep(efh(() => process.exit(1)))
+    require('./restart')(efh(() => process.exit(1)))
   }))
 }
 
-export function post (argv, npmArgv, plugins) {
-  postStep(argv, plugins, efh(function () {
+exports.post = function (argv, npmArgv, plugins) {
+  require('./post')(argv, plugins, efh(function () {
     // see src/restart.js
     if (npmArgv['semantic-release-rerun']) {
       console.log('Everything is alright :) npm will now print an error message that you can safely ignore.')
@@ -60,8 +54,8 @@ export function post (argv, npmArgv, plugins) {
   }))
 }
 
-export function setup () {
-  setupStep()
+exports.setup = function () {
+  require('./setup')()
   console.log('"package.json" is set up properly. Now configure your CI server.')
   console.log('https://github.com/boennemann/semantic-release#ci-server')
 }

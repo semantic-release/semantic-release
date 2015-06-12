@@ -1,16 +1,16 @@
-import { readFileSync as readFile } from 'fs'
+const { readFileSync } = require('fs')
 
-export default function (input) {
+let exports = module.exports = function (input) {
   const options = exports.verifyOptions(input)
   const pkg = exports.verifyPackage()
   const travis = exports.verifyTravis()
   return options && pkg && travis
 }
 
-export function verifyTravis () {
+exports.verifyTravis = function () {
   let travis
   try {
-    travis = String(readFile('.travis.yml'))
+    travis = String(readFileSync('.travis.yml'))
   } catch (e) {
     return true
   }
@@ -30,12 +30,12 @@ export function verifyTravis () {
   return passed
 }
 
-export function verifyPackage () {
+exports.verifyPackage = function () {
   let passed = true
 
   let pkg
   try {
-    pkg = String(readFile('./package.json'))
+    pkg = String(readFileSync('./package.json'))
   } catch (e) {
     console.error('You must have a "package.json" present.')
     passed = false
@@ -62,7 +62,7 @@ export function verifyPackage () {
   return passed
 }
 
-export function verifyOptions (options) {
+exports.verifyOptions = function (options) {
   if (!options) return true
   if (options.token) return true
 

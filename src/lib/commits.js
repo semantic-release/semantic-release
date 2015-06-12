@@ -1,8 +1,8 @@
-import { exec } from 'child_process'
+const { exec } = require('child_process')
 
-import { efh } from './error'
+const { efh } = require('./error')
 
-export default function (from, cb) {
+module.exports = function (from, cb) {
   const range = (from ? from + '..' : '') + 'HEAD'
   exec(
     `git log -E --format=%H==SPLIT==%B==END== ${range}`,

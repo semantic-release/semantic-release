@@ -1,13 +1,13 @@
-import {
-  readFileSync as readFile,
-  writeFileSync as writeFile
-} from 'fs'
+const {
+  readFileSync,
+  writeFileSync
+} = require('fs')
 
-import ini from 'ini'
-import ghUrl from 'github-url-from-git'
+const ini = require('ini')
+const ghUrl = require('github-url-from-git')
 
-export default function () {
-  let pkg = JSON.parse(String(readFile('./package.json')))
+module.exports = function () {
+  let pkg = JSON.parse(String(readFileSync('./package.json')))
 
   // ensure a yet unpublished version
   pkg.version = '0.0.0-semantically-released'
@@ -26,7 +26,7 @@ export default function () {
 
   // set up repository
   if (!pkg.repository || !pkg.repository.url) {
-    const config = ini.decode(String(readFile('./.git/config')))
+    const config = ini.decode(String(readFileSync('./.git/config')))
     const repo = config['remote "origin"'].url
 
     if (repo) pkg.repository = { type: 'git', url: ghUrl(repo) }
@@ -39,5 +39,5 @@ export default function () {
     pkg.devDependencies['semantic-release'] = `^${require('../package.json').version}`
   }
 
-  writeFile('./package.json', `${JSON.stringify(pkg, null, 2)}\n`)
+  writeFileSync('./package.json', `${JSON.stringify(pkg, null, 2)}\n`)
 }

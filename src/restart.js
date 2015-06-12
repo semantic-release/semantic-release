@@ -1,6 +1,6 @@
-import { spawn } from 'child_process'
+const { spawn } = require('child_process')
 
-export default function (cb) {
+let exports = module.exports = function (cb) {
   // npm loads package.json data before running the `prepublish` hook
   // changing the version on `prepublish` has no effect
   // see https://github.com/npm/npm/issues/7118
@@ -18,7 +18,7 @@ export default function (cb) {
   child.on('error', cb)
 }
 
-export function handleCloseAndExit (cb, code, signal) {
+exports.handleCloseAndExit = function (cb, code, signal) {
   if (code === 0) return cb(null)
   cb({
     code,
