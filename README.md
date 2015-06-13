@@ -8,7 +8,7 @@
 
 ## What is `semantic-release` about?
 
-It fully automates your package's releases. It will determine not only which version to release, but also when – all without you wasting [cognitive resources](https://www.youtube.com/watch?v=FKTxC9pl-WM) on it.
+At its core `semantic-release` is a set of conventions that gives you entirely automated, semver-compliant package publishing. Luckily these conventions make sense on their own, like having meaningful commit messages.
 
 [![JSConfBP Talk](https://cloud.githubusercontent.com/assets/908178/8032541/e9bf6300-0dd6-11e5-92c9-8a39211368af.png)](https://www.youtube.com/watch?v=tc2UgG5L7WM&index=6&list=PLFZ5NyC0xHDaaTy6tY9p0C0jd_rRRl5Zm)
 
@@ -20,7 +20,7 @@ It removes human decisions and emotions from version numbers and releases – su
 
 ## How does it work?
 
-Meaningful conventions. Instead of dumping [lols](http://whatthecommit.com/) into our commit messages, we can take some time to think about what we changed in the codebase and write it down. Following formalized conventions it this then possible to not only generate a helpful changelog, but to determine whether a new version should be released.
+Instead of dumping [lols](http://whatthecommit.com/) into our commit messages, we can take some time to think about what we changed in the codebase and write it down. Following formalized conventions it this then possible to not only generate a helpful changelog, but to determine whether a new version should be released.
 
 This module ships with the [AngularJS Commit Message Conventions](https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/edit), but you can [define your own](https://github.com/boennemann/semantic-release/wiki/commit-analysis).
 
