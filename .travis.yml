@@ -1,0 +1,28 @@
+sudo: false
+language: node_js
+cache:
+  directories:
+  - node_modules
+notifications:
+  email: false
+node_js:
+- iojs-v2
+- iojs-v1
+- '0.12'
+- '0.10'
+before_install:
+- npm i -g npm@^2.0.0
+before_script:
+- npm prune
+- curl -Lo travis_after_all.py https://raw.github.com/dmakhno/travis_after_all/master/travis_after_all.py
+after_success:
+- python travis_after_all.py
+- export $(cat .to_export_back)
+- if [[ $BUILD_LEADER = YES ]]; then npm run coverage:upload; fi
+after_failure:
+- python travis_after_all.py
+- export $(cat .to_export_back)
+before_deploy:
+- rm -f travis_after_all.py .to_export_back
+after_script:
+- echo leader=$BUILD_LEADER status=$BUILD_AGGREGATE_STATUS
