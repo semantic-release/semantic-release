@@ -1,22 +1,8 @@
 const test = require('tap').test
 const proxyquire = require('proxyquire')
 
-const rawCommits = [
-  'hash-one==SPLIT==commit-one==END==\n',
-  'hash-two==SPLIT==commit-two==END==\n'
-]
-const commits = proxyquire('../../dist/lib/commits.js', {
-  'child_process': {
-    exec: (command, cb) => {
-      cb(
-        null,
-        /\.\.HEAD/.test(command) ?
-          rawCommits[0] :
-          rawCommits.join()
-      )
-    },
-    '@noCallThru': true
-  }
+const commits = proxyquire('../../dist/lib/commits', {
+  'child_process': require('../mocks/child-process')
 })
 
 test('commits since last release', (t) => {

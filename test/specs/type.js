@@ -1,6 +1,6 @@
 const test = require('tap').test
 
-const type = require('../../dist/lib/type.js')
+const type = require('../../dist/lib/type')
 
 test('get type from commits', (t) => {
   t.test('get type from plugin', (t) => {
