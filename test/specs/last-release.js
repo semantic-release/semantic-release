@@ -8,35 +8,43 @@ const npmConfig = {
 }
 
 test('last release from registry', (t) => {
-  t.test('get release from package name', (t) => {
+  t.test('get release from package name', (tt) => {
     lastRelease({
       name: 'available'
     }, npmConfig,
     (err, release) => {
-      t.error(err)
-      t.is(release.version, '1.33.7', 'version')
-      t.is(release.gitHead, 'HEAD', 'gitHead')
+      tt.error(err)
+      tt.is(release.version, '1.33.7', 'version')
+      tt.is(release.gitHead, 'HEAD', 'gitHead')
+
+      tt.end()
     })
   })
 
-  t.test('get release from scoped package name', (t) => {
+  t.test('get release from scoped package name', (tt) => {
     lastRelease({
       name: '@scoped/available'
     }, npmConfig,
     (err, release) => {
-      t.error(err)
-      t.is(release.version, '1.33.7', 'version')
-      t.is(release.gitHead, 'HEAD', 'gitHead')
+      tt.error(err)
+      tt.is(release.version, '1.33.7', 'version')
+      tt.is(release.gitHead, 'HEAD', 'gitHead')
+
+      tt.end()
     })
   })
 
-  t.test('get nothing from not yet published package name', (t) => {
+  t.test('get nothing from not yet published package name', (tt) => {
     lastRelease({
       name: 'unavailable'
     }, npmConfig,
     (err, release) => {
-      t.error(err)
-      t.is(release.version, undefined, 'no version')
+      tt.error(err)
+      tt.is(release.version, undefined, 'no version')
+
+      tt.end()
     })
   })
+
+  t.end()
 })

@@ -12,7 +12,7 @@ const plugins = {
 }
 
 test('full pre run', (t) => {
-  t.test('increase version', (t) => {
+  t.test('increase version', (tt) => {
     pre({
       name: 'available'
     }, {
@@ -20,13 +20,15 @@ test('full pre run', (t) => {
     },
     plugins,
     (err, release) => {
-      t.error(err)
-      t.is(release.type, 'major')
-      t.is(release.version, '2.0.0')
+      tt.error(err)
+      tt.is(release.type, 'major')
+      tt.is(release.version, '2.0.0')
+
+      tt.end()
     })
   })
 
-  t.test('increase version', (t) => {
+  t.test('increase version', (tt) => {
     pre({
       name: 'unavailable'
     }, {
@@ -34,9 +36,13 @@ test('full pre run', (t) => {
     },
     plugins,
     (err, release) => {
-      t.error(err)
-      t.is(release.type, 'initial')
-      t.is(release.version, '1.0.0')
+      tt.error(err)
+      tt.is(release.type, 'initial')
+      tt.is(release.version, '1.0.0')
+
+      tt.end()
     })
   })
+
+  t.end()
 })

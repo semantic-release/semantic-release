@@ -3,7 +3,7 @@ const test = require('tap').test
 const type = require('../../dist/lib/type')
 
 test('get type from commits', (t) => {
-  t.test('get type from plugin', (t) => {
+  t.test('get type from plugin', (tt) => {
     type({
       analyze: () => 'major'
     }, [{
@@ -12,27 +12,35 @@ test('get type from commits', (t) => {
     }], {
       version: '1.0.0'
     }, (err, type) => {
-      t.error(err)
-      t.is(type, 'major')
+      tt.error(err)
+      tt.is(type, 'major')
+
+      tt.end()
     })
   })
 
-  t.test('error when no changes', (t) => {
+  t.test('error when no changes', (tt) => {
     type({
       analyze: () => null
     }, [], {},
     (err) => {
-      t.is(err.code, 'ENOCHANGE')
+      tt.is(err.code, 'ENOCHANGE')
+
+      tt.end()
     })
   })
 
-  t.test('initial version', (t) => {
+  t.test('initial version', (tt) => {
     type({
       analyze: () => 'major'
     }, [], {},
     (err, type) => {
-      t.error(err)
-      t.is(type, 'initial')
+      tt.error(err)
+      tt.is(type, 'initial')
+
+      tt.end()
     })
   })
+
+  t.end()
 })

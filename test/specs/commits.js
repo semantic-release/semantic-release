@@ -6,21 +6,27 @@ const commits = proxyquire('../../dist/lib/commits', {
 })
 
 test('commits since last release', (t) => {
-  t.test('get all commits', (t) => {
+  t.test('get all commits', (tt) => {
     commits({}, (err, commits) => {
-      t.error(err)
-      t.is(commits.length, 2, 'all commits')
-      t.is(commits[0].hash, 'hash-one', 'parsed hash')
-      t.is(commits[1].message, 'commit-two', 'parsed message')
+      tt.error(err)
+      tt.is(commits.length, 2, 'all commits')
+      tt.is(commits[0].hash, 'hash-one', 'parsed hash')
+      tt.is(commits[1].message, 'commit-two', 'parsed message')
+
+      tt.end()
     })
   })
 
-  t.test('get commits since hash', (t) => {
+  t.test('get commits since hash', (tt) => {
     commits({gitHead: 'hash'}, (err, commits) => {
-      t.error(err)
-      t.is(commits.length, 1, 'specified commits')
-      t.is(commits[0].hash, 'hash-one', 'parsed hash')
-      t.is(commits[0].message, 'commit-one', 'parsed message')
+      tt.error(err)
+      tt.is(commits.length, 1, 'specified commits')
+      tt.is(commits[0].hash, 'hash-one', 'parsed hash')
+      tt.is(commits[0].message, 'commit-one', 'parsed message')
+
+      tt.end()
     })
   })
+
+  t.end()
 })
