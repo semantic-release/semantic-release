@@ -9,7 +9,8 @@
     "nyc": {
       "exclude": [
         ".test",
-        "node_modules"
+        "node_modules",
+        "dist/lib/error.js"
       ]
     }
   },
