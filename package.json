@@ -65,9 +65,6 @@
   "optionalDependencies": {
     "babel": "^5.5.6"
   },
-  "release": {
-    "verification": "cracks"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/boennemann/semantic-release.git"
