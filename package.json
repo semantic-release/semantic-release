@@ -23,7 +23,6 @@
   },
   "devDependencies": {
     "babel": "^5.5.8",
-    "codeclimate-test-reporter": "0.0.4",
     "coveralls": "^2.11.2",
     "mkdirp": "^0.5.1",
     "nock": "^2.5.0",
@@ -55,7 +54,7 @@
     "build": "rimraf dist && mkdirp dist && babel src --out-dir dist",
     "build:tests": "rimraf .test && mkdirp .test && babel test --out-dir .test",
     "coverage": "nyc report",
-    "coverage:upload": "npm run coverage -- --reporter=lcovonly && codeclimate < coverage/lcov.info",
+    "coverage:upload": "npm run coverage -- --reporter=lcovonly && coveralls < coverage/lcov.info",
     "pretest:suite": "npm run build && npm run build:tests",
     "test": "npm run test:style && npm run test:suite",
     "test:style": "standard",
