@@ -18,7 +18,8 @@
     "npm-registry-client": "^6.4.0",
     "npmconf": "^2.1.2",
     "npmlog": "^1.2.1",
-    "run-auto": "^1.1.2"
+    "run-auto": "^1.1.2",
+    "semver": "^4.3.6"
   },
   "devDependencies": {
     "babel": "^5.5.8",
@@ -29,7 +30,6 @@
     "nyc": "^2.3.0",
     "proxyquire": "^1.5.0",
     "rimraf": "^2.4.0",
-    "semver": "^4.3.6",
     "standard": "^4.2.1",
     "tap": "^1.2.0"
   },

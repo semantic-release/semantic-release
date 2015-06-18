@@ -4,8 +4,10 @@ const type = require('../../dist/lib/type')
 
 test('get type from commits', (t) => {
   t.test('get type from plugin', (tt) => {
+    tt.plan(2)
+
     type({
-      analyze: () => 'major'
+      analyze: (commits, cb) => cb(null, 'major')
     }, [{
       hash: '0',
       message: 'a'
@@ -14,31 +16,29 @@ test('get type from commits', (t) => {
     }, (err, type) => {
       tt.error(err)
       tt.is(type, 'major')
-
-      tt.end()
     })
   })
 
   t.test('error when no changes', (tt) => {
+    tt.plan(1)
+
     type({
-      analyze: () => null
+      analyze: (commits, cb) => cb(null, null)
     }, [], {},
     (err) => {
       tt.is(err.code, 'ENOCHANGE')
-
-      tt.end()
     })
   })
 
   t.test('initial version', (tt) => {
+    tt.plan(2)
+
     type({
-      analyze: () => 'major'
+      analyze: (commits, cb) => cb(null, 'major')
     }, [], {},
     (err, type) => {
       tt.error(err)
       tt.is(type, 'initial')
-
-      tt.end()
     })
   })
 
