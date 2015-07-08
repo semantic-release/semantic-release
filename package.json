@@ -27,6 +27,7 @@
     "babel": "^5.5.8",
     "coveralls": "^2.11.2",
     "mkdirp": "^0.5.1",
+    "nixt": "^0.4.1",
     "nock": "^2.5.0",
     "nyc": "^2.3.0",
     "npm-registry-couchapp": "^2.6.11",

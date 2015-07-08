@@ -26,7 +26,7 @@ module.exports = function (pkg, options, env) {
     ))
   }
 
-  if (!env.NPM_TOKEN) {
+  if (!(env.NPM_TOKEN || (env.NPM_OLD_TOKEN && env.NPM_EMAIL))) {
     errors.push(new SemanticReleaseError(
       'No npm token specified.',
       'ENONPMTOKEN'
