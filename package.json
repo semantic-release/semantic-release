@@ -29,12 +29,12 @@
     "mkdirp": "^0.5.1",
     "nixt": "^0.4.1",
     "nock": "^2.5.0",
-    "nyc": "^2.3.0",
     "npm-registry-couchapp": "^2.6.11",
+    "nyc": "^3.0.0",
     "proxyquire": "^1.5.0",
     "rimraf": "^2.4.0",
     "standard": "^4.2.1",
-    "tap": "^1.2.0"
+    "tap": "^1.3.1"
   },
   "homepage": "https://github.com/semantic-release/core#readme",
   "keywords": [
@@ -59,9 +59,10 @@
     "build:tests": "rimraf .test && mkdirp .test && babel test --out-dir .test",
     "coverage": "nyc report",
     "coverage:upload": "npm run coverage -- --reporter=lcovonly && coveralls < coverage/lcov.info",
-    "pretest:suite": "npm run build && npm run build:tests",
-    "test": "npm run test:style && npm run test:suite",
+    "pretest:unit": "npm run build && npm run build:tests",
+    "test": "npm run test:style && npm run test:unit && npm run test:integration",
+    "test:integration": "tap --no-cov .test/scenarios/*.js",
     "test:style": "standard",
-    "test:suite": "nyc tap --no-cov .test/{scenarios,specs}/*.js"
+    "test:unit": "nyc tap --no-cov .test/specs/*.js"
   }
 }
