@@ -6,7 +6,7 @@ module.exports = function (plugins, commits, lastRelease, cb) {
 
     if (!type) {
       return cb(new SemanticReleaseError(
-        'There are no relevant changes, so no new version is released',
+        'There are no relevant changes, so no new version is released.',
         'ENOCHANGE'
       ))
     }
