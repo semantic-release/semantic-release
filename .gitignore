@@ -9,3 +9,4 @@ node_modules
 
 # build-artifacts
 dist
+test/registry/couchdb.*

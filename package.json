@@ -29,6 +29,7 @@
     "mkdirp": "^0.5.1",
     "nock": "^2.5.0",
     "nyc": "^2.3.0",
+    "npm-registry-couchapp": "^2.6.11",
     "proxyquire": "^1.5.0",
     "rimraf": "^2.4.0",
     "standard": "^4.2.1",
