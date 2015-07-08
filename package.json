@@ -17,6 +17,8 @@
   "dependencies": {
     "@semantic-release/commit-analyzer": "^1.0.0",
     "@semantic-release/release-notes-generator": "^1.0.0",
+    "lodash": "^3.9.3",
+    "nopt": "^3.0.3",
     "npm-registry-client": "^6.4.0",
     "npmconf": "^2.1.2",
     "npmlog": "^1.2.1",
