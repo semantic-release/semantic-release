@@ -58,11 +58,12 @@
   },
   "scripts": {
     "build": "rimraf dist && mkdirp dist && babel src --out-dir dist",
-    "build:tests": "rimraf .test && mkdirp .test && babel test --out-dir .test",
     "coverage": "nyc report",
     "coverage:upload": "npm run coverage -- --reporter=lcovonly && coveralls < coverage/lcov.info",
-    "pretest:unit": "npm run build && npm run build:tests",
-    "test": "npm run test:style && npm run test:unit && npm run test:integration",
+    "pretest:integration": "npm run build && npm run test:build",
+    "pretest:unit": "npm run build && npm run test:build",
+    "test": "npm run test:style && npm run test:unit",
+    "test:build": "rimraf .test && mkdirp .test && babel test --out-dir .test",
     "test:integration": "tap --no-cov .test/scenarios/*.js",
     "test:style": "standard",
     "test:unit": "nyc tap --no-cov .test/specs/*.js"
