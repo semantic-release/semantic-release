@@ -22,6 +22,7 @@
     "npm-registry-client": "^6.4.0",
     "npmconf": "^2.1.2",
     "npmlog": "^1.2.1",
+    "require-relative": "^0.8.7",
     "run-auto": "^1.1.2",
     "semver": "^4.3.6"
   },

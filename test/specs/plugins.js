@@ -5,7 +5,7 @@ const { normalize } = require('../../dist/lib/plugins')
 test('normalize and load plugin', function (t) {
 
   t.test('load from string', (tt) => {
-    const plugin = normalize('../../dist/lib/plugin-noop')
+    const plugin = normalize('./dist/lib/plugin-noop')
 
     tt.is(typeof plugin, 'function')
 
@@ -14,7 +14,7 @@ test('normalize and load plugin', function (t) {
 
   t.test('load from object', (tt) => {
     const plugin = normalize({
-      path: '../../dist/lib/plugin-noop'
+      path: './dist/lib/plugin-noop'
     })
 
     tt.is(typeof plugin, 'function')

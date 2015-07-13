@@ -1,3 +1,5 @@
+const relative = require('require-relative')
+
 let exports = module.exports = function (source) {
   return {
     analyzeCommits: exports.normalize(source.analyzeCommits, '@semantic-release/commit-analyzer'),
@@ -7,10 +9,10 @@ let exports = module.exports = function (source) {
 }
 
 exports.normalize = function (plugin, fallback) {
-  if (typeof plugin === 'string') return require(plugin).bind(null, {})
+  if (typeof plugin === 'string') return relative(plugin).bind(null, {})
 
   if (plugin && (typeof plugin.path === 'string')) {
-    return require(plugin.path).bind(null, plugin)
+    return relative(plugin.path).bind(null, plugin)
   }
 
   return require(fallback).bind(null, plugin)
