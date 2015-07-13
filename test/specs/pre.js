@@ -7,8 +7,8 @@ const pre = proxyquire('../../dist/pre', {
 })
 
 const plugins = {
-  verify: (release, cb) => cb(null, release),
-  analyze: (commits, cb) => cb(null, 'major')
+  verifyRelease: (release, cb) => cb(null, release),
+  analyzeCommits: (commits, cb) => cb(null, 'major')
 }
 
 test('full pre run', (t) => {

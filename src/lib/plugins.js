@@ -1,8 +1,8 @@
 let exports = module.exports = function (source) {
   return {
-    analyze: exports.normalize(source.analyze, '@semantic-release/commit-analyzer'),
+    analyzeCommits: exports.normalize(source.analyzeCommits, '@semantic-release/commit-analyzer'),
     generateNotes: exports.normalize(source.generateNotes, '@semantic-release/release-notes-generator'),
-    verify: exports.normalize(source.verify, './plugin-noop')
+    verifyRelease: exports.normalize(source.verifyRelease, './plugin-noop')
   }
 }
 

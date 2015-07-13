@@ -1,7 +1,7 @@
 const SemanticReleaseError = require('./error')
 
 module.exports = function (plugins, commits, lastRelease, cb) {
-  plugins.analyze(commits, (err, type) => {
+  plugins.analyzeCommits(commits, (err, type) => {
     if (err) return cb(err)
 
     if (!type) {

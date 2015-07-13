@@ -26,7 +26,7 @@ module.exports = function (pkg, npmConfig, plugins, cb) {
         semver.inc(results.lastRelease.version, results.type)
     }
 
-    plugins.verify(nextRelease, (err) => {
+    plugins.verifyRelease(nextRelease, (err) => {
       if (err) return cb(err)
       cb(null, nextRelease)
     })
