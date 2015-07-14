@@ -42,20 +42,23 @@ npmconf.load({}, (err, conf) => {
 
     const registry = conf.get('registry')
     const nerfDart = require('./lib/nerf-dart')(registry)
+    let wroteNpmRc = false
 
     if (env.NPM_TOKEN) {
       conf.set(`${nerfDart}:_authToken`, '${NPM_TOKEN}', 'project')
-    } else {
+      wroteNpmRc = true
+    } else if (env.NPM_OLD_TOKEN && env.NPM_EMAIL) {
       // Using the old auth token format is not considered part of the public API
       // This might go away anytime (i.e. when we have a better testing strategy)
       conf.set('_auth', '${NPM_OLD_TOKEN}', 'project')
       conf.set('email', '${NPM_EMAIL}', 'project')
+      wroteNpmRc = true
     }
 
     conf.save('project', (err) => {
       if (err) return log.error(PREFIX, 'Failed to save npm config.', err)
 
-      log.verbose(PREFIX, 'Wrote authToken to .npmrc.')
+      if (wroteNpmRc) log.verbose(PREFIX, 'Wrote authToken to .npmrc.')
 
       require('./pre')(pkg, {
         auth: {
@@ -82,6 +85,10 @@ npmconf.load({}, (err, conf) => {
         }), null, 2))
 
         log.info(PREFIX, `Wrote version ${release.version} to package.json.`)
+        if (options.debug) {
+          log.error(PREFIX, 'Not publishing in debug mode')
+          process.exit(1)
+        }
       })
     })
   } else if (options.argv.cooked[0] === 'post') {
