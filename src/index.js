@@ -65,7 +65,7 @@ npmconf.load({}, (err, conf) => {
           token: env.NPM_TOKEN
         },
         loglevel: log.level,
-        registry
+        registry: registry + (registry[registry.length - 1] !== '/' ? '/' : '')
       },
       plugins,
       (err, release) => {

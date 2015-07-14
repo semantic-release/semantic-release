@@ -18,7 +18,7 @@ test('full pre run', (t) => {
     pre({
       name: 'available'
     }, {
-      registry: 'http://registry.npmjs.org'
+      registry: 'http://registry.npmjs.org/'
     },
     plugins,
     (err, release) => {
@@ -34,7 +34,7 @@ test('full pre run', (t) => {
     pre({
       name: 'unavailable'
     }, {
-      registry: 'http://registry.npmjs.org'
+      registry: 'http://registry.npmjs.org/'
     },
     plugins,
     (err, release) => {

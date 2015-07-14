@@ -5,7 +5,7 @@ module.exports = function (pkg, npmConfig, cb) {
   npmlog.level = npmConfig.loglevel || 'error'
   const client = new RegClient({log: npmlog})
 
-  client.get(`${npmConfig.registry}/${pkg.name}`, {
+  client.get(`${npmConfig.registry}${pkg.name}`, {
     auth: npmConfig.auth
   }, (err, data) => {
     if (err && err.statusCode === 404) return cb(null, {})

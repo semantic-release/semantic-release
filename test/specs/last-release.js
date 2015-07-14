@@ -4,7 +4,7 @@ require('../mocks/registry')
 const lastRelease = require('../../dist/lib/last-release')
 
 const npmConfig = {
-  registry: 'http://registry.npmjs.org'
+  registry: 'http://registry.npmjs.org/'
 }
 
 test('last release from registry', (t) => {
