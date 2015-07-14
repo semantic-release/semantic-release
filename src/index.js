@@ -31,6 +31,8 @@ npmconf.load({}, (err, conf) => {
 
   log.level = conf.get('loglevel')
 
+  log.verbose(PREFIX, 'argv:', options)
+  log.verbose(PREFIX, 'options:', pkg.release || 'no options')
   log.verbose(PREFIX, 'Verifying pkg, options and env.')
 
   const errors = require('./lib/verify')(pkg, options, env)
@@ -39,56 +41,65 @@ npmconf.load({}, (err, conf) => {
 
   if (!options.argv.cooked.length || options.argv.cooked[0] === 'pre') {
     log.verbose(PREFIX, 'Running pre-script.')
+    log.verbose(PREFIX, 'Veriying conditions.')
 
-    const registry = conf.get('registry')
-    const nerfDart = require('./lib/nerf-dart')(registry)
-    let wroteNpmRc = false
+    plugins.verifyConditions(pkg, options, env, (err) => {
+      if (err) {
+        log[options.debug ? 'warn' : 'error'](PREFIX, err.message)
+        if (!options.debug) process.exit(1)
+      }
 
-    if (env.NPM_TOKEN) {
-      conf.set(`${nerfDart}:_authToken`, '${NPM_TOKEN}', 'project')
-      wroteNpmRc = true
-    } else if (env.NPM_OLD_TOKEN && env.NPM_EMAIL) {
-      // Using the old auth token format is not considered part of the public API
-      // This might go away anytime (i.e. when we have a better testing strategy)
-      conf.set('_auth', '${NPM_OLD_TOKEN}', 'project')
-      conf.set('email', '${NPM_EMAIL}', 'project')
-      wroteNpmRc = true
-    }
+      const registry = conf.get('registry')
+      const nerfDart = require('./lib/nerf-dart')(registry)
+      let wroteNpmRc = false
 
-    conf.save('project', (err) => {
-      if (err) return log.error(PREFIX, 'Failed to save npm config.', err)
+      if (env.NPM_TOKEN) {
+        conf.set(`${nerfDart}:_authToken`, '${NPM_TOKEN}', 'project')
+        wroteNpmRc = true
+      } else if (env.NPM_OLD_TOKEN && env.NPM_EMAIL) {
+        // Using the old auth token format is not considered part of the public API
+        // This might go away anytime (i.e. once we have a better testing strategy)
+        conf.set('_auth', '${NPM_OLD_TOKEN}', 'project')
+        conf.set('email', '${NPM_EMAIL}', 'project')
+        wroteNpmRc = true
+      }
 
-      if (wroteNpmRc) log.verbose(PREFIX, 'Wrote authToken to .npmrc.')
+      conf.save('project', (err) => {
+        if (err) return log.error(PREFIX, 'Failed to save npm config.', err)
 
-      require('./pre')(pkg, {
-        auth: {
-          token: env.NPM_TOKEN
+        if (wroteNpmRc) log.verbose(PREFIX, 'Wrote authToken to .npmrc.')
+
+        require('./pre')(pkg, {
+          auth: {
+            token: env.NPM_TOKEN
+          },
+          loglevel: log.level,
+          registry: registry + (registry[registry.length - 1] !== '/' ? '/' : '')
         },
-        loglevel: log.level,
-        registry: registry + (registry[registry.length - 1] !== '/' ? '/' : '')
-      },
-      plugins,
-      (err, release) => {
-        if (err) {
-          log.error(PREFIX, 'Failed to determine new version.')
+        plugins,
+        (err, release) => {
+          if (err) {
+            log.error(PREFIX, 'Failed to determine new version.')
 
-          const args = [PREFIX, (err.code ? `${err.code} ` : '') + err.message]
-          if (err.stack) args.push(err.stack)
-          log.error(...args)
-          process.exit(1)
-        }
+            const args = [PREFIX, (err.code ? `${err.code} ` : '') + err.message]
+            if (err.stack) args.push(err.stack)
+            log.error(...args)
+            process.exit(1)
+          }
 
-        log.verbose(PREFIX, `Determined version ${release.version}.`, release)
+          log.verbose(PREFIX, `Determined version ${release.version}.`)
 
-        writeFileSync('./package.json', JSON.stringify(_.assign(pkg, {
-          version: release.version
-        }), null, 2))
+          if (options.debug) {
+            log.error(PREFIX, `Determined version ${release.version}, but not publishing in debug mode.`, release)
+            process.exit(1)
+          }
 
-        log.info(PREFIX, `Wrote version ${release.version} to package.json.`)
-        if (options.debug) {
-          log.error(PREFIX, 'Not publishing in debug mode')
-          process.exit(1)
-        }
+          writeFileSync('./package.json', JSON.stringify(_.assign(pkg, {
+            version: release.version
+          }), null, 2))
+
+          log.verbose(PREFIX, `Wrote version ${release.version} to package.json.`)
+        })
       })
     })
   } else if (options.argv.cooked[0] === 'post') {
