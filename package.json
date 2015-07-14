@@ -9,13 +9,13 @@
     "nyc": {
       "exclude": [
         ".test",
-        "node_modules",
-        "dist/lib/error.js"
+        "node_modules"
       ]
     }
   },
   "dependencies": {
     "@semantic-release/commit-analyzer": "^1.0.0",
+    "@semantic-release/error": "^1.0.0",
     "@semantic-release/release-notes-generator": "^1.0.0",
     "lodash": "^3.9.3",
     "nopt": "^3.0.3",

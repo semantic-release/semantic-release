@@ -1,4 +1,4 @@
-const SemanticReleaseError = require('./error')
+const SemanticReleaseError = require('@semantic-release/error')
 
 module.exports = function (plugins, commits, lastRelease, cb) {
   plugins.analyzeCommits(commits, (err, type) => {
