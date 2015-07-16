@@ -11,15 +11,20 @@ const plugins = {
   analyzeCommits: (commits, cb) => cb(null, 'major')
 }
 
+const npmConfig = {
+  registry: 'http://registry.npmjs.org/',
+  tag: 'latest'
+
+}
+
 test('full pre run', (t) => {
   t.test('increase version', (tt) => {
     tt.plan(3)
 
     pre({
       name: 'available'
-    }, {
-      registry: 'http://registry.npmjs.org/'
     },
+    npmConfig,
     plugins,
     (err, release) => {
       tt.error(err)
@@ -33,9 +38,8 @@ test('full pre run', (t) => {
 
     pre({
       name: 'unavailable'
-    }, {
-      registry: 'http://registry.npmjs.org/'
     },
+    npmConfig,
     plugins,
     (err, release) => {
       tt.error(err)
