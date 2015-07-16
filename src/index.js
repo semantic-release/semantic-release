@@ -111,6 +111,14 @@ npmconf.load({}, (err, conf) => {
   } else if (options.argv.cooked[0] === 'post') {
     log.verbose(PREFIX, 'Running post-script.')
 
+    require('./post')(pkg, options, plugins, (err, published, release) => {
+      if (err) {
+        log.error(PREFIX, 'Failed to publish release notes.', err)
+        process.exit(1)
+      }
+
+      log.verbose(PREFIX, `${published ? 'Published' : 'Generated'} release notes.`, release)
+    })
   } else {
     log.error(PREFIX, `Command "${options.argv.cooked[0]}" not recognized. User either "pre" or "post"`)
   }
