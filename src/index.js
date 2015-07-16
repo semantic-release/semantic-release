@@ -69,13 +69,17 @@ npmconf.load({}, (err, conf) => {
 
         if (wroteNpmRc) log.verbose(PREFIX, 'Wrote authToken to .npmrc.')
 
-        require('./pre')(pkg, {
+        const npmConfig = {
           auth: {
             token: env.NPM_TOKEN
           },
           loglevel: log.level,
-          registry: registry + (registry[registry.length - 1] !== '/' ? '/' : '')
-        },
+          registry: registry + (registry[registry.length - 1] !== '/' ? '/' : ''),
+          tag: (pkg.publishConfig || {}).tag || conf.get('tag') || 'latest'
+        }
+
+        require('./pre')(pkg,
+        npmConfig,
         plugins,
         (err, release) => {
           if (err) {
@@ -87,10 +91,12 @@ npmconf.load({}, (err, conf) => {
             process.exit(1)
           }
 
-          log.verbose(PREFIX, `Determined version ${release.version}.`)
+          const message = `Determined version ${release.version} as "${npmConfig.tag}".`
+
+          log.verbose(PREFIX, message)
 
           if (options.debug) {
-            log.error(PREFIX, `Determined version ${release.version}, but not publishing in debug mode.`, release)
+            log.error(PREFIX, `${message} Not publishing in debug mode.`, release)
             process.exit(1)
           }
 
