@@ -1,3 +1,5 @@
+const parseSlug = require('parse-github-repo-url')
+
 const SemanticReleaseError = require('@semantic-release/error')
 
 module.exports = function (pkg, options, env) {
@@ -14,6 +16,11 @@ module.exports = function (pkg, options, env) {
     errors.push(new SemanticReleaseError(
       'No "repository" found in package.json.',
       'ENOPKGREPO'
+    ))
+  } else if (!parseSlug(pkg.repository.url)) {
+    errors.push(new SemanticReleaseError(
+      'The "repository" field in the package.json is malformed.',
+      'EMALFORMEDPKGREPO'
     ))
   }
 
