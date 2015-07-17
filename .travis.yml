@@ -22,7 +22,6 @@ after_success:
 after_failure:
 - python travis_after_all.py
 - export $(cat .to_export_back)
-before_deploy:
-- rm -f travis_after_all.py .to_export_back
 after_script:
-- echo leader=$BUILD_LEADER status=$BUILD_AGGREGATE_STATUS
+- rm -f travis_after_all.py .to_export_back
+- npm run semantic-release

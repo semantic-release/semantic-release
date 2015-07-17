@@ -2,9 +2,18 @@
   "name": "semantic-release-scripts",
   "description": "automated semver compliant package publishing",
   "author": "Stephan Bönnemann <stephan@boennemann.me> (http://boennemann.me)",
+  "bin": {
+    "semantic-release-scripts": "./bin/semantic-release.js"
+  },
   "bugs": {
     "url": "https://github.com/semantic-release/scripts/issues"
   },
+  "bundleDependencies": [
+    "@semantic-release/commit-analyzer",
+    "@semantic-release/condition-travis",
+    "@semantic-release/error",
+    "@semantic-release/release-notes-generator"
+  ],
   "config": {
     "nyc": {
       "exclude": [
@@ -67,6 +76,7 @@
     "coverage:upload": "npm run coverage -- --reporter=lcovonly && coveralls < coverage/lcov.info",
     "pretest:integration": "npm run build && npm run test:build",
     "pretest:unit": "npm run build && npm run test:build",
+    "semantic-release": "./bin/semantic-release.js pre && npm dedupe && npm publish && ./bin/semantic-release.js post",
     "test": "npm run test:style && npm run test:unit",
     "test:build": "rimraf .test && mkdirp .test && babel test --out-dir .test",
     "test:integration": "tap --no-cov .test/scenarios/*.js",
