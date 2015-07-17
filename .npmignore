@@ -11,3 +11,5 @@ node_modules
 src
 *.yml
 .gitignore
+.editorconfig
+.npmrc
