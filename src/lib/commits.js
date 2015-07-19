@@ -1,6 +1,6 @@
 const { exec } = require('child_process')
 
-module.exports = function (lastRelease, cb) {
+module.exports = function ({lastRelease}, cb) {
   const from = lastRelease.gitHead
   const range = (from ? from + '..' : '') + 'HEAD'
 

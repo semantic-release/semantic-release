@@ -1,27 +1,35 @@
 const { readFileSync, writeFileSync } = require('fs')
+const path = require('path')
 
 const _ = require('lodash')
 const log = require('npmlog')
 const nopt = require('nopt')
 const npmconf = require('npmconf')
 
+const PREFIX = 'semantic-release'
 const env = process.env
-const options = _.defaults(nopt({
+const pkg = JSON.parse(readFileSync('./package.json'))
+const knownOptions = {
+  branch: String,
   debug: Boolean,
   'github-token': String,
-  'github-url': String
-}, {
-  token: 'github-token',
-  dry: 'debug'
-}), {
-  debug: !env.CI,
-  'github-token': env.GH_TOKEN || env.GITHUB_TOKEN,
-  'github-url': env.GH_URL
-})
-const PREFIX = 'semantic-release'
-
-const pkg = JSON.parse(readFileSync('./package.json'))
-const plugins = require('./lib/plugins')(pkg.release || {})
+  'github-url': String,
+  'analyze-commits': [path, String],
+  'generate-notes': [path, String],
+  'verify-conditions': [path, String],
+  'verify-release': [path, String]
+}
+const options = _.defaults(
+  _.mapKeys(nopt(knownOptions), (value, key) => _.camelCase(key)),
+  pkg.release,
+  {
+    branch: 'master',
+    debug: !env.CI,
+    githubToken: env.GH_TOKEN || env.GITHUB_TOKEN,
+    githubUrl: env.GH_URL
+  }
+)
+const plugins = require('./lib/plugins')(options)
 
 npmconf.load({}, (err, conf) => {
   if (err) {
@@ -29,28 +37,41 @@ npmconf.load({}, (err, conf) => {
     process.exit(1)
   }
 
-  log.level = conf.get('loglevel')
+  let npm = {
+    auth: {
+      token: env.NPM_TOKEN
+    },
+    loglevel: conf.get('loglevel'),
+    registry: conf.get('registry'),
+    tag: (pkg.publishConfig || {}).tag || conf.get('tag') || 'latest'
+  }
 
-  log.verbose(PREFIX, 'argv:', options)
-  log.verbose(PREFIX, 'options:', pkg.release || 'no options')
-  log.verbose(PREFIX, 'Verifying pkg, options and env.')
+  if (npm.registry[npm.registry.length - 1] !== '/') npm.registry += '/'
 
-  const errors = require('./lib/verify')(pkg, options, env)
+  log.level = npm.loglevel
+
+  const config = {PREFIX, log, env, pkg, options, plugins, npm}
+
+  log.verbose(PREFIX, 'options:', _.assign({
+    githubToken: options.githubToken ? '***' : undefined
+  }), options)
+  log.verbose(PREFIX, 'Verifying config.')
+
+  const errors = require('./lib/verify')(config)
   errors.forEach((err) => log.error(PREFIX, `${err.message} ${err.code}`))
   if (errors.length) process.exit(1)
 
-  if (!options.argv.cooked.length || options.argv.cooked[0] === 'pre') {
+  if (options.argv.remain[0] === 'pre') {
     log.verbose(PREFIX, 'Running pre-script.')
     log.verbose(PREFIX, 'Veriying conditions.')
 
-    plugins.verifyConditions(pkg, options, env, (err) => {
+    plugins.verifyConditions(config, (err) => {
       if (err) {
         log[options.debug ? 'warn' : 'error'](PREFIX, err.message)
         if (!options.debug) process.exit(1)
       }
 
-      const registry = conf.get('registry')
-      const nerfDart = require('./lib/nerf-dart')(registry)
+      const nerfDart = require('./lib/nerf-dart')(npm.registry)
       let wroteNpmRc = false
 
       if (env.NPM_TOKEN) {
@@ -69,19 +90,7 @@ npmconf.load({}, (err, conf) => {
 
         if (wroteNpmRc) log.verbose(PREFIX, 'Wrote authToken to .npmrc.')
 
-        const npmConfig = {
-          auth: {
-            token: env.NPM_TOKEN
-          },
-          loglevel: log.level,
-          registry: registry + (registry[registry.length - 1] !== '/' ? '/' : ''),
-          tag: (pkg.publishConfig || {}).tag || conf.get('tag') || 'latest'
-        }
-
-        require('./pre')(pkg,
-        npmConfig,
-        plugins,
-        (err, release) => {
+        require('./pre')(config, (err, release) => {
           if (err) {
             log.error(PREFIX, 'Failed to determine new version.')
 
@@ -91,7 +100,7 @@ npmconf.load({}, (err, conf) => {
             process.exit(1)
           }
 
-          const message = `Determined version ${release.version} as "${npmConfig.tag}".`
+          const message = `Determined version ${release.version} as "${npm.tag}".`
 
           log.verbose(PREFIX, message)
 
@@ -108,10 +117,10 @@ npmconf.load({}, (err, conf) => {
         })
       })
     })
-  } else if (options.argv.cooked[0] === 'post') {
+  } else if (options.argv.remain[0] === 'post') {
     log.verbose(PREFIX, 'Running post-script.')
 
-    require('./post')(pkg, options, plugins, (err, published, release) => {
+    require('./post')(config, (err, published, release) => {
       if (err) {
         log.error(PREFIX, 'Failed to publish release notes.', err)
         process.exit(1)
@@ -120,6 +129,6 @@ npmconf.load({}, (err, conf) => {
       log.verbose(PREFIX, `${published ? 'Published' : 'Generated'} release notes.`, release)
     })
   } else {
-    log.error(PREFIX, `Command "${options.argv.cooked[0]}" not recognized. User either "pre" or "post"`)
+    log.error(PREFIX, `Command "${options.argv.remain[0]}" not recognized. User either "pre" or "post"`)
   }
 })

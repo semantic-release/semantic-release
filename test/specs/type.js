@@ -7,12 +7,12 @@ test('get type from commits', (t) => {
     tt.plan(2)
 
     type({
-      analyzeCommits: (commits, cb) => cb(null, 'major')
-    }, [{
-      hash: '0',
-      message: 'a'
-    }], {
-      version: '1.0.0'
+      commits: [{
+        hash: '0',
+        message: 'a'
+      }],
+      lastRelease: {version: '1.0.0'},
+      plugins: {analyzeCommits: (config, cb) => cb(null, 'major')}
     }, (err, type) => {
       tt.error(err)
       tt.is(type, 'major')
@@ -23,9 +23,10 @@ test('get type from commits', (t) => {
     tt.plan(1)
 
     type({
-      analyzeCommits: (commits, cb) => cb(null, null)
-    }, [], {},
-    (err) => {
+      commits: [],
+      lastRelease: {},
+      plugins: {analyzeCommits: (config, cb) => cb(null, null)}
+    }, (err) => {
       tt.is(err.code, 'ENOCHANGE')
     })
   })
@@ -34,9 +35,10 @@ test('get type from commits', (t) => {
     tt.plan(2)
 
     type({
-      analyzeCommits: (commits, cb) => cb(null, 'major')
-    }, [], {},
-    (err, type) => {
+      commits: [],
+      lastRelease: {},
+      plugins: {analyzeCommits: (config, cb) => cb(null, 'major')}
+    }, (err, type) => {
       tt.error(err)
       tt.is(type, 'initial')
     })

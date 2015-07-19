@@ -9,14 +9,10 @@ const post = proxyquire('../../dist/post', {
 
 const pkg = {
   version: '1.0.0',
-  repository: {
-    url: 'http://github.com/whats/up.git'
-  }
+  repository: {url: 'http://github.com/whats/up.git'}
 }
 
-const plugins = {
-  generateNotes: (pkg, cb) => cb(null, 'the log')
-}
+const plugins = {generateNotes: (pkg, cb) => cb(null, 'the log')}
 
 const defaultRelease = {
   owner: 'whats',
@@ -29,7 +25,11 @@ const defaultRelease = {
 
 test('full post run', (t) => {
   t.test('in debug mode w/o token', (tt) => {
-    post(pkg, {debug: true}, plugins, (err, published, release) => {
+    post({
+      options: {debug: true},
+      pkg,
+      plugins
+    }, (err, published, release) => {
       tt.error(err)
       tt.is(published, false)
       tt.match(release, defaults({draft: true}, defaultRelease))
@@ -38,8 +38,12 @@ test('full post run', (t) => {
     })
   })
 
-  t.test('in debug mode w token', (tt) => {
-    post(pkg, {debug: true, 'github-token': 'yo'}, plugins, (err, published, release) => {
+  t.test('in debug mode w/token', (tt) => {
+    post({
+      options: {debug: true, githubToken: 'yo'},
+      pkg,
+      plugins
+    }, (err, published, release) => {
       tt.error(err)
       tt.is(published, true)
       tt.match(release, defaults({draft: true}, defaultRelease))
@@ -49,7 +53,11 @@ test('full post run', (t) => {
   })
 
   t.test('production', (tt) => {
-    post(pkg, {'github-token': 'yo'}, plugins, (err, published, release) => {
+    post({
+      options: {githubToken: 'yo'},
+      pkg,
+      plugins
+    }, (err, published, release) => {
       tt.error(err)
       tt.is(published, true)
       tt.match(release, defaultRelease)

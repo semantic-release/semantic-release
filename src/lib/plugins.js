@@ -1,20 +1,20 @@
 const relative = require('require-relative')
 
-let exports = module.exports = function (source) {
+let exports = module.exports = function (options) {
   return {
-    analyzeCommits: exports.normalize(source.analyzeCommits, '@semantic-release/commit-analyzer'),
-    generateNotes: exports.normalize(source.generateNotes, '@semantic-release/release-notes-generator'),
-    verifyConditions: exports.normalize(source.verifyConditions, '@semantic-release/condition-travis'),
-    verifyRelease: exports.normalize(source.verifyRelease, './plugin-noop')
+    analyzeCommits: exports.normalize(options.analyzeCommits, '@semantic-release/commit-analyzer'),
+    generateNotes: exports.normalize(options.generateNotes, '@semantic-release/release-notes-generator'),
+    verifyConditions: exports.normalize(options.verifyConditions, '@semantic-release/condition-travis'),
+    verifyRelease: exports.normalize(options.verifyRelease, './plugin-noop')
   }
 }
 
-exports.normalize = function (plugin, fallback) {
-  if (typeof plugin === 'string') return relative(plugin).bind(null, {})
+exports.normalize = function (pluginConfig, fallback) {
+  if (typeof pluginConfig === 'string') return relative(pluginConfig).bind(null, {})
 
-  if (plugin && (typeof plugin.path === 'string')) {
-    return relative(plugin.path).bind(null, plugin)
+  if (pluginConfig && (typeof pluginConfig.path === 'string')) {
+    return relative(pluginConfig.path).bind(null, pluginConfig)
   }
 
-  return require(fallback).bind(null, plugin)
+  return require(fallback).bind(null, pluginConfig)
 }

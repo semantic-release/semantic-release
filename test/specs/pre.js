@@ -11,7 +11,7 @@ const plugins = {
   analyzeCommits: (commits, cb) => cb(null, 'major')
 }
 
-const npmConfig = {
+const npm = {
   registry: 'http://registry.npmjs.org/',
   tag: 'latest'
 
@@ -22,11 +22,10 @@ test('full pre run', (t) => {
     tt.plan(3)
 
     pre({
-      name: 'available'
-    },
-    npmConfig,
-    plugins,
-    (err, release) => {
+      npm,
+      pkg: {name: 'available'},
+      plugins
+    }, (err, release) => {
       tt.error(err)
       tt.is(release.type, 'major')
       tt.is(release.version, '2.0.0')
@@ -37,11 +36,10 @@ test('full pre run', (t) => {
     tt.plan(3)
 
     pre({
-      name: 'unavailable'
-    },
-    npmConfig,
-    plugins,
-    (err, release) => {
+      npm,
+      pkg: {name: 'unavailable'},
+      plugins
+    }, (err, release) => {
       tt.error(err)
       tt.is(release.type, 'initial')
       tt.is(release.version, '1.0.0')

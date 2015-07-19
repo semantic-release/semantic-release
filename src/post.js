@@ -4,17 +4,18 @@ const gitHead = require('git-head')
 const GitHubApi = require('github')
 const parseSlug = require('parse-github-repo-url')
 
-module.exports = function (pkg, argv, plugins, cb) {
-  const config = argv['github-url'] ? url.parse(argv['github-url']) : {}
+module.exports = function (config, cb) {
+  const { pkg, options, plugins } = config
+  const ghConfig = options.githubUrl ? url.parse(options.githubUrl) : {}
 
   const github = new GitHubApi({
     version: '3.0.0',
-    port: config.port,
-    protocol: (config.protocol || '').split(':')[0] || null,
-    host: config.hostname
+    port: ghConfig.port,
+    protocol: (ghConfig.protocol || '').split(':')[0] || null,
+    host: ghConfig.hostname
   })
 
-  plugins.generateNotes(pkg, (err, log) => {
+  plugins.generateNotes(config, (err, log) => {
     if (err) return cb(err)
 
     gitHead((err, hash) => {
@@ -27,17 +28,17 @@ module.exports = function (pkg, argv, plugins, cb) {
         name: `v${pkg.version}`,
         tag_name: `v${pkg.version}`,
         target_commitish: hash,
-        draft: !!argv.debug,
+        draft: !!options.debug,
         body: log
       }
 
-      if (argv.debug && !argv['github-token']) {
+      if (options.debug && !options.githubToken) {
         return cb(null, false, release)
       }
 
       github.authenticate({
         type: 'oauth',
-        token: argv['github-token']
+        token: options.githubToken
       })
 
       github.releases.createRelease(release, (err) => {

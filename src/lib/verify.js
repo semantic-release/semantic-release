@@ -2,7 +2,7 @@ const parseSlug = require('parse-github-repo-url')
 
 const SemanticReleaseError = require('@semantic-release/error')
 
-module.exports = function (pkg, options, env) {
+module.exports = function ({pkg, options, env}) {
   let errors = []
 
   if (!pkg.name) {
@@ -26,7 +26,7 @@ module.exports = function (pkg, options, env) {
 
   if (options.debug) return errors
 
-  if (!options['github-token']) {
+  if (!options.githubToken) {
     errors.push(new SemanticReleaseError(
       'No github token specified.',
       'ENOGHTOKEN'
