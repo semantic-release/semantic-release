@@ -1,7 +1,10 @@
 # common
 coverage
 node_modules
+test/registry/couch
+test/registry/data
 *.log
+*.dump
 .DS_Store
 .nyc_output
 .test

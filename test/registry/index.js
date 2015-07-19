@@ -8,5 +8,5 @@ const opts = {
 module.exports = {
   start: exec.bind(null, './start.sh', opts),
   stop: exec.bind(null, './stop.sh', opts),
-  uri: 'http://localhost:5984/registry/_design/app/_rewrite/'
+  uri: 'http://localhost:15986/registry/_design/app/_rewrite/'
 }

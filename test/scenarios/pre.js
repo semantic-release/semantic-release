@@ -12,16 +12,23 @@ test('change version', (t) => {
 
   registry.start((err) => {
     t.error(err, 'registry started')
-    if (err) t.bailout('registry not started')
+    if (err) {
+      t.end()
+      t.bailout('registry not started')
+    }
 
     testModule('change-version', (err, cwd) => {
       t.error(err, 'test-module created')
-      if (err) t.bailout('test-module not created')
+      if (err) {
+        t.end()
+        t.bailout('test-module not created')
+      }
 
       t.test('no version', (tt) => {
         tt.plan(1)
 
         baseScenario(cwd, registry.uri)
+          .env('npm_config_loglevel', 'info')
           .run('node ../../../bin/semantic-release.js pre')
           .stderr(/ENOCHANGE/)
           .code(1)
@@ -80,8 +87,10 @@ test('change version', (t) => {
 })
 
 tearDown(() => {
-  function cb (err) {
+  function cb (err, stdout, stderr) {
     if (err) console.log(err)
+    if (stdout) console.log(stdout)
+    if (stderr) console.log(stderr)
   }
 
   rimraf(join(__dirname, '../tmp'), cb)

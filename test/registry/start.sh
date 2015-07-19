@@ -5,10 +5,21 @@ set -e
 
 cd $(dirname $0)
 
-# start couchdb as a background process, reset config, load local config
-couchdb -b -a local.ini
+mkdir -p couch
 
-COUCH=http://admin:password@127.0.0.1:5984
+# start couchdb as a background process, load local config, specify writable logfiles
+if [[ $TRAVIS = true ]]
+then
+  echo 'starting couch with sudo'
+  sudo couchdb -b -a local.ini -p couch/pid -o couch/stdout.log -e couch/stderr.log
+else
+  couchdb -b -a local.ini -p couch/pid -o couch/stdout.log -e couch/stderr.log
+fi
+
+# wait for couch to start
+sleep 5
+
+COUCH=http://admin:password@127.0.0.1:15986
 
 # create "registry" database
 curl -X PUT $COUCH/registry
