@@ -1,12 +1,12 @@
 {
-  "name": "semantic-release-scripts",
+  "name": "semantic-release",
   "description": "automated semver compliant package publishing",
   "author": "Stephan Bönnemann <stephan@boennemann.me> (http://boennemann.me)",
   "bin": {
-    "semantic-release-scripts": "./bin/semantic-release.js"
+    "semantic-release": "./bin/semantic-release.js"
   },
   "bugs": {
-    "url": "https://github.com/semantic-release/scripts/issues"
+    "url": "https://github.com/semantic-release/semantic-release/issues"
   },
   "bundleDependencies": [
     "@semantic-release/commit-analyzer",
@@ -52,7 +52,7 @@
     "standard": "^4.2.1",
     "tap": "^1.3.1"
   },
-  "homepage": "https://github.com/semantic-release/scripts#readme",
+  "homepage": "https://github.com/semantic-release/semantic-release/tree/next#readme",
   "keywords": [
     "author",
     "automation",
@@ -65,15 +65,22 @@
     "version"
   ],
   "license": "MIT",
-  "main": "src/index.js",
+  "main": "dist/index.js",
+  "publishConfig": {
+    "tag": "next"
+  },
+  "release": {
+    "branch": "next"
+  },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/semantic-release/scripts.git"
+    "url": "git+https://github.com/semantic-release/semantic-release.git"
   },
   "scripts": {
     "build": "rimraf dist && mkdirp dist && babel src --out-dir dist",
     "coverage": "nyc report",
     "coverage:upload": "npm run coverage -- --reporter=lcovonly && coveralls < coverage/lcov.info",
+    "prepublish": "npm run build",
     "pretest:integration": "npm run build && npm run test:build",
     "pretest:unit": "npm run build && npm run test:build",
     "semantic-release": "./bin/semantic-release.js pre && npm dedupe && npm publish && ./bin/semantic-release.js post",
