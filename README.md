@@ -30,48 +30,16 @@ _Note:_ The current release/tag implementation is tied to GitHub, but could be o
 
 ## Setup
 
-Manual setup will soon be a thing of the past with the new `semantic-release-cli`.
-
-![soon.jpg](https://cloud.githubusercontent.com/assets/908178/8766357/f3eadaca-2e34-11e5-8ebb-d40b9ae613d7.png)
-
-In the meantime:
-
-### `package.json`
-
-Delete the `version` field from your `package.json`. _Really_. It's safe to do, because machines will take care of it from now on.
-
-Install `semantic-release` and save it as a `devDependency`.
-
 ```bash
-# stable channel
-npm install --save-dev semantic-release
+npm install -g semantic-release-cli
 
-# next channel
-npm install --save-dev semantic-release@next
+cd your-module
+semantic-release-cli setup
 ```
 
-Create a `semantic-release` script in the [`scripts` field](https://docs.npmjs.com/files/package.json#scripts) of your `package.json`.
+![dialogue](https://cloud.githubusercontent.com/assets/908178/8766357/f3eadaca-2e34-11e5-8ebb-d40b9ae613d7.png)
 
-```json
-{
-  "scripts": {
-    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
-  }
-}
-```
-
-Add a [`repository` field](https://docs.npmjs.com/files/package.json#repository) to the `package.json`.
-You should do this anyway, but – as `semantic-release` depends on it – now you have to.
-
-### CI Server
-
-The idea is that your CI Server runs `npm run semantic-release` whenever a test run on your main branch succeeds. By default these conditions are verified assuming a [Travis CI](https://travis-ci.org/) environment. This isn't tied to a specific service though. Using the [`verifyConditions` plugin](#verifyconditions) you can easily configure your own CI Server.
-
-The CI environment has to export `CI=true` in order for `semantic-release` to not automatically perform a dry run. Most CI services do this by default.
-
-You need to export access tokens to the environment, so `semantic-release` can authenticate itself with GitHub and npm.  [Get a token for GitHub on their website](https://github.com/settings/tokens/new), grant it the repo/public_repo scope, and export it as `GH_TOKEN`. The smoothest and securest way to do this on Travis CI is to use [their web interface](http://docs.travis-ci.com/user/environment-variables/#Defining-Variables-in-Repository-Settings).
-
-Unfortunately there is no web interface for obtaining npm tokens yet, so you have to run `npm adduser` locally. Copy the token from your `~/.npmrc` file afterwards. Export it as `NPM_TOKEN`.
+_[This is what happens under the hood.](https://github.com/semantic-release/cli#manual-setup)_
 
 ## Options
 
