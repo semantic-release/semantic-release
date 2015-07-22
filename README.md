@@ -61,15 +61,15 @@ Create a `semantic-release` script in the [`scripts` field](https://docs.npmjs.c
 ```
 
 Add a [`repository` field](https://docs.npmjs.com/files/package.json#repository) to the `package.json`.
-You should do this anyway, but – as `semantic-relase` depends on it – now you have to.
+You should do this anyway, but – as `semantic-release` depends on it – now you have to.
 
 ### CI Server
 
-The idea is that your CI Server runs `npm run semantic-relase` whenever a test run on your main branch succeeds. Per default these conditions are verified assuming a [Travis CI](https://travis-ci.org/) environment. This isn't tied to a specific service though. Using the [`verifyConditions` plugin](#verifyconditions) you can easily configure your own CI Server.
+The idea is that your CI Server runs `npm run semantic-release` whenever a test run on your main branch succeeds. By default these conditions are verified assuming a [Travis CI](https://travis-ci.org/) environment. This isn't tied to a specific service though. Using the [`verifyConditions` plugin](#verifyconditions) you can easily configure your own CI Server.
 
 The CI environment has to export `CI=true` in order for `semantic-release` to not automatically perform a dry run. Most CI services do this by default.
 
-You need to export access-tokens to the environment, so `semantic-relase` can authenticate itself with GitHub and npm.  [Get a token for GitHub on their website](https://github.com/settings/tokens/new), grant it the repo/public_repo scope, and export it as `GH_TOKEN`. The smoothest and securest way to do this on Travis CI is to use [their web interface](http://docs.travis-ci.com/user/environment-variables/#Defining-Variables-in-Repository-Settings).
+You need to export access tokens to the environment, so `semantic-release` can authenticate itself with GitHub and npm.  [Get a token for GitHub on their website](https://github.com/settings/tokens/new), grant it the repo/public_repo scope, and export it as `GH_TOKEN`. The smoothest and securest way to do this on Travis CI is to use [their web interface](http://docs.travis-ci.com/user/environment-variables/#Defining-Variables-in-Repository-Settings).
 
 Unfortunately there is no web interface for obtaining npm tokens yet, so you have to run `npm adduser` locally. Copy the token from your `~/.npmrc` file afterwards. Export it as `NPM_TOKEN`.
 
@@ -89,13 +89,13 @@ These options are currently available:
 
 _A few notes on `npm` config_:
 1. The `npm` token can only be defined in the environment as `NPM_TOKEN`, because that's where `npm` itself is going to read it from.
-2. In order to publish to a different `npm` registry you can just configure that how you would usually do it and `semantic-relase` will respect that setting.
+2. In order to publish to a different `npm` registry you can just configure that how you would usually do it and `semantic-release` will respect that setting.
 3. If you want to use another dist-tag for your publishes than `'latest'` you can specify that inside the `package.json`'s [`publishConfig`](https://docs.npmjs.com/files/package.json#publishconfig) field.
-4. `semantic-relase` generally tries to orientate itself towards `npm` – it inherits the loglevel for example.
+4. `semantic-release` generally tries to orientate itself towards `npm` – it inherits the loglevel for example.
 
 ## Plugins
 
-Currently there are four steps where you can customize the `semantic-relase` behavior using plugins. A plugin is a regular [option](#options), but inside the `package.json` you can pass additional config.
+There are four steps where you can customize the `semantic-release` behavior using plugins. A plugin is a regular [option](#options), but inside the `package.json` you can pass additional config.
 
 ```json
 {
@@ -139,7 +139,7 @@ This plugin is responsible for generating release notes. Call the callback with 
 
 ### `verifyConditions`
 
-This plugins is responsible for verifying that a release should happen in the first place. For example the [default implementation](https://github.com/semantic-release/condition-travis/) verifies that the publish is happening on Travis, that it's the right branch, and that all other build jobs succeeded. There are more use cases for this, e.g. verifying that test coverage is above a certain threshold or that there are no [vulnerabilities](https://nodesecurity.io/) in your dependencies. Be creative.
+This plugins is responsible for verifying that a release should happen in the first place. For example, the [default implementation](https://github.com/semantic-release/condition-travis/) verifies that the publish is happening on Travis, that it's the right branch, and that all other build jobs succeeded. There are more use cases for this, e.g. verifying that test coverage is above a certain threshold or that there are no [vulnerabilities](https://nodesecurity.io/) in your dependencies. Be creative.
 
 ### `verifyRelease`
 
@@ -159,7 +159,7 @@ While this entirely true the version number doesn't have to be checked into sour
 
 ### Is there a way to preview which version would currently get published?
 
-If you're running `npm run semantic-release` locally a dry run gets performed, which logs the version that would currently get published.
+If you run `npm run semantic-release` locally a dry run gets performed, which logs the version that would currently get published.
 
 ### Can I run this on my own machine rather than on a CI server?
 
@@ -167,7 +167,7 @@ Of course you can, but this doesn't necessarily mean you should. Running your te
 
 ### Can I manually trigger the release of a specific version?
 
-You can trigger a release by pushing to your GitHub repository. You deliberately can not trigger a _specific_ version release, because this is the whole point of `semantic-release`. Start your packages with `1.0.0` and semver on.  
+You can trigger a release by pushing to your GitHub repository. You deliberately cannot trigger a _specific_ version release, because this is the whole point of `semantic-release`. Start your packages with `1.0.0` and semver on.  
 
 ### Is it _really_ a good idea to release on every push?
 
