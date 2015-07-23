@@ -18,9 +18,15 @@ This removes the immediate connection between human emotions and version numbers
 
 ## How does it work?
 
-Instead of writing [meaningless commit messages](http://whatthecommit.com/), we can take our time to think about the changes in the codebase and write them down. Following formalized conventions it this then possible to not only generate a helpful changelog, but to derive the next semantic version number from them.
+Instead of writing [meaningless commit messages](http://whatthecommit.com/), we can take our time to think about the changes in the codebase and write them down. Following formalized conventions it this then possible to generate a helpful changelog and to derive the next semantic version number from them.
+
+When `semantic-release` got setup it will do that after every successful continuous integration build of your master branch (or any other branch you specify) and publish the new version for you. That way no human is directly involved in the release process and your releases are guaranteed to be [unromantic and unsentimental](http://sentimentalversioning.org/).
+
+If you fear the loss of control over timing and marketing implications of software releases you should know that `semantic-release` supports [release channels](https://github.com/npm/npm/issues/2718) using `npm`'s [dist-tags](https://docs.npmjs.com/cli/tag). This way you can keep control over what your users end up using by default, you can decide when to promote an automatically released version to the stable channel and you can choose which versions to write blogposts and tweets about. You can use the same mechanism to support older versions of your software, for example with important security fixes.
 
 This module ships with the [AngularJS Commit Message Conventions](https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/edit) and changelog generator, but you can [define your own](#plugins) style.
+
+This is what happens in series:
 
 | 1. `semantic-release pre` | 2. `npm publish` | 3. `semantic-release post` |
 | :--- | :--- | :---- |
@@ -57,8 +63,11 @@ These options are currently available:
 
 _A few notes on `npm` config_:
 1. The `npm` token can only be defined in the environment as `NPM_TOKEN`, because that's where `npm` itself is going to read it from.
+
 2. In order to publish to a different `npm` registry you can just configure that how you would usually do it and `semantic-release` will respect that setting.
+
 3. If you want to use another dist-tag for your publishes than `'latest'` you can specify that inside the `package.json`'s [`publishConfig`](https://docs.npmjs.com/files/package.json#publishconfig) field.
+
 4. `semantic-release` generally tries to orientate itself towards `npm` – it inherits the loglevel for example.
 
 ## Plugins
