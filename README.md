@@ -1,11 +1,13 @@
 # semantic-release
 | [![Build Status](https://travis-ci.org/semantic-release/semantic-release.svg?branch=next)](https://travis-ci.org/semantic-release/semantic-release) | [![Coverage Status](https://coveralls.io/repos/semantic-release/semantic-release/badge.svg?branch=next&service=github)](https://coveralls.io/github/semantic-release/semantic-release?branch=next) | [![Dependency Status](https://david-dm.org/semantic-release/semantic-release/next.svg)](https://david-dm.org/semantic-release/semantic-release/next) | [![devDependency Status](https://david-dm.org/semantic-release/semantic-release/next/dev-status.svg)](https://david-dm.org/semantic-release/semantic-release/next#info=devDependencies) | [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://github.com/feross/standard) |
 | --- | --- | --- | --- | --- |
-[![NPM](https://nodei.co/npm/semantic-release.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/semantic-release/)
 
-## What is `semantic-release` about?
+`semantic-release` builds upon a set of conventions to give you **fully automated, semver-compliant package publishing**. It's mostly about _commit-messages_, but you can define more _heuristics_.
 
-At its core `semantic-release` is a set of conventions that gives you **entirely automated, semver-compliant package publishing**. _Coincidentally_ these conventions make sense on their own – like meaningful commit messages.
+&nbsp; | Commands | Comment
+--- | --- | ---
+| **manual** | <pre><code><div>npm version major</div><div>git push origin master --tags</div><div>npm publish</div></code></pre> | You **manually decide** what the **next version** is. You have to remember what major, minor and patch means. You have to remember to push both commits and tags. You have to wait for the CI to pass. |
+| **semantic-release** | <pre><code><div>git commit -m "fix: &lt;message&gt;"</div><div>git push</div></code></pre> | You **think about and describe the changes** you've made. A new version is automatically published with the correct version number.
 
 This removes the immediate connection between human emotions and version numbers, so strictly following the [SemVer](http://semver.org/) spec is not a problem anymore – and that’s ultimately `semantic-release`’s goal.
 
@@ -20,21 +22,38 @@ This removes the immediate connection between human emotions and version numbers
 
 Instead of writing [meaningless commit messages](http://whatthecommit.com/), we can take our time to think about the changes in the codebase and write them down. Following formalized conventions it this then possible to generate a helpful changelog and to derive the next semantic version number from them.
 
+_Note: This module ships with the [AngularJS Commit Message Conventions](https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/edit) and changelog generator, but you can [define your own](#plugins) style_.
+
+> ### Commit Message Format
+
+> Each commit message consists of a **header**, a **body** and a **footer**.  The header has a special
+format that includes a **type**, a **scope** and a **subject**:
+
+> ```
+<type>(<scope>): <subject>
+<BLANK LINE>
+<body>
+<BLANK LINE>
+<footer>
+```
+
+> [Full explanation](https://github.com/ajoslin/conventional-changelog/blob/master/conventions/angular.md)
+
 When `semantic-release` got setup it will do that after every successful continuous integration build of your master branch (or any other branch you specify) and publish the new version for you. That way no human is directly involved in the release process and your releases are guaranteed to be [unromantic and unsentimental](http://sentimentalversioning.org/).
 
 If you fear the loss of control over timing and marketing implications of software releases you should know that `semantic-release` supports [release channels](https://github.com/npm/npm/issues/2718) using `npm`'s [dist-tags](https://docs.npmjs.com/cli/tag). This way you can keep control over what your users end up using by default, you can decide when to promote an automatically released version to the stable channel and you can choose which versions to write blogposts and tweets about. You can use the same mechanism to support older versions of your software, for example with important security fixes.
 
-This module ships with the [AngularJS Commit Message Conventions](https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/edit) and changelog generator, but you can [define your own](#plugins) style.
-
 This is what happens in series:
 
-| 1. `semantic-release pre` | 2. `npm publish` | 3. `semantic-release post` |
-| :--- | :--- | :---- |
-| Writes, based on all commits that happened since the last release, the new version number to the `package.json`. | Publishes the new version to `npm`. | Generates a changelog and creates a [release](https://help.github.com/articles/about-releases/) (including a git tag) on GitHub. |
+| 1. `git push` | 2. `semantic-release pre` | 3. `npm publish` | 4. `semantic-release post` |
+| :--- | :--- | :--- | :---- |
+| New code is pushed and triggers a CI build. | Based on all commits that happened since the last release, the new version number gets written to the `package.json`. | The new version gets published to `npm`. | A changelog gets generated and a [release](https://help.github.com/articles/about-releases/) (including a git tag) on GitHub gets created. |
 
 _Note:_ The current release/tag implementation is tied to GitHub, but could be opened up to Bitbucket, GitLab, et al. Feel free to send PRs for these services.
 
 ## Setup
+
+[![NPM](https://nodei.co/npm/semantic-release.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/semantic-release/)
 
 ```bash
 npm install -g semantic-release-cli
@@ -53,7 +72,8 @@ You can pass options either via command line (in [kebab-case](https://lodash.com
 
 | CLI | package.json |
 | --- | --- |
-| `semantic-release pre --no-debug` | `"release": { "debug": false }` |
+| <pre><code>semantic-release pre --no-debug</code><pre> | <pre><code><div>//package.json</div><div>"release": {</div><div>  "debug": false</div><div>}</div></code></pre><pre><code>semantic-release pre</code></pre> |
+
 
 These options are currently available:
 - `branch`: The branch on which releases should happen. Default: `'master'`
