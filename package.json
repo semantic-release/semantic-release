@@ -8,12 +8,6 @@
   "bugs": {
     "url": "https://github.com/semantic-release/semantic-release/issues"
   },
-  "bundleDependencies": [
-    "@semantic-release/commit-analyzer",
-    "@semantic-release/condition-travis",
-    "@semantic-release/error",
-    "@semantic-release/release-notes-generator"
-  ],
   "engines": {
     "node": ">=0.10",
     "npm": ">=2"
