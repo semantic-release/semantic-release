@@ -1,4 +1,3 @@
-// TODO: Test
 const SemanticReleaseError = require('@semantic-release/error')
 const _ = require('lodash')
 
@@ -38,6 +37,7 @@ function parseCommits (parse, config, commits, cb) {
       if (err) return cb(err)
       if (typeof t === 'string') t = types.indexOf(t)
 
+      // rskip is not in the array, and therefore will allways be < type (-1).
       if (type < t) type = t
 
       if (i === 0) {
