@@ -101,7 +101,7 @@ _A few notes on `npm` config_:
 
 ## Plugins
 
-There are four steps where you can customize the `semantic-release` behavior using plugins. A plugin is a regular [option](#options), but inside the `package.json` you can pass additional config.
+There are numerous steps where you can customize `semantic-release`'s behaviour using plugins. A plugin is a regular [option](#options), but passed inside the `release` block of `package.json`:
 
 ```json
 {
