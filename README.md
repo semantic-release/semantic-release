@@ -151,6 +151,10 @@ This plugins is responsible for verifying that a release should happen in the fi
 
 This plugin is responsible for verifying a release that was determined before and is about to be published. There is no default implementation. It additionally receives `nextRelease`, `lastRelease` and `commits` inside `config`. While `commits` is the same as with analyzeCommits, `nextRelease` contains a `type` (e.g. `'major'`) and the new version (e.g. `'1.0.0'`) and `lastRelease` contains the old `version`, the `gitHead` at the time of the release and the npm dist-`tag` (e.g. `'latest'`). Using this information you could [detect breaking changes](https://github.com/semantic-release/cracks) or hold back certain types of releases. Again: Be creative.
 
+### `getLastRelease`
+
+This plugin is responsible for determining a package's last release version. The [default implementation](https://github.com/semantic-release/last-release-npm) uses the last published version on a npm registry.
+
 ## ITYM*FAQ*LT
 > I think you might frequently ask questions like these
 
