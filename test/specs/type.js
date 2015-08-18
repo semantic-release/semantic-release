@@ -3,7 +3,7 @@ const test = require('tap').test
 const type = require('../../dist/lib/type')
 
 test('get type from commits', (t) => {
-  t.plan(4)
+  t.plan(5)
 
   t.test('get type from plugin', (tt) => {
     tt.plan(2)
@@ -75,6 +75,18 @@ test('get type from commits', (t) => {
       tt.error(err)
       tt.is(pluginCalledTimes, 4)
       tt.is(type, 'major')
+    })
+  })
+
+  t.test('error when skipped', (tt) => {
+    tt.plan(1)
+
+    type({
+      commits: [],
+      lastRelease: {},
+      plugins: {analyzeCommits: (config, cb) => cb(null, 'rskip')}
+    }, (err) => {
+      tt.is(err.code, 'ERELSKIP')
     })
   })
 
