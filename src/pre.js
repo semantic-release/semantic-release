@@ -2,14 +2,14 @@ const _ = require('lodash')
 const auto = require('run-auto')
 const semver = require('semver')
 
-const getLastRelease = require('./lib/last-release')
 const getCommits = require('./lib/commits')
 const getType = require('./lib/type')
 
 module.exports = function (config, cb) {
-  const {plugins} = config
+  const { plugins } = config
+
   auto({
-    lastRelease: getLastRelease.bind(null, config),
+    lastRelease: plugins.getLastRelease.bind(null, config),
     commits: ['lastRelease', (cb, results) => {
       getCommits(_.assign({
         lastRelease: results.lastRelease

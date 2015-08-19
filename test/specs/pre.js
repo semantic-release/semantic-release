@@ -6,9 +6,16 @@ const pre = proxyquire('../../dist/pre', {
   'child_process': require('../mocks/child-process')
 })
 
+const versions = {
+  available: '1.0.0'
+}
+
 const plugins = {
   verifyRelease: (release, cb) => cb(null, release),
-  analyzeCommits: (commits, cb) => cb(null, 'major')
+  analyzeCommits: (commits, cb) => cb(null, 'major'),
+  getLastRelease: ({ pkg }, cb) => {
+    cb(null, { version: versions[pkg.name] || null, gitHead: 'HEAD' })
+  }
 }
 
 const npm = {
