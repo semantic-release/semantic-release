@@ -23,8 +23,11 @@ test('get type from commits', (t) => {
     tt.plan(1)
 
     type({
-      commits: [],
-      lastRelease: {},
+      commits: [{
+        hash: '0',
+        message: 'a'
+      }],
+      lastRelease: {version: '1.0.0'},
       plugins: {analyzeCommits: (config, cb) => cb(null, null)}
     }, (err) => {
       tt.is(err.code, 'ENOCHANGE')
@@ -35,7 +38,10 @@ test('get type from commits', (t) => {
     tt.plan(2)
 
     type({
-      commits: [],
+      commits: [{
+        hash: '0',
+        message: 'a'
+      }],
       lastRelease: {},
       plugins: {analyzeCommits: (config, cb) => cb(null, 'major')}
     }, (err, type) => {
