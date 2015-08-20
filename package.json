@@ -29,6 +29,7 @@
     "git-head": "^1.2.1",
     "github": "^0.2.4",
     "lodash": "^3.9.3",
+    "nerf-dart": "^1.0.0",
     "nopt": "^3.0.3",
     "npmconf": "^2.1.2",
     "npmlog": "^1.2.1",

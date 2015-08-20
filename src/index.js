@@ -71,7 +71,7 @@ npmconf.load({}, (err, conf) => {
         if (!options.debug) process.exit(1)
       }
 
-      const nerfDart = require('./lib/nerf-dart')(npm.registry)
+      const nerfDart = require('nerf-dart')(npm.registry)
       let wroteNpmRc = false
 
       if (env.NPM_TOKEN) {
