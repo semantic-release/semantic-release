@@ -68,7 +68,7 @@ _Note:_ The current release/tag implementation is tied to GitHub, but could be o
 npm install -g semantic-release-cli
 
 cd your-module
-semantic-release-cli setup
+semantic-release setup
 ```
 
 ![dialogue](https://cloud.githubusercontent.com/assets/908178/8766357/f3eadaca-2e34-11e5-8ebb-d40b9ae613d7.png)
