@@ -147,9 +147,13 @@ This plugin is responsible for generating release notes. Call the callback with 
 
 This plugins is responsible for verifying that a release should happen in the first place. For example, the [default implementation](https://github.com/semantic-release/condition-travis/) verifies that the publish is happening on Travis, that it's the right branch, and that all other build jobs succeeded. There are more use cases for this, e.g. verifying that test coverage is above a certain threshold or that there are no [vulnerabilities](https://nodesecurity.io/) in your dependencies. Be creative.
 
+Passing an array of plugins will run them in series.
+
 ### `verifyRelease`
 
 This plugin is responsible for verifying a release that was determined before and is about to be published. There is no default implementation. It additionally receives `nextRelease`, `lastRelease` and `commits` inside `config`. While `commits` is the same as with analyzeCommits, `nextRelease` contains a `type` (e.g. `'major'`) and the new version (e.g. `'1.0.0'`) and `lastRelease` contains the old `version`, the `gitHead` at the time of the release and the npm dist-`tag` (e.g. `'latest'`). Using this information you could [detect breaking changes](https://github.com/semantic-release/cracks) or hold back certain types of releases. Again: Be creative.
+
+Passing an array of plugins will run them in series.
 
 ### `getLastRelease`
 
