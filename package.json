@@ -66,12 +66,6 @@
   ],
   "license": "MIT",
   "main": "dist/index.js",
-  "publishConfig": {
-    "tag": "next"
-  },
-  "release": {
-    "branch": "next"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/semantic-release/semantic-release.git"

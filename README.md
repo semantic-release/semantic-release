@@ -1,10 +1,10 @@
 # semantic-release
 
-[![Build Status](https://travis-ci.org/semantic-release/semantic-release.svg?branch=next)](https://travis-ci.org/semantic-release/semantic-release)
-[![Coverage Status](https://coveralls.io/repos/semantic-release/semantic-release/badge.svg?branch=next&service=github)](https://coveralls.io/github/semantic-release/semantic-release?branch=next)
+[![Build Status](https://travis-ci.org/semantic-release/semantic-release.svg?branch=master)](https://travis-ci.org/semantic-release/semantic-release)
+[![Coverage Status](https://coveralls.io/repos/semantic-release/semantic-release/badge.svg?branch=master&service=github)](https://coveralls.io/github/semantic-release/semantic-release?branch=master)
 
-[![Dependency Status](https://david-dm.org/semantic-release/semantic-release/next.svg)](https://david-dm.org/semantic-release/semantic-release/next)
-[![devDependency Status](https://david-dm.org/semantic-release/semantic-release/next/dev-status.svg)](https://david-dm.org/semantic-release/semantic-release/next#info=devDependencies)
+[![Dependency Status](https://david-dm.org/semantic-release/semantic-release/master.svg)](https://david-dm.org/semantic-release/semantic-release/master)
+[![devDependency Status](https://david-dm.org/semantic-release/semantic-release/master/dev-status.svg)](https://david-dm.org/semantic-release/semantic-release/master#info=devDependencies)
 
 [![Join the chat at https://gitter.im/semantic-release/semantic-release](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/semantic-release/semantic-release?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
