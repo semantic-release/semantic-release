@@ -45,7 +45,7 @@ npmconf.load({}, (err, conf) => {
       token: env.NPM_TOKEN
     },
     loglevel: conf.get('loglevel'),
-    registry: conf.get('registry'),
+    registry: (pkg.publishConfig && pkg.publishConfig.registry) || conf.get('registry'),
     tag: (pkg.publishConfig || {}).tag || conf.get('tag') || 'latest'
   }
 
