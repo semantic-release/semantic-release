@@ -36,6 +36,7 @@
     "parse-github-repo-url": "^1.0.0",
     "require-relative": "^0.8.7",
     "run-auto": "^1.1.2",
+    "run-series": "^1.1.2",
     "semver": "^5.0.1"
   },
   "devDependencies": {

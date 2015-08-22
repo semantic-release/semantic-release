@@ -1,13 +1,34 @@
 const relative = require('require-relative')
+const series = require('run-series')
 
 let exports = module.exports = function (options) {
-  return {
+  var plugins = {
     analyzeCommits: exports.normalize(options.analyzeCommits, '@semantic-release/commit-analyzer'),
     generateNotes: exports.normalize(options.generateNotes, '@semantic-release/release-notes-generator'),
-    verifyConditions: exports.normalize(options.verifyConditions, '@semantic-release/condition-travis'),
-    verifyRelease: exports.normalize(options.verifyRelease, './plugin-noop'),
     getLastRelease: exports.normalize(options.getLastRelease, '@semantic-release/last-release-npm')
   }
+
+  ;['verifyConditions', 'verifyRelease'].forEach((plugin) => {
+    if (!Array.isArray(options[plugin])) {
+      plugins[plugin] = exports.normalize(
+        options[plugin],
+        plugin === 'verifyConditions' ?
+          '@semantic-release/condition-travis' :
+          './plugin-noop'
+      )
+      return
+    }
+
+    plugins[plugin] = function (pluginOptions, cb) {
+      var tasks = options[plugin].map((step) => {
+        return exports.normalize(step, './plugin-noop').bind(null, pluginOptions)
+      })
+
+      series(tasks, cb)
+    }
+  })
+
+  return plugins
 }
 
 exports.normalize = function (pluginConfig, fallback) {
