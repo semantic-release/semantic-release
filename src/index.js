@@ -1,5 +1,6 @@
 const { readFileSync, writeFileSync } = require('fs')
 const path = require('path')
+const url = require('url')
 
 const _ = require('lodash')
 const log = require('npmlog')
@@ -45,11 +46,12 @@ npmconf.load({}, (err, conf) => {
       token: env.NPM_TOKEN
     },
     loglevel: conf.get('loglevel'),
-    registry: conf.get('registry'),
+    registry: require('./lib/get-registry')(pkg, conf),
     tag: (pkg.publishConfig || {}).tag || conf.get('tag') || 'latest'
   }
 
-  if (npm.registry[npm.registry.length - 1] !== '/') npm.registry += '/'
+  // normalize trailing slash
+  npm.registry = url.format(url.parse(npm.registry))
 
   log.level = npm.loglevel
 
