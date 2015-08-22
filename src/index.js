@@ -24,6 +24,9 @@ const options = _.defaults(
   pkg.release,
   {
     branch: 'master',
+    fallbackTags: {
+      next: 'latest'
+    },
     debug: !env.CI,
     githubToken: env.GH_TOKEN || env.GITHUB_TOKEN,
     githubUrl: env.GH_URL
