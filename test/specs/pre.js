@@ -30,7 +30,7 @@ test('full pre run', (t) => {
     tt.plan(3)
 
     pre({
-      branch: 'master',
+      options: {branch: 'master'},
       npm,
       pkg: {name: 'available'},
       plugins
@@ -45,7 +45,7 @@ test('full pre run', (t) => {
     tt.plan(3)
 
     pre({
-      branch: 'master',
+      options: {branch: 'master'},
       npm,
       pkg: {name: 'unavailable'},
       plugins

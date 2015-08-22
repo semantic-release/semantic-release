@@ -4,7 +4,8 @@ const log = require('npmlog')
 
 const SemanticReleaseError = require('@semantic-release/error')
 
-module.exports = function ({lastRelease, branch}, cb) {
+module.exports = function ({lastRelease, options}, cb) {
+  const branch = options.branch
   const from = lastRelease.gitHead
   const range = (from ? from + '..' : '') + 'HEAD'
 
