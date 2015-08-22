@@ -3,7 +3,9 @@ const proxyquire = require('proxyquire')
 
 require('../mocks/registry')
 const pre = proxyquire('../../dist/pre', {
-  'child_process': require('../mocks/child-process')
+  './lib/commits': proxyquire('../../dist/lib/commits', {
+    'child_process': require('../mocks/child-process')
+  })
 })
 
 const versions = {
@@ -14,14 +16,13 @@ const plugins = {
   verifyRelease: (release, cb) => cb(null, release),
   analyzeCommits: (commits, cb) => cb(null, 'major'),
   getLastRelease: ({ pkg }, cb) => {
-    cb(null, { version: versions[pkg.name] || null, gitHead: 'HEAD' })
+    cb(null, {version: versions[pkg.name] || null, gitHead: 'HEAD'})
   }
 }
 
 const npm = {
   registry: 'http://registry.npmjs.org/',
   tag: 'latest'
-
 }
 
 test('full pre run', (t) => {
@@ -29,6 +30,7 @@ test('full pre run', (t) => {
     tt.plan(3)
 
     pre({
+      branch: 'master',
       npm,
       pkg: {name: 'available'},
       plugins
@@ -43,6 +45,7 @@ test('full pre run', (t) => {
     tt.plan(3)
 
     pre({
+      branch: 'master',
       npm,
       pkg: {name: 'unavailable'},
       plugins

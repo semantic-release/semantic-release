@@ -7,7 +7,7 @@ const commits = proxyquire('../../dist/lib/commits', {
 
 test('commits since last release', (t) => {
   t.test('get all commits', (tt) => {
-    commits({lastRelease: {}}, (err, commits) => {
+    commits({lastRelease: {}, branch: 'master'}, (err, commits) => {
       tt.error(err)
       tt.is(commits.length, 2, 'all commits')
       tt.is(commits[0].hash, 'hash-one', 'parsed hash')
@@ -18,12 +18,20 @@ test('commits since last release', (t) => {
   })
 
   t.test('get commits since hash', (tt) => {
-    commits({lastRelease: {gitHead: 'hash'}}, (err, commits) => {
+    commits({lastRelease: {gitHead: 'hash'}, branch: 'master'}, (err, commits) => {
       tt.error(err)
       tt.is(commits.length, 1, 'specified commits')
       tt.is(commits[0].hash, 'hash-one', 'parsed hash')
       tt.is(commits[0].message, 'commit-one', 'parsed message')
 
+      tt.end()
+    })
+  })
+
+  t.test('get commits since hash', (tt) => {
+    commits({lastRelease: {gitHead: 'notinhistory'}, branch: 'notmaster'}, (err, commits) => {
+      tt.ok(err)
+      tt.is(err.code, 'ENOTINHISTORY')
       tt.end()
     })
   })

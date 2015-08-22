@@ -5,6 +5,10 @@ const rawCommits = [
 
 module.exports = {
   exec: (command, cb) => {
+    if (/contains/.test(command)) {
+      return cb(null, `whatever\nmaster\n`)
+    }
+
     cb(
       null,
       /\.\.HEAD/.test(command) ?
