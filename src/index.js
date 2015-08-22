@@ -52,9 +52,10 @@ npmconf.load({}, (err, conf) => {
 
   const config = {PREFIX, log, env, pkg, options, plugins, npm}
 
-  log.verbose(PREFIX, 'options:', _.assign({
-    githubToken: options.githubToken ? '***' : undefined
-  }), options)
+  let hide = {}
+  if (options.githubToken) hide.githubToken = '***'
+
+  log.verbose(PREFIX, 'options:', _.assign({}, options, hide))
   log.verbose(PREFIX, 'Verifying config.')
 
   const errors = require('./lib/verify')(config)
