@@ -14,9 +14,6 @@ before_install:
 - npm i -g npm@^2.0.0
 before_script:
 - npm prune
-- curl -Lo travis_after_all.py https://git.io/vLSON
 after_success:
-- python travis_after_all.py
-- export $(cat .to_export_back)
-- if [[ $BUILD_LEADER = YES ]]; then npm run coverage:upload; fi
+- npm run coverage:upload
 - npm run semantic-release
