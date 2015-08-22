@@ -6,7 +6,7 @@ const log = require('npmlog')
 const nopt = require('nopt')
 const npmconf = require('npmconf')
 
-const PREFIX = 'semantic-release'
+log.heading = 'semantic-release'
 const env = process.env
 const pkg = JSON.parse(readFileSync('./package.json'))
 const knownOptions = {
@@ -33,7 +33,7 @@ const plugins = require('./lib/plugins')(options)
 
 npmconf.load({}, (err, conf) => {
   if (err) {
-    log.error(PREFIX, 'Failed to load npm config.', err)
+    log.error('init', 'Failed to load npm config.', err)
     process.exit(1)
   }
 
@@ -50,25 +50,25 @@ npmconf.load({}, (err, conf) => {
 
   log.level = npm.loglevel
 
-  const config = {PREFIX, log, env, pkg, options, plugins, npm}
+  const config = {env, pkg, options, plugins, npm}
 
   let hide = {}
   if (options.githubToken) hide.githubToken = '***'
 
-  log.verbose(PREFIX, 'options:', _.assign({}, options, hide))
-  log.verbose(PREFIX, 'Verifying config.')
+  log.verbose('init', 'options:', _.assign({}, options, hide))
+  log.verbose('init', 'Verifying config.')
 
   const errors = require('./lib/verify')(config)
-  errors.forEach((err) => log.error(PREFIX, `${err.message} ${err.code}`))
+  errors.forEach((err) => log.error('init', `${err.message} ${err.code}`))
   if (errors.length) process.exit(1)
 
   if (options.argv.remain[0] === 'pre') {
-    log.verbose(PREFIX, 'Running pre-script.')
-    log.verbose(PREFIX, 'Veriying conditions.')
+    log.verbose('pre', 'Running pre-script.')
+    log.verbose('pre', 'Veriying conditions.')
 
     plugins.verifyConditions(config, (err) => {
       if (err) {
-        log[options.debug ? 'warn' : 'error'](PREFIX, err.message)
+        log[options.debug ? 'warn' : 'error']('pre', err.message)
         if (!options.debug) process.exit(1)
       }
 
@@ -87,15 +87,15 @@ npmconf.load({}, (err, conf) => {
       }
 
       conf.save('project', (err) => {
-        if (err) return log.error(PREFIX, 'Failed to save npm config.', err)
+        if (err) return log.error('pre', 'Failed to save npm config.', err)
 
-        if (wroteNpmRc) log.verbose(PREFIX, 'Wrote authToken to .npmrc.')
+        if (wroteNpmRc) log.verbose('pre', 'Wrote authToken to .npmrc.')
 
         require('./pre')(config, (err, release) => {
           if (err) {
-            log.error(PREFIX, 'Failed to determine new version.')
+            log.error('pre', 'Failed to determine new version.')
 
-            const args = [PREFIX, (err.code ? `${err.code} ` : '') + err.message]
+            const args = ['pre', (err.code ? `${err.code} ` : '') + err.message]
             if (err.stack) args.push(err.stack)
             log.error(...args)
             process.exit(1)
@@ -103,10 +103,10 @@ npmconf.load({}, (err, conf) => {
 
           const message = `Determined version ${release.version} as "${npm.tag}".`
 
-          log.verbose(PREFIX, message)
+          log.verbose('pre', message)
 
           if (options.debug) {
-            log.error(PREFIX, `${message} Not publishing in debug mode.`, release)
+            log.error('pre', `${message} Not publishing in debug mode.`, release)
             process.exit(1)
           }
 
@@ -114,22 +114,22 @@ npmconf.load({}, (err, conf) => {
             version: release.version
           }), null, 2))
 
-          log.verbose(PREFIX, `Wrote version ${release.version} to package.json.`)
+          log.verbose('pre', `Wrote version ${release.version} to package.json.`)
         })
       })
     })
   } else if (options.argv.remain[0] === 'post') {
-    log.verbose(PREFIX, 'Running post-script.')
+    log.verbose('post', 'Running post-script.')
 
     require('./post')(config, (err, published, release) => {
       if (err) {
-        log.error(PREFIX, 'Failed to publish release notes.', err)
+        log.error('post', 'Failed to publish release notes.', err)
         process.exit(1)
       }
 
-      log.verbose(PREFIX, `${published ? 'Published' : 'Generated'} release notes.`, release)
+      log.verbose('post', `${published ? 'Published' : 'Generated'} release notes.`, release)
     })
   } else {
-    log.error(PREFIX, `Command "${options.argv.remain[0]}" not recognized. User either "pre" or "post"`)
+    log.error('post', `Command "${options.argv.remain[0]}" not recognized. User either "pre" or "post"`)
   }
 })
