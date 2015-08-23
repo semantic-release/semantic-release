@@ -1,30 +1,59 @@
 # semantic-release
 
-[![Build Status](https://travis-ci.org/semantic-release/semantic-release.svg?branch=next)](https://travis-ci.org/semantic-release/semantic-release)
-[![Coverage Status](https://coveralls.io/repos/semantic-release/semantic-release/badge.svg?branch=next&service=github)](https://coveralls.io/github/semantic-release/semantic-release?branch=next)
-
-[![Dependency Status](https://david-dm.org/semantic-release/semantic-release/next.svg)](https://david-dm.org/semantic-release/semantic-release/next)
-[![devDependency Status](https://david-dm.org/semantic-release/semantic-release/next/dev-status.svg)](https://david-dm.org/semantic-release/semantic-release/next#info=devDependencies)
+> **fully automated, semver-compliant package publishing**
 
 [![Join the chat at https://gitter.im/semantic-release/semantic-release](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/semantic-release/semantic-release?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://github.com/feross/standard)
 
-`semantic-release` builds upon a set of conventions to give you **fully automated, semver-compliant package publishing**. It's mostly about _commit-messages_, but you can define more _heuristics_.
+[![Dependency Status](https://david-dm.org/semantic-release/semantic-release/next.svg)](https://david-dm.org/semantic-release/semantic-release/next)
+[![devDependency Status](https://david-dm.org/semantic-release/semantic-release/next/dev-status.svg)](https://david-dm.org/semantic-release/semantic-release/next#info=devDependencies)
+
+[![Build Status](https://travis-ci.org/semantic-release/semantic-release.svg?branch=next)](https://travis-ci.org/semantic-release/semantic-release)
+[![Coverage Status](https://coveralls.io/repos/semantic-release/semantic-release/badge.svg?branch=next&service=github)](https://coveralls.io/github/semantic-release/semantic-release?branch=next)
+
+Out of the box this is just about _commit-messages_, but you can do so much more.
+
+* **Detect breaking changes** using the test suite of your last release: [cracks](https://github.com/semantic-release/cracks)
+* Detect breaking changes using your dependents’ test suites: [Help out! Implement the **dont-break** plugin](https://github.com/semantic-release/semantic-release/issues/65)
+* Detect breaking changes diffing your JSDoc interface: [Help out! Implement the **india** plugin](https://github.com/semantic-release/semantic-release/issues/66)
+* Abort releases with **insufficient test coverage**: [Help out! Implement the **istanbul** plugin](https://github.com/semantic-release/semantic-release/issues/68)
+* Abort releases with **vulnerable dependencies** in the tree: [Help out! Implement the **nsp** plugin](https://github.com/semantic-release/semantic-release/issues/67)
+* Everything you can imagine: [Build Plugins!](https://github.com/semantic-release/semantic-release#plugins)
 
 &nbsp; | Commands | Comment
 --- | --- | ---
 | **manual** | <pre><code><div>npm version major</div><div>git push origin master --tags</div><div>npm publish</div></code></pre> | You **manually decide** what the **next version** is. You have to remember what major, minor and patch means. You have to remember to push both commits and tags. You have to wait for the CI to pass. |
-| **semantic-release** | <pre><code><div>git commit -m "fix: &lt;message&gt;"</div><div>git push</div></code></pre> | You **think about and describe the changes** you've made. A new version is automatically published with the correct version number.
+| **semantic-release** | <pre><code><div>git commit -m "fix: &lt;message&gt;"</div><div>git push</div></code></pre> | You **describe the changes** you’ve made. A new version is automatically published with the correct version number.
 
 This removes the immediate connection between human emotions and version numbers, so strictly following the [SemVer](http://semver.org/) spec is not a problem anymore – and that’s ultimately `semantic-release`’s goal.
 
-> ### “We fail to follow SemVer – and why it needn’t matter”
-> #### JSConf Budapest 2015
-
-> [![JSConfBP Talk](https://cloud.githubusercontent.com/assets/908178/8032541/e9bf6300-0dd6-11e5-92c9-8a39211368af.png)](https://www.youtube.com/watch?v=tc2UgG5L7WM&index=6&list=PLFZ5NyC0xHDaaTy6tY9p0C0jd_rRRl5Zm)
-
-> This talk gives you a complete introduction to the underlying concepts of this module
+<table>
+  <tr>
+    <th>
+      “We fail to follow SemVer – and why it needn’t matter”
+    </th>
+    <th>
+      “semantic-release Q&A with Kent C. Dodds”
+    </th>
+  </tr>
+  <tr>
+    <td style="width: 50%">
+      <a href="https://www.youtube.com/watch?v=tc2UgG5L7WM&amp;index=6&amp;list=PLFZ5NyC0xHDaaTy6tY9p0C0jd_rRRl5Zm"><img alt="JSConfBP Talk" src="https://cloud.githubusercontent.com/assets/908178/8032541/e9bf6300-0dd6-11e5-92c9-8a39211368af.png"></a>
+    </td>
+    <td style="width: 50%">
+      <a href="https://www.youtube.com/watch?v=g6y3DnhkjrI"><img alt="Hangout on Air with Kent C. Dodds" src="https://cloud.githubusercontent.com/assets/908178/9428157/fa55deaa-49a0-11e5-934b-842f000f0278.png"></a>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      This talk gives you a complete introduction to the underlying concepts of this module. 38:30
+    </td>
+    <td>
+      A “Hangouts on Air” conversation with hands on questions and answers about how to use semantic-release. 53:52
+    </td>
+  </tr>
+</table>
 
 ## How does it work?
 
@@ -49,7 +78,7 @@ format that includes a **type**, a **scope** and a **subject**:
 
 When `semantic-release` got setup it will do that after every successful continuous integration build of your master branch (or any other branch you specify) and publish the new version for you. That way no human is directly involved in the release process and your releases are guaranteed to be [unromantic and unsentimental](http://sentimentalversioning.org/).
 
-If you fear the loss of control over timing and marketing implications of software releases you should know that `semantic-release` supports [release channels](https://github.com/npm/npm/issues/2718) using `npm`'s [dist-tags](https://docs.npmjs.com/cli/tag). This way you can keep control over what your users end up using by default, you can decide when to promote an automatically released version to the stable channel and you can choose which versions to write blogposts and tweets about. You can use the same mechanism to support older versions of your software, for example with important security fixes.
+If you fear the loss of control over timing and marketing implications of software releases you should know that `semantic-release` supports [release channels](https://github.com/npm/npm/issues/2718) using `npm`’s [dist-tags](https://docs.npmjs.com/cli/tag). This way you can keep control over what your users end up using by default, you can decide when to promote an automatically released version to the stable channel and you can choose which versions to write blogposts and tweets about. You can use the same mechanism to support older versions of your software, for example with important security fixes.
 
 This is what happens in series:
 
@@ -70,7 +99,7 @@ cd your-module
 semantic-release-cli setup
 ```
 
-![dialogue](https://cloud.githubusercontent.com/assets/908178/8766357/f3eadaca-2e34-11e5-8ebb-d40b9ae613d7.png)
+![dialogue](https://cloud.githubusercontent.com/assets/908178/9428123/3628dfec-499f-11e5-8bdd-8f3042dd95ed.png)
 
 _[This is what happens under the hood.](https://github.com/semantic-release/cli#manual-setup)_
 
@@ -84,23 +113,23 @@ You can pass options either via command line (in [kebab-case](https://lodash.com
 
 
 These options are currently available:
-- `branch`: The branch on which releases should happen. Default: `'master'`
-- `debug`: If true doesn't actually publish to npm or write things to file. Default: `!process.env.CI`
+- `branch`: The branch on which releases should happen. Default: `’master’`
+- `debug`: If true doesn’t actually publish to npm or write things to file. Default: `!process.env.CI`
 - `githubToken`: The token used to authenticate with GitHub. Default: `process.env.GH_TOKEN`
 - `githubUrl`: Optional. Pass your GitHub Enterprise endpoint.
 
 _A few notes on `npm` config_:
-1. The `npm` token can only be defined in the environment as `NPM_TOKEN`, because that's where `npm` itself is going to read it from.
+1. The `npm` token can only be defined in the environment as `NPM_TOKEN`, because that’s where `npm` itself is going to read it from.
 
 2. In order to publish to a different `npm` registry you can just configure that how you would usually do it and `semantic-release` will respect that setting.
 
-3. If you want to use another dist-tag for your publishes than `'latest'` you can specify that inside the `package.json`'s [`publishConfig`](https://docs.npmjs.com/files/package.json#publishconfig) field.
+3. If you want to use another dist-tag for your publishes than `’latest’` you can specify that inside the `package.json`’s [`publishConfig`](https://docs.npmjs.com/files/package.json#publishconfig) field.
 
 4. `semantic-release` generally tries to orientate itself towards `npm` – it inherits the loglevel for example.
 
 ## Plugins
 
-There are numerous steps where you can customize `semantic-release`'s behaviour using plugins. A plugin is a regular [option](#options), but passed inside the `release` block of `package.json`:
+There are numerous steps where you can customize `semantic-release`’s behaviour using plugins. A plugin is a regular [option](#options), but passed inside the `release` block of `package.json`:
 
 ```json
 {
@@ -124,7 +153,7 @@ A plugin itself is an async function that always receives three arguments.
 module.exports = function (pluginConfig, config, callback) {}
 ```
 
-- `pluginConfig`: If the user of your plugin specifies additional plugin config in the `package.json` (see the `verifyConditions` example above) then it's this object.
+- `pluginConfig`: If the user of your plugin specifies additional plugin config in the `package.json` (see the `verifyConditions` example above) then it’s this object.
 - `config`: A config object containing a lot of information to act upon.
   - `env`: All environment variables
   - `npm`: Select npm configuration bits like `registry`, `tag` and `auth`
@@ -144,7 +173,7 @@ This plugin is responsible for generating release notes. Call the callback with 
 
 ### `verifyConditions`
 
-This plugins is responsible for verifying that a release should happen in the first place. For example, the [default implementation](https://github.com/semantic-release/condition-travis/) verifies that the publish is happening on Travis, that it's the right branch, and that all other build jobs succeeded. There are more use cases for this, e.g. verifying that test coverage is above a certain threshold or that there are no [vulnerabilities](https://nodesecurity.io/) in your dependencies. Be creative.
+This plugins is responsible for verifying that a release should happen in the first place. For example, the [default implementation](https://github.com/semantic-release/condition-travis/) verifies that the publish is happening on Travis, that it’s the right branch, and that all other build jobs succeeded. There are more use cases for this, e.g. verifying that test coverage is above a certain threshold or that there are no [vulnerabilities](https://nodesecurity.io/) in your dependencies. Be creative.
 
 Passing an array of plugins will run them in series.
 
@@ -156,19 +185,19 @@ Passing an array of plugins will run them in series.
 
 ### `getLastRelease`
 
-This plugin is responsible for determining a package's last release version. The [default implementation](https://github.com/semantic-release/last-release-npm) uses the last published version on a npm registry.
+This plugin is responsible for determining a package’s last release version. The [default implementation](https://github.com/semantic-release/last-release-npm) uses the last published version on a npm registry.
 
 ## ITYM*FAQ*LT
 > I think you might frequently ask questions like these
 
-### Why is the `package.json`'s version not updated in my repository?
+### Why is the `package.json`’s version not updated in my repository?
 
 The `npm` docs even state:
 
-> The most important things in your package.json are the name and version fields. Those are actually required, and your package won't install without them.
+> The most important things in your package.json are the name and version fields. Those are actually required, and your package won’t install without them.
 > – [npm docs](https://docs.npmjs.com/files/package.json#version)
 
-While this entirely true the version number doesn't have to be checked into source control. `semantic-release` takes care of the version field right before `npm publish` uses it – and this is the only point where it _really_ is required.
+While this entirely true the version number doesn’t have to be checked into source control. `semantic-release` takes care of the version field right before `npm publish` uses it – and this is the only point where it _really_ is required.
 
 ### Is there a way to preview which version would currently get published?
 
@@ -176,7 +205,7 @@ If you run `npm run semantic-release` locally a dry run gets performed, which lo
 
 ### Can I run this on my own machine rather than on a CI server?
 
-Of course you can, but this doesn't necessarily mean you should. Running your tests on an independent machine before releasing software is a crucial part of this workflow. Also it is a pain to set this up locally, with tokens lying around and everything. That said, you can run the scripts with `--debug=false` explicitly. You have to export `GH_TOKEN=<your_token>` and `NPM_TOKEN=<your_other_token>`.
+Of course you can, but this doesn’t necessarily mean you should. Running your tests on an independent machine before releasing software is a crucial part of this workflow. Also it is a pain to set this up locally, with tokens lying around and everything. That said, you can run the scripts with `--debug=false` explicitly. You have to export `GH_TOKEN=<your_token>` and `NPM_TOKEN=<your_other_token>`.
 
 ### Can I manually trigger the release of a specific version?
 
@@ -184,13 +213,13 @@ You can trigger a release by pushing to your GitHub repository. You deliberately
 
 ### Is it _really_ a good idea to release on every push?
 
-It is indeed a great idea because it _forces_ you to follow best practices. If you don't feel comfortable making every passing feature or fix on your master branch addressable via `npm` you might not treat your master right. Have a look at [branch workflows](https://guides.github.com/introduction/flow/index.html). If you still think you should have control over the exact point in time of your release, e.g. because you are following a release schedule, you can release only on the `production`/`deploy`/`release` branch and push your code there in certain intervals, or better yet use [dist-tags](https://docs.npmjs.com/cli/dist-tag).
+It is indeed a great idea because it _forces_ you to follow best practices. If you don’t feel comfortable making every passing feature or fix on your master branch addressable via `npm` you might not treat your master right. Have a look at [branch workflows](https://guides.github.com/introduction/flow/index.html). If you still think you should have control over the exact point in time of your release, e.g. because you are following a release schedule, you can release only on the `production`/`deploy`/`release` branch and push your code there in certain intervals, or better yet use [dist-tags](https://docs.npmjs.com/cli/dist-tag).
 
 ### Why should I trust `semantic-release` with my releases?
 
-`semantic-release` has a full unit- and integration-test-suite that tests _actual_ `npm` publishes against the [npm-registry-couchapp](https://github.com/npm/npm-registry-couchapp/) on node.js `^0.10`, `^0.12` and io.js `^1`, `^2`. A new version won't get published if it doesn't pass on all these engines.
+`semantic-release` has a full unit- and integration-test-suite that tests _actual_ `npm` publishes against the [npm-registry-couchapp](https://github.com/npm/npm-registry-couchapp/) on node.js `^0.10`, `^0.12` and io.js `^1`, `^2`. A new version won’t get published if it doesn’t pass on all these engines.
 
-Note: Currently integration-tests don't run on Travis CI. If you know stuff about npm/Travis/Couch: Please help!
+Note: Currently integration-tests don’t run on Travis CI. If you know stuff about npm/Travis/Couch: Please help!
 
 ## Badge
 
