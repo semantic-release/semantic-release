@@ -38,11 +38,11 @@ This removes the immediate connection between human emotions and version numbers
     </th>
   </tr>
   <tr>
-    <td style="width: 50%">
-      <a href="https://www.youtube.com/watch?v=tc2UgG5L7WM&amp;index=6&amp;list=PLFZ5NyC0xHDaaTy6tY9p0C0jd_rRRl5Zm"><img alt="JSConfBP Talk" src="https://cloud.githubusercontent.com/assets/908178/8032541/e9bf6300-0dd6-11e5-92c9-8a39211368af.png"></a>
+    <td>
+      <a href="https://www.youtube.com/watch?v=tc2UgG5L7WM&amp;index=6&amp;list=PLFZ5NyC0xHDaaTy6tY9p0C0jd_rRRl5Zm"><img alt="JSConfBP Talk" src="https://cloud.githubusercontent.com/assets/908178/9428178/c337ed26-49a2-11e5-8ad0-a602500a65bf.png"></a>
     </td>
-    <td style="width: 50%">
-      <a href="https://www.youtube.com/watch?v=g6y3DnhkjrI"><img alt="Hangout on Air with Kent C. Dodds" src="https://cloud.githubusercontent.com/assets/908178/9428157/fa55deaa-49a0-11e5-934b-842f000f0278.png"></a>
+    <td>
+      <a href="https://www.youtube.com/watch?v=g6y3DnhkjrI"><img alt="Hangout on Air with Kent C. Dodds" src="https://cloud.githubusercontent.com/assets/908178/9428179/c3387318-49a2-11e5-9f5f-dccd3fbb0c1d.png"></a>
     </td>
   </tr>
   <tr>
