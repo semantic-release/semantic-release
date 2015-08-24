@@ -115,6 +115,15 @@ npmconf.load({}, (err, conf) => {
             process.exit(1)
           }
 
+          try {
+            let shrinkwrap = JSON.parse(readFileSync('./npm-shrinkwrap.json'))
+            shrinkwrap.version = release.version
+            writeFileSync('./npm-shrinkwrap.json', JSON.stringify(shrinkwrap, null, 2))
+            log.verbose('pre', `Wrote version ${release.version} to npm-shrinkwrap.json.`)
+          } catch (e) {
+            log.silly('pre', `Couldn't find npm-shrinkwrap.json.`)
+          }
+
           writeFileSync('./package.json', JSON.stringify(_.assign(pkg, {
             version: release.version
           }), null, 2))
