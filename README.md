@@ -6,11 +6,11 @@
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://github.com/feross/standard)
 
-[![Dependency Status](https://david-dm.org/semantic-release/semantic-release/next.svg)](https://david-dm.org/semantic-release/semantic-release/next)
-[![devDependency Status](https://david-dm.org/semantic-release/semantic-release/next/dev-status.svg)](https://david-dm.org/semantic-release/semantic-release/next#info=devDependencies)
+[![Dependency Status](https://david-dm.org/semantic-release/semantic-release/caribou.svg)](https://david-dm.org/semantic-release/semantic-release/caribou)
+[![devDependency Status](https://david-dm.org/semantic-release/semantic-release/caribou/dev-status.svg)](https://david-dm.org/semantic-release/semantic-release/caribou#info=devDependencies)
 
-[![Build Status](https://travis-ci.org/semantic-release/semantic-release.svg?branch=next)](https://travis-ci.org/semantic-release/semantic-release)
-[![Coverage Status](https://coveralls.io/repos/semantic-release/semantic-release/badge.svg?branch=next&service=github)](https://coveralls.io/github/semantic-release/semantic-release?branch=next)
+[![Build Status](https://travis-ci.org/semantic-release/semantic-release.svg?branch=caribou)](https://travis-ci.org/semantic-release/semantic-release)
+[![Coverage Status](https://coveralls.io/repos/semantic-release/semantic-release/badge.svg?branch=caribou&service=github)](https://coveralls.io/github/semantic-release/semantic-release?branch=caribou)
 
 Out of the box this is just about _commit-messages_, but you can do so much more.
 
