@@ -70,7 +70,7 @@
     "tag": "next"
   },
   "release": {
-    "branch": "next"
+    "branch": "caribou"
   },
   "repository": {
     "type": "git",
