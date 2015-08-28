@@ -71,9 +71,11 @@ npmconf.load({}, (err, conf) => {
     log.verbose('pre', 'Running pre-script.')
     log.verbose('pre', 'Veriying conditions.')
 
-    plugins.verifyConditions(config, (err) => {
-      if (err) {
-        log[options.debug ? 'warn' : 'error']('pre', err.message)
+    plugins.verifyConditions(config, (verifyConditionsErrors) => {
+      if (verifyConditionsErrors) {
+        // ensure errors are listed as array
+        verifyConditionsErrors = [].concat(verifyConditionsErrors);
+        verifyConditionsErrors.forEach((err) => log[options.debug ? 'warn' : 'error']('pre', err.message))
         if (!options.debug) process.exit(1)
       }
 
