@@ -1,6 +1,8 @@
-# semantic-release
+# :package::rocket: semantic-release
 
-> **fully automated, semver-compliant package publishing**
+> **Trust us, this will change your workflow for the better.**
+
+> – [egghead.io](https://egghead.io/lessons/javascript-how-to-write-a-javascript-library-automating-releases-with-semantic-release)
 
 [![Join the chat at https://gitter.im/semantic-release/semantic-release](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/semantic-release/semantic-release?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
@@ -30,6 +32,21 @@ Out of the box this is just about _commit-messages_, but you can do so much more
 This removes the immediate connection between human emotions and version numbers, so strictly following the [SemVer](http://semver.org/) spec is not a problem anymore – and that’s ultimately `semantic-release`’s goal.
 
 <table>
+  <tr>
+    <th colspan="2">
+      “How to Write a JavaScript Library - Automating Releases with semantic-release” – egghead.io
+    </th>
+  </tr>
+  <tr>
+    <td colspan="2">
+      <a href="https://egghead.io/lessons/javascript-how-to-write-a-javascript-library-automating-releases-with-semantic-release"><img src="https://cloud.githubusercontent.com/assets/908178/9730739/7b1da5d8-5610-11e5-88b6-5c75fdda7ee2.png" alt="egghead.io session"></a>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2">
+      A free egghead.io tutorial series on how to write an open source library featuring semantic-release.
+    </td>
+  </tr>
   <tr>
     <th>
       “We fail to follow SemVer – and why it needn’t matter”
