@@ -3,6 +3,8 @@ const test = require('tap').test
 const verify = require('../../dist/lib/verify')
 
 test('verify pkg, options and env', (t) => {
+  t.plan(2)
+
   t.test('dry run verification', (tt) => {
     const noErrors = verify({
       options: {debug: true},

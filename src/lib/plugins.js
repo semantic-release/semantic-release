@@ -16,11 +16,7 @@ function loadPlugin (name) {
   try {
     return require(name)
   } catch(err) {
-    if (err.code === 'MODULE_NOT_FOUND') {
-      return relative(name)
-    } else {
-      throw err
-    }
+    return relative(name)
   }
 }
 
@@ -28,7 +24,6 @@ exports.noopPlugin = './plugin-noop'
 
 exports.normalizeArray = function (pluginConfig, fallback) {
   if (Array.isArray(pluginConfig)) {
-
     return function (pluginOptions, cb) {
       var tasks = pluginConfig.map((step) => {
         return exports.normalize(step, exports.noopPlugin).bind(null, pluginConfig)

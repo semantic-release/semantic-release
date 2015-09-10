@@ -24,6 +24,8 @@ const defaultRelease = {
 }
 
 test('full post run', (t) => {
+  t.plan(3)
+
   t.test('in debug mode w/o token', (tt) => {
     post({
       options: {debug: true},
