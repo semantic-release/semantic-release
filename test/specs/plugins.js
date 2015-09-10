@@ -67,6 +67,7 @@ test('plugin pipelines', (t) => {
 })
 
 test('normalize and load plugin', (t) => {
+  t.plan(4)
 
   t.test('load from string', (tt) => {
     const plugin = plugins.normalize('./dist/lib/plugin-noop')
@@ -90,6 +91,16 @@ test('normalize and load plugin', (t) => {
     const plugin = plugins.normalize(null, '../../dist/lib/plugin-noop')
 
     tt.is(typeof plugin, 'function')
+
+    tt.end()
+  })
+
+  t.test('load plugin with errors', (tt) => {
+    try {
+      plugins.normalize(null, './.test/mocks/plugin-throw-error')
+    } catch (error) {
+      tt.is(error.message, 'Error: throwen error')
+    }
 
     tt.end()
   })
