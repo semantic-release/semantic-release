@@ -96,7 +96,7 @@ _Note:_ The current release/tag implementation is tied to GitHub, but could be o
 This module ships with the [AngularJS Commit Message Conventions](https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/edit) and changelog generator, but you can [define your own](#plugins) style.
 
 Each commit message consists of a **header**, a **body** and a **footer**.  The header has a special
-format that includes a **type**, a **scope** and a **subject**:
+format that includes a **type**, a **scope** and a **subject** ([full explanation](https://github.com/ajoslin/conventional-changelog/blob/master/conventions/angular.md)):
 
 ```
 <type>(<scope>): <subject>
@@ -106,7 +106,7 @@ format that includes a **type**, a **scope** and a **subject**:
 <footer>
 ```
 
-[Full explanation](https://github.com/ajoslin/conventional-changelog/blob/master/conventions/angular.md)
+You can simplify using this convention for yourself and contributors by using [commitizen](https://github.com/commitizen/cz-cli) and [validate-commit-msg](https://github.com/kentcdodds/validate-commit-msg).
 
 ## Setup
 
