@@ -94,6 +94,8 @@ format that includes a **type**, a **scope** and a **subject**:
 
 > [Full explanation](https://github.com/ajoslin/conventional-changelog/blob/master/conventions/angular.md)
 
+You can simplify using this convention for yourself and contributors by using [commitizen](https://github.com/commitizen/cz-cli) and [validate-commit-msg](https://github.com/kentcdodds/validate-commit-msg).
+
 When `semantic-release` got setup it will do that after every successful continuous integration build of your master branch (or any other branch you specify) and publish the new version for you. That way no human is directly involved in the release process and your releases are guaranteed to be [unromantic and unsentimental](http://sentimentalversioning.org/).
 
 If you fear the loss of control over timing and marketing implications of software releases you should know that `semantic-release` supports [release channels](https://github.com/npm/npm/issues/2718) using `npm`’s [dist-tags](https://docs.npmjs.com/cli/tag). This way you can keep control over what your users end up using by default, you can decide when to promote an automatically released version to the stable channel and you can choose which versions to write blogposts and tweets about. You can use the same mechanism to support older versions of your software, for example with important security fixes.
