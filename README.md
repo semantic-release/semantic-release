@@ -1,10 +1,15 @@
-# semantic-release
+# :package::rocket: semantic-release
 
-> **fully automated, semver-compliant package publishing**
+**fully automated package publishing**
+
+> **Trust us, this will change your workflow for the better.**
+
+> – [egghead.io](https://egghead.io/lessons/javascript-how-to-write-a-javascript-library-automating-releases-with-semantic-release)
 
 [![Join the chat at https://gitter.im/semantic-release/semantic-release](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/semantic-release/semantic-release?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://github.com/feross/standard)
+[![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 
 [![Dependency Status](https://david-dm.org/semantic-release/semantic-release/badger.svg)](https://david-dm.org/semantic-release/semantic-release/badger)
 [![devDependency Status](https://david-dm.org/semantic-release/semantic-release/badger/dev-status.svg)](https://david-dm.org/semantic-release/semantic-release/badger#info=devDependencies)
@@ -23,12 +28,27 @@ Out of the box this is just about _commit-messages_, but you can do so much more
 
 &nbsp; | Commands | Comment
 --- | --- | ---
-| **manual** | <pre><code><div>npm version major</div><div>git push origin master --tags</div><div>npm publish</div></code></pre> | You **manually decide** what the **next version** is. You have to remember what major, minor and patch means. You have to remember to push both commits and tags. You have to wait for the CI to pass. |
-| **semantic-release** | <pre><code><div>git commit -m "fix: &lt;message&gt;"</div><div>git push</div></code></pre> | You **describe the changes** you’ve made. A new version is automatically published with the correct version number.
+| **manual/before** | <pre><code><div>npm version major</div><div>git push origin master --tags</div><div>npm publish</div></code></pre> | You **manually decide** what the **next version** is. You have to remember what major, minor and patch means. You have to remember to push both commits and tags. You have to wait for the CI to pass. |
+| **semantic-release/after** | <pre><code><div>git commit -m "fix: &lt;message&gt;"</div><div>git push</div></code></pre> | You **describe the changes** you’ve made. A new version is automatically published with the correct version number.
 
 This removes the immediate connection between human emotions and version numbers, so strictly following the [SemVer](http://semver.org/) spec is not a problem anymore – and that’s ultimately `semantic-release`’s goal.
 
 <table>
+  <tr>
+    <th colspan="2">
+      “How to Write a JavaScript Library - Automating Releases with semantic-release” – egghead.io
+    </th>
+  </tr>
+  <tr>
+    <td colspan="2">
+      <a href="https://egghead.io/lessons/javascript-how-to-write-a-javascript-library-automating-releases-with-semantic-release"><img src="https://cloud.githubusercontent.com/assets/908178/9730739/7b1da5d8-5610-11e5-88b6-5c75fdda7ee2.png" alt="egghead.io session"></a>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2">
+      A free egghead.io tutorial series on how to write an open source library featuring semantic-release.
+    </td>
+  </tr>
   <tr>
     <th>
       “We fail to follow SemVer – and why it needn’t matter”
@@ -59,26 +79,9 @@ This removes the immediate connection between human emotions and version numbers
 
 Instead of writing [meaningless commit messages](http://whatthecommit.com/), we can take our time to think about the changes in the codebase and write them down. Following formalized conventions it this then possible to generate a helpful changelog and to derive the next semantic version number from them.
 
-_Note: This module ships with the [AngularJS Commit Message Conventions](https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/edit) and changelog generator, but you can [define your own](#plugins) style_.
-
-> ### Commit Message Format
-
-> Each commit message consists of a **header**, a **body** and a **footer**.  The header has a special
-format that includes a **type**, a **scope** and a **subject**:
-
-> ```
-<type>(<scope>): <subject>
-<BLANK LINE>
-<body>
-<BLANK LINE>
-<footer>
-```
-
-> [Full explanation](https://github.com/ajoslin/conventional-changelog/blob/master/conventions/angular.md)
-
 When `semantic-release` got setup it will do that after every successful continuous integration build of your master branch (or any other branch you specify) and publish the new version for you. That way no human is directly involved in the release process and your releases are guaranteed to be [unromantic and unsentimental](http://sentimentalversioning.org/).
 
-If you fear the loss of control over timing and marketing implications of software releases you should know that `semantic-release` supports [release channels](https://github.com/npm/npm/issues/2718) using `npm`’s [dist-tags](https://docs.npmjs.com/cli/tag). This way you can keep control over what your users end up using by default, you can decide when to promote an automatically released version to the stable channel and you can choose which versions to write blogposts and tweets about. You can use the same mechanism to support older versions of your software, for example with important security fixes.
+If you fear the loss of control over timing and marketing implications of software releases you should know that `semantic-release` supports [release channels](https://github.com/npm/npm/issues/2718) using `npm`’s [dist-tags](https://docs.npmjs.com/cli/tag). This way you can keep control over what your users end up using by default, you can decide when to promote an automatically released version to the stable channel and you can choose which versions to write blogposts and tweets about. You can use the same mechanism to [support older versions of your software](https://gist.github.com/boennemann/54042374e49c7ade8910), for example with important security fixes.
 
 This is what happens in series:
 
@@ -87,6 +90,23 @@ This is what happens in series:
 | New code is pushed and triggers a CI build. | Based on all commits that happened since the last release, the new version number gets written to the `package.json`. | The new version gets published to `npm`. | A changelog gets generated and a [release](https://help.github.com/articles/about-releases/) (including a git tag) on GitHub gets created. |
 
 _Note:_ The current release/tag implementation is tied to GitHub, but could be opened up to Bitbucket, GitLab, et al. Feel free to send PRs for these services.
+
+## Default Commit Message Format
+
+This module ships with the [AngularJS Commit Message Conventions](https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/edit) and changelog generator, but you can [define your own](#plugins) style.
+
+Each commit message consists of a **header**, a **body** and a **footer**.  The header has a special
+format that includes a **type**, a **scope** and a **subject**:
+
+```
+<type>(<scope>): <subject>
+<BLANK LINE>
+<body>
+<BLANK LINE>
+<footer>
+```
+
+[Full explanation](https://github.com/ajoslin/conventional-changelog/blob/master/conventions/angular.md)
 
 ## Setup
 
@@ -113,7 +133,7 @@ You can pass options either via command line (in [kebab-case](https://lodash.com
 
 
 These options are currently available:
-- `branch`: The branch on which releases should happen. Default: `’master’`
+- `branch`: The branch on which releases should happen. Default: `'master'`
 - `debug`: If true doesn’t actually publish to npm or write things to file. Default: `!process.env.CI`
 - `githubToken`: The token used to authenticate with GitHub. Default: `process.env.GH_TOKEN`
 - `githubUrl`: Optional. Pass your GitHub Enterprise endpoint.
@@ -121,9 +141,9 @@ These options are currently available:
 _A few notes on `npm` config_:
 1. The `npm` token can only be defined in the environment as `NPM_TOKEN`, because that’s where `npm` itself is going to read it from.
 
-2. In order to publish to a different `npm` registry you can just configure that how you would usually do it and `semantic-release` will respect that setting.
+2. In order to publish to a different `npm` registry you can specify that inside the `package.json`’s [`publishConfig`](https://docs.npmjs.com/files/package.json#publishconfig) field.
 
-3. If you want to use another dist-tag for your publishes than `’latest’` you can specify that inside the `package.json`’s [`publishConfig`](https://docs.npmjs.com/files/package.json#publishconfig) field.
+3. If you want to use another dist-tag for your publishes than `'latest'` you can specify that inside the `package.json`’s [`publishConfig`](https://docs.npmjs.com/files/package.json#publishconfig) field.
 
 4. `semantic-release` generally tries to orientate itself towards `npm` – it inherits the loglevel for example.
 
@@ -248,4 +268,4 @@ Use this in one of your projects? Include one of these badges in your README.md 
 MIT License
 2015 © Stephan Bönnemann and [contributors](https://github.com/semantic-release/semantic-release/graphs/contributors)
 
-![https://twitter.com/trodrigues/status/509301317467373571](https://cloud.githubusercontent.com/assets/908178/6091690/cc86f58c-aeb8-11e4-94cb-15f15f486cde.png)
+[![](https://cloud.githubusercontent.com/assets/908178/6091690/cc86f58c-aeb8-11e4-94cb-15f15f486cde.png)](https://twitter.com/trodrigues/status/509301317467373571)
