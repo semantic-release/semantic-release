@@ -12,27 +12,27 @@ module.exports = function ({lastRelease, options}, cb) {
   if (!from) return extract()
 
   exec(`git branch --contains ${from}`, (err, stdout) => {
-    if (err) return cb(err)
     let inHistory = false
+    let branches
 
-    const branches = stdout.split('\n')
-    .map((result) => {
-      if (branch === result.replace('*', '').trim()) {
-        inHistory = true
-        return null
-      }
-      return result.trim()
-    })
-    .filter(branch => !!branch)
+    if (!err && stdout) {
+      branches = stdout.split('\n')
+      .map((result) => {
+        if (branch === result.replace('*', '').trim()) {
+          inHistory = true
+          return null
+        }
+        return result.trim()
+      })
+      .filter(branch => !!branch)
+    }
 
     if (!inHistory) {
       log.error('commits',
-`The commit the last release of this package was derived from is no longer
-in the direct history of the "${branch}" branch.
+`The commit the last release of this package was derived from is not in the direct history of the "${branch}" branch.
 This means semantic-release can not extract the commits between now and then.
-This is usually caused by force pushing or releasing from an unrelated branch.
-You can recover from this error by publishing manually or restoring
-the commit "${from}".` + (branches.length ?
+This is usually caused by force pushing, releasing from an unrelated branch, or using an already existing package name.
+You can recover from this error by publishing manually or restoring the commit "${from}".` + (branches && branches.length ?
         `\nHere is a list of branches that still contain the commit in question: \n * ${branches.join('\n * ')}` :
         ''
       ))
