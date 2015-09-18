@@ -108,6 +108,26 @@ format that includes a **type**, a **scope** and a **subject** ([full explanatio
 
 You can simplify using this convention for yourself and contributors by using [commitizen](https://github.com/commitizen/cz-cli) and [validate-commit-msg](https://github.com/kentcdodds/validate-commit-msg).
 
+### Patch Release
+
+```
+fix(pencil): stop graphite breaking when too much pressure applied
+```
+
+### ~~Minor~~ Fix Release
+
+```
+feat(pencil): add 'graphiteWidth' option
+```
+
+### ~~Major~~ Breaking Release
+
+```
+perf(pencil): remove graphiteWidth option
+
+BREAKING CHANGE: The graphiteWidth option has been removed. The default graphite width of 10mm is always used for performance reason.
+```
+
 ## Setup
 
 [![NPM](https://nodei.co/npm/semantic-release.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/semantic-release/)
