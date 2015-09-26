@@ -12,9 +12,9 @@ module.exports = {
 
     cb(
       null,
-      /\.\.HEAD/.test(command) ?
-        rawCommits[0] :
-        rawCommits.join()
+      /\.\.HEAD/.test(command)
+        ? rawCommits[0]
+        : rawCommits.join()
     )
   },
   '@noCallThru': true

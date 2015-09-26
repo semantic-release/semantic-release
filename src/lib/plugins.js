@@ -12,9 +12,9 @@ let exports = module.exports = function (options) {
     if (!Array.isArray(options[plugin])) {
       plugins[plugin] = exports.normalize(
         options[plugin],
-        plugin === 'verifyConditions' ?
-          '@semantic-release/condition-travis' :
-          './plugin-noop'
+        plugin === 'verifyConditions'
+          ? '@semantic-release/condition-travis'
+          : './plugin-noop'
       )
       return
     }
