@@ -32,9 +32,9 @@ module.exports = function ({lastRelease, options}, cb) {
 `The commit the last release of this package was derived from is not in the direct history of the "${branch}" branch.
 This means semantic-release can not extract the commits between now and then.
 This is usually caused by force pushing, releasing from an unrelated branch, or using an already existing package name.
-You can recover from this error by publishing manually or restoring the commit "${from}".` + (branches && branches.length ?
-        `\nHere is a list of branches that still contain the commit in question: \n * ${branches.join('\n * ')}` :
-        ''
+You can recover from this error by publishing manually or restoring the commit "${from}".` + (branches && branches.length
+        ? `\nHere is a list of branches that still contain the commit in question: \n * ${branches.join('\n * ')}`
+        : ''
       ))
       return cb(new SemanticReleaseError('Commit not in history', 'ENOTINHISTORY'))
     }

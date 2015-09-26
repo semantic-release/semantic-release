@@ -28,9 +28,9 @@ module.exports = function (config, cb) {
 
     const nextRelease = {
       type: results.type,
-      version: results.type === 'initial' ?
-        '1.0.0' :
-        semver.inc(results.lastRelease.version, results.type)
+      version: results.type === 'initial'
+        ? '1.0.0'
+        : semver.inc(results.lastRelease.version, results.type)
     }
 
     plugins.verifyRelease(_.assign({

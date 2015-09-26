@@ -65,4 +65,6 @@ test('full post run', (t) => {
       tt.end()
     })
   })
+
+  t.end()
 })

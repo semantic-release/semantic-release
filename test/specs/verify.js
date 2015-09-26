@@ -65,4 +65,6 @@ test('verify pkg, options and env', (t) => {
 
     tt.end()
   })
+
+  t.end()
 })

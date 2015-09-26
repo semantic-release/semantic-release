@@ -67,7 +67,6 @@ test('plugin pipelines', (t) => {
 })
 
 test('normalize and load plugin', (t) => {
-
   t.test('load from string', (tt) => {
     const plugin = plugins.normalize('./dist/lib/plugin-noop')
 
@@ -93,4 +92,6 @@ test('normalize and load plugin', (t) => {
 
     tt.end()
   })
+
+  t.end()
 })
