@@ -92,4 +92,6 @@ test('normalize and load plugin', (t) => {
 
     tt.end()
   })
+
+  t.end()
 })
