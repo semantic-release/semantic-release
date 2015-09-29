@@ -114,7 +114,7 @@ You can simplify using this convention for yourself and contributors by using [c
 fix(pencil): stop graphite breaking when too much pressure applied
 ```
 
-### ~~Minor~~ Fix Release
+### ~~Minor~~ Feature Release
 
 ```
 feat(pencil): add 'graphiteWidth' option
