@@ -41,7 +41,7 @@
   "devDependencies": {
     "babel": "5.8.21",
     "coveralls": "2.11.3",
-    "cz-conventional-changelog": "1.1.0",
+    "cz-conventional-changelog": "1.1.2",
     "mkdirp": "^0.5.1",
     "nixt": "^0.4.1",
     "nock": "2.11.0",
