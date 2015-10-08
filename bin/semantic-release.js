@@ -2,11 +2,11 @@
 
 /* istanbul ignore next */
 try {
-  require('../dist')
+  require('../dist/cli')
 } catch (err) {
   if (err.code === 'MODULE_NOT_FOUND') {
     require('babel/register')
-    require('../src')
+    require('../src/cli')
   } else {
     console.log(err)
   }
