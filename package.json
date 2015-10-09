@@ -50,7 +50,7 @@
     "proxyquire": "1.7.3",
     "rimraf": "2.4.2",
     "standard": "5.3.0",
-    "tap": "1.4.0"
+    "tap": "2.1.1"
   },
   "engines": {
     "node": ">=0.10",
