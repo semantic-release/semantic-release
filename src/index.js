@@ -6,10 +6,11 @@ const _ = require('lodash')
 const log = require('npmlog')
 const nopt = require('nopt')
 const npmconf = require('npmconf')
+const normalizeData = require('normalize-package-data')
 
 log.heading = 'semantic-release'
 const env = process.env
-const pkg = JSON.parse(readFileSync('./package.json'))
+const pkg = normalizeData(readFileSync('./package.json'))
 const knownOptions = {
   branch: String,
   debug: Boolean,

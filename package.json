@@ -30,6 +30,7 @@
     "lodash": "^3.10.1",
     "nerf-dart": "^1.0.0",
     "nopt": "^3.0.3",
+    "normalize-package-data": "^2.3.4",
     "npmconf": "^2.1.2",
     "npmlog": "^2.0.0",
     "parse-github-repo-url": "^1.0.0",
