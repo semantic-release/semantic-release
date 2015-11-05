@@ -31,7 +31,7 @@
     "nerf-dart": "^1.0.0",
     "nopt": "^3.0.3",
     "npmconf": "^2.1.2",
-    "npmlog": "^1.2.1",
+    "npmlog": "^2.0.0",
     "parse-github-repo-url": "^1.0.0",
     "require-relative": "^0.8.7",
     "run-auto": "^1.1.2",
