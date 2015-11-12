@@ -39,7 +39,7 @@
     "semver": "^5.0.3"
   },
   "devDependencies": {
-    "babel": "^5.8.21",
+    "babel": "^6.1.18",
     "coveralls": "^2.11.4",
     "cz-conventional-changelog": "^1.1.4",
     "mkdirp": "^0.5.1",
