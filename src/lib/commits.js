@@ -45,7 +45,7 @@ You can recover from this error by publishing manually or restoring the commit "
   function extract () {
     exec(
       `git log -E --format=%H==SPLIT==%B==END== ${range}`,
-      { maxBuffer: Infinity }
+      { maxBuffer: Infinity },
       (err, stdout) => {
         if (err) return cb(err)
 
