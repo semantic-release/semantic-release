@@ -10,3 +10,16 @@ module.exports = function () {
     }
   }
 }
+
+module.exports.error = function () {
+  return {
+    authenticate: function () {
+      return true
+    },
+    releases: {
+      createRelease: function (release, cb) {
+        cb(new Error('An error with createRelease has occured.'))
+      }
+    }
+  }
+}

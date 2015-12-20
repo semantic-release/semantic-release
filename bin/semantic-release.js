@@ -149,13 +149,13 @@ npmconf.load({}, function (err, conf) {
   } else if (options.argv.remain[0] === 'post') {
     log.verbose('post', 'Running post-script.')
 
-    require('../src/post')(config, function (err, published, release) {
+    plugins.postRelease(config, function (err, release) {
       if (err) {
         log.error('post', 'Failed to publish release notes.', err)
         process.exit(1)
       }
 
-      log.verbose('post', (published ? 'Published' : 'Generated') + ' release notes.', release)
+      log.verbose('post', 'Published release notes.', release)
     })
   } else {
     log.error('post', 'Command "' + options.argv.remain[0] + '" not recognized. User either "pre" or "post"')
