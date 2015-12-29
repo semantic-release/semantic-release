@@ -1,9 +1,10 @@
-const SemanticReleaseError = require('@semantic-release/error')
+var SemanticReleaseError = require('@semantic-release/error')
 
 module.exports = function (config, cb) {
-  const { plugins, lastRelease } = config
+  var plugins = config.plugins
+  var lastRelease = config.lastRelease
 
-  plugins.analyzeCommits(config, (err, type) => {
+  plugins.analyzeCommits(config, function (err, type) {
     if (err) return cb(err)
 
     if (!type) {

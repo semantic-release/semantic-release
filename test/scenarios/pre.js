@@ -1,30 +1,27 @@
-const { join } = require('path')
+var join = require('path').join
 
-const { test, tearDown } = require('tap')
-const rimraf = require('rimraf')
+var tap = require('tap')
+var rimraf = require('rimraf')
 
-const registry = require('../registry')
-const testModule = require('../lib/test-module')
-const baseScenario = require('../lib/base-scenario')
+var registry = require('../registry')
+var testModule = require('../lib/test-module')
+var baseScenario = require('../lib/base-scenario')
 
-test('change version', (t) => {
+var tearDown = tap.tearDown
+var test = tap.test
+
+test('change version', {bail: process.env.TRAVIS === 'true'}, function (t) {
   t.plan(7)
 
-  registry.start((err) => {
+  registry.start(function (err, stdout, stderr) {
     t.error(err, 'registry started')
-    if (err) {
-      t.end()
-      t.bailout('registry not started')
-    }
+    if (err) return t.end()
 
-    testModule('change-version', (err, cwd) => {
+    testModule('change-version', registry.uri, function (err, cwd) {
       t.error(err, 'test-module created')
-      if (err) {
-        t.end()
-        t.bailout('test-module not created')
-      }
+      if (err) return t.end()
 
-      t.test('no version', (tt) => {
+      t.test('no version', function (tt) {
         tt.plan(1)
 
         baseScenario(cwd, registry.uri)
@@ -35,7 +32,7 @@ test('change version', (t) => {
           .end(tt.error)
       })
 
-      t.test('initial version', (tt) => {
+      t.test('initial version', function (tt) {
         tt.plan(1)
 
         baseScenario(cwd, registry.uri)
@@ -47,7 +44,7 @@ test('change version', (t) => {
           .end(tt.error)
       })
 
-      t.test('patch version', (tt) => {
+      t.test('patch version', function (tt) {
         tt.plan(1)
 
         baseScenario(cwd, registry.uri)
@@ -59,7 +56,7 @@ test('change version', (t) => {
           .end(tt.error)
       })
 
-      t.test('feature version', (tt) => {
+      t.test('feature version', function (tt) {
         tt.plan(1)
 
         baseScenario(cwd, registry.uri)
@@ -71,7 +68,7 @@ test('change version', (t) => {
           .end(tt.error)
       })
 
-      t.test('breaking version', (tt) => {
+      t.test('breaking version', function (tt) {
         tt.plan(1)
 
         baseScenario(cwd, registry.uri)
@@ -86,10 +83,11 @@ test('change version', (t) => {
   })
 })
 
-tearDown(() => {
+tearDown(function () {
+  if (process.env.TRAVIS === 'true') return
+
   function cb (err, stdout, stderr) {
     if (err) console.log(err)
-    if (stdout) console.log(stdout)
     if (stderr) console.log(stderr)
   }
 

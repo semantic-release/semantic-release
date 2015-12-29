@@ -1,12 +1,11 @@
-const { exec } = require('child_process')
-const { join } = require('path')
+var exec = require('child_process').exec
 
-const opts = {
-  cwd: join(__dirname, '../../test/registry')
+var opts = {
+  cwd: __dirname
 }
 
 module.exports = {
   start: exec.bind(null, './start.sh', opts),
   stop: exec.bind(null, './stop.sh', opts),
-  uri: 'http://localhost:15986/registry/_design/app/_rewrite/'
+  uri: 'http://localhost:' + (process.env.TRAVIS === 'true' ? 5984 : 15986) + '/registry/_design/app/_rewrite/'
 }

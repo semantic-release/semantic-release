@@ -1,13 +1,16 @@
-const test = require('tap').test
-const proxyquire = require('proxyquire')
+var test = require('tap').test
+var proxyquire = require('proxyquire')
 
-const commits = proxyquire('../../dist/lib/commits', {
+var commits = proxyquire('../../src/lib/commits', {
+  'npmlog': {
+    error: function () {}
+  },
   'child_process': require('../mocks/child-process')
 })
 
-test('commits since last release', (t) => {
-  t.test('get all commits', (tt) => {
-    commits({lastRelease: {}, options: {branch: 'master'}}, (err, commits) => {
+test('commits since last release', function (t) {
+  t.test('get all commits', function (tt) {
+    commits({lastRelease: {}, options: {branch: 'master'}}, function (err, commits) {
       tt.error(err)
       tt.is(commits.length, 2, 'all commits')
       tt.is(commits[0].hash, 'hash-one', 'parsed hash')
@@ -17,8 +20,8 @@ test('commits since last release', (t) => {
     })
   })
 
-  t.test('get commits since hash', (tt) => {
-    commits({lastRelease: {gitHead: 'hash'}, options: {branch: 'master'}}, (err, commits) => {
+  t.test('get commits since hash', function (tt) {
+    commits({lastRelease: {gitHead: 'hash'}, options: {branch: 'master'}}, function (err, commits) {
       tt.error(err)
       tt.is(commits.length, 1, 'specified commits')
       tt.is(commits[0].hash, 'hash-one', 'parsed hash')
@@ -28,8 +31,8 @@ test('commits since last release', (t) => {
     })
   })
 
-  t.test('get commits since hash', (tt) => {
-    commits({lastRelease: {gitHead: 'notinhistory'}, options: {branch: 'notmaster'}}, (err, commits) => {
+  t.test('get commits since hash', function (tt) {
+    commits({lastRelease: {gitHead: 'notinhistory'}, options: {branch: 'notmaster'}}, function (err, commits) {
       tt.ok(err)
       tt.is(err.code, 'ENOTINHISTORY')
       tt.end()

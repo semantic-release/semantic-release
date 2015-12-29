@@ -1,39 +1,43 @@
-const { exec } = require('child_process')
+var exec = require('child_process').exec
 
-const log = require('npmlog')
+var log = require('npmlog')
 
-const SemanticReleaseError = require('@semantic-release/error')
+var SemanticReleaseError = require('@semantic-release/error')
 
-module.exports = function ({lastRelease, options}, cb) {
-  const branch = options.branch
-  const from = lastRelease.gitHead
-  const range = (from ? from + '..' : '') + 'HEAD'
+module.exports = function (config, cb) {
+  var lastRelease = config.lastRelease
+  var options = config.options
+  var branch = options.branch
+  var from = lastRelease.gitHead
+  var range = (from ? from + '..' : '') + 'HEAD'
 
   if (!from) return extract()
 
-  exec(`git branch --contains ${from}`, (err, stdout) => {
-    let inHistory = false
-    let branches
+  exec('git branch --contains ' + from, function (err, stdout) {
+    var inHistory = false
+    var branches
 
     if (!err && stdout) {
       branches = stdout.split('\n')
-      .map((result) => {
+      .map(function (result) {
         if (branch === result.replace('*', '').trim()) {
           inHistory = true
           return null
         }
         return result.trim()
       })
-      .filter(branch => !!branch)
+      .filter(function (branch) {
+        return !!branch
+      })
     }
 
     if (!inHistory) {
       log.error('commits',
-`The commit the last release of this package was derived from is not in the direct history of the "${branch}" branch.
-This means semantic-release can not extract the commits between now and then.
-This is usually caused by force pushing, releasing from an unrelated branch, or using an already existing package name.
-You can recover from this error by publishing manually or restoring the commit "${from}".` + (branches && branches.length
-        ? `\nHere is a list of branches that still contain the commit in question: \n * ${branches.join('\n * ')}`
+        'The commit the last release of this package was derived from is not in the direct history of the "' + branch + '" branch.\n' +
+        'This means semantic-release can not extract the commits between now and then.\n' +
+        'This is usually caused by force pushing, releasing from an unrelated branch, or using an already existing package name.\n' +
+        'You can recover from this error by publishing manually or restoring the commit "' + from + '".' + (branches && branches.length
+        ? '\nHere is a list of branches that still contain the commit in question: \n * ' + branches.join('\n * ')
         : ''
       ))
       return cb(new SemanticReleaseError('Commit not in history', 'ENOTINHISTORY'))
@@ -44,16 +48,18 @@ You can recover from this error by publishing manually or restoring the commit "
 
   function extract () {
     exec(
-      `git log -E --format=%H==SPLIT==%B==END== ${range}`,
-      (err, stdout) => {
+      'git log -E --format=%H==SPLIT==%B==END== ' + range,
+      function (err, stdout) {
         if (err) return cb(err)
 
         cb(null, String(stdout).split('==END==\n')
 
-        .filter((raw) => !!raw.trim())
+        .filter(function (raw) {
+          return !!raw.trim()
+        })
 
-        .map((raw) => {
-          const data = raw.split('==SPLIT==')
+        .map(function (raw) {
+          var data = raw.split('==SPLIT==')
           return {
             hash: data[0],
             message: data[1]

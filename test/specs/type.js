@@ -1,9 +1,9 @@
-const test = require('tap').test
+var test = require('tap').test
 
-const type = require('../../dist/lib/type')
+var type = require('../../src/lib/type')
 
-test('get type from commits', (t) => {
-  t.test('get type from plugin', (tt) => {
+test('get type from commits', function (t) {
+  t.test('get type from plugin', function (tt) {
     tt.plan(2)
 
     type({
@@ -12,33 +12,45 @@ test('get type from commits', (t) => {
         message: 'a'
       }],
       lastRelease: {version: '1.0.0'},
-      plugins: {analyzeCommits: (config, cb) => cb(null, 'major')}
-    }, (err, type) => {
+      plugins: {
+        analyzeCommits: function (config, cb) {
+          cb(null, 'major')
+        }
+      }
+    }, function (err, type) {
       tt.error(err)
       tt.is(type, 'major')
     })
   })
 
-  t.test('error when no changes', (tt) => {
+  t.test('error when no changes', function (tt) {
     tt.plan(1)
 
     type({
       commits: [],
       lastRelease: {},
-      plugins: {analyzeCommits: (config, cb) => cb(null, null)}
-    }, (err) => {
+      plugins: {
+        analyzeCommits: function (config, cb) {
+          cb(null, null)
+        }
+      }
+    }, function (err) {
       tt.is(err.code, 'ENOCHANGE')
     })
   })
 
-  t.test('initial version', (tt) => {
+  t.test('initial version', function (tt) {
     tt.plan(2)
 
     type({
       commits: [],
       lastRelease: {},
-      plugins: {analyzeCommits: (config, cb) => cb(null, 'major')}
-    }, (err, type) => {
+      plugins: {
+        analyzeCommits: function (config, cb) {
+          cb(null, 'major')
+        }
+      }
+    }, function (err, type) {
       tt.error(err)
       tt.is(type, 'initial')
     })

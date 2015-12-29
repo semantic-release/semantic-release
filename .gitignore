@@ -1,14 +1,9 @@
-# common
 coverage
 node_modules
 test/registry/couch
 test/registry/data
+test/tmp
 *.log
 *.dump
 .DS_Store
 .nyc_output
-.test
-.tmp
-
-# build-artifacts
-dist
