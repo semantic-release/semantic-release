@@ -1,32 +1,32 @@
-const _ = require('lodash')
-const auto = require('run-auto')
-const semver = require('semver')
+var _ = require('lodash')
+var auto = require('run-auto')
+var semver = require('semver')
 
-const getCommits = require('./lib/commits')
-const getType = require('./lib/type')
+var getCommits = require('./lib/commits')
+var getType = require('./lib/type')
 
 module.exports = function (config, cb) {
-  const { plugins } = config
+  var plugins = config.plugins
 
   auto({
     lastRelease: plugins.getLastRelease.bind(null, config),
-    commits: ['lastRelease', (cb, results) => {
+    commits: ['lastRelease', function (cb, results) {
       getCommits(_.assign({
         lastRelease: results.lastRelease
       }, config),
       cb)
     }],
-    type: ['commits', 'lastRelease', (cb, results) => {
+    type: ['commits', 'lastRelease', function (cb, results) {
       getType(_.assign({
         commits: results.commits,
         lastRelease: results.lastRelease
       }, config),
       cb)
     }]
-  }, (err, results) => {
+  }, function (err, results) {
     if (err) return cb(err)
 
-    const nextRelease = {
+    var nextRelease = {
       type: results.type,
       version: results.type === 'initial'
         ? '1.0.0'
@@ -36,8 +36,8 @@ module.exports = function (config, cb) {
     plugins.verifyRelease(_.assign({
       commits: results.commits,
       lastRelease: results.lastRelease,
-      nextRelease
-    }, config), (err) => {
+      nextRelease: nextRelease
+    }, config), function (err) {
       if (err) return cb(err)
       cb(null, nextRelease)
     })

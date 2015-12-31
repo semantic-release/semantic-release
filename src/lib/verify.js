@@ -1,9 +1,12 @@
-const parseSlug = require('parse-github-repo-url')
+var parseSlug = require('parse-github-repo-url')
 
-const SemanticReleaseError = require('@semantic-release/error')
+var SemanticReleaseError = require('@semantic-release/error')
 
-module.exports = function ({pkg, options, env}) {
-  let errors = []
+module.exports = function (config) {
+  var pkg = config.pkg
+  var options = config.options
+  var env = config.env
+  var errors = []
 
   if (!pkg.name) {
     errors.push(new SemanticReleaseError(

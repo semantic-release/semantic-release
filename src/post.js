@@ -1,32 +1,34 @@
-const url = require('url')
+var url = require('url')
 
-const gitHead = require('git-head')
-const GitHubApi = require('github')
-const parseSlug = require('parse-github-repo-url')
+var gitHead = require('git-head')
+var GitHubApi = require('github')
+var parseSlug = require('parse-github-repo-url')
 
 module.exports = function (config, cb) {
-  const { pkg, options, plugins } = config
-  const ghConfig = options.githubUrl ? url.parse(options.githubUrl) : {}
+  var pkg = config.pkg
+  var options = config.options
+  var plugins = config.plugins
+  var ghConfig = options.githubUrl ? url.parse(options.githubUrl) : {}
 
-  const github = new GitHubApi({
+  var github = new GitHubApi({
     version: '3.0.0',
     port: ghConfig.port,
     protocol: (ghConfig.protocol || '').split(':')[0] || null,
     host: ghConfig.hostname
   })
 
-  plugins.generateNotes(config, (err, log) => {
+  plugins.generateNotes(config, function (err, log) {
     if (err) return cb(err)
 
-    gitHead((err, hash) => {
+    gitHead(function (err, hash) {
       if (err) return cb(err)
 
-      const ghRepo = parseSlug(pkg.repository.url)
-      const release = {
+      var ghRepo = parseSlug(pkg.repository.url)
+      var release = {
         owner: ghRepo[0],
         repo: ghRepo[1],
-        name: `v${pkg.version}`,
-        tag_name: `v${pkg.version}`,
+        name: 'v' + pkg.version,
+        tag_name: 'v' + pkg.version,
         target_commitish: hash,
         draft: !!options.debug,
         body: log
@@ -41,7 +43,7 @@ module.exports = function (config, cb) {
         token: options.githubToken
       })
 
-      github.releases.createRelease(release, (err) => {
+      github.releases.createRelease(release, function (err) {
         if (err) return cb(err)
 
         cb(null, true, release)

@@ -3,8 +3,8 @@ module.exports = function (pkg, conf) {
 
   if (pkg.name[0] !== '@') return conf.get('registry') || 'https://registry.npmjs.org/'
 
-  const scope = pkg.name.split('/')[0]
-  const scopedRegistry = conf.get(`${scope}/registry`)
+  var scope = pkg.name.split('/')[0]
+  var scopedRegistry = conf.get(scope + '/registry')
 
   if (scopedRegistry) return scopedRegistry
 

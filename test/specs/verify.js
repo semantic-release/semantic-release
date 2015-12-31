@@ -1,10 +1,10 @@
-const test = require('tap').test
+var test = require('tap').test
 
-const verify = require('../../dist/lib/verify')
+var verify = require('../../src/lib/verify')
 
-test('verify pkg, options and env', (t) => {
-  t.test('dry run verification', (tt) => {
-    const noErrors = verify({
+test('verify pkg, options and env', function (t) {
+  t.test('dry run verification', function (tt) {
+    var noErrors = verify({
       options: {debug: true},
       pkg: {
         name: 'package',
@@ -16,7 +16,7 @@ test('verify pkg, options and env', (t) => {
 
     tt.is(noErrors.length, 0)
 
-    const errors = verify({
+    var errors = verify({
       options: {debug: true},
       pkg: {}
     })
@@ -25,7 +25,7 @@ test('verify pkg, options and env', (t) => {
     tt.is(errors[0].code, 'ENOPKGNAME')
     tt.is(errors[1].code, 'ENOPKGREPO')
 
-    const errors2 = verify({
+    var errors2 = verify({
       options: {debug: true},
       pkg: {
         name: 'package',
@@ -41,8 +41,8 @@ test('verify pkg, options and env', (t) => {
     tt.end()
   })
 
-  t.test('publish verification', (tt) => {
-    const noErrors = verify({
+  t.test('publish verification', function (tt) {
+    var noErrors = verify({
       env: {NPM_TOKEN: 'yo'},
       options: {githubToken: 'sup'},
       pkg: {
@@ -55,7 +55,7 @@ test('verify pkg, options and env', (t) => {
 
     tt.is(noErrors.length, 0)
 
-    const errors = verify({env: {}, options: {}, pkg: {}})
+    var errors = verify({env: {}, options: {}, pkg: {}})
 
     tt.is(errors.length, 4)
     tt.is(errors[0].code, 'ENOPKGNAME')
