@@ -1,20 +1,13 @@
 {
   "name": "semantic-release",
   "description": "automated semver compliant package publishing",
+  "version": "0.0.0-placeholder",
   "author": "Stephan Bönnemann <stephan@boennemann.me> (http://boennemann.me)",
   "bin": {
-    "semantic-release": "./bin/semantic-release.js"
+    "semantic-release": "bin/semantic-release.js"
   },
   "bugs": {
     "url": "https://github.com/semantic-release/semantic-release/issues"
-  },
-  "config": {
-    "nyc": {
-      "exclude": [
-        ".test",
-        "node_modules"
-      ]
-    }
   },
   "czConfig": {
     "path": "node_modules/cz-conventional-changelog/"
@@ -40,7 +33,6 @@
     "semver": "^5.0.3"
   },
   "devDependencies": {
-    "babel": "^5.8.21",
     "coveralls": "^2.11.4",
     "cz-conventional-changelog": "^1.1.4",
     "mkdirp": "^0.5.1",
@@ -49,7 +41,7 @@
     "npm-registry-couchapp": "^2.6.11",
     "nyc": "^5.0.0",
     "proxyquire": "^1.7.3",
-    "rimraf": "^2.4.3",
+    "rimraf": "^2.5.0",
     "standard": "^5.3.0",
     "tap": "^4.0.0"
   },
@@ -70,7 +62,11 @@
     "version"
   ],
   "license": "MIT",
-  "main": "dist/index.js",
+  "main": "bin/semantic-release.js",
+  "files": [
+    "bin",
+    "src"
+  ],
   "publishConfig": {
     "tag": "next"
   },
@@ -82,17 +78,12 @@
     "url": "git+https://github.com/semantic-release/semantic-release.git"
   },
   "scripts": {
-    "build": "rimraf dist && mkdirp dist && babel src --out-dir dist",
     "coverage": "nyc report",
-    "coverage:upload": "npm run coverage -- --reporter=lcovonly && coveralls < coverage/lcov.info",
-    "prepublish": "npm run build",
-    "pretest:integration": "npm run build && npm run test:build",
-    "pretest:unit": "npm run build && npm run test:build",
-    "semantic-release": "./bin/semantic-release.js pre && npm dedupe && npm publish && ./bin/semantic-release.js post",
-    "test": "npm run test:style && npm run test:unit",
-    "test:build": "rimraf .test && mkdirp .test && babel test --out-dir .test",
-    "test:integration": "tap --no-cov .test/scenarios/*.js",
-    "test:style": "standard",
-    "test:unit": "nyc tap --no-cov .test/specs/*.js"
+    "coverage:upload": "npm run coverage -s -- --reporter=text-lcov | coveralls",
+    "pretest": "standard",
+    "semantic-release": "./bin/semantic-release.js pre && npm publish && ./bin/semantic-release.js post",
+    "test": "npm run test:unit && npm run test:integration",
+    "test:integration": "tap --no-cov test/scenarios/*.js",
+    "test:unit": "nyc tap --no-cov test/specs/*.js"
   }
 }

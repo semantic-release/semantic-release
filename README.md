@@ -257,9 +257,7 @@ It is indeed a great idea because it _forces_ you to follow best practices. If y
 
 ### Why should I trust `semantic-release` with my releases?
 
-`semantic-release` has a full unit- and integration-test-suite that tests _actual_ `npm` publishes against the [npm-registry-couchapp](https://github.com/npm/npm-registry-couchapp/) on node.js `^0.10`, `^0.12` and io.js `^1`, `^2`. A new version won’t get published if it doesn’t pass on all these engines.
-
-Note: Currently integration-tests don’t run on Travis CI. If you know stuff about npm/Travis/Couch: Please help!
+`semantic-release` has a full unit- and integration-test-suite that tests _actual_ `npm` publishes against the [npm-registry-couchapp](https://github.com/npm/npm-registry-couchapp/) on all major node.js versions from `^0.10` on. A new version won’t get published if it doesn’t pass on all these engines.
 
 ## Badge
 

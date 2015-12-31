@@ -1,20 +1,24 @@
-const { defaults } = require('lodash')
-const test = require('tap').test
-const proxyquire = require('proxyquire')
+var defaults = require('lodash').defaults
+var test = require('tap').test
+var proxyquire = require('proxyquire')
 
-const post = proxyquire('../../dist/post', {
+var post = proxyquire('../../src/post', {
   'git-head': require('../mocks/git-head'),
   github: require('../mocks/github')
 })
 
-const pkg = {
+var pkg = {
   version: '1.0.0',
   repository: {url: 'http://github.com/whats/up.git'}
 }
 
-const plugins = {generateNotes: (pkg, cb) => cb(null, 'the log')}
+var plugins = {
+  generateNotes: function (pkg, cb) {
+    cb(null, 'the log')
+  }
+}
 
-const defaultRelease = {
+var defaultRelease = {
   owner: 'whats',
   repo: 'up',
   name: 'v1.0.0',
@@ -23,13 +27,13 @@ const defaultRelease = {
   body: 'the log'
 }
 
-test('full post run', (t) => {
-  t.test('in debug mode w/o token', (tt) => {
+test('full post run', function (t) {
+  t.test('in debug mode w/o token', function (tt) {
     post({
       options: {debug: true},
-      pkg,
-      plugins
-    }, (err, published, release) => {
+      pkg: pkg,
+      plugins: plugins
+    }, function (err, published, release) {
       tt.error(err)
       tt.is(published, false)
       tt.match(release, defaults({draft: true}, defaultRelease))
@@ -38,12 +42,12 @@ test('full post run', (t) => {
     })
   })
 
-  t.test('in debug mode w/token', (tt) => {
+  t.test('in debug mode w/token', function (tt) {
     post({
       options: {debug: true, githubToken: 'yo'},
-      pkg,
-      plugins
-    }, (err, published, release) => {
+      pkg: pkg,
+      plugins: plugins
+    }, function (err, published, release) {
       tt.error(err)
       tt.is(published, true)
       tt.match(release, defaults({draft: true}, defaultRelease))
@@ -52,12 +56,12 @@ test('full post run', (t) => {
     })
   })
 
-  t.test('production', (tt) => {
+  t.test('production', function (tt) {
     post({
       options: {githubToken: 'yo'},
-      pkg,
-      plugins
-    }, (err, published, release) => {
+      pkg: pkg,
+      plugins: plugins
+    }, function (err, published, release) {
       tt.error(err)
       tt.is(published, true)
       tt.match(release, defaultRelease)
