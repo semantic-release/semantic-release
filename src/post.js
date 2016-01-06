@@ -14,7 +14,8 @@ module.exports = function (config, cb) {
     version: '3.0.0',
     port: ghConfig.port,
     protocol: (ghConfig.protocol || '').split(':')[0] || null,
-    host: ghConfig.hostname
+    host: ghConfig.hostname,
+    pathPrefix: options.githubApiPathPrefix || null
   })
 
   plugins.generateNotes(config, function (err, log) {
