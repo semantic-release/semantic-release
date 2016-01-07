@@ -1,4 +1,4 @@
-var parseSlug = require('parse-github-repo-url')
+var parseSlug = require('@bahmutov/parse-github-repo-url')
 
 var SemanticReleaseError = require('@semantic-release/error')
 

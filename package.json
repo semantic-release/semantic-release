@@ -13,6 +13,7 @@
     "path": "node_modules/cz-conventional-changelog/"
   },
   "dependencies": {
+    "@bahmutov/parse-github-repo-url": "^0.1.0",
     "@semantic-release/commit-analyzer": "^2.0.0",
     "@semantic-release/condition-travis": "^5.0.0",
     "@semantic-release/error": "^1.0.0",
@@ -26,7 +27,6 @@
     "normalize-package-data": "^2.3.4",
     "npmconf": "^2.1.2",
     "npmlog": "^2.0.0",
-    "parse-github-repo-url": "^1.0.0",
     "require-relative": "^0.8.7",
     "run-auto": "^1.1.2",
     "run-series": "^1.1.3",

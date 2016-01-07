@@ -41,6 +41,22 @@ test('verify pkg, options and env', function (t) {
     tt.end()
   })
 
+  t.test('dry run verification for gitlab repo', function (tt) {
+    var noErrors = verify({
+      options: {debug: true},
+      pkg: {
+        name: 'package',
+        repository: {
+          url: 'http://gitlab.corp.com/whats/up.git'
+        }
+      }
+    })
+
+    console.log(noErrors)
+    tt.is(noErrors.length, 0)
+    tt.end()
+  })
+
   t.test('publish verification', function (tt) {
     var noErrors = verify({
       env: {NPM_TOKEN: 'yo'},
