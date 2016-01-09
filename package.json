@@ -37,7 +37,7 @@
     "cz-conventional-changelog": "^1.1.4",
     "mkdirp": "^0.5.1",
     "nixt": "^0.4.1",
-    "nock": "^4.0.0",
+    "nock": "^5.2.1",
     "npm-registry-couchapp": "^2.6.11",
     "nyc": "^5.0.0",
     "proxyquire": "^1.7.3",
