@@ -8,13 +8,13 @@ var exports = module.exports = function (options) {
     getLastRelease: exports.normalize(options.getLastRelease, '@semantic-release/last-release-npm')
   }
 
-  ;['verifyConditions', 'verifyRelease'].forEach(function (plugin) {
+  ;['verifyConditions', 'verifyRelease', 'postRelease'].forEach(function (plugin) {
     if (!Array.isArray(options[plugin])) {
       plugins[plugin] = exports.normalize(
         options[plugin],
         plugin === 'verifyConditions'
           ? '@semantic-release/condition-travis'
-          : './plugin-noop'
+          : plugin === 'postRelease' ? './plugin-github-release' : './plugin-noop'
       )
       return
     }

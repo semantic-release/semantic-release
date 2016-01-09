@@ -87,7 +87,7 @@ This is what happens in series:
 
 | 1. `git push` | 2. `semantic-release pre` | 3. `npm publish` | 4. `semantic-release post` |
 | :--- | :--- | :--- | :---- |
-| New code is pushed and triggers a CI build. | Based on all commits that happened since the last release, the new version number gets written to the `package.json`. | The new version gets published to `npm`. | A changelog gets generated and a [release](https://help.github.com/articles/about-releases/) (including a git tag) on GitHub gets created. |
+| New code is pushed and triggers a CI build. | Based on all commits that happened since the last release, the new version number gets written to the `package.json`. | The new version gets published to `npm`. | All `postRelease` plugins are executed, including, if not disabled, the default plugin that publishes a git tag, along with a changelog and [GitHub release](https://help.github.com/articles/about-releases/) |
 
 _Note:_ The current release/tag implementation is tied to GitHub, but could be opened up to Bitbucket, GitLab, et al. Feel free to send PRs for these services.
 
@@ -156,7 +156,7 @@ These options are currently available:
 - `branch`: The branch on which releases should happen. Default: `'master'`
 - `debug`: If true doesn’t actually publish to npm or write things to file. Default: `!process.env.CI`
 - `githubToken`: The token used to authenticate with GitHub. Default: `process.env.GH_TOKEN`
-- `githubUrl`: Optional. Pass your GitHub Enterprise endpoint.
+- `githubUrl`: Optional. Pass your GitHub Enterprise endpoint. Default: `process.env.GH_URL`
 
 _A few notes on `npm` config_:
 1. The `npm` token can only be defined in the environment as `NPM_TOKEN`, because that’s where `npm` itself is going to read it from.
@@ -227,6 +227,12 @@ Passing an array of plugins will run them in series.
 
 This plugin is responsible for determining a package’s last release version. The [default implementation](https://github.com/semantic-release/last-release-npm) uses the last published version on a npm registry.
 
+### `postRelease`
+
+This plugin is responsible for publishing release information. For example, the default implementation publishes a changelog, a list, of enhancements, and bug fixes, included in the latest release to the project's SCM system (GitHub only in the case of the default implementation).
+
+Passing an array of plugins will run them in series.
+
 ## ITYM*FAQ*LT
 > I think you might frequently ask questions like these
 
@@ -249,7 +255,7 @@ Of course you can, but this doesn’t necessarily mean you should. Running your 
 
 ### Can I manually trigger the release of a specific version?
 
-You can trigger a release by pushing to your GitHub repository. You deliberately cannot trigger a _specific_ version release, because this is the whole point of `semantic-release`. Start your packages with `1.0.0` and semver on.  
+You can trigger a release by pushing to your GitHub repository. You deliberately cannot trigger a _specific_ version release, because this is the whole point of `semantic-release`. Start your packages with `1.0.0` and semver on.
 
 ### Is it _really_ a good idea to release on every push?
 
