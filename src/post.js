@@ -2,7 +2,7 @@ var url = require('url')
 
 var gitHead = require('git-head')
 var GitHubApi = require('github')
-var parseSlug = require('parse-github-repo-url')
+var parseSlug = require('@bahmutov/parse-github-repo-url')
 
 module.exports = function (config, cb) {
   var pkg = config.pkg
