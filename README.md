@@ -157,6 +157,7 @@ These options are currently available:
 - `debug`: If true doesn’t actually publish to npm or write things to file. Default: `!process.env.CI`
 - `githubToken`: The token used to authenticate with GitHub. Default: `process.env.GH_TOKEN`
 - `githubUrl`: Optional. Pass your GitHub Enterprise endpoint.
+- `githubApiPathPrefix`: Optional. The path prefix for your GitHub Enterprise API.
 
 _A few notes on `npm` config_:
 1. The `npm` token can only be defined in the environment as `NPM_TOKEN`, because that’s where `npm` itself is going to read it from.

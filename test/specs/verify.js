@@ -25,19 +25,6 @@ test('verify pkg, options and env', function (t) {
     tt.is(errors[0].code, 'ENOPKGNAME')
     tt.is(errors[1].code, 'ENOPKGREPO')
 
-    var errors2 = verify({
-      options: {debug: true},
-      pkg: {
-        name: 'package',
-        repository: {
-          url: 'lol'
-        }
-      }
-    })
-
-    tt.is(errors2.length, 1)
-    tt.is(errors2[0].code, 'EMALFORMEDPKGREPO')
-
     tt.end()
   })
 
