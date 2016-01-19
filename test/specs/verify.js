@@ -3,8 +3,12 @@ var test = require('tap').test
 var verify = require('../../src/lib/verify')
 
 test('verify pkg, options and env', function (t) {
+  t.plan(3)
+
   t.test('dry run verification', function (tt) {
-    var noErrors = verify({
+    tt.plan(4)
+
+    verify(null, {
       options: {debug: true},
       pkg: {
         name: 'package',
@@ -12,24 +16,24 @@ test('verify pkg, options and env', function (t) {
           url: 'http://github.com/whats/up.git'
         }
       }
+    }, function (noErrors) {
+      tt.is(noErrors.length, 0)
     })
 
-    tt.is(noErrors.length, 0)
-
-    var errors = verify({
+    verify(null, {
       options: {debug: true},
       pkg: {}
+    }, function (errors) {
+      tt.is(errors.length, 2)
+      tt.is(errors[0].code, 'ENOPKGNAME')
+      tt.is(errors[1].code, 'ENOPKGREPO')
     })
-
-    tt.is(errors.length, 2)
-    tt.is(errors[0].code, 'ENOPKGNAME')
-    tt.is(errors[1].code, 'ENOPKGREPO')
-
-    tt.end()
   })
 
   t.test('dry run verification for gitlab repo', function (tt) {
-    var noErrors = verify({
+    tt.plan(1)
+
+    verify(null, {
       options: {debug: true},
       pkg: {
         name: 'package',
@@ -37,15 +41,15 @@ test('verify pkg, options and env', function (t) {
           url: 'http://gitlab.corp.com/whats/up.git'
         }
       }
+    }, function (noErrors) {
+      tt.is(noErrors.length, 0)
     })
-
-    console.log(noErrors)
-    tt.is(noErrors.length, 0)
-    tt.end()
   })
 
   t.test('publish verification', function (tt) {
-    var noErrors = verify({
+    tt.plan(6)
+
+    verify(null, {
       env: {NPM_TOKEN: 'yo'},
       options: {githubToken: 'sup'},
       pkg: {
@@ -54,20 +58,16 @@ test('verify pkg, options and env', function (t) {
           url: 'http://github.com/whats/up.git'
         }
       }
+    }, function (noErrors) {
+      tt.is(noErrors.length, 0)
     })
 
-    tt.is(noErrors.length, 0)
-
-    var errors = verify({env: {}, options: {}, pkg: {}})
-
-    tt.is(errors.length, 4)
-    tt.is(errors[0].code, 'ENOPKGNAME')
-    tt.is(errors[1].code, 'ENOPKGREPO')
-    tt.is(errors[2].code, 'ENOGHTOKEN')
-    tt.is(errors[3].code, 'ENONPMTOKEN')
-
-    tt.end()
+    verify(null, {env: {}, options: {}, pkg: {}}, function (errors) {
+      tt.is(errors.length, 4)
+      tt.is(errors[0].code, 'ENOPKGNAME')
+      tt.is(errors[1].code, 'ENOPKGREPO')
+      tt.is(errors[2].code, 'ENOGHTOKEN')
+      tt.is(errors[3].code, 'ENONPMTOKEN')
+    })
   })
-
-  t.end()
 })

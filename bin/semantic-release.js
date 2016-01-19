@@ -22,6 +22,7 @@ var knownOptions = {
   'analyze-commits': [path, String],
   'generate-notes': [path, String],
   'verify-conditions': [path, String],
+  'verify-config': [path, String],
   'verify-release': [path, String]
 }
 var options = _.defaults(
@@ -75,89 +76,91 @@ npmconf.load({}, function (err, conf) {
   log.verbose('init', 'options:', _.assign({}, options, hide))
   log.verbose('init', 'Verifying config.')
 
-  var errors = require('../src/lib/verify')(config)
-  errors.forEach(function (err) {
-    log.error('init', err.message + ' ' + err.code)
-  })
-  if (errors.length) process.exit(1)
+  plugins.verifyConfig(config, function (errors) {
+    errors.forEach(function (err) {
+      log.error('init', err.message + ' ' + err.code)
+    })
 
-  if (options.argv.remain[0] === 'pre') {
-    log.verbose('pre', 'Running pre-script.')
-    log.verbose('pre', 'Veriying conditions.')
+    if (errors.length) process.exit(1)
 
-    plugins.verifyConditions(config, function (err) {
-      if (err) {
-        log[options.debug ? 'warn' : 'error']('pre', err.message)
-        if (!options.debug) process.exit(1)
-      }
+    if (options.argv.remain[0] === 'pre') {
+      log.verbose('pre', 'Running pre-script.')
+      log.verbose('pre', 'Veriying conditions.')
 
-      var nerfDart = require('nerf-dart')(npm.registry)
-      var wroteNpmRc = false
+      plugins.verifyConditions(config, function (err) {
+        if (err) {
+          log[options.debug ? 'warn' : 'error']('pre', err.message)
+          if (!options.debug) process.exit(1)
+        }
 
-      if (env.NPM_OLD_TOKEN && env.NPM_EMAIL) {
-        // Using the old auth token format is not considered part of the public API
-        // This might go away anytime (i.e. once we have a better testing strategy)
-        conf.set('_auth', '${NPM_OLD_TOKEN}', 'project')
-        conf.set('email', '${NPM_EMAIL}', 'project')
-        wroteNpmRc = true
-      } else if (env.NPM_TOKEN) {
-        conf.set(nerfDart + ':_authToken', '${NPM_TOKEN}', 'project')
-        wroteNpmRc = true
-      }
+        var nerfDart = require('nerf-dart')(npm.registry)
+        var wroteNpmRc = false
 
-      conf.save('project', function (err) {
-        if (err) return log.error('pre', 'Failed to save npm config.', err)
+        if (env.NPM_OLD_TOKEN && env.NPM_EMAIL) {
+          // Using the old auth token format is not considered part of the public API
+          // This might go away anytime (i.e. once we have a better testing strategy)
+          conf.set('_auth', '${NPM_OLD_TOKEN}', 'project')
+          conf.set('email', '${NPM_EMAIL}', 'project')
+          wroteNpmRc = true
+        } else if (env.NPM_TOKEN) {
+          conf.set(nerfDart + ':_authToken', '${NPM_TOKEN}', 'project')
+          wroteNpmRc = true
+        }
 
-        if (wroteNpmRc) log.verbose('pre', 'Wrote authToken to .npmrc.')
+        conf.save('project', function (err) {
+          if (err) return log.error('pre', 'Failed to save npm config.', err)
 
-        require('../src/pre')(config, function (err, release) {
-          if (err) {
-            log.error('pre', 'Failed to determine new version.')
+          if (wroteNpmRc) log.verbose('pre', 'Wrote authToken to .npmrc.')
 
-            var args = ['pre', (err.code ? err.code + ' ' : '') + err.message]
-            if (err.stack) args.push(err.stack)
-            log.error.apply(log, args)
-            process.exit(1)
-          }
+          require('../src/pre')(config, function (err, release) {
+            if (err) {
+              log.error('pre', 'Failed to determine new version.')
 
-          var message = 'Determined version ' + release.version + ' as "' + npm.tag + '".'
+              var args = ['pre', (err.code ? err.code + ' ' : '') + err.message]
+              if (err.stack) args.push(err.stack)
+              log.error.apply(log, args)
+              process.exit(1)
+            }
 
-          log.verbose('pre', message)
+            var message = 'Determined version ' + release.version + ' as "' + npm.tag + '".'
 
-          if (options.debug) {
-            log.error('pre', message + ' Not publishing in debug mode.', release)
-            process.exit(1)
-          }
+            log.verbose('pre', message)
 
-          try {
-            var shrinkwrap = JSON.parse(fs.readFileSync('./npm-shrinkwrap.json'))
-            shrinkwrap.version = release.version
-            fs.writeFileSync('./npm-shrinkwrap.json', JSON.stringify(shrinkwrap, null, 2))
-            log.verbose('pre', 'Wrote version ' + release.version + 'to npm-shrinkwrap.json.')
-          } catch (e) {
-            log.silly('pre', 'Couldn\'t find npm-shrinkwrap.json.')
-          }
+            if (options.debug) {
+              log.error('pre', message + ' Not publishing in debug mode.', release)
+              process.exit(1)
+            }
 
-          fs.writeFileSync('./package.json', JSON.stringify(_.assign(pkg, {
-            version: release.version
-          }), null, 2))
+            try {
+              var shrinkwrap = JSON.parse(fs.readFileSync('./npm-shrinkwrap.json'))
+              shrinkwrap.version = release.version
+              fs.writeFileSync('./npm-shrinkwrap.json', JSON.stringify(shrinkwrap, null, 2))
+              log.verbose('pre', 'Wrote version ' + release.version + 'to npm-shrinkwrap.json.')
+            } catch (e) {
+              log.silly('pre', 'Couldn\'t find npm-shrinkwrap.json.')
+            }
 
-          log.verbose('pre', 'Wrote version ' + release.version + ' to package.json.')
+            fs.writeFileSync('./package.json', JSON.stringify(_.assign(pkg, {
+              version: release.version
+            }), null, 2))
+
+            log.verbose('pre', 'Wrote version ' + release.version + ' to package.json.')
+          })
         })
       })
-    })
-  } else if (options.argv.remain[0] === 'post') {
-    log.verbose('post', 'Running post-script.')
+    } else if (options.argv.remain[0] === 'post') {
+      log.verbose('post', 'Running post-script.')
 
-    require('../src/post')(config, function (err, published, release) {
-      if (err) {
-        log.error('post', 'Failed to publish release notes.', err)
-        process.exit(1)
-      }
+      require('../src/post')(config, function (err, published, release) {
+        if (err) {
+          log.error('post', 'Failed to publish release notes.', err)
+          process.exit(1)
+        }
 
-      log.verbose('post', (published ? 'Published' : 'Generated') + ' release notes.', release)
-    })
-  } else {
-    log.error('post', 'Command "' + options.argv.remain[0] + '" not recognized. User either "pre" or "post"')
-  }
+        log.verbose('post', (published ? 'Published' : 'Generated') + ' release notes.', release)
+      })
+    } else {
+      log.error('post', 'Command "' + options.argv.remain[0] + '" not recognized. User either "pre" or "post"')
+    }
+  })
 })
