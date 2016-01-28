@@ -139,6 +139,10 @@ cd your-module
 semantic-release-cli setup
 ```
 
+###### Note on Linux Setup
+
+semantic-release relies on [keytar](https://github.com/atom/node-keytar), please check the [installation instructions for keytar](https://github.com/atom/node-keytar#on-linux) on Linux and Red Hat-based systems.
+
 ![dialogue](https://cloud.githubusercontent.com/assets/908178/9428123/3628dfec-499f-11e5-8bdd-8f3042dd95ed.png)
 
 _[This is what happens under the hood.](https://github.com/semantic-release/cli#manual-setup)_
