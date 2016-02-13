@@ -7,7 +7,7 @@ var url = require('url')
 var _ = require('lodash')
 var log = require('npmlog')
 var nopt = require('nopt')
-var npmconf = require('npmconf')
+var npm = require('npm')
 var normalizeData = require('normalize-package-data')
 
 log.heading = 'semantic-release'
@@ -41,32 +41,32 @@ var options = _.defaults(
 )
 var plugins = require('../src/lib/plugins')(options)
 
-npmconf.load({}, function (err, conf) {
+npm.load(function (err, npm) {
   if (err) {
     log.error('init', 'Failed to load npm config.', err)
     process.exit(1)
   }
 
-  var npm = {
+  var npmConf = {
     auth: {
       token: env.NPM_TOKEN
     },
-    loglevel: conf.get('loglevel'),
-    registry: require('../src/lib/get-registry')(pkg, conf),
-    tag: (pkg.publishConfig || {}).tag || conf.get('tag') || 'latest'
+    loglevel: npm.config.get('loglevel'),
+    registry: require('../src/lib/get-registry')(pkg, npm.config),
+    tag: (pkg.publishConfig || {}).tag || npm.config.get('tag') || 'latest'
   }
 
   // normalize trailing slash
-  npm.registry = url.format(url.parse(npm.registry))
+  npmConf.registry = url.format(url.parse(npmConf.registry))
 
-  log.level = npm.loglevel
+  log.level = npmConf.loglevel
 
   var config = {
     env: env,
     pkg: pkg,
     options: options,
     plugins: plugins,
-    npm: npm
+    npm: npmConf
   }
 
   var hide = {}
@@ -91,59 +91,55 @@ npmconf.load({}, function (err, conf) {
         if (!options.debug) process.exit(1)
       }
 
-      var nerfDart = require('nerf-dart')(npm.registry)
+      var nerfDart = require('nerf-dart')(npmConf.registry)
       var wroteNpmRc = false
 
       if (env.NPM_OLD_TOKEN && env.NPM_EMAIL) {
         // Using the old auth token format is not considered part of the public API
         // This might go away anytime (i.e. once we have a better testing strategy)
-        conf.set('_auth', '${NPM_OLD_TOKEN}', 'project')
-        conf.set('email', '${NPM_EMAIL}', 'project')
+        npm.set('_auth', '${NPM_OLD_TOKEN}', 'project')
+        npm.set('email', '${NPM_EMAIL}', 'project')
         wroteNpmRc = true
       } else if (env.NPM_TOKEN) {
-        conf.set(nerfDart + ':_authToken', '${NPM_TOKEN}', 'project')
+        npm.set(nerfDart + ':_authToken', '${NPM_TOKEN}', 'project')
         wroteNpmRc = true
       }
 
-      conf.save('project', function (err) {
-        if (err) return log.error('pre', 'Failed to save npm config.', err)
+      if (wroteNpmRc) log.verbose('pre', 'Wrote authToken to .npmrc.')
 
-        if (wroteNpmRc) log.verbose('pre', 'Wrote authToken to .npmrc.')
+      require('../src/pre')(config, function (err, release) {
+        if (err) {
+          log.error('pre', 'Failed to determine new version.')
 
-        require('../src/pre')(config, function (err, release) {
-          if (err) {
-            log.error('pre', 'Failed to determine new version.')
+          var args = ['pre', (err.code ? err.code + ' ' : '') + err.message]
+          if (err.stack) args.push(err.stack)
+          log.error.apply(log, args)
+          process.exit(1)
+        }
 
-            var args = ['pre', (err.code ? err.code + ' ' : '') + err.message]
-            if (err.stack) args.push(err.stack)
-            log.error.apply(log, args)
-            process.exit(1)
-          }
+        var message = 'Determined version ' + release.version + ' as "' + npmConf.tag + '".'
 
-          var message = 'Determined version ' + release.version + ' as "' + npm.tag + '".'
+        log.verbose('pre', message)
 
-          log.verbose('pre', message)
+        if (options.debug) {
+          log.error('pre', message + ' Not publishing in debug mode.', release)
+          process.exit(1)
+        }
 
-          if (options.debug) {
-            log.error('pre', message + ' Not publishing in debug mode.', release)
-            process.exit(1)
-          }
+        try {
+          var shrinkwrap = JSON.parse(fs.readFileSync('./npm-shrinkwrap.json'))
+          shrinkwrap.version = release.version
+          fs.writeFileSync('./npm-shrinkwrap.json', JSON.stringify(shrinkwrap, null, 2))
+          log.verbose('pre', 'Wrote version ' + release.version + 'to npm-shrinkwrap.json.')
+        } catch (e) {
+          log.silly('pre', 'Couldn\'t find npm-shrinkwrap.json.')
+        }
 
-          try {
-            var shrinkwrap = JSON.parse(fs.readFileSync('./npm-shrinkwrap.json'))
-            shrinkwrap.version = release.version
-            fs.writeFileSync('./npm-shrinkwrap.json', JSON.stringify(shrinkwrap, null, 2))
-            log.verbose('pre', 'Wrote version ' + release.version + 'to npm-shrinkwrap.json.')
-          } catch (e) {
-            log.silly('pre', 'Couldn\'t find npm-shrinkwrap.json.')
-          }
+        fs.writeFileSync('./package.json', JSON.stringify(_.assign(pkg, {
+          version: release.version
+        }), null, 2))
 
-          fs.writeFileSync('./package.json', JSON.stringify(_.assign(pkg, {
-            version: release.version
-          }), null, 2))
-
-          log.verbose('pre', 'Wrote version ' + release.version + ' to package.json.')
-        })
+        log.verbose('pre', 'Wrote version ' + release.version + ' to package.json.')
       })
     })
   } else if (options.argv.remain[0] === 'post') {
