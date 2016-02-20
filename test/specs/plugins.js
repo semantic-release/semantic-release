@@ -3,7 +3,7 @@ var test = require('tap').test
 var plugins = require('../../src/lib/plugins')
 
 test('export plugins', function (t) {
-  t.plan(5)
+  t.plan(6)
 
   var defaultPlugins = plugins({})
 
@@ -12,6 +12,7 @@ test('export plugins', function (t) {
   t.is(typeof defaultPlugins.verifyConditions, 'function')
   t.is(typeof defaultPlugins.verifyRelease, 'function')
   t.is(typeof defaultPlugins.getLastRelease, 'function')
+  t.is(typeof defaultPlugins.verifyConfig, 'function')
 })
 
 test('plugin pipelines', function (t) {

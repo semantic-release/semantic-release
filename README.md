@@ -212,6 +212,11 @@ This plugin is responsible for determining the type of the next release. It addi
 
 This plugin is responsible for generating release notes. Call the callback with the notes as a string. Have a look at the [default implementation](https://github.com/semantic-release/release-notes-generator/).
 
+### `verifyConfig`
+
+This plugins is responsible for verifying that the environment contains all the necessary configuration. By default it checks that `package.json` contains a `name` and `repository`. It also checks that
+a GitHub token is provided as weel as a npm one.
+
 ### `verifyConditions`
 
 This plugins is responsible for verifying that a release should happen in the first place. For example, the [default implementation](https://github.com/semantic-release/condition-travis/) verifies that the publish is happening on Travis, that it’s the right branch, and that all other build jobs succeeded. There are more use cases for this, e.g. verifying that test coverage is above a certain threshold or that there are no [vulnerabilities](https://nodesecurity.io/) in your dependencies. Be creative.

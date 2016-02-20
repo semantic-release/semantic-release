@@ -1,6 +1,6 @@
 var SemanticReleaseError = require('@semantic-release/error')
 
-module.exports = function (config) {
+module.exports = function (pluginConfig, config, cb) {
   var pkg = config.pkg
   var options = config.options
   var env = config.env
@@ -20,7 +20,7 @@ module.exports = function (config) {
     ))
   }
 
-  if (options.debug) return errors
+  if (options.debug) return cb(errors)
 
   if (!options.githubToken) {
     errors.push(new SemanticReleaseError(
@@ -36,5 +36,5 @@ module.exports = function (config) {
     ))
   }
 
-  return errors
+  return cb(errors)
 }

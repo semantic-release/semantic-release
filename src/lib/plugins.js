@@ -5,7 +5,8 @@ var exports = module.exports = function (options) {
   var plugins = {
     analyzeCommits: exports.normalize(options.analyzeCommits, '@semantic-release/commit-analyzer'),
     generateNotes: exports.normalize(options.generateNotes, '@semantic-release/release-notes-generator'),
-    getLastRelease: exports.normalize(options.getLastRelease, '@semantic-release/last-release-npm')
+    getLastRelease: exports.normalize(options.getLastRelease, '@semantic-release/last-release-npm'),
+    verifyConfig: exports.normalize(options.verifyConfig, './verify.js')
   }
 
   ;['verifyConditions', 'verifyRelease'].forEach(function (plugin) {
