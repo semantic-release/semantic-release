@@ -77,7 +77,7 @@ This removes the immediate connection between human emotions and version numbers
 
 ## How does it work?
 
-Instead of writing [meaningless commit messages](http://whatthecommit.com/), we can take our time to think about the changes in the codebase and write them down. Following formalized conventions it this then possible to generate a helpful changelog and to derive the next semantic version number from them.
+Instead of writing [meaningless commit messages](http://whatthecommit.com/), we can take our time to think about the changes in the codebase and write them down. Following formalized conventions it is then possible to generate a helpful changelog and to derive the next semantic version number from them.
 
 When `semantic-release` got setup it will do that after every successful continuous integration build of your master branch (or any other branch you specify) and publish the new version for you. That way no human is directly involved in the release process and your releases are guaranteed to be [unromantic and unsentimental](http://sentimentalversioning.org/).
 
