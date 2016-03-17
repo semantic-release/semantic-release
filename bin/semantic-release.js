@@ -13,6 +13,7 @@ var normalizeData = require('normalize-package-data')
 log.heading = 'semantic-release'
 var env = process.env
 var pkg = JSON.parse(fs.readFileSync('./package.json'))
+var originalPkg = _.cloneDeep(pkg)
 normalizeData(pkg)
 var knownOptions = {
   branch: String,
@@ -138,7 +139,7 @@ npmconf.load({}, function (err, conf) {
             log.silly('pre', 'Couldn\'t find npm-shrinkwrap.json.')
           }
 
-          fs.writeFileSync('./package.json', JSON.stringify(_.assign(pkg, {
+          fs.writeFileSync('./package.json', JSON.stringify(_.assign(originalPkg, {
             version: release.version
           }), null, 2))
 
