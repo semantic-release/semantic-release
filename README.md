@@ -206,7 +206,11 @@ module.exports = function (pluginConfig, config, callback) {}
 
 ### `analyzeCommits`
 
-This plugin is responsible for determining the type of the next release. It additionally receives a `commits` array inside `config`. One commit is an object with a `message` and `hash` property. Call the callback with `'major'`, `'premajor'`, `'minor'`, `'preminor'`, `'patch'`, `'prepatch'`, `'prerelease'`, or `null` if nothing changed. Have a look at the [default implementation](https://github.com/semantic-release/commit-analyzer/).
+This plugin is responsible for determining the type of the next release. It additionally receives a `commits` array inside `config`. One commit is an object with a `message` and `hash` property. Call the callback with `'major'`, `'premajor'`, `'minor'`, `'preminor'`, `'patch'`, `'prepatch'`, `'prerelease'`, or `null` if nothing changed.
+
+While it may be tempting to use `'prepatch'`, `'preminor'` & `'prerelease'` as part of a release process, this is strongly discouraged. A better approach is to use [dist-tags](https://docs.npmjs.com/cli/dist-tag) to create release channels (such as 'latest', 'next', 'stable') and to return only `'major'`, `'premajor'` and `'minor'` from the commit analyzer.
+
+Have a look at the [default implementation](https://github.com/semantic-release/commit-analyzer/).
 
 ### `generateNotes`
 
