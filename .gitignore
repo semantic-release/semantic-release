@@ -7,3 +7,4 @@ test/tmp
 *.dump
 .DS_Store
 .nyc_output
+.idea
