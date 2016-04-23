@@ -141,7 +141,7 @@ semantic-release-cli setup
 
 ![dialogue](https://cloud.githubusercontent.com/assets/908178/9428123/3628dfec-499f-11e5-8bdd-8f3042dd95ed.png)
 
-_[This is what happens under the hood.](https://github.com/semantic-release/cli#manual-setup)_
+_[This is what happens under the hood.](https://github.com/semantic-release/cli#what-it-does)_
 
 ## Options
 
