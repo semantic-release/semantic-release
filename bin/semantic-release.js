@@ -159,6 +159,6 @@ npmconf.load({}, function (err, conf) {
       log.verbose('post', (published ? 'Published' : 'Generated') + ' release notes.', release)
     })
   } else {
-    log.error('post', 'Command "' + options.argv.remain[0] + '" not recognized. User either "pre" or "post"')
+    log.error('post', 'Command "' + options.argv.remain[0] + '" not recognized. Use either "pre" or "post"')
   }
 })
