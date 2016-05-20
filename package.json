@@ -15,6 +15,7 @@
   "dependencies": {
     "@semantic-release/last-release-npm": "1.2.1",
     "async": "1.5.2",
+    "lerna": "jpnelson/lerna#8c0e5a44",
     "nodegit": "0.13.0",
     "npmconf": "2.1.2",
     "rc": "1.1.6",
