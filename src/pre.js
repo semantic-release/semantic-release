@@ -1,10 +1,10 @@
 var async = require('async');
-var cwd = require('process').cwd();
+var cwd = require('process').cwd;
 var fs = require('fs');
 var path = require('path');
 var npmconf = require('npmconf');
 var rc = require('rc');
-var git = require("nodegit");
+var shell = require('shelljs');
 
 var srPre = require('semantic-release/dist/pre');
 var srNormalize = require('semantic-release/dist/lib/plugins').normalize;
@@ -12,12 +12,24 @@ var srRegistry = require('semantic-release/dist/lib/get-registry');
 
 var sh = require('../src/utils/sh');
 
+function getPkgLocation () {
+  return path.join(cwd(), 'package.json')
+}
+
 function getPkg () {
-  return JSON.parse(fs.readFileSync(path.join(cwd, 'package.json')))
+  return JSON.parse(fs.readFileSync(getPkgLocation()))
 }
 
 function getNpmConfig (done) {
   npmconf.load({}, done);
+}
+
+function addGitHeadToPkg (done) {
+  var pkg = getPkg();
+  var gitHeadLocation = path.join(shell.exec('git rev-parse --show-toplevel'), '.git/HEAD');
+  pkg.gitHead = fs.readFileSync(gitHeadLocation);
+  fs.writeFileSync(getPkgLocation(), JSON.stringify(pkg));
+  done();
 }
 
 function makeSrConfig (npmConfig, done) {
@@ -65,14 +77,15 @@ function tag (nextRelease, done) {
 
   var tag = [getPkg().name, '@', nextRelease.version].join('');
   sh([
-    {cmd: 'npm', args: ['version', nextRelease.type, '--git-tag-version', 'false'], opts: {cwd: cwd}},
-    {cmd: 'git', args: ['commit', '-am\'release: (' + tag + '): releasing component\''], opts: {cwd: cwd}},
-    {cmd: 'git', args: ['tag', tag], opts: {cwd: cwd}}
+    {cmd: 'npm', args: ['version', nextRelease.type, '--git-tag-version', 'false'], opts: {cwd: cwd()}},
+    {cmd: 'git', args: ['commit', '-anm\'chore: (' + tag + '): releasing component\''], opts: {cwd: cwd()}},
+    {cmd: 'git', args: ['tag', tag], opts: {cwd: cwd()}}
   ], done);
 }
 
 module.exports = function () {
   async.waterfall([
+    addGitHeadToPkg, //Note: this can be removed once https://github.com/npm/read-package-json/issues/66 is resolved
     getNpmConfig,
     makeSrConfig,
     pre,

@@ -16,11 +16,11 @@
     "@semantic-release/last-release-npm": "1.2.1",
     "async": "1.5.2",
     "lerna": "jpnelson/lerna#8c0e5a44",
-    "nodegit": "0.13.0",
     "npmconf": "2.1.2",
     "rc": "1.1.6",
     "semantic-release": "4.3.5",
-    "semantic-release-lerna-analyzer": "0.0.1"
+    "semantic-release-lerna-analyzer": "0.0.1",
+    "shelljs": "0.7.0"
   },
   "devDependencies": {},
   "engines": {

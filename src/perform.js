@@ -10,7 +10,7 @@ var PackageUtilities = require('lerna/lib/PackageUtilities').default;
 
 function pushTags (done) {
   sh([
-    {cmd: 'git', args: ['push', '--tags'], opts: {cwd: cwd}},
+    {cmd: 'git', args: ['push', '--tags'], opts: {cwd: cwd}}
   ], done);
 }
 
@@ -22,15 +22,15 @@ function publishPackage (path, done) {
 
 function publishPackages (done) {
   var packagesLocation = new Repository().packagesLocation;
-  var packageNames = PackageUtilities.getPackages(packagesLocation).map(function (pkg) {
-    return pkg.name
+  var allPackageLocations = PackageUtilities.getPackages(packagesLocation).map(function (pkg) {
+    return pkg.location
   });
 
-  var packageRelativePaths = packageNames.map(function (name) {
-    return path.relative(cwd, PackageUtilities.getPackagePath(packagesLocation, name));
+  var allPackageRelativeLocations = allPackageLocations.map(function (location) {
+    return path.relative(cwd, location);
   });
 
-  async.series(packageRelativePaths.map(function (path) {
+  async.series(allPackageRelativeLocations.map(function (path) {
       return function (packagePublishedCallback) {
         publishPackage(path, packagePublishedCallback)
       };
