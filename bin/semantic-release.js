@@ -52,6 +52,7 @@ npmconf.load({}, function (err, conf) {
     auth: {
       token: env.NPM_TOKEN
     },
+    cafile: conf.get('cafile'),
     loglevel: conf.get('loglevel'),
     registry: require('../src/lib/get-registry')(pkg, conf),
     tag: (pkg.publishConfig || {}).tag || conf.get('tag') || 'latest'
