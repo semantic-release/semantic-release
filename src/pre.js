@@ -11,6 +11,7 @@ var srNormalize = require('semantic-release/dist/lib/plugins').normalize;
 var srRegistry = require('semantic-release/dist/lib/get-registry');
 
 var sh = require('../src/utils/sh');
+var makeTag = require('../src/utils/make-tag');
 
 function getPkgLocation () {
   return path.join(cwd(), 'package.json')
@@ -22,14 +23,6 @@ function getPkg () {
 
 function getNpmConfig (done) {
   npmconf.load({}, done);
-}
-
-function addGitHeadToPkg (done) {
-  var pkg = getPkg();
-  var gitHeadLocation = path.join(shell.exec('git rev-parse --show-toplevel'), '.git/HEAD');
-  pkg.gitHead = fs.readFileSync(gitHeadLocation);
-  fs.writeFileSync(getPkgLocation(), JSON.stringify(pkg));
-  done();
 }
 
 function makeSrConfig (npmConfig, done) {
@@ -45,7 +38,7 @@ function makeSrConfig (npmConfig, done) {
     env: process.env,
     plugins: {
       "analyzeCommits": srNormalize({}, "semantic-release-lerna-analyzer"),
-      "getLastRelease": srNormalize({}, "@semantic-release/last-release-npm"),
+      "getLastRelease": require('./last-release-lerna.js'),
       "verifyRelease": srNormalize({}, "semantic-release/dist/lib/plugin-noop")
     },
     npm: {
@@ -75,7 +68,8 @@ function tag (nextRelease, done) {
     return;
   }
 
-  var tag = [getPkg().name, '@', nextRelease.version].join('');
+  var tag = makeTag(getPkg().name, nextRelease.version);
+
   sh([
     {cmd: 'npm', args: ['version', nextRelease.type, '--git-tag-version', 'false'], opts: {cwd: cwd()}},
     {cmd: 'git', args: ['commit', '-anm\'chore: (' + tag + '): releasing component\''], opts: {cwd: cwd()}},
@@ -85,7 +79,6 @@ function tag (nextRelease, done) {
 
 module.exports = function () {
   async.waterfall([
-    addGitHeadToPkg, //Note: this can be removed once https://github.com/npm/read-package-json/issues/66 is resolved
     getNpmConfig,
     makeSrConfig,
     pre,
