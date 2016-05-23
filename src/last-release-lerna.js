@@ -1,3 +1,7 @@
+/*
+  This is only necessary because package.json's gitHead isn't always populated with lerna. See
+ https://github.com/npm/read-package-json/issues/66
+ */
 var lastRelease = require('@semantic-release/last-release-npm');
 var shell = require('shelljs');
 

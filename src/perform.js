@@ -5,8 +5,7 @@ var cwd = require('process').cwd();
 var path = require('path');
 
 var Repository = require('lerna/lib/Repository').default;
-var PackageUtilities = require('lerna/lib/PackageUtilities').default;
-
+var UpdatedCommand = require('lerna/lib/commands/UpdatedCommand').default;
 
 function pushTags (done) {
   sh([
@@ -20,17 +19,29 @@ function publishPackage (path, done) {
   ], done);
 }
 
-function publishPackages (done) {
-  var packagesLocation = new Repository().packagesLocation;
-  var allPackageLocations = PackageUtilities.getPackages(packagesLocation).map(function (pkg) {
+function getUpdatedPackages (done) {
+  var updatedCommand = new UpdatedCommand([], {});
+
+  // We can't use updatedCommand.run() as this will exit TODO: PR to add an option to run specifying whether it'd exit
+  updatedCommand.runValidations();
+  updatedCommand.runPreparations();
+  updatedCommand.initialize(function () {
+    updatedCommand.execute(function () {
+      done(null, updatedCommand.updates);
+    });
+  });
+}
+
+function publishUpdatedPackages (updatedPackages, done) {
+  var allPackageLocations = updatedPackages.map(function (pkg) {
     return pkg.location
   });
 
-  var allPackageRelativeLocations = allPackageLocations.map(function (location) {
+  var packageRelativeLocations = allPackageLocations.map(function (location) {
     return path.relative(cwd, location);
   });
 
-  async.series(allPackageRelativeLocations.map(function (path) {
+  async.series(packageRelativeLocations.map(function (path) {
       return function (packagePublishedCallback) {
         publishPackage(path, packagePublishedCallback)
       };
@@ -39,8 +50,9 @@ function publishPackages (done) {
 
 
 module.exports = function perform () {
-  async.series([
+  async.waterfall([
     pushTags,
-    publishPackages
+    getUpdatedPackages,
+    publishUpdatedPackages
   ]);
 };
