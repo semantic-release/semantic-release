@@ -70,6 +70,8 @@ function tag (nextRelease, done) {
 
   var tag = makeTag(getPkg().name, nextRelease.version);
 
+  console.log('Tagging with', tag);
+
   sh([
     {cmd: 'npm', args: ['version', nextRelease.type, '--git-tag-version', 'false'], opts: {cwd: cwd()}},
     {cmd: 'git', args: ['commit', '-anm\'chore: (' + tag + '): releasing component\''], opts: {cwd: cwd()}},

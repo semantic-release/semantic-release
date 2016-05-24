@@ -1,27 +1,24 @@
 /*
   This is only necessary because package.json's gitHead isn't always populated with lerna. See
  https://github.com/npm/read-package-json/issues/66
+ For that reason we can't use @semantic-release/last-release-npm, otherwise we'd directly use that plugin
  */
-var lastRelease = require('@semantic-release/last-release-npm');
 var shell = require('shelljs');
-
 var makeTag = require('./utils/make-tag');
 
 module.exports = function lastReleaseLerna (_ref, cb) {
-  lastRelease({}, _ref, function (err, lastRelease) {
-    if (!lastRelease.gitHead) {
-      var tag = makeTag(_ref.pkg.name, lastRelease.version);
-      var gitHead = shell.exec(['git rev-list -n 1', tag].join(' '));
+  var tag = makeTag(_ref.pkg.name, _ref.pkg.version);
+  console.log('Looking for sha for', tag);
+  var gitHead = shell.exec(['git rev-list -n 1', tag].join(' '));
 
-      if (gitHead.code !== 0) {
-        console.warn('Error: git head could not be calculated from the tag `' + tag + '`. Ensure this tag exists locally.');
-        console.warn('Attempting to use the first commit instead');
-        gitHead = shell.exec('git rev-list --max-parents=0 HEAD');
-      }
+  if (gitHead.code !== 0) {
+    console.warn('Error: git head could not be calculated from the tag `' + tag + '`. Ensure this tag exists locally.');
+    console.warn('Attempting to use the first commit instead');
+    gitHead = shell.exec('git rev-list --max-parents=0 HEAD');
+  }
 
-      lastRelease.gitHead = gitHead.stdout.trim();
-    }
-
-    cb(null, lastRelease);
+  cb(null, {
+    version: _ref.pkg.version,
+    gitHead: gitHead.stdout.trim()
   });
 };
