@@ -4,8 +4,8 @@ module.exports = function (_ref, cb) {
   var pkg = _ref.pkg;
   var commits = _ref.commits;
 
-  var relevantCommits = commits.filter(function (message) {
-    var affectsLine = message.split('\n\n')[1];
+  var relevantCommits = commits.filter(function (commit) {
+    var affectsLine = commit.message.split('\n\n')[1];
     return affectsLine && affectsLine.indexOf('affects:') === 0 && affectsLine.indexOf(pkg.name) > -1;
   });
 

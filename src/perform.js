@@ -23,7 +23,9 @@ function publishPackage (path, done) {
 function isPackageUpdated (pkg, cb) {
   console.log('Checking to see if', pkg.name, 'has been updated');
   var npmVersion = shell.exec(['npm view', pkg.name, 'version'].join(' '), {silent: true});
-  cb(null, {pkg: pkg, updated: npmVersion.stdout.trim() !== pkg.version}); //if it 404's, it's !==, therefore new
+  var outOfDate = npmVersion.stdout.trim() !== pkg.version;
+  console.log(pkg.name, outOfDate ? 'is out of date' : 'is up to dated');
+  cb(null, {pkg: pkg, updated: outOfDate}); //if it 404's, it's !==, therefore new
 }
 
 function getUpdatedPackages (done) {
@@ -35,7 +37,6 @@ function getUpdatedPackages (done) {
       isPackageUpdated(pkg, done);
     }
   }), function gotLatestVersions (err, results) {
-    console.log(JSON.stringify(results));
     var updatedPackages = results.filter(function (result) {
       return result.updated;
     }).map(function (result) {
