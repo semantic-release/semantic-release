@@ -10,8 +10,8 @@ var srPre = require('semantic-release/dist/pre');
 var srNormalize = require('semantic-release/dist/lib/plugins').normalize;
 var srRegistry = require('semantic-release/dist/lib/get-registry');
 
-var sh = require('../src/utils/sh');
-var makeTag = require('../src/utils/make-tag');
+var makeTag = require('./utils/make-tag');
+var concurrentGit = require('./utils/concurrent-git');
 
 function getPkgLocation () {
   return path.join(cwd(), 'package.json')
@@ -70,12 +70,28 @@ function tag (nextRelease, done) {
 
   var tag = makeTag(getPkg().name, nextRelease.version);
 
-  console.log('Tagging with', tag);
+  console.log('Creating tag', tag);
 
-  sh([
-    {cmd: 'npm', args: ['version', nextRelease.type, '--git-tag-version', 'false'], opts: {cwd: cwd()}},
-    {cmd: 'git', args: ['commit', '-anm\'chore: (' + tag + '): releasing component\''], opts: {cwd: cwd()}},
-    {cmd: 'git', args: ['tag', tag], opts: {cwd: cwd()}}
+  function nextAsyncShell (asyncDoneCallback) {
+    return function (code, stdout, stderr) {
+      console.log('return code: ', code);
+      console.log('stdout: ', stdout.toString());
+      console.log('stderr: ', stderr.toString());
+
+      asyncDoneCallback(code === 0 ? null : code);
+    }
+  }
+
+  async.series([
+    function (done) {
+      shell.exec('npm version ' + nextRelease.type + ' --git-tag-version false', nextAsyncShell(done))
+    },
+    function (done) {
+      concurrentGit('commit -anm\'chore: (' + tag + '): releasing component\' --allow-empty', nextAsyncShell(done))
+    },
+    function (done) {
+      concurrentGit('tag ' + tag, nextAsyncShell(done))
+    }
   ], done);
 }
 

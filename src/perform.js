@@ -1,5 +1,3 @@
-var sh = require('../src/utils/sh');
-
 var async = require('async');
 var cwd = require('process').cwd();
 var path = require('path');
@@ -9,19 +7,18 @@ var Repository = require('lerna/lib/Repository').default;
 var PackageUtilities = require('lerna/lib/PackageUtilities').default;
 
 function pushTags (done) {
-  sh([
-    {cmd: 'git', args: ['push', '--tags'], opts: {cwd: cwd}}
-  ], done);
+  shell.exec('git push --tags', function (code) {
+    done(code === 0 ? null : code);
+  });
 }
 
 function publishPackage (path, done) {
-  sh([
-    {cmd: 'npm', args: ['publish', path], opts: {cwd: cwd}}
-  ], done);
+  shell.exec('npm publish ' + path, function (code) {
+    done(code === 0 ? null : code);
+  });
 }
 
 function isPackageUpdated (pkg, cb) {
-  console.log('Checking to see if', pkg.name, 'has been updated');
   var npmVersion = shell.exec(['npm view', pkg.name, 'version'].join(' '), {silent: true});
   var outOfDate = npmVersion.stdout.trim() !== pkg.version;
   console.log(pkg.name, outOfDate ? 'is out of date' : 'is up to date');
