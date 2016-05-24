@@ -37,8 +37,8 @@ function makeSrConfig (npmConfig, done) {
   var srConfig = Object.assign({}, defaults, {
     env: process.env,
     plugins: {
-      "analyzeCommits": srNormalize({}, "semantic-release-lerna-analyzer"),
-      "getLastRelease": require('./last-release-lerna.js'),
+      "analyzeCommits": require('./plugins/analyzer.js'),
+      "getLastRelease": require('./plugins/last-release.js'),
       "verifyRelease": srNormalize({}, "semantic-release/dist/lib/plugin-noop")
     },
     npm: {

@@ -1,14 +1,14 @@
 /*
-  This is only necessary because package.json's gitHead isn't always populated with lerna. See
+ This is only necessary because package.json's gitHead isn't always populated with lerna. See
  https://github.com/npm/read-package-json/issues/66
  For that reason we can't use @semantic-release/last-release-npm, otherwise we'd directly use that plugin
  */
 var shell = require('shelljs');
-var makeTag = require('./utils/make-tag');
+var makeTag = require('../utils/make-tag');
 
 module.exports = function lastReleaseLerna (_ref, cb) {
   var tag = makeTag(_ref.pkg.name, _ref.pkg.version);
-  console.log('Looking for sha for', tag);
+  console.log('Finding the last release by searching looking for tag:', tag);
   var gitHead = shell.exec(['git rev-list -n 1', tag].join(' '));
 
   if (gitHead.code !== 0) {
