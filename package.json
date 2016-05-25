@@ -57,7 +57,7 @@
     "url": "https://github.com/atlassian/lerna-semantic-release.git"
   },
   "scripts": {
-    "semantic-release": "./node_modules/.bin/semantic-release pre && npm publish && ./node_modules/.bin/semantic-release post"
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
   "release": {
     "analyzeCommits": "semantic-release-lerna-analyzer",
