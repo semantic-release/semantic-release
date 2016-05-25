@@ -61,7 +61,8 @@
   "release": {
     "analyzeCommits": "semantic-release-lerna-analyzer",
     "verifyConditions": [],
-    "debug": false
+    "debug": false,
+    "branch": "caribou"
   },
   "version": "0.4.3"
 }
