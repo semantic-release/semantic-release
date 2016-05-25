@@ -11,7 +11,7 @@ before_script:
   - npm prune
 after_success:
   - npm run semantic-release
-  - tree node_modules/semantic-release
+  - ls -laR node_modules/semantic-release
 branches:
   except:
     - /^v\d+\.\d+\.\d+$/
