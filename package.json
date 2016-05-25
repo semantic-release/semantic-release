@@ -59,9 +59,6 @@
     "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
   "release": {
-    "analyzeCommits": "semantic-release-lerna-analyzer",
-    "verifyConditions": [],
-    "debug": false,
     "branch": "caribou"
   },
   "version": "0.4.3"
