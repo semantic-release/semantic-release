@@ -8,8 +8,10 @@
   "bugs": {
     "url": "https://github.com/atlassian/lerna-semantic-release/issues"
   },
-  "czConfig": {
-    "path": "node_modules/cz-conventional-changelog/"
+  "config": {
+    "commitizen": {
+      "path": "node_modules/cz-conventional-changelog/"
+    }
   },
   "dependencies": {
     "@semantic-release/commit-analyzer": "2.0.0",
