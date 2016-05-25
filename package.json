@@ -17,15 +17,19 @@
     "@semantic-release/commit-analyzer": "2.0.0",
     "@semantic-release/last-release-npm": "1.2.1",
     "async": "1.5.2",
-    "lerna": "jpnelson/lerna#8c0e5a44",
     "npmconf": "2.1.2",
     "rc": "1.1.6",
     "semantic-release": "4.3.5",
     "semantic-release-lerna-analyzer": "0.0.1",
     "shelljs": "0.7.0"
   },
+  "peerDependencies": {
+    "lerna": "*"
+  },
   "devDependencies": {
-    "cz-conventional-changelog": "1.1.6"
+    "cz-conventional-changelog": "1.1.6",
+    "lerna": "jpnelson/lerna#8c0e5a44",
+    "semantic-release": "^4.3.5"
   },
   "engines": {
     "node": ">=0.10",
