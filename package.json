@@ -1,7 +1,7 @@
 {
   "name": "lerna-semantic-release",
   "description": "automated semver compliant package publishing, for lerna",
-  "author": "Joshua Nelson <jonelson@atlassian.com>",
+  "author": "Joshua Nelson <jonelson@atlassian.com>, Joscha Feth <jfeth@atlassian.com>",
   "bin": {
     "lerna-semantic-release": "bin/lerna-semantic-release.js"
   },
@@ -38,7 +38,8 @@
     "publish",
     "release",
     "semver",
-    "version"
+    "version",
+    "lerna"
   ],
   "license": "MIT",
   "main": "bin/semantic-release.js",
@@ -48,7 +49,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/atlassian/lerna-semantic-release.git"
+    "url": "https://github.com/atlassian/lerna-semantic-release.git"
   },
   "scripts": {
     "lerna-semantic-release": "bin/lerna-semantic-release.js"
