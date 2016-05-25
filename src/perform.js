@@ -1,10 +1,13 @@
 var async = require('async');
-var cwd = require('process').cwd();
+var cwd = require('process').cwd;
 var path = require('path');
+var fs = require('fs');
 var shell = require('shelljs');
 
 var Repository = require('lerna/lib/Repository').default;
 var PackageUtilities = require('lerna/lib/PackageUtilities').default;
+
+var makeTag = require('./utils/make-tag');
 
 function pushTags (done) {
   shell.exec('git push --tags', function (code) {
@@ -51,14 +54,24 @@ function publishUpdatedPackages (updatedPackages, done) {
   });
 
   var updatedPackageRelativeLocations = updatedPackageLocations.map(function (location) {
-    return path.relative(cwd, location);
+    return path.relative(cwd(), location);
+  });
+
+  var releasedPackages = updatedPackages.map(function (pkg) {
+    return makeTag(pkg.name, pkg.version);
   });
 
   async.series(updatedPackageRelativeLocations.map(function (path) {
     return function (packagePublishedCallback) {
       publishPackage(path, packagePublishedCallback)
     };
-  }), done);
+  }), function (err) {
+    done(err, releasedPackages)
+  });
+}
+
+function writeReleasedPackagesFile (releasedPackages, done) {
+  fs.writeFile('.released-packages', releasedPackages.join('\n'), done);
 }
 
 
@@ -66,6 +79,7 @@ module.exports = function perform () {
   async.waterfall([
     pushTags,
     getUpdatedPackages,
-    publishUpdatedPackages
+    publishUpdatedPackages,
+    writeReleasedPackagesFile
   ]);
 };
