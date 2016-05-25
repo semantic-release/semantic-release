@@ -64,5 +64,6 @@
     "analyzeCommits": "semantic-release-lerna-analyzer",
     "verifyConditions": [],
     "debug": false
-  }
+  },
+  "version": "0.4.3"
 }
