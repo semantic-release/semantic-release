@@ -10,7 +10,7 @@ var PackageUtilities = require('lerna/lib/PackageUtilities').default;
 var makeTag = require('./utils/make-tag');
 
 function pushTags (done) {
-  shell.exec('git push --tags', function (code) {
+  shell.exec('git push origin --tags', function (code) {
     done(code === 0 ? null : code);
   });
 }
