@@ -19,7 +19,7 @@
     "async": "1.5.2",
     "npmconf": "2.1.2",
     "rc": "1.1.6",
-    "semantic-release": "4.3.5",
+    "semantic-release": "^4.3.5",
     "shelljs": "0.7.0"
   },
   "peerDependencies": {
@@ -27,8 +27,7 @@
   },
   "devDependencies": {
     "cz-conventional-changelog": "1.1.6",
-    "lerna": "jpnelson/lerna#8c0e5a44",
-    "semantic-release": "^4.3.5"
+    "lerna": "jpnelson/lerna#8c0e5a44"
   },
   "engines": {
     "node": ">=0.10",
