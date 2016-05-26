@@ -101,7 +101,7 @@ module.exports = function () {
     getNpmConfig,
     makeSrConfig,
     pre,
-    tag,
+    tag
   ], function (err) {
     if (err) {
       console.log(err.message);

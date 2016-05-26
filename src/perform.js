@@ -15,6 +15,12 @@ function pushTags (done) {
   });
 }
 
+function pushCommits (done) {
+  shell.exec('git push origin', function (code) {
+    done(code === 0 ? null : code);
+  });
+}
+
 function publishPackage (relativePath, done) {
   var rootPath = path.resolve(cwd());
   var packagePath =  path.resolve(relativePath);
@@ -100,9 +106,10 @@ function writeReleasedPackagesFile (releasedPackages, done) {
 module.exports = function perform () {
   async.waterfall([
     pushTags,
+    pushCommits,
     getUpdatedPackages,
     publishUpdatedPackages,
-    writeReleasedPackagesFile,
+    writeReleasedPackagesFile
   ], function (err) {
     if (err) {
       console.log(err.message);
