@@ -1,29 +1,34 @@
 {
   "name": "lerna-semantic-release",
   "description": "automated semver compliant package publishing, for lerna",
-  "version": "0.4.2",
-  "author": "Joshua Nelson <jonelson@atlassian.com>",
+  "author": "Joshua Nelson <jonelson@atlassian.com>, Joscha Feth <jfeth@atlassian.com>",
   "bin": {
     "lerna-semantic-release": "bin/lerna-semantic-release.js"
   },
   "bugs": {
     "url": "https://github.com/atlassian/lerna-semantic-release/issues"
   },
-  "czConfig": {
-    "path": "node_modules/cz-conventional-changelog/"
+  "config": {
+    "commitizen": {
+      "path": "node_modules/cz-conventional-changelog/"
+    }
   },
   "dependencies": {
     "@semantic-release/commit-analyzer": "2.0.0",
     "@semantic-release/last-release-npm": "1.2.1",
     "async": "1.5.2",
-    "lerna": "jpnelson/lerna#8c0e5a44",
     "npmconf": "2.1.2",
     "rc": "1.1.6",
     "semantic-release": "4.3.5",
+    "semantic-release": "^4.3.5",
     "shelljs": "0.7.0"
   },
+  "peerDependencies": {
+    "lerna": "*"
+  },
   "devDependencies": {
-    "cz-conventional-changelog": "1.1.6"
+    "cz-conventional-changelog": "1.1.6",
+    "lerna": "jpnelson/lerna#8c0e5a44"
   },
   "engines": {
     "node": ">=0.10",
@@ -38,7 +43,8 @@
     "publish",
     "release",
     "semver",
-    "version"
+    "version",
+    "lerna"
   ],
   "license": "MIT",
   "main": "bin/semantic-release.js",
@@ -48,13 +54,13 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/atlassian/lerna-semantic-release.git"
+    "url": "https://github.com/atlassian/lerna-semantic-release.git"
   },
   "scripts": {
-    "lerna-semantic-release": "bin/lerna-semantic-release.js"
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
   "release": {
-    "verifyConditions": [],
-    "debug": false
-  }
+    "branch": "caribou"
+  },
+  "version": "0.4.3"
 }
