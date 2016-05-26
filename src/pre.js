@@ -11,7 +11,6 @@ var srNormalize = require('semantic-release/dist/lib/plugins').normalize;
 var srRegistry = require('semantic-release/dist/lib/get-registry');
 
 var makeTag = require('./utils/make-tag');
-var concurrentGit = require('./utils/concurrent-git');
 
 function getPkgLocation () {
   return path.join(cwd(), 'package.json')
@@ -38,7 +37,7 @@ function makeSrConfig (npmConfig, done) {
     env: process.env,
     plugins: {
       "analyzeCommits": require('./plugins/analyzer.js'),
-      "getLastRelease": require('./plugins/last-release.js'),
+      "getLastRelease": srNormalize({}, "@semantic-release/last-release-npm"),
       "verifyRelease": srNormalize({}, "semantic-release/dist/lib/plugin-noop")
     },
     npm: {
@@ -58,7 +57,7 @@ function makeSrConfig (npmConfig, done) {
 
 function pre (srConfig, done) {
   srPre(srConfig, function (err, nextRelease) {
-    done(null, nextRelease);
+    done(err, nextRelease);
   });
 }
 
@@ -87,12 +86,14 @@ function tag (nextRelease, done) {
       shell.exec('npm version ' + nextRelease.type + ' --git-tag-version false', nextAsyncShell(done))
     },
     function (done) {
-      concurrentGit('commit -anm\'chore: (' + tag + '): releasing component\' --allow-empty', nextAsyncShell(done))
+      shell.exec('git commit -anm\'chore: (' + tag + '): releasing component\' --allow-empty', nextAsyncShell(done))
     },
     function (done) {
-      concurrentGit('tag ' + tag, nextAsyncShell(done))
+      shell.exec('git tag ' + tag, nextAsyncShell(done))
     }
-  ], done);
+  ], function (err) {
+    done(err);
+  });
 }
 
 module.exports = function () {
@@ -100,6 +101,10 @@ module.exports = function () {
     getNpmConfig,
     makeSrConfig,
     pre,
-    tag
-  ]);
+    tag,
+  ], function (err) {
+    if (err) {
+      console.log(err.message);
+    }
+  });
 };

@@ -15,10 +15,31 @@ function pushTags (done) {
   });
 }
 
-function publishPackage (path, done) {
-  shell.exec('npm publish ' + path, function (code) {
+function publishPackage (relativePath, done) {
+  var rootPath = path.resolve(cwd());
+  var packagePath =  path.resolve(relativePath);
+  setupGitSymlink(rootPath, packagePath);
+
+  shell.exec('npm publish ' + relativePath, function (code) {
+    removeGitSymlink(packagePath);
     done(code === 0 ? null : code);
   });
+}
+
+/*
+ The symlinking is only necessary because package.json's gitHead isn't always populated with lerna. See
+ https://github.com/npm/read-package-json/issues/66
+ */
+
+function setupGitSymlink (rootPath, packagePath) {
+  var rootPathGit = path.join(rootPath, '.git');
+  var packagePathGit = path.join(packagePath, '.git');
+  shell.exec('ln -sf ' + rootPathGit + ' ' + packagePathGit);
+}
+
+
+function removeGitSymlink (packagePath) {
+  shell.exec('unlink ' + path.join(packagePath, '.git'));
 }
 
 function isPackageUpdated (pkg, cb) {
@@ -66,20 +87,25 @@ function publishUpdatedPackages (updatedPackages, done) {
       publishPackage(path, packagePublishedCallback)
     };
   }), function (err) {
-    done(err, releasedPackages)
+    done(err, releasedPackages);
   });
 }
 
 function writeReleasedPackagesFile (releasedPackages, done) {
-  fs.writeFile('.released-packages', releasedPackages.join('\n'), done);
+  fs.writeFile('.released-packages', releasedPackages.join('\n'), function (err) {
+    done(err)
+  });
 }
-
 
 module.exports = function perform () {
   async.waterfall([
     pushTags,
     getUpdatedPackages,
     publishUpdatedPackages,
-    writeReleasedPackagesFile
-  ]);
+    writeReleasedPackagesFile,
+  ], function (err) {
+    if (err) {
+      console.log(err.message);
+    }
+  });
 };

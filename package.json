@@ -20,7 +20,6 @@
     "npmconf": "2.1.2",
     "rc": "1.1.6",
     "semantic-release": "4.3.5",
-    "semantic-release-lerna-analyzer": "0.0.1",
     "shelljs": "0.7.0"
   },
   "devDependencies": {
@@ -55,7 +54,6 @@
     "lerna-semantic-release": "bin/lerna-semantic-release.js"
   },
   "release": {
-    "analyzeCommits": "semantic-release-lerna-analyzer",
     "verifyConditions": [],
     "debug": false
   }
