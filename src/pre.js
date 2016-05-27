@@ -10,13 +10,13 @@ module.exports = function (config, cb) {
 
   auto({
     lastRelease: plugins.getLastRelease.bind(null, config),
-    commits: ['lastRelease', function (cb, results) {
+    commits: ['lastRelease', function (results, cb) {
       getCommits(_.assign({
         lastRelease: results.lastRelease
       }, config),
       cb)
     }],
-    type: ['commits', 'lastRelease', function (cb, results) {
+    type: ['commits', 'lastRelease', function (results, cb) {
       getType(_.assign({
         commits: results.commits,
         lastRelease: results.lastRelease
