@@ -37,7 +37,7 @@ function makeSrConfig (npmConfig, done) {
   var srConfig = Object.assign({}, defaults, {
     env: process.env,
     plugins: {
-      "analyzeCommits": require('./plugins/analyzer.js'),
+      "analyzeCommits": require('./plugins/analyzer.js').default,
       "getLastRelease": srNormalize({}, "@semantic-release/last-release-npm"),
       "verifyRelease": srNormalize({}, "semantic-release/dist/lib/plugin-noop")
     },
