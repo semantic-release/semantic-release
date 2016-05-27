@@ -37,7 +37,9 @@ lerna-semantic-release perform # Publishes to npm
 
 # Post
 lerna run post-release # Generates a changelog in each package
-lerna run post-release 
+
+## Git operations
+lerna exec git add CHANGELOG.md --ignore-errors --concurrency 1
 git commit -anm\"docs(changelog): appending to changelog\" --allow-empty 
 git push
 ```
