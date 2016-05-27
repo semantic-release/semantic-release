@@ -9,3 +9,28 @@ Status:
 [semantic-release](https://www.npmjs.com/package/semantic-release) for [lerna](http://lernajs.io)-based projects.
 
 Basically a semantic-release that orders commits based on which package they belong to (uses data from [cz-lerna-changelog](https://github.com/atlassian/cz-lerna-changelog)) and then determines on that what the next release should be.
+
+## Setup
+
+Each lerna package should have a `pre-release` script in their `package.json`
+
+```
+{
+  "name": "component",
+  "version": "0.0.0",
+  "scripts": {
+    "pre-release": "lerna-semantic-release pre"
+  },
+}
+```
+
+## Releasing
+
+Execute these commands in your release process:
+
+```
+lerna run pre-release --concurrency 1 #We must run this is a pre-release step in each package. Concurrency 1 is necessary due to git operations
+lerna-semantic-release perform
+```
+
+This will publish all npm packages, including creating commits and tags for each release, in the format that lerna expects for the `lerna updated` command.
