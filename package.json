@@ -16,11 +16,12 @@
   "dependencies": {
     "@semantic-release/commit-analyzer": "2.0.0",
     "@semantic-release/last-release-npm": "1.2.1",
+    "@semantic-release/release-notes-generator": "2.0.0",
     "async": "1.5.2",
+    "conventional-changelog": "1.1.0",
     "npmconf": "2.1.2",
     "rc": "1.1.6",
     "semantic-release": "4.3.5",
-    "semantic-release": "^4.3.5",
     "shelljs": "0.7.0"
   },
   "peerDependencies": {

@@ -29,8 +29,17 @@ Each lerna package should have a `pre-release` script in their `package.json`
 Execute these commands in your release process:
 
 ```
-lerna run pre-release --concurrency 1 #We must run this is a pre-release step in each package. Concurrency 1 is necessary due to git operations
-lerna-semantic-release perform
+# Pre
+lerna run pre-release --concurrency 1 # Set up the versions, tags and commits
+
+# Perform
+lerna-semantic-release perform # Publishes to npm
+
+# Post
+lerna run post-release # Generates a changelog in each package
+lerna run post-release 
+git commit -anm\"docs(changelog): appending to changelog\" --allow-empty 
+git push
 ```
 
 This will publish all npm packages, including creating commits and tags for each release, in the format that lerna expects for the `lerna updated` command.

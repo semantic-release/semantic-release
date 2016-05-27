@@ -11,6 +11,7 @@ var srNormalize = require('semantic-release/dist/lib/plugins').normalize;
 var srRegistry = require('semantic-release/dist/lib/get-registry');
 
 var makeTag = require('./utils/make-tag');
+var nextAsyncShell = require('./utils/async-shell');
 
 function getPkgLocation () {
   return path.join(cwd(), 'package.json')
@@ -70,16 +71,6 @@ function tag (nextRelease, done) {
   var tag = makeTag(getPkg().name, nextRelease.version);
 
   console.log('Creating tag', tag);
-
-  function nextAsyncShell (asyncDoneCallback) {
-    return function (code, stdout, stderr) {
-      console.log('return code: ', code);
-      console.log('stdout: ', stdout.toString());
-      console.log('stderr: ', stderr.toString());
-
-      asyncDoneCallback(code === 0 ? null : code);
-    }
-  }
 
   async.series([
     function (done) {
