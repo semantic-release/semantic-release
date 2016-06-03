@@ -1,4 +1,5 @@
 var commitAnalyzer = require('@semantic-release/commit-analyzer');
+var log = require('../utils/log');
 
 module.exports = {
   default: function (_ref, cb) {
@@ -11,7 +12,8 @@ module.exports = {
     });
 
     commitAnalyzer({}, Object.assign(_ref, {commits: relevantCommits}), function (err, type) {
-      console.log('Anaylzed', relevantCommits.length, 'commits to determine type', type, 'for', pkg.name);
+      log.info('Anaylzed', relevantCommits.length, 'commits to determine type', type, 'for', pkg.name);
+      log.verbose(relevantCommits);
       cb(err, type);
     });
   },

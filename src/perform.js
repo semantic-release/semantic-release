@@ -8,6 +8,7 @@ var Repository = require('lerna/lib/Repository').default;
 var PackageUtilities = require('lerna/lib/PackageUtilities').default;
 
 var makeTag = require('./utils/make-tag');
+var log = require('./utils/log');
 
 function pushTags (done) {
   shell.exec('git push origin --tags', function (code) {
@@ -51,7 +52,7 @@ function removeGitSymlink (packagePath) {
 function isPackageUpdated (pkg, cb) {
   var npmVersion = shell.exec(['npm view', pkg.name, 'version'].join(' '), {silent: true});
   var outOfDate = npmVersion.stdout.trim() !== pkg.version;
-  console.log(pkg.name, outOfDate ? 'is out of date' : 'is up to date');
+  log.info(pkg.name, outOfDate ? 'is out of date' : 'is up to date');
   cb(null, {pkg: pkg, updated: outOfDate}); //if it 404's, it's !==, therefore new
 }
 
@@ -74,7 +75,7 @@ function getUpdatedPackages (done) {
 }
 
 function publishUpdatedPackages (updatedPackages, done) {
-  console.log('Publishing', updatedPackages.length, 'updated packages');
+  log.info('Publishing', updatedPackages.length, 'updated packages');
 
   var updatedPackageLocations = updatedPackages.map(function (pkg) {
     return pkg.location
@@ -112,7 +113,7 @@ module.exports = function perform () {
     writeReleasedPackagesFile
   ], function (err) {
     if (err) {
-      console.log(err.message);
+      log.error(err.message);
     }
   });
 };

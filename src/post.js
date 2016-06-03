@@ -2,6 +2,7 @@ var conventionalChangelog = require('conventional-changelog');
 var async = require('async');
 var shell = require('shelljs');
 var fs = require('fs');
+var log = require('./utils/log');
 
 var analyzer = require('./plugins/analyzer');
 
@@ -29,7 +30,7 @@ module.exports = function () {
     createChangelog
   ],function (err) {
     if (err) {
-      console.log(err);
+      log.error(err);
     }
   });
 

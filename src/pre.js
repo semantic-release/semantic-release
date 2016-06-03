@@ -12,6 +12,7 @@ var srRegistry = require('semantic-release/dist/lib/get-registry');
 
 var makeTag = require('./utils/make-tag');
 var nextAsyncShell = require('./utils/async-shell');
+var log = require('./utils/log');
 
 function getPkgLocation () {
   return path.join(cwd(), 'package.json')
@@ -62,15 +63,17 @@ function pre (srConfig, done) {
   });
 }
 
-function tag (nextRelease, done) {
+function bumpVersionCommitAndTag (nextRelease, done) {
   if (!nextRelease) {
     done(null);
     return;
   }
 
+  log.info(nextRelease);
+
   var tag = makeTag(getPkg().name, nextRelease.version);
 
-  console.log('Creating tag', tag);
+  log.info('Creating tag', tag);
 
   async.series([
     function (done) {
@@ -92,10 +95,10 @@ module.exports = function () {
     getNpmConfig,
     makeSrConfig,
     pre,
-    tag
+    bumpVersionCommitAndTag
   ], function (err) {
     if (err) {
-      console.log(err.message);
+      log.error(err.message);
     }
   });
 };
