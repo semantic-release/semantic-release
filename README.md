@@ -12,16 +12,10 @@ Basically a semantic-release that orders commits based on which package they bel
 
 ## Setup
 
-Each lerna package should have a `pre-release` script in their `package.json`
+Install cz-lerna-changelog in your repository:
 
 ```
-{
-  "name": "component",
-  "version": "0.0.0",
-  "scripts": {
-    "pre-release": "lerna-semantic-release pre"
-  },
-}
+npm i cz-lerna-changelog --save-dev
 ```
 
 ## Releasing
@@ -30,13 +24,13 @@ Execute these commands in your release process:
 
 ```
 # Pre
-lerna run pre-release --concurrency 1 # Set up the versions, tags and commits
+lerna-semantic-release pre # Set up the versions, tags and commits
 
 # Perform
 lerna-semantic-release perform # Publishes to npm
 
 # Post
-lerna run post-release # Generates a changelog in each package
+lerna-semantic-release post # Generates a changelog in each package
 
 ## Git operations
 lerna exec --concurrency 1 -- touch CHANGELOG.md

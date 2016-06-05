@@ -1,25 +1,26 @@
 var async = require('async');
-var cwd = require('process').cwd;
 var fs = require('fs');
 var path = require('path');
 var npmconf = require('npmconf');
 var rc = require('rc');
 var shell = require('shelljs');
+var gitHead = require('git-head');
 
 var srPre = require('semantic-release/dist/pre');
 var srNormalize = require('semantic-release/dist/lib/plugins').normalize;
 var srRegistry = require('semantic-release/dist/lib/get-registry');
 
 var makeTag = require('./utils/make-tag');
-var nextAsyncShell = require('./utils/async-shell');
+var execAsTask = require('./utils/exec-as-task');
 var log = require('./utils/log');
+var lernaPackages = require('./lerna/packages');
 
-function getPkgLocation () {
-  return path.join(cwd(), 'package.json')
+function getPkgLocation (packagePath) {
+  return path.join(packagePath, 'package.json')
 }
 
-function getPkg () {
-  return JSON.parse(fs.readFileSync(getPkgLocation()))
+function getPkg (packagePath) {
+  return JSON.parse(fs.readFileSync(getPkgLocation(packagePath)))
 }
 
 function getNpmConfig (done) {
@@ -27,7 +28,7 @@ function getNpmConfig (done) {
 }
 
 function makeSrConfig (npmConfig, done) {
-  var pkg = getPkg();
+  var pkg = getPkg(this.packagePath);
 
   var defaults = {
     options: {
@@ -63,7 +64,12 @@ function pre (srConfig, done) {
   });
 }
 
+var process = require('process');
+
 function bumpVersionCommitAndTag (nextRelease, done) {
+  var packagePath = this.packagePath;
+  var releaseHash = this.releaseHash;
+
   if (!nextRelease) {
     done(null);
     return;
@@ -71,19 +77,20 @@ function bumpVersionCommitAndTag (nextRelease, done) {
 
   log.info(nextRelease);
 
-  var tag = makeTag(getPkg().name, nextRelease.version);
+  var tag = makeTag(getPkg(packagePath).name, nextRelease.version);
 
   log.info('Creating tag', tag);
-
   async.series([
     function (done) {
-      shell.exec('npm version ' + nextRelease.type + ' --git-tag-version false', nextAsyncShell(done))
+      var pushd = shell.pushd(packagePath);
+      done(pushd.code);
     },
+    execAsTask('npm version ' + nextRelease.type + ' --git-tag-version false'),
+    execAsTask('git commit -anm\'chore: (' + tag + '): releasing component\n\nReleased from sha ' + releaseHash +'\' --allow-empty'),
+    execAsTask('git tag ' + tag),
     function (done) {
-      shell.exec('git commit -anm\'chore: (' + tag + '): releasing component\' --allow-empty', nextAsyncShell(done))
-    },
-    function (done) {
-      shell.exec('git tag ' + tag, nextAsyncShell(done))
+      var popd = shell.popd();
+      done(popd.code);
     }
   ], function (err) {
     done(err);
@@ -91,14 +98,16 @@ function bumpVersionCommitAndTag (nextRelease, done) {
 }
 
 module.exports = function () {
-  async.waterfall([
-    getNpmConfig,
-    makeSrConfig,
-    pre,
-    bumpVersionCommitAndTag
-  ], function (err) {
-    if (err) {
-      log.error(err.message);
-    }
+  gitHead(function (err, releaseHash) {
+    err && log.error(err);
+
+    lernaPackages.forEachPackage([
+      getNpmConfig,
+      makeSrConfig,
+      pre,
+      bumpVersionCommitAndTag
+    ], async.waterfall, {releaseHash: releaseHash});
+
   });
+
 };

@@ -4,9 +4,7 @@ var path = require('path');
 var fs = require('fs');
 var shell = require('shelljs');
 
-var Repository = require('lerna/lib/Repository').default;
-var PackageUtilities = require('lerna/lib/PackageUtilities').default;
-
+var lernaPackages = require('./lerna/packages');
 var makeTag = require('./utils/make-tag');
 var log = require('./utils/log');
 
@@ -57,8 +55,7 @@ function isPackageUpdated (pkg, cb) {
 }
 
 function getUpdatedPackages (done) {
-  var packagesLocation = new Repository().packagesLocation;
-  var allPackages = PackageUtilities.getPackages(packagesLocation);
+  var allPackages = lernaPackages.getAllPackages();
 
   async.parallel(allPackages.map(function (pkg) {
     return function getLatestVersion (done) {

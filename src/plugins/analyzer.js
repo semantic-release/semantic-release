@@ -13,7 +13,6 @@ module.exports = {
 
     commitAnalyzer({}, Object.assign(_ref, {commits: relevantCommits}), function (err, type) {
       log.info('Anaylzed', relevantCommits.length, 'commits to determine type', type, 'for', pkg.name);
-      log.verbose(relevantCommits);
       cb(err, type);
     });
   },
