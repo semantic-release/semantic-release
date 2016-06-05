@@ -106,7 +106,10 @@ module.exports = function () {
       makeSrConfig,
       pre,
       bumpVersionCommitAndTag
-    ], async.waterfall, {releaseHash: releaseHash});
+    ], {
+      asyncType: async.waterfall,
+      extraContext:  {releaseHash: releaseHash}
+    });
 
   });
 

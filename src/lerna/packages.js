@@ -14,7 +14,10 @@ module.exports = {
     return PackageUtilities.getPackages(packagesLocation);
   },
 
-  forEachPackage: function (tasks, asyncType, extraContext) {
+  forEachPackage: function (tasks, options, done) {
+    var extraContext = (options && options.extraContext) || {};
+    var asyncType = (options && options.asyncType) || async.series;
+
     var packages = module.exports.getAllPackages();
     var packageLocations = packages.map(function (pkg) {
       return pkg.location;
@@ -25,7 +28,7 @@ module.exports = {
         var contextBoundTasks = tasks.map(function (task) {
           return function () {
             log.info('Executing ' + task.name + ' in ' + path.relative('.', packagePath));
-            var context = Object.assign({}, extraContext || {}, {packagePath: packagePath});
+            var context = Object.assign({}, extraContext, {packagePath: packagePath});
             return task.apply(context, arguments);
           }
         });
@@ -39,6 +42,7 @@ module.exports = {
 
     async.series(tasksToRunInEachPackage, function (err) {
       err && log.error(err);
+      done();
     });
   }
 };

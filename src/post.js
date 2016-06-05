@@ -31,8 +31,12 @@ module.exports = function () {
   lernaPackages.forEachPackage([
     createChangelog,
     execAsTask('touch ' + CHANGELOG_FILE_NAME),
-    execAsTask('git add ' + CHANGELOG_FILE_NAME),
-    execAsTask('git commit -anm\'docs(changelog): appending to changelog\' --allow-empty'),
-    execAsTask('git push origin')
-  ], async.series);
+    execAsTask('git add ' + CHANGELOG_FILE_NAME)
+
+  ], {}, function done () {
+    async.series([
+      execAsTask('git commit -anm\'docs(changelog): appending to changelog\' --allow-empty'),
+      execAsTask('git push origin')
+    ]);
+  });
 };
