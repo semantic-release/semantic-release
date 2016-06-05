@@ -20,7 +20,7 @@ module.exports = {
   },
 
   isRelevant: function (commit, packageName) {
-    var affectsLine = commit.message.split('\n\n')[1];
+    var affectsLine = commit.message ? commit.message.split('\n\n')[1] : '';
     return affectsLine && affectsLine.indexOf('affects:') === 0 && affectsLine.indexOf(packageName) > -1
   }
 };
