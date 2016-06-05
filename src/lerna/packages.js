@@ -42,7 +42,7 @@ module.exports = {
 
     async.series(tasksToRunInEachPackage, function (err) {
       err && log.error(err);
-      done();
+      done && done();
     });
   }
 };
