@@ -14,7 +14,7 @@ var CHANGELOG_FILE_NAME = 'CHANGELOG.md';
 function createChangelog (done) {
   var packagePath = this.packagePath;
   var pkgJsonPath = path.join(packagePath, 'package.json');
-  var writeStream = fs.createWriteStream(path.join(packagePath, CHANGELOG_FILE_NAME));
+  var writeStream = fs.createWriteStream(path.join(packagePath, CHANGELOG_FILE_NAME), {flags: 'a'});
   var stream = conventionalChangelog({
     preset: 'angular',
     transform: function (commit, cb) {

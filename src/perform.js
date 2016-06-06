@@ -49,8 +49,9 @@ function removeGitSymlink (packagePath) {
 
 function isPackageUpdated (pkg, cb) {
   var npmVersion = shell.exec(['npm view', pkg.name, 'version'].join(' '), {silent: true});
-  var outOfDate = npmVersion.stdout.trim() !== pkg.version;
-  log.info(pkg.name, outOfDate ? 'is out of date' : 'is up to date');
+  var publishedVersion = npmVersion.stdout.trim();
+  var outOfDate = publishedVersion !== pkg.version;
+  log.info(pkg.name + '@' + pkg.version, outOfDate ? ('has been updated, since version is newer than ' + publishedVersion) : 'is up to date');
   cb(null, {pkg: pkg, updated: outOfDate}); //if it 404's, it's !==, therefore new
 }
 
