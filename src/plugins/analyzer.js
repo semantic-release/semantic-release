@@ -7,7 +7,8 @@ module.exports = {
     var commits = _ref.commits;
 
     var relevantCommits = commits.filter(function (commit) {
-      return module.exports.isRelevant(commit, pkg.name);
+      var affectsLine = (commit && commit.message) ? commit.message.split('\n\n')[1] : '';
+      return module.exports.isRelevant(affectsLine, pkg.name);
     });
 
     commitAnalyzer({}, Object.assign(_ref, {commits: relevantCommits}), function (err, type) {
@@ -19,8 +20,7 @@ module.exports = {
     });
   },
 
-  isRelevant: function (commit, packageName) {
-    var affectsLine = (commit && commit.message) ? commit.message.split('\n\n')[1] : '';
+  isRelevant: function (affectsLine, packageName) {
     return affectsLine && affectsLine.indexOf('affects:') === 0 && affectsLine.indexOf(packageName) > -1
   }
 };

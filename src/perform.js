@@ -103,8 +103,8 @@ function writeReleasedPackagesFile (releasedPackages, done) {
 
 module.exports = function perform () {
   async.waterfall([
-    pushTags,
     pushCommits,
+    pushTags,
     getUpdatedPackages,
     publishUpdatedPackages,
     writeReleasedPackagesFile
