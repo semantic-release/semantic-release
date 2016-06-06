@@ -64,7 +64,9 @@ function pre (srConfig, done) {
   });
 }
 
-var process = require('process');
+function releaseTypeToNpmVersionType (releaseType) {
+  return releaseType === 'initial' ? 'major' : releaseType;
+}
 
 function bumpVersionCommitAndTag (nextRelease, done) {
   var packagePath = this.packagePath;
@@ -80,19 +82,13 @@ function bumpVersionCommitAndTag (nextRelease, done) {
   var tag = makeTag(getPkg(packagePath).name, nextRelease.version);
 
   log.info('Creating tag', tag);
+  shell.pushd(packagePath);
   async.series([
-    function (done) {
-      var pushd = shell.pushd(packagePath);
-      done(pushd.code);
-    },
-    execAsTask('npm version ' + nextRelease.type + ' --git-tag-version false'),
+    execAsTask('npm version ' + releaseTypeToNpmVersionType(nextRelease.type) + ' --git-tag-version false'),
     execAsTask('git commit -anm\'chore: (' + tag + '): releasing component\n\nReleased from sha ' + releaseHash +'\' --allow-empty'),
-    execAsTask('git tag ' + tag),
-    function (done) {
-      var popd = shell.popd();
-      done(popd.code);
-    }
+    execAsTask('git tag ' + tag)
   ], function (err) {
+    shell.popd();
     done(err);
   });
 }
