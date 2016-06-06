@@ -15,8 +15,16 @@ Basically a semantic-release that orders commits based on which package they bel
 Install cz-lerna-changelog in your repository:
 
 ```
-npm i cz-lerna-changelog --save-dev
+npm install commitizen -g
 ```
+
+Next, initialize your project to use the cz-lerna-changelog adapter by typing:
+
+```
+commitizen init cz-lerna-changelog --save-dev --save-exact
+```
+
+See the [commitzien-cli](https://github.com/commitizen/cz-cli) docs for more details on how to set up commitzen with the correct adapter
 
 ## Releasing
 
