@@ -24,6 +24,7 @@
     "rc": "1.1.6",
     "semantic-release": "4.3.5",
     "shelljs": "0.7.0",
+    "simple-git": "^1.37.0",
     "winston": "2.2.0"
   },
   "peerDependencies": {
