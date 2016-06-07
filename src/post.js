@@ -99,8 +99,8 @@ module.exports = function () {
     exitPackage
   ], {}, function done () {
     async.series([
-      //execAsTask('git commit -anm\'docs(changelog): appending to changelog\' --allow-empty'),
-      //execAsTask('git push origin')
+      execAsTask('git commit -anm\'docs(changelog): appending to changelog\' --allow-empty'),
+      execAsTask('git push origin')
     ]);
   });
 };
