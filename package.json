@@ -19,6 +19,7 @@
     "@semantic-release/release-notes-generator": "2.0.0",
     "async": "1.5.2",
     "conventional-changelog": "1.1.0",
+    "dateformat": "^1.0.12",
     "git-head": "1.14.0",
     "npmconf": "2.1.2",
     "rc": "1.1.6",

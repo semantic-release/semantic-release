@@ -5,6 +5,8 @@ var fs = require('fs');
 var path = require('path');
 var simpleGit = require('simple-git');
 var semver = require('semver');
+var dateFormat = require('dateformat');
+
 
 var lernaPackages = require('./lerna/packages');
 var execAsTask = require('./utils/exec-as-task');
@@ -60,7 +62,7 @@ function addVersionToCommit (commit) {
     rtag.lastIndex = 0;
 
     if (!match) {
-      return;
+      return commit;
     }
 
     var temporaryTag = match[1];
@@ -69,6 +71,33 @@ function addVersionToCommit (commit) {
       commit.version = makeLernaTag(tagParts);
     }
   }
+
+  return commit;
+}
+
+/**
+ * Reformat a commit to contain a version (based on git tags) and the proper date.
+ * Mostly from the default (conventional-changelog-core/lib/merge-config.js)
+ * @param commit
+ * @returns commit the modified commit
+ */
+function reformatCommit (commit) {
+  var rtag = /tag:\s*[v=]?(.+?)[,\)]/gi;
+
+  if (commit.committerDate) {
+    commit.committerDate = dateFormat(commit.committerDate, 'yyyy-mm-dd', true);
+  }
+
+  if (commit.gitTags) {
+    var match = rtag.exec(commit.gitTags);
+    rtag.lastIndex = 0;
+
+    if (match) {
+      commit.version = match[1];
+    }
+  }
+
+  return commit;
 }
 
 function createChangelog (done) {
@@ -79,14 +108,17 @@ function createChangelog (done) {
     preset: 'angular',
     transform: function (commit, cb) {
       var pkgJsonFile = getPkg(packagePath);
-      if (analyzer.isRelevant(commit.body, pkgJsonFile.name)) {
 
-        addVersionToCommit(commit);
+      var isRelevant = analyzer.isRelevant(commit.body, pkgJsonFile.name);
 
-        cb(null, commit);
-      } else {
+      if (!isRelevant && !commit.gitTags) {
         cb(null, null);
+        return;
       }
+
+      commit = reformatCommit(commit);
+
+      cb(null, commit);
     },
     pkg: {
       path: pkgJsonPath
