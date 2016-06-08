@@ -85,11 +85,15 @@ function bumpVersionCommitAndTag (nextRelease, done) {
   log.info('Creating tags', lernaTag, 'and', semanticTag);
 
   shell.pushd(packagePath);
+
+  var releaseCommitMessage = 'chore(release): releasing component\n\naffects: ' + lernaTag + '\n\nReleased from sha ' + releaseHash;
+
   async.series([
     execAsTask('npm version ' + releaseTypeToNpmVersionType(nextRelease.type) + ' --git-tag-version false'),
-    execAsTask('git commit -anm\'chore: (release): releasing component\n\naffects: ' + lernaTag + '\n\nReleased from sha ' + releaseHash +'\' --allow-empty'),
-    execAsTask('git tag ' + semanticTag),
-    execAsTask('git tag ' + lernaTag)
+    execAsTask('git commit -anm\'' + releaseCommitMessage +'\' --allow-empty'),
+    execAsTask('git tag -am"tag for lerna releases" ' + lernaTag),
+    execAsTask('git commit -anm\'' + releaseCommitMessage +'\' --allow-empty'),
+    execAsTask('git tag -am"tag for  semantic releases' + semanticTag) // Need to do two commits due to git
   ], function (err) {
     shell.popd();
     done(err);
