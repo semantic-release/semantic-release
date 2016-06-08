@@ -87,7 +87,7 @@ function bumpVersionCommitAndTag (nextRelease, done) {
   shell.pushd(packagePath);
   async.series([
     execAsTask('npm version ' + releaseTypeToNpmVersionType(nextRelease.type) + ' --git-tag-version false'),
-    execAsTask('git commit -anm\'chore: (release): releasing component\n\nReleased from sha ' + releaseHash +'\' --allow-empty'),
+    execAsTask('git commit -anm\'chore: (release): releasing component\n\naffects: ' + lernaTag + '\n\nReleased from sha ' + releaseHash +'\' --allow-empty'),
     execAsTask('git tag ' + semanticTag),
     execAsTask('git tag ' + lernaTag)
   ], function (err) {
