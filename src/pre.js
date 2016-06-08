@@ -93,7 +93,7 @@ function bumpVersionCommitAndTag (nextRelease, done) {
     execAsTask('git commit -anm\'' + releaseCommitMessage +'\' --allow-empty'),
     execAsTask('git tag -am"tag for lerna releases" ' + lernaTag),
     execAsTask('git commit -anm\'' + releaseCommitMessage +'\' --allow-empty'),
-    execAsTask('git tag -am"tag for  semantic releases' + semanticTag) // Need to do two commits due to git
+    execAsTask('git tag -am"tag for  semantic releases' + semanticTag) // Need to do two commits due to git-semver-tags. See https://github.com/stevemao/git-semver-tags/issues/8
   ], function (err) {
     shell.popd();
     done(err);
