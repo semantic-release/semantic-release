@@ -10,6 +10,7 @@ var dateFormat = require('dateformat');
 
 var lernaPackages = require('./lerna/packages');
 var execAsTask = require('./utils/exec-as-task');
+var tagging = require('./utils/tagging');
 var analyzer = require('./plugins/analyzer');
 var log = require('./utils/log');
 
@@ -92,10 +93,43 @@ function exitPackage (done) {
   done();
 }
 
+function isTagRelevant (packageName, tag) {
+  var tagParts = tagging.getTagParts(tag);
+  return tagParts && tagParts.version && tagParts.name === packageName;
+}
+
+function replaceTags (oldTags, newTagFormatter) {
+  oldTags.forEach(function renameTag (oldTags) {
+    var tagParts = tagging.getTagParts(oldTags);
+    shell.exec('git tag ' + newTagFormatter(tagParts.name, tagParts.version) + ' ' + oldTags);
+  });
+  shell.exec('git tag -d ' + oldTags.join(' '));
+}
+
+function createSemverTags (done) {
+  var packageName = getPkg(this.packagePath).name;
+  simpleGit().tags(function (err, tags) {
+    var relevantLernaTags = tags.all.filter(isTagRelevant.bind(this, packageName));
+    replaceTags(relevantLernaTags, tagging.semver);
+    done(err);
+  });
+}
+
+function removeSemverTags (done) {
+  var packageName = getPkg(this.packagePath).name;
+  simpleGit().tags(function (err, tags) {
+    var relevantSemverTags = tags.all.filter(isTagRelevant.bind(this, packageName));
+    replaceTags(relevantSemverTags, tagging.lerna);
+    done(err);
+  })
+}
+
 module.exports = function () {
   var rootPackageRepository = JSON.parse(fs.readFileSync('./package.json')).repository;
   lernaPackages.forEachPackage([
+    createSemverTags,
     createChangelog,
+    removeSemverTags,
     enterPackage,
     execAsTask('touch ' + CHANGELOG_FILE_NAME),
     execAsTask('git add ' + CHANGELOG_FILE_NAME),
@@ -104,8 +138,8 @@ module.exports = function () {
     rootPackageRepository: rootPackageRepository
   }, function done () {
     async.series([
-      execAsTask('git commit -anm\'docs(changelog): appending to changelog\' --allow-empty'),
-      execAsTask('git push origin')
+      //execAsTask('git commit -anm\'docs(changelog): appending to changelog\' --allow-empty'),
+      //execAsTask('git push origin')
     ]);
   });
 };

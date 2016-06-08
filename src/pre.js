@@ -10,7 +10,7 @@ var srPre = require('semantic-release/dist/pre');
 var srNormalize = require('semantic-release/dist/lib/plugins').normalize;
 var srRegistry = require('semantic-release/dist/lib/get-registry');
 
-var makeTag = require('./utils/make-tag');
+var tagging = require('./utils/tagging');
 var execAsTask = require('./utils/exec-as-task');
 var log = require('./utils/log');
 var lernaPackages = require('./lerna/packages');
@@ -79,10 +79,9 @@ function bumpVersionCommitAndTag (nextRelease, done) {
 
   log.info(nextRelease);
 
-  var lernaTag = makeTag.lerna(getPkg(packagePath).name, nextRelease.version);
-  var semanticTag = makeTag.semantic(getPkg(packagePath).name, nextRelease.version);
+  var lernaTag = tagging.lerna(getPkg(packagePath).name, nextRelease.version);
 
-  log.info('Creating tags', lernaTag, 'and', semanticTag);
+  log.info('Creating tag', lernaTag);
 
   shell.pushd(packagePath);
 
@@ -91,9 +90,7 @@ function bumpVersionCommitAndTag (nextRelease, done) {
   async.series([
     execAsTask('npm version ' + releaseTypeToNpmVersionType(nextRelease.type) + ' --git-tag-version false'),
     execAsTask('git commit -anm\'' + releaseCommitMessage + '\nTag for lerna release' +'\' --allow-empty'),
-    execAsTask('git tag -am"tag for lerna releases" ' + lernaTag),
-    execAsTask('git commit -anm\'' + releaseCommitMessage + '\nTag for lerna release' +'\' --allow-empty'),
-    execAsTask('git tag -am"tag for  semantic releases" ' + semanticTag) // Need to do two commits due to git-semver-tags. See https://github.com/stevemao/git-semver-tags/issues/8
+    execAsTask('git tag -am"tag for lerna releases" ' + lernaTag)
   ], function (err) {
     shell.popd();
     done(err);

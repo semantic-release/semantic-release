@@ -5,7 +5,7 @@ var fs = require('fs');
 var shell = require('shelljs');
 
 var lernaPackages = require('./lerna/packages');
-var makeTag = require('./utils/make-tag');
+var tagging = require('./utils/tagging');
 var log = require('./utils/log');
 
 function pushTags (done) {
@@ -84,7 +84,7 @@ function publishUpdatedPackages (updatedPackages, done) {
   });
 
   var releasedPackages = updatedPackages.map(function (pkg) {
-    return makeTag.lerna(pkg.name, pkg.version);
+    return tagging.lerna(pkg.name, pkg.version);
   });
 
   async.series(updatedPackageRelativeLocations.map(function (path) {
