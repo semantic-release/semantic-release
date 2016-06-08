@@ -90,10 +90,10 @@ function bumpVersionCommitAndTag (nextRelease, done) {
 
   async.series([
     execAsTask('npm version ' + releaseTypeToNpmVersionType(nextRelease.type) + ' --git-tag-version false'),
-    execAsTask('git commit -anm\'' + releaseCommitMessage +'\' --allow-empty'),
+    execAsTask('git commit -anm\'' + releaseCommitMessage + '\nTag for lerna release' +'\' --allow-empty'),
     execAsTask('git tag -am"tag for lerna releases" ' + lernaTag),
-    execAsTask('git commit -anm\'' + releaseCommitMessage +'\' --allow-empty'),
-    execAsTask('git tag -am"tag for  semantic releases' + semanticTag) // Need to do two commits due to git-semver-tags. See https://github.com/stevemao/git-semver-tags/issues/8
+    execAsTask('git commit -anm\'' + releaseCommitMessage + '\nTag for lerna release' +'\' --allow-empty'),
+    execAsTask('git tag -am"tag for  semantic releases" ' + semanticTag) // Need to do two commits due to git-semver-tags. See https://github.com/stevemao/git-semver-tags/issues/8
   ], function (err) {
     shell.popd();
     done(err);

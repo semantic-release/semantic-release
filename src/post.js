@@ -50,6 +50,8 @@ function reformatCommit (commit) {
 
 function createChangelog (done) {
   var packagePath = this.packagePath;
+  var rootPackageRepository = this.rootPackageRepository;
+
   var pkgJsonPath = getPkgPath(packagePath);
   var writeStream = fs.createWriteStream(path.join(packagePath, CHANGELOG_FILE_NAME));
   var stream = conventionalChangelog({
@@ -73,7 +75,7 @@ function createChangelog (done) {
     },
     releaseCount: 0
   }, {
-
+    repository: rootPackageRepository
   }).pipe(writeStream);
 
   stream.on('close', function () {
@@ -91,13 +93,16 @@ function exitPackage (done) {
 }
 
 module.exports = function () {
+  var rootPackageRepository = JSON.parse(fs.readFileSync('./package.json')).repository;
   lernaPackages.forEachPackage([
     createChangelog,
     enterPackage,
     execAsTask('touch ' + CHANGELOG_FILE_NAME),
     execAsTask('git add ' + CHANGELOG_FILE_NAME),
     exitPackage
-  ], {}, function done () {
+  ], {
+    rootPackageRepository: rootPackageRepository
+  }, function done () {
     async.series([
       execAsTask('git commit -anm\'docs(changelog): appending to changelog\' --allow-empty'),
       execAsTask('git push origin')
