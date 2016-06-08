@@ -84,7 +84,7 @@ function publishUpdatedPackages (updatedPackages, done) {
   });
 
   var releasedPackages = updatedPackages.map(function (pkg) {
-    return makeTag(pkg.name, pkg.version);
+    return makeTag.lerna(pkg.name, pkg.version);
   });
 
   async.series(updatedPackageRelativeLocations.map(function (path) {
