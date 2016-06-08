@@ -108,7 +108,10 @@ module.exports = function (config) {
       bumpVersionCommitAndTag
     ], {
       asyncType: async.waterfall,
-      extraContext:  {releaseHash: releaseHash}
+      extraContext:  {
+        releaseHash: releaseHash,
+        services: config.services
+      }
     });
 
   });

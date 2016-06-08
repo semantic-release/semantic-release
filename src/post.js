@@ -135,8 +135,10 @@ module.exports = function (config) {
     execAsTask('git add ' + CHANGELOG_FILE_NAME),
     exitPackage
   ], {
-    rootPackageRepository: rootPackageRepository,
-    services: config.services
+    extraContext: {
+      rootPackageRepository: rootPackageRepository,
+      services: config.services
+    }
   }, function done () {
     async.series([
       //execAsTask('git commit -anm\'docs(changelog): appending to changelog\' --allow-empty'),

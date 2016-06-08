@@ -109,7 +109,12 @@ module.exports = function perform (config) {
     getUpdatedPackages,
     publishUpdatedPackages,
     writeReleasedPackagesFile
-  ], function (err) {
+  ], {
+    extraContext: {
+      services: config.services
+    }
+  },
+  function (err) {
     if (err) {
       log.error(err.message);
     }
