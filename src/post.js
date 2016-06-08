@@ -124,7 +124,7 @@ function removeSemverTags (done) {
   })
 }
 
-module.exports = function () {
+module.exports = function (config) {
   var rootPackageRepository = JSON.parse(fs.readFileSync('./package.json')).repository;
   lernaPackages.forEachPackage([
     createSemverTags,
@@ -135,7 +135,8 @@ module.exports = function () {
     execAsTask('git add ' + CHANGELOG_FILE_NAME),
     exitPackage
   ], {
-    rootPackageRepository: rootPackageRepository
+    rootPackageRepository: rootPackageRepository,
+    services: config.services
   }, function done () {
     async.series([
       //execAsTask('git commit -anm\'docs(changelog): appending to changelog\' --allow-empty'),

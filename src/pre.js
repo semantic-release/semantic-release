@@ -97,7 +97,7 @@ function bumpVersionCommitAndTag (nextRelease, done) {
   });
 }
 
-module.exports = function () {
+module.exports = function (config) {
   gitHead(function (err, releaseHash) {
     err && log.error(err);
 

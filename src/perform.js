@@ -102,7 +102,7 @@ function writeReleasedPackagesFile (releasedPackages, done) {
   });
 }
 
-module.exports = function perform () {
+module.exports = function perform (config) {
   async.waterfall([
     pushCommits,
     pushTags,
