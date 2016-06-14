@@ -8,8 +8,7 @@ module.exports = function execAsTask (command) {
       (code !== 0) && log.info('shell return code: ', code);
       stdout && log.info('\n', stdout.toString());
       stderr && log.error('shell stderr: ', stderr.toString());
-
-      done(code === 0 ? null : code);
+      done(code === 0 ? null : code, stdout);
     });
   }
 };

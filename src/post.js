@@ -1,6 +1,5 @@
 var conventionalChangelog = require('conventional-changelog');
 var async = require('async');
-var shell = require('shelljs');
 var fs = require('fs');
 var path = require('path');
 var semver = require('semver');
@@ -8,14 +7,11 @@ var dateFormat = require('dateformat');
 
 
 var lernaPackages = require('./lerna/packages');
-var execAsTask = require('./utils/exec-as-task');
 var tagging = require('./utils/tagging');
 var analyzer = require('./plugins/analyzer');
 var log = require('./utils/log');
 
 var CHANGELOG_FILE_NAME = 'CHANGELOG.md';
-
-var simpleGit = require('simple-git');
 
 function getPkgPath (packagePath) {
   return path.join(packagePath, 'package.json')

@@ -1,8 +1,5 @@
 var async = require('async');
-var cwd = require('process').cwd;
 var path = require('path');
-var fs = require('fs');
-var shell = require('shelljs');
 
 var lernaPackages = require('./lerna/packages');
 var tagging = require('./utils/tagging');
@@ -10,25 +7,25 @@ var log = require('./utils/log');
 var bindTasks = require('./utils/bind-tasks');
 
 function pushTags (done) {
-  shell.exec('git push origin --tags', function (code) {
-    done(code === 0 ? null : code);
+  this.io.git.pushTags()(function(err) {
+    done(err);
   });
 }
 
 function pushCommits (done) {
-  shell.exec('git push origin', function (code) {
-    done(code === 0 ? null : code);
+  this.io.git.push()(function(err) {
+    done(err);
   });
 }
 
-function publishPackage (relativePath, done) {
-  var rootPath = path.resolve(cwd());
+function publishPackage (relativePath, io, done) {
+  var rootPath = path.resolve(io.shell.cwdSync());
   var packagePath =  path.resolve(relativePath);
-  setupGitSymlink(rootPath, packagePath);
+  setupGitSymlink(rootPath, packagePath, io.shell);
 
-  shell.exec('npm publish ' + relativePath, function (code) {
-    removeGitSymlink(packagePath);
-    done(code === 0 ? null : code);
+  io.npm.publish(relativePath)(function (err) {
+    removeGitSymlink(packagePath, io.shell);
+    done(err);
   });
 }
 
@@ -37,31 +34,32 @@ function publishPackage (relativePath, done) {
  https://github.com/npm/read-package-json/issues/66
  */
 
-function setupGitSymlink (rootPath, packagePath) {
+function setupGitSymlink (rootPath, packagePath, shell) {
   var rootPathGit = path.join(rootPath, '.git');
   var packagePathGit = path.join(packagePath, '.git');
-  shell.exec('ln -sf ' + rootPathGit + ' ' + packagePathGit);
+  shell.lnSync(rootPathGit, packagePathGit);
 }
 
 
-function removeGitSymlink (packagePath) {
-  shell.exec('unlink ' + path.join(packagePath, '.git'));
+function removeGitSymlink (packagePath, shell) {
+  shell.unlinkSync(path.join(packagePath, '.git'));
 }
 
-function isPackageUpdated (pkg, cb) {
-  var npmVersion = shell.exec(['npm view', pkg.name, 'version'].join(' '), {silent: true});
-  var publishedVersion = npmVersion.stdout.trim();
-  var outOfDate = publishedVersion !== pkg.version;
-  log.info(pkg.name + '@' + pkg.version, outOfDate ? ('has been updated, since version is newer than ' + publishedVersion) : 'is up to date');
-  cb(null, {pkg: pkg, updated: outOfDate}); //if it 404's, it's !==, therefore new
+function isPackageUpdated (pkg, npm, cb) {
+  npm.getVersion(pkg.name)(function (err, publishedVersion) {
+    var outOfDate = publishedVersion !== pkg.version;
+    log.info(pkg.name + '@' + pkg.version, outOfDate ? ('has been updated, since version is newer than ' + publishedVersion) : 'is up to date');
+    cb(null, {pkg: pkg, updated: outOfDate}); //if it 404's, it's !==, therefore new //TODO move this logic into getVersion
+  });
 }
 
 function getUpdatedPackages (done) {
   var allPackages = lernaPackages.getAllPackages();
+  var npm = this.io.npm;
 
   async.parallel(allPackages.map(function (pkg) {
     return function getLatestVersion (done) {
-      isPackageUpdated(pkg, done);
+      isPackageUpdated(pkg, npm, done);
     }
   }), function gotLatestVersions (err, results) {
     var updatedPackages = results.filter(function (result) {
@@ -74,6 +72,7 @@ function getUpdatedPackages (done) {
 }
 
 function publishUpdatedPackages (updatedPackages, done) {
+  var io = this.io;
   log.info('Publishing', updatedPackages.length, 'updated packages');
 
   var updatedPackageLocations = updatedPackages.map(function (pkg) {
@@ -81,7 +80,7 @@ function publishUpdatedPackages (updatedPackages, done) {
   });
 
   var updatedPackageRelativeLocations = updatedPackageLocations.map(function (location) {
-    return path.relative(cwd(), location);
+    return path.relative(io.shell.cwdSync(), location);
   });
 
   var releasedPackages = updatedPackages.map(function (pkg) {
@@ -90,7 +89,7 @@ function publishUpdatedPackages (updatedPackages, done) {
 
   async.series(updatedPackageRelativeLocations.map(function (path) {
     return function (packagePublishedCallback) {
-      publishPackage(path, packagePublishedCallback)
+      publishPackage(path, io, packagePublishedCallback)
     };
   }), function (err) {
     done(err, releasedPackages);
@@ -98,7 +97,7 @@ function publishUpdatedPackages (updatedPackages, done) {
 }
 
 function writeReleasedPackagesFile (releasedPackages, done) {
-  fs.writeFile('.released-packages', releasedPackages.join('\n'), function (err) {
+  this.io.fs.writeFile('.released-packages', releasedPackages.join('\n'), function (err) {
     done(err)
   });
 }
@@ -112,7 +111,7 @@ module.exports = function perform (config) {
     writeReleasedPackagesFile
   ], {
     io: config.io
-  }, './'),
+  }),
   function (err) {
     if (err) {
       log.error(err.message);

@@ -1,5 +1,4 @@
 var async = require('async');
-var fs = require('fs');
 var path = require('path');
 var npmconf = require('npmconf');
 var rc = require('rc');
@@ -16,7 +15,7 @@ function getPkgLocation (packagePath) {
   return path.join(packagePath, 'package.json')
 }
 
-function getPkg (packagePath) {
+function getPkg (packagePath, fs) {
   return JSON.parse(fs.readFileSync(getPkgLocation(packagePath)))
 }
 
@@ -25,7 +24,7 @@ function getNpmConfig (done) {
 }
 
 function makeSrConfig (npmConfig, done) {
-  var pkg = getPkg(this.packagePath);
+  var pkg = getPkg(this.packagePath, this.io.fs);
 
   var defaults = {
     options: {
@@ -77,7 +76,7 @@ function bumpVersionCommitAndTag (nextRelease, done) {
 
   log.info(nextRelease);
 
-  var lernaTag = tagging.lerna(getPkg(packagePath).name, nextRelease.version);
+  var lernaTag = tagging.lerna(getPkg(packagePath, io.fs).name, nextRelease.version);
 
   log.info('Creating tag', lernaTag);
 
