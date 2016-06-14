@@ -3,7 +3,6 @@ var async = require('async');
 var shell = require('shelljs');
 var fs = require('fs');
 var path = require('path');
-var simpleGit = require('simple-git');
 var semver = require('semver');
 var dateFormat = require('dateformat');
 
@@ -15,6 +14,8 @@ var analyzer = require('./plugins/analyzer');
 var log = require('./utils/log');
 
 var CHANGELOG_FILE_NAME = 'CHANGELOG.md';
+
+var simpleGit = require('simple-git');
 
 function getPkgPath (packagePath) {
   return path.join(packagePath, 'package.json')
@@ -52,9 +53,10 @@ function reformatCommit (commit) {
 function createChangelog (done) {
   var packagePath = this.packagePath;
   var rootPackageRepository = this.rootPackageRepository;
+  var io = this.io;
 
   var pkgJsonPath = getPkgPath(packagePath);
-  var writeStream = fs.createWriteStream(path.join(packagePath, CHANGELOG_FILE_NAME));
+  var writeStream = io.fs.createWriteStream(path.join(packagePath, CHANGELOG_FILE_NAME));
   var stream = conventionalChangelog({
     preset: 'angular',
     transform: function (commit, cb) {
@@ -85,11 +87,11 @@ function createChangelog (done) {
 }
 
 function enterPackage (done) {
-  shell.pushd(this.packagePath);
+  this.io.shell.pushdSync(this.packagePath);
   done();
 }
 function exitPackage (done) {
-  shell.popd();
+  this.io.shell.popdSync();
   done();
 }
 
@@ -98,29 +100,35 @@ function isTagRelevant (packageName, tag) {
   return tagParts && tagParts.version && tagParts.name === packageName;
 }
 
-function replaceTags (oldTags, newTagFormatter) {
-  oldTags.forEach(function renameTag (oldTags) {
-    var tagParts = tagging.getTagParts(oldTags);
-    shell.exec('git tag ' + newTagFormatter(tagParts.name, tagParts.version) + ' ' + oldTags);
+function replaceTags (oldTags, newTagFormatter, git, done) {
+
+  async.series(oldTags.map(function renameTag (oldTag) {
+    return function (done) {
+      var tagParts = tagging.getTagParts(oldTag);
+      git.tag(newTagFormatter(tagParts.name, tagParts.version) + ' ' + oldTag, 'temporary tag')(done);
+    };
+  }), function seriesComplete (errListTag) {
+    git.tagDelete(oldTags)(function (errDeleteTag) {
+      done(errListTag || errDeleteTag);
+    });
   });
-  shell.exec('git tag -d ' + oldTags.join(' '));
 }
 
 function createSemverTags (done) {
+  var git = this.io.git;
   var packageName = getPkg(this.packagePath).name;
-  simpleGit().tags(function (err, tags) {
+  git.tagList()(function (err, tags) {
     var relevantLernaTags = tags.all.filter(isTagRelevant.bind(this, packageName));
-    replaceTags(relevantLernaTags, tagging.semver);
-    done(err);
+    replaceTags(relevantLernaTags, tagging.semver, git, done);
   });
 }
 
 function removeSemverTags (done) {
+  var git = this.io.git;
   var packageName = getPkg(this.packagePath).name;
-  simpleGit().tags(function (err, tags) {
+  git.tagList()(function (err, tags) {
     var relevantSemverTags = tags.all.filter(isTagRelevant.bind(this, packageName));
-    replaceTags(relevantSemverTags, tagging.lerna);
-    done(err);
+    replaceTags(relevantSemverTags, tagging.lerna, git, done);
   })
 }
 
@@ -131,18 +139,19 @@ module.exports = function (config) {
     createChangelog,
     removeSemverTags,
     enterPackage,
-    execAsTask('touch ' + CHANGELOG_FILE_NAME),
-    execAsTask('git add ' + CHANGELOG_FILE_NAME),
+    config.io.shell.touch(CHANGELOG_FILE_NAME),
+    config.io.git.add(CHANGELOG_FILE_NAME),
     exitPackage
   ], {
     extraContext: {
       rootPackageRepository: rootPackageRepository,
-      services: config.services
+      io: config.io
     }
   }, function done () {
     async.series([
-      //execAsTask('git commit -anm\'docs(changelog): appending to changelog\' --allow-empty'),
-      //execAsTask('git push origin')
+      //config.io.git.add(CHANGELOG_FILE_NAME),
+      //config.io.git.commit('docs(changelog): appending to changelog'),
+      //config.io.git.push()
     ]);
   });
 };

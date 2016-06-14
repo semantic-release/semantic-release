@@ -7,6 +7,7 @@ var shell = require('shelljs');
 var lernaPackages = require('./lerna/packages');
 var tagging = require('./utils/tagging');
 var log = require('./utils/log');
+var bindTasks = require('./utils/bind-tasks');
 
 function pushTags (done) {
   shell.exec('git push origin --tags', function (code) {
@@ -103,17 +104,15 @@ function writeReleasedPackagesFile (releasedPackages, done) {
 }
 
 module.exports = function perform (config) {
-  async.waterfall([
+  async.waterfall(bindTasks([
     pushCommits,
     pushTags,
     getUpdatedPackages,
     publishUpdatedPackages,
     writeReleasedPackagesFile
   ], {
-    extraContext: {
-      services: config.services
-    }
-  },
+    io: config.io
+  }, './'),
   function (err) {
     if (err) {
       log.error(err.message);

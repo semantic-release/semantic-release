@@ -2,8 +2,10 @@
 
 var task = process.argv[2];
 
-var npm = require('./services/npm');
-var git = require('./services/git');
+var npm = require('../src/io/npm');
+var git = require('../src/io/git');
+var fs = require('../src/io/fs');
+var shell = require('../src/io/shell');
 
 var tasks = {
   pre: require('../src/pre'),
@@ -12,8 +14,10 @@ var tasks = {
 };
 
 tasks[task]({
-  services: {
+  io: {
     npm: npm,
-    git: git
+    git: git,
+    shell: shell,
+    fs: fs
   }
 });

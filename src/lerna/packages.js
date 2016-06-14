@@ -7,6 +7,7 @@ var PackageUtilities = require('lerna/lib/PackageUtilities').default;
 var process = require('process');
 
 var log = require('../utils/log');
+var bindTasks = require('../utils/bind-tasks');
 
 module.exports = {
   getAllPackages: function () {
@@ -25,13 +26,7 @@ module.exports = {
 
     var tasksToRunInEachPackage = packageLocations.map(function (packagePath) {
       return function (next) {
-        var contextBoundTasks = tasks.map(function (task) {
-          return function () {
-            log.info('Executing ' + task.name + ' in ' + path.relative('.', packagePath));
-            var context = Object.assign({}, extraContext, {packagePath: packagePath});
-            return task.apply(context, arguments);
-          }
-        });
+        var contextBoundTasks = bindTasks(tasks, Object.assign({}, extraContext, {packagePath: packagePath}), packagePath);
 
         asyncType(contextBoundTasks, function (err) {
           err && log.error(err);

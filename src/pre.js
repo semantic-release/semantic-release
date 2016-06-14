@@ -3,15 +3,12 @@ var fs = require('fs');
 var path = require('path');
 var npmconf = require('npmconf');
 var rc = require('rc');
-var shell = require('shelljs');
-var gitHead = require('git-head');
 
 var srPre = require('semantic-release/dist/pre');
 var srNormalize = require('semantic-release/dist/lib/plugins').normalize;
 var srRegistry = require('semantic-release/dist/lib/get-registry');
 
 var tagging = require('./utils/tagging');
-var execAsTask = require('./utils/exec-as-task');
 var log = require('./utils/log');
 var lernaPackages = require('./lerna/packages');
 
@@ -71,6 +68,7 @@ function releaseTypeToNpmVersionType (releaseType) {
 function bumpVersionCommitAndTag (nextRelease, done) {
   var packagePath = this.packagePath;
   var releaseHash = this.releaseHash;
+  var io = this.io;
 
   if (!nextRelease) {
     done(null);
@@ -83,22 +81,22 @@ function bumpVersionCommitAndTag (nextRelease, done) {
 
   log.info('Creating tag', lernaTag);
 
-  shell.pushd(packagePath);
+  io.shell.pushdSync(packagePath);
 
   var releaseCommitMessage = 'chore(release): releasing component\n\naffects: ' + lernaTag + '\n\nReleased from sha ' + releaseHash;
 
   async.series([
-    execAsTask('npm version ' + releaseTypeToNpmVersionType(nextRelease.type) + ' --git-tag-version false'),
-    execAsTask('git commit -anm\'' + releaseCommitMessage + '\nTag for lerna release' +'\' --allow-empty'),
-    execAsTask('git tag -am"tag for lerna releases" ' + lernaTag)
+    io.npm.version(releaseTypeToNpmVersionType(nextRelease.type)),
+    io.git.commit(releaseCommitMessage + '\nTag for lerna release'),
+    io.git.tag(lernaTag, 'tag for lerna releases')
   ], function (err) {
-    shell.popd();
+    io.shell.popdSync();
     done(err);
   });
 }
 
 module.exports = function (config) {
-  gitHead(function (err, releaseHash) {
+  config.io.git.head(function (err, releaseHash) {
     err && log.error(err);
 
     lernaPackages.forEachPackage([
@@ -110,7 +108,7 @@ module.exports = function (config) {
       asyncType: async.waterfall,
       extraContext:  {
         releaseHash: releaseHash,
-        services: config.services
+        io: config.io
       }
     });
 
