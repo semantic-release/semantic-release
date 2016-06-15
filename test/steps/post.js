@@ -31,7 +31,7 @@ describe('post', function() {
       'packages': {
         'a': {
           'index.js': 'Published',
-          'package.json': JSON.stringify({name: 'a', version: '0.0.1'})
+          'package.json': JSON.stringify({name: 'a', version: '0.0.2'})
         },
         'b': {
           'index.js': 'Published',
@@ -52,11 +52,38 @@ describe('post', function() {
         allTags: [
           'a@0.0.0',
           'a@0.0.1',
+          'a@0.0.2',
           'b@0.0.0',
           'b@0.0.1',
           'c@0.0.0'
         ],
-        head: 'BAR'
+        head: 'BAR',
+        // Git tags are set up here for A's changelog, these would be modified at run time by git tag
+        log: [
+          {
+            message: 'fix: a\n\naffects: a',
+            hash: 'FOO',
+            date: '2015-08-22 12:01:42 +0200',
+            tags: '0.0.2'
+          },
+          {
+            message: 'fix: a b\n\naffects: a, b',
+            hash: 'BAR',
+            date: '2015-08-22 12:01:42 +0200',
+            tags: '0.0.1'
+          },
+          {
+            message: 'fix: b\n\naffects: b',
+            hash: 'BAZ',
+            date: '2015-08-22 12:01:42 +0200'
+          },
+          {
+            message: 'chore: does nothing',
+            hash: 'BUZ',
+            date: '2015-08-22 12:01:42 +0200',
+            tags: '0.0.0'
+          }
+        ]
       },
       npm: {
         versions: {
@@ -104,9 +131,17 @@ describe('post', function() {
       expect(io.git.add.innerTask.callCount).to.equal(3);
     });
 
-    it.only('changelog contains correct content', function () {
-      console.log(fs.readFileSync('./packages/a/CHANGELOG.md').toString());
-      expect(true).to.equal(true);
+    it('changelog contains correct content for package A', function () {
+      function countOccurrences (s, regex) {
+        return (s.match(regex) || []).length;
+      }
+      var changeLog = fs.readFileSync('./packages/a/CHANGELOG.md').toString();
+      expect(countOccurrences(changeLog, /<a name=/g)).to.equal(4);
+      expect(countOccurrences(changeLog, /\* fix:/g)).to.equal(2);
+      expect(countOccurrences(changeLog, /## 0.0.2/g)).to.equal(2);
+      expect(countOccurrences(changeLog, /## 0.0.1/g)).to.equal(1);
+      expect(countOccurrences(changeLog, /# 0.0.0/g)).to.equal(1);
+      expect(countOccurrences(changeLog, /\* fix: b/g)).to.equal(0);
     });
 
     it('git push --tags is not called', function () {

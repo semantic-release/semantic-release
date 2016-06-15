@@ -5,22 +5,6 @@ var perform = require('../../src/perform');
 
 describe('perform', function() {
   beforeEach(function () {
-
-    console.log('BEFORE');
-
-    function mountConventionalChangelogWriterNodeModules (fsState) {
-      var templatesDirectory = path.resolve('node_modules/conventional-changelog-writer/templates');
-      fsState[templatesDirectory] = {
-        commit: fs.readFileSync(path.join(templatesDirectory, 'commit.hbs')),
-        footer: fs.readFileSync(path.join(templatesDirectory, 'footer.hbs')),
-        header: fs.readFileSync(path.join(templatesDirectory, 'header.hbs')),
-        template: fs.readFileSync(path.join(templatesDirectory, 'template.hbs')),
-      };
-      console.log(fsState);
-      return fsState;
-    }
-
-
     var fsState = {
       'packages': {
         'a': {

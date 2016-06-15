@@ -21,6 +21,8 @@ module.exports = {
   },
 
   isRelevant: function (affectsLine, packageName) {
-    return affectsLine && affectsLine.indexOf('affects:') === 0 && affectsLine.indexOf(packageName) > -1
+    var affectsDelimiter = 'affects:';
+    return affectsLine && affectsLine.indexOf(affectsDelimiter) === 0 &&
+      affectsLine.slice(affectsDelimiter.length).indexOf(packageName) > -1;
   }
 };
