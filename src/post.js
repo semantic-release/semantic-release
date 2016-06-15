@@ -6,7 +6,7 @@ var semver = require('semver');
 var dateFormat = require('dateformat');
 
 
-var lernaPackages = require('./lerna/packages');
+var forEachPackage = require('./utils/for-each-package');
 var tagging = require('./utils/tagging');
 var analyzer = require('./plugins/analyzer');
 var log = require('./utils/log');
@@ -130,7 +130,7 @@ function removeSemverTags (done) {
 
 module.exports = function (config) {
   var rootPackageRepository = JSON.parse(fs.readFileSync('./package.json')).repository;
-  lernaPackages.forEachPackage([
+  forEachPackage([
     createSemverTags,
     createChangelog,
     removeSemverTags,
@@ -139,15 +139,15 @@ module.exports = function (config) {
     config.io.git.add(CHANGELOG_FILE_NAME),
     exitPackage
   ], {
+    allPackages: config.io.lerna.getAllPackages(),
     extraContext: {
       rootPackageRepository: rootPackageRepository,
       io: config.io
     }
   }, function done () {
     async.series([
-      //config.io.git.add(CHANGELOG_FILE_NAME),
-      //config.io.git.commit('docs(changelog): appending to changelog'),
-      //config.io.git.push()
-    ]);
+      config.io.git.commit('docs(changelog): appending to changelog'),
+      config.io.git.push()
+    ], config.callback);
   });
 };

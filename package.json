@@ -32,8 +32,13 @@
     "lerna": "*"
   },
   "devDependencies": {
+    "chai": "^3.5.0",
     "cz-conventional-changelog": "1.1.6",
-    "lerna": "jpnelson/lerna#8c0e5a44"
+    "expect.js": "^0.3.1",
+    "lerna": "2.0.0-beta.19",
+    "mock-fs": "^3.9.0",
+    "mockery": "^1.7.0",
+    "sinon": "^1.17.4"
   },
   "engines": {
     "node": ">=0.10",
@@ -62,7 +67,8 @@
     "url": "https://github.com/atlassian/lerna-semantic-release.git"
   },
   "scripts": {
-    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post",
+    "test": "mocha test/unit.js"
   },
   "release": {
     "branch": "caribou"

@@ -2,9 +2,11 @@
 
 var task = process.argv[2];
 
-var npm = require('../src/io/npm');
-var git = require('../src/io/git');
 var fs = require('../src/io/fs');
+var git = require('../src/io/git');
+var lerna = require('../src/io/lerna');
+var npm = require('../src/io/npm');
+var semanticRelease = require('../src/io/semantic-release');
 var shell = require('../src/io/shell');
 
 var tasks = {
@@ -15,9 +17,11 @@ var tasks = {
 
 tasks[task]({
   io: {
+    fs: fs,
     npm: npm,
     git: git,
+    lerna: lerna,
     shell: shell,
-    fs: fs
+    semanticRelease: semanticRelease
   }
 });

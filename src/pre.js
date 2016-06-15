@@ -3,13 +3,11 @@ var path = require('path');
 var npmconf = require('npmconf');
 var rc = require('rc');
 
-var srPre = require('semantic-release/dist/pre');
-var srNormalize = require('semantic-release/dist/lib/plugins').normalize;
 var srRegistry = require('semantic-release/dist/lib/get-registry');
 
 var tagging = require('./utils/tagging');
 var log = require('./utils/log');
-var lernaPackages = require('./lerna/packages');
+var forEachPackage = require('./utils/for-each-package');
 
 function getPkgLocation (packagePath) {
   return path.join(packagePath, 'package.json')
@@ -34,11 +32,7 @@ function makeSrConfig (npmConfig, done) {
 
   var srConfig = Object.assign({}, defaults, {
     env: process.env,
-    plugins: {
-      "analyzeCommits": require('./plugins/analyzer.js').default,
-      "getLastRelease": srNormalize({}, "@semantic-release/last-release-npm"),
-      "verifyRelease": srNormalize({}, "semantic-release/dist/lib/plugin-noop")
-    },
+    plugins: this.io.semanticRelease.plugins,
     npm: {
       auth: {
         token: process.env.NPM_TOKEN
@@ -50,12 +44,11 @@ function makeSrConfig (npmConfig, done) {
     pkg: pkg
 
   });
-
   done(null, srConfig);
 }
 
 function pre (srConfig, done) {
-  srPre(srConfig, function (err, nextRelease) {
+  this.io.semanticRelease.pre(srConfig, function (err, nextRelease) {
     done(err, nextRelease);
   });
 }
@@ -75,7 +68,6 @@ function bumpVersionCommitAndTag (nextRelease, done) {
   }
 
   log.info(nextRelease);
-
   var lernaTag = tagging.lerna(getPkg(packagePath, io.fs).name, nextRelease.version);
 
   log.info('Creating tag', lernaTag);
@@ -98,18 +90,19 @@ module.exports = function (config) {
   config.io.git.head(function (err, releaseHash) {
     err && log.error(err);
 
-    lernaPackages.forEachPackage([
+    forEachPackage([
       getNpmConfig,
       makeSrConfig,
       pre,
       bumpVersionCommitAndTag
     ], {
+      allPackages: config.io.lerna.getAllPackages(),
       asyncType: async.waterfall,
       extraContext:  {
         releaseHash: releaseHash,
         io: config.io
       }
-    });
+    }, config.callback);
 
   });
 

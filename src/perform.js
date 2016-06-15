@@ -1,7 +1,6 @@
 var async = require('async');
 var path = require('path');
 
-var lernaPackages = require('./lerna/packages');
 var tagging = require('./utils/tagging');
 var log = require('./utils/log');
 var bindTasks = require('./utils/bind-tasks');
@@ -54,7 +53,7 @@ function isPackageUpdated (pkg, npm, cb) {
 }
 
 function getUpdatedPackages (done) {
-  var allPackages = lernaPackages.getAllPackages();
+  var allPackages = this.io.lerna.getAllPackages();
   var npm = this.io.npm;
 
   async.parallel(allPackages.map(function (pkg) {
@@ -116,5 +115,6 @@ module.exports = function perform (config) {
     if (err) {
       log.error(err.message);
     }
+    config.callback(err);
   });
 };
