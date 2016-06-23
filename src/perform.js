@@ -115,6 +115,8 @@ module.exports = function perform (config) {
     if (err) {
       log.error(err.message);
     }
-    config.callback(err);
+    if (typeof config.callback === 'function') {
+      config.callback(err);
+    }
   });
 };

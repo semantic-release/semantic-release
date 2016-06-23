@@ -148,6 +148,10 @@ module.exports = function (config) {
     async.series([
       config.io.git.commit('docs(changelog): appending to changelog'),
       config.io.git.push()
-    ], config.callback);
+    ], (err) => {
+      if (typeof config.callback === 'function') {
+        config.callback(err);
+      }
+    });
   });
 };

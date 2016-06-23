@@ -6,7 +6,7 @@ module.exports = {
     mock(fsState);
   },
   restore: function () {
-    mock.restore()
+    mock.restore();
   },
   writeFile: fs.writeFile,
   readFileSync: fs.readFileSync,

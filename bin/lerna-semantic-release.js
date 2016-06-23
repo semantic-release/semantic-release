@@ -23,5 +23,6 @@ tasks[task]({
     lerna: lerna,
     shell: shell,
     semanticRelease: semanticRelease
-  }
+  },
+  callback: (err) => process.exit(+!!err))
 });

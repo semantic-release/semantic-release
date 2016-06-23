@@ -102,7 +102,11 @@ module.exports = function (config) {
         releaseHash: releaseHash,
         io: config.io
       }
-    }, config.callback);
+    }, (err) => {
+      if (typeof config.callback === 'function') {
+        config.callback(err);
+      }
+    });
 
   });
 

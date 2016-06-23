@@ -85,4 +85,8 @@ describe('pre', function() {
       expect(isPatchReleaseCommit(io.git.commit.thirdCall.args[0], 'c')).to.equal(true);
     });
   });
+
+  it('should work even if there is no callback given', () => {
+    pre({ io: io });
+  });
 });
