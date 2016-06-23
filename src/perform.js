@@ -20,6 +20,13 @@ function pushCommits (done) {
 function publishPackage (relativePath, io, done) {
   var rootPath = path.resolve(io.shell.cwdSync());
   var packagePath =  path.resolve(relativePath);
+  var pkg = JSON.parse(io.fs.readFileSync(path.resolve(path.join(packagePath, 'package.json'))));
+  if (pkg.private) {
+    log.info('Skipping publish for', pkg.name, 'because it is marked as private');
+    done(null);
+    return;
+  }
+
   setupGitSymlink(rootPath, packagePath, io.shell);
 
   io.npm.publish(relativePath)(function (err) {

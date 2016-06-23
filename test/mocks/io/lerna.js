@@ -1,3 +1,5 @@
+var path = require('path');
+
 module.exports = {
   _state: {},
   mock: function (lernaState) {
@@ -7,22 +9,14 @@ module.exports = {
     module.exports._state = {};
   },
   getAllPackages: function () {
-    return [
-      {
-        name: 'a',
-        location: 'packages/a',
-        version: module.exports._state.versions['a']
-      },
-      {
-        name: 'b',
-        location: 'packages/b',
-        version: module.exports._state.versions['b']
-      },
-      {
-        name: 'c',
-        location: 'packages/c',
-        version: module.exports._state.versions['c']
-      }
-    ]
+    var state = module.exports._state;
+    var names = Object.keys(state.versions);
+    return names.map(function (name) {
+      return {
+        name: name,
+        location: path.join('packages', name),
+        version: state.versions[name]
+      };
+    });
   }
 };
