@@ -94,8 +94,4 @@ describe('perform', function() {
       expect(io.git.pushTags.called).to.equal(true);
     });
   });
-
-  it('should work even if there is no callback given', () => {
-    perform({ io: io });
-  });
 });

@@ -148,8 +148,4 @@ describe('post', function() {
       expect(io.git.pushTags.innerTask.callCount).to.equal(0);
     });
   });
-
-  it('should work even if there is no callback given', () => {
-    post({ io: io });
-  });
 });

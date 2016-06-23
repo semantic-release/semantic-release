@@ -3,6 +3,7 @@ var expect = require('expect.js');
 var pre = require('../../src/pre');
 
 describe('pre', function() {
+
   beforeEach(function () {
     var packageVersions = {
       versions: {
@@ -84,9 +85,5 @@ describe('pre', function() {
       expect(isPatchReleaseCommit(io.git.commit.secondCall.args[0], 'b')).to.equal(true);
       expect(isPatchReleaseCommit(io.git.commit.thirdCall.args[0], 'c')).to.equal(true);
     });
-  });
-
-  it('should work even if there is no callback given', () => {
-    pre({ io: io });
   });
 });
