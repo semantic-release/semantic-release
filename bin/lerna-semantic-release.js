@@ -17,7 +17,7 @@ function erorrHandler(err) {
 try {
   tasks[task]({
     io: io,
-    callback: erorrHandler)
+    callback: erorrHandler
   });
 } catch(err) {
   erorrHandler(err);
