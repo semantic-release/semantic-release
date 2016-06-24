@@ -1,0 +1,41 @@
+{
+  "name": "lerna-semantic-release-post",
+  "author": "Joshua Nelson <jonelson@atlassian.com>, Joscha Feth <jfeth@atlassian.com>",
+  "bugs": {
+    "url": "https://github.com/atlassian/lerna-semantic-release/issues"
+  },
+  "dependencies": {
+    "lerna-semantic-release-utils": "^0.0.0",
+    "lerna-semantic-release-io": "^0.0.0",
+    "lerna-semantic-release-analyze-commits": "^0.0.0",
+    "async": "~0.5.0",
+    "dateformat": "~1.0.0",
+    "conventional-changelog": "~1.1.0"
+  },
+  "devDependencies": {
+    "mocha": "~2.5.0",
+    "expect.js": "~0.3.0",
+    "chai": "~3.5.0",
+    "sinon": "~1.17.0"
+  },
+  "engines": {
+    "node": ">=4",
+    "npm": ">=3"
+  },
+  "license": "MIT",
+  "main": "index.js",
+  "files": [
+    "bin"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/atlassian/lerna-semantic-release.git"
+  },
+  "scripts": {
+    "test": "mocha test/unit.js"
+  },
+  "release": {
+    "branch": "caribou"
+  },
+  "version": "0.0.0"
+}
