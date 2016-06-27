@@ -1,7 +1,7 @@
 var srNormalize = require('semantic-release/dist/lib/plugins').normalize;
 
 var noop = srNormalize({}, "semantic-release/dist/lib/plugin-noop");
-var analyzeCommits = require('lerna-semantic-release-analyze-commits');
+var analyzeCommits = require('lerna-semantic-release-analyze-commits').analyze;
 
 module.exports = {
   plugins: {

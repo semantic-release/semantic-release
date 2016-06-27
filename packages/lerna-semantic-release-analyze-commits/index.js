@@ -2,7 +2,7 @@ var commitAnalyzer = require('@semantic-release/commit-analyzer');
 var log = require('lerna-semantic-release-utils').log;
 
 module.exports = {
-  default: function (_ref, cb) {
+  analyze: function (_ref, cb) {
     var pkg = _ref.pkg;
     var commits = _ref.commits;
 
