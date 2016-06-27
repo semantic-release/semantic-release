@@ -2,9 +2,6 @@
   "name": "lerna-semantic-release-main",
   "description": "automated semver compliant package publishing, for lerna",
   "author": "Joshua Nelson <jonelson@atlassian.com>, Joscha Feth <jfeth@atlassian.com>",
-  "bin": {
-    "lerna-semantic-release": "bin/lerna-semantic-release.js"
-  },
   "bugs": {
     "url": "https://github.com/atlassian/lerna-semantic-release/issues"
   },
