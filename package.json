@@ -41,6 +41,7 @@
   },
   "scripts": {
     "semantic-release": "lerna-semantic-release pre && lerna-semantic-release-perform && lerna-semantic-release post",
+    "postinstall": "lerna bootstrap",
     "test": "lerna run test"
   },
   "release": {
