@@ -40,6 +40,10 @@ describe('post', function() {
         'c': {
           'index.js': 'Unmodified',
           'package.json': JSON.stringify({name: 'c', version: '0.0.0'})
+        },
+        'd': {
+          'index.js': 'Published',
+          'package.json': JSON.stringify({name: 'd', version: '0.0.2', repository: { type: 'git', url: 'http://follow.me' }})
         }
       },
       'package.json': JSON.stringify({name: 'main', version: '0.0.0'}),
@@ -55,7 +59,10 @@ describe('post', function() {
           'a@0.0.2',
           'b@0.0.0',
           'b@0.0.1',
-          'c@0.0.0'
+          'c@0.0.0',
+          'd@0.0.0',
+          'd@0.0.1',
+          'd@0.0.2'
         ],
         head: 'BAR',
         // Git tags are set up here for A's changelog, these would be modified at run time by git tag
@@ -89,14 +96,16 @@ describe('post', function() {
         versions: {
           'a': '0.0.1',
           'b': '0.0.1',
-          'c': '0.0.0'
+          'c': '0.0.0',
+          'd': '0.0.1'
         }
       },
       lerna: {
         versions: {
           'a': '0.0.1',
           'b': '0.0.1',
-          'c': '0.0.0'
+          'c': '0.0.0',
+          'd': '0.0.1',
         }
       }
     });
@@ -126,15 +135,16 @@ describe('post', function() {
       expect(io.git.commit.innerTask.callCount).to.equal(1);
     });
 
-    it('changelogs are touched and added three times', function () {
-      expect(io.shell.touch.innerTask.callCount).to.equal(3);
-      expect(io.git.add.innerTask.callCount).to.equal(3);
+    it('changelogs are touched and added four times', function () {
+      expect(io.shell.touch.innerTask.callCount).to.equal(4);
+      expect(io.git.add.innerTask.callCount).to.equal(4);
     });
 
+    function countOccurrences (s, regex) {
+      return (s.match(regex) || []).length;
+    }
+
     it('changelog contains correct content for package A', function () {
-      function countOccurrences (s, regex) {
-        return (s.match(regex) || []).length;
-      }
       var changeLog = fs.readFileSync('./packages/a/CHANGELOG.md').toString();
       expect(countOccurrences(changeLog, /<a name=/g)).to.equal(4);
       expect(countOccurrences(changeLog, /\* fix:/g)).to.equal(2);
@@ -142,6 +152,14 @@ describe('post', function() {
       expect(countOccurrences(changeLog, /## 0.0.1/g)).to.equal(1);
       expect(countOccurrences(changeLog, /# 0.0.0/g)).to.equal(1);
       expect(countOccurrences(changeLog, /\* fix: b/g)).to.equal(0);
+    });
+
+    it('changelog contains correct URL package D', function () {
+      var changeLog = fs.readFileSync('./packages/d/CHANGELOG.md').toString();
+
+      expect(countOccurrences(changeLog, /\[FOO\]\(http:\/\/follow.me\/commits\/FOO\)/g)).to.equal(1);
+      expect(countOccurrences(changeLog, /\[BAR\]\(http:\/\/follow.me\/commits\/BAR\)/g)).to.equal(1);
+      expect(countOccurrences(changeLog, /\[BUZ\]\(http:\/\/follow.me\/commits\/BUZ\)/g)).to.equal(1);
     });
 
     it('git push --tags is not called', function () {

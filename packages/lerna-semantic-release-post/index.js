@@ -73,7 +73,7 @@ function createChangelog (done) {
     },
     releaseCount: 0
   }, {
-    repository: rootPackageRepository
+    repository: typeof rootPackageRepository !== 'object' ? rootPackageRepository : rootPackageRepository.url
   }).pipe(writeStream);
 
   stream.on('close', function () {
