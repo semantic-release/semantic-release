@@ -11,6 +11,7 @@ module.exports = {
     module.exports.lerna.mock(state.lerna);
     module.exports.npm.mock(state.npm);
     module.exports.shell.mock();
+    module.exports.semanticRelease.mock(state.npm);
   },
   restore: function () {
     module.exports.fs.restore();
@@ -18,5 +19,6 @@ module.exports = {
     module.exports.lerna.restore();
     module.exports.npm.restore();
     module.exports.shell.restore();
+    module.exports.semanticRelease.restore();
   }
 };

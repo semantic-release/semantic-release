@@ -93,6 +93,12 @@ describe('pre with a private package', function() {
     var packageVersions = {
       versions: {
         'a': '1.0.0',
+      },
+      latestVersions: {
+        'a': {
+          version: '1.0.0',
+          gitHead: 'BREAK'
+        }
       }
     };
 
@@ -159,7 +165,7 @@ describe('pre with a private package', function() {
       expect(isPatchReleaseCommit(io.git.commit.firstCall.args[0], 'a')).to.equal(true);
     });
 
-    it('should leave the version as 1.0.1', function () {
+    it.only('should leave the version as 1.0.1', function () {
       expect(JSON.parse(io.fs.readFileSync('packages/a/package.json')).version).to.equal('1.0.1');
     });
   });

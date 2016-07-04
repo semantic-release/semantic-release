@@ -10,6 +10,7 @@
     "lerna-semantic-release-analyze-commits": "^0.0.0",
     "lerna-semantic-release-get-last-release": "^0.0.0",
     "semantic-release": "4.3.5",
+    "@semantic-release/last-release-npm": "~1.0.0",
     "shelljs": "~0.7.0",
     "simple-git": "~1.37.0",
     "mockery": "~1.7.0",
