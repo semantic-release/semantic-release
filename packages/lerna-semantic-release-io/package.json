@@ -1,0 +1,41 @@
+{
+  "name": "lerna-semantic-release-io",
+  "author": "Joshua Nelson <jonelson@atlassian.com>, Joscha Feth <jfeth@atlassian.com>",
+  "bugs": {
+    "url": "https://github.com/atlassian/lerna-semantic-release/issues"
+  },
+  "dependencies": {
+    "git-head": "1.14.0",
+    "lerna-semantic-release-utils": "^0.0.0",
+    "lerna-semantic-release-analyze-commits": "^0.0.0",
+    "semantic-release": "4.3.5",
+    "shelljs": "~0.7.0",
+    "simple-git": "~1.37.0",
+    "mockery": "~1.7.0",
+    "mock-fs": "~3.9.0",
+    "sinon": "~1.17.0"
+  },
+  "peerDependencies": {
+    "lerna": "*"
+  },
+  "engines": {
+    "node": ">=4",
+    "npm": ">=3"
+  },
+  "license": "MIT",
+  "main": "index.js",
+  "files": [
+    "bin"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/atlassian/lerna-semantic-release.git"
+  },
+  "release": {
+    "branch": "caribou"
+  },
+  "scripts": {
+    "test": "echo 'no tests'; exit 0"
+  },
+  "version": "0.0.0"
+}

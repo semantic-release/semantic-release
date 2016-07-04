@@ -1,0 +1,31 @@
+{
+  "name": "lerna-semantic-release-analyze-commits",
+  "author": "Joshua Nelson <jonelson@atlassian.com>, Joscha Feth <jfeth@atlassian.com>",
+  "bugs": {
+    "url": "https://github.com/atlassian/lerna-semantic-release/issues"
+  },
+  "dependencies": {
+    "lerna-semantic-release-utils": "^0.0.0"
+  },
+  "peerDependencies": {
+    "semantic-release": "~4.3.0",
+    "@semantic-release/commit-analyzer": "~2.0.0"
+  },
+  "engines": {
+    "node": ">=4",
+    "npm": ">=3"
+  },
+  "license": "MIT",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/atlassian/lerna-semantic-release.git"
+  },
+  "release": {
+    "branch": "caribou"
+  },
+  "scripts": {
+    "test": "echo 'no tests'; exit 0"
+  },
+  "version": "0.0.0"
+}
