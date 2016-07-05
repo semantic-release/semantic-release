@@ -50,64 +50,77 @@ describe('post', function() {
       'lerna.json': JSON.stringify({lerna: '2.0.0-beta.17', version: 'independent'})
     };
 
+    var packageVersions = {
+      versions: {
+        'a': '0.0.2',
+        'b': '0.0.1',
+        'c': '0.0.0',
+        'd': '0.0.1',
+      },
+      latestVersions: {
+        'a': {
+          version: '0.0.2',
+          gitHead: '3FIXA'
+        },
+        'b': {
+          version: '0.0.1',
+          gitHead: '2FIXAB'
+        },
+        'c': {
+          version: '0.0.0',
+          gitHead: 'FIRST'
+        },
+        'd': {
+          version: '0.0.1',
+          gitHead: 'FIRST'
+        }
+      }
+    };
+
     io.mock({
       fs: mockNodeModules(fsState),
       git: {
         allTags: [
-          'a@0.0.0',
-          'a@0.0.1',
-          'a@0.0.2',
-          'b@0.0.0',
-          'b@0.0.1',
-          'c@0.0.0',
-          'd@0.0.0',
-          'd@0.0.1',
-          'd@0.0.2'
+          {tag: 'a@0.0.0', hash: 'FIRST'},
+          {tag: 'a@0.0.1', hash: 'FIRST'},
+          {tag: 'a@0.0.2', hash: '3FIXA'},
+          {tag: 'b@0.0.0', hash: 'FIRST'},
+          {tag: 'b@0.0.1', hash: '2FIXAB'},
+          {tag: 'c@0.0.0', hash: 'FIRST'},
+          {tag: 'd@0.0.0', hash: 'FIRST'},
+          {tag: 'd@0.0.1', hash: 'FIRST'},
+          {tag: 'd@0.0.2', hash: 'FIRST'}
         ],
-        head: 'BAR',
+        head: '3FIXA',
         // Git tags are set up here for A's changelog, these would be modified at run time by git tag
         log: [
           {
             message: 'fix: a\n\naffects: a',
-            hash: 'FOO',
+            hash: '3FIXA',
             date: '2015-08-22 12:01:42 +0200',
             tags: '0.0.2'
           },
           {
             message: 'fix: a b\n\naffects: a, b',
-            hash: 'BAR',
+            hash: '2FIXAB',
             date: '2015-08-22 12:01:42 +0200',
             tags: '0.0.1'
           },
           {
             message: 'fix: b\n\naffects: b',
-            hash: 'BAZ',
+            hash: '1FIXB',
             date: '2015-08-22 12:01:42 +0200'
           },
           {
-            message: 'chore: does nothing',
-            hash: 'BUZ',
+            message: 'chore: the first commit',
+            hash: 'FIRST',
             date: '2015-08-22 12:01:42 +0200',
             tags: '0.0.0'
           }
         ]
       },
-      npm: {
-        versions: {
-          'a': '0.0.1',
-          'b': '0.0.1',
-          'c': '0.0.0',
-          'd': '0.0.1'
-        }
-      },
-      lerna: {
-        versions: {
-          'a': '0.0.1',
-          'b': '0.0.1',
-          'c': '0.0.0',
-          'd': '0.0.1',
-        }
-      }
+      npm: packageVersions,
+      lerna: packageVersions
     });
   });
 
@@ -157,9 +170,9 @@ describe('post', function() {
     it('changelog contains correct URL package D', function () {
       var changeLog = fs.readFileSync('./packages/d/CHANGELOG.md').toString();
 
-      expect(countOccurrences(changeLog, /\[FOO\]\(http:\/\/follow.me\/commits\/FOO\)/g)).to.equal(1);
-      expect(countOccurrences(changeLog, /\[BAR\]\(http:\/\/follow.me\/commits\/BAR\)/g)).to.equal(1);
-      expect(countOccurrences(changeLog, /\[BUZ\]\(http:\/\/follow.me\/commits\/BUZ\)/g)).to.equal(1);
+      expect(countOccurrences(changeLog, /\[3FIXA\]\(http:\/\/follow.me\/commits\/3FIXA\)/g)).to.equal(1);
+      expect(countOccurrences(changeLog, /\[2FIXAB\]\(http:\/\/follow.me\/commits\/2FIXAB\)/g)).to.equal(1);
+      expect(countOccurrences(changeLog, /\[FIRST\]\(http:\/\/follow.me\/commits\/FIRST\)/g)).to.equal(1);
     });
 
     it('git push --tags is not called', function () {
