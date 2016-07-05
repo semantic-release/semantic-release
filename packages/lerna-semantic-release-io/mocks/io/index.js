@@ -11,7 +11,7 @@ module.exports = {
     module.exports.lerna.mock(state.lerna);
     module.exports.npm.mock(state.npm);
     module.exports.shell.mock();
-    module.exports.semanticRelease.mock(state.npm);
+    module.exports.semanticRelease.mock(state.npm, state.git);
   },
   restore: function () {
     module.exports.fs.restore();

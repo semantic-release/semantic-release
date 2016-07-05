@@ -53,9 +53,16 @@ module.exports = {
   tagList: function tagList () {
     return function (done) {
       done(null, {
-        all: module.exports._state.allTags
-      })
+        all: module.exports._state.allTags.map((tagAndHash) => tagAndHash.tag)
+      });
     };
+  },
+  revParse: function revParse () {
+    return function (tagToMatch, done) {
+      const matchingTagAndHash = module.exports._state.allTags.filter(({tag, hash}) => tag === tagToMatch)[0];
+      const matchFound = matchingTagAndHash && matchingTagAndHash.hash;
+      done(null,  matchFound ? matchingTagAndHash.hash : 'tagnotfound');
+    }
   },
   commit: makeMockTask(sandbox),
   head: function (done) {

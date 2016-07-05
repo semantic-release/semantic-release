@@ -14,6 +14,11 @@ module.exports = {
       simpleGit().tags(done)
     };
   },
+  revParse: function revParse () {
+    return function (done) {
+      simpleGit().revParse(done)
+    }
+  },
   commit: function commit (message) {
     return execAsTask('git commit -anm\'' + message +'\' --allow-empty');
   },
