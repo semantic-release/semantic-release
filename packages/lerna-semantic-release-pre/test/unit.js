@@ -3,13 +3,15 @@ var expect = require('expect.js');
 var path = require('path');
 var pre = require('../index');
 
-function isPatchReleaseCommit (commit, packageName) {
+function isPatchReleaseCommit (commit, packageName, expectedReleaseHash) {
   var isPatchReleaseCommit = true;
   var commitParts = commit.split('\n\n');
 
-  isPatchReleaseCommit = isPatchReleaseCommit && commitParts[0].indexOf('chore') === 0;
-  isPatchReleaseCommit = isPatchReleaseCommit && commitParts[1].indexOf('affects: ' + packageName + '@0.0.1') === 0;
-  isPatchReleaseCommit = isPatchReleaseCommit && commitParts[2].indexOf('Released from sha FOO') === 0;
+  console.log('lernasr', commit);
+
+  isPatchReleaseCommit = isPatchReleaseCommit && commitParts[0].indexOf(`chore`) === 0;
+  isPatchReleaseCommit = isPatchReleaseCommit && commitParts[1].indexOf(`affects: ${packageName}@0.0.1`) === 0;
+  isPatchReleaseCommit = isPatchReleaseCommit && commitParts[2].indexOf(`Released from sha ${expectedReleaseHash}`) === 0;
   return isPatchReleaseCommit;
 }
 
@@ -20,6 +22,20 @@ describe('pre with three packages', function() {
         'a': '0.0.0',
         'b': '0.0.0',
         'c': '0.0.0'
+      },
+      latestVersions: {
+        'a': {
+          version: '0.0.0',
+          gitHead: 'FIRST'
+        },
+        'b': {
+          version: '0.0.0',
+          gitHead: 'FIRST'
+        },
+        'c': {
+          version: '0.0.0',
+          gitHead: 'FIRST'
+        }
       }
     };
 
@@ -44,11 +60,20 @@ describe('pre with three packages', function() {
       },
       git: {
         allTags: [
-          'a@0.0.0',
-          'b@0.0.0',
-          'c@0.0.0'
+          {tag: 'a@0.0.0', hash: 'FIRST'},
+          {tag: 'b@0.0.0', hash: 'FIRST'},
+          {tag: 'c@0.0.0', hash: 'FIRST'}
         ],
-        head: 'FOO'
+        log: [{
+          message: 'fix: patch commit\n\naffects: a, b, c',
+          hash: 'PATCH',
+          date: '2015-08-22 12:01:42 +0200'
+        }, {
+          message: 'fix: initial commit\n\naffects: a, b, c',
+          hash: 'INITIAL',
+          date: '2015-08-22 12:01:42 +0200'
+        }],
+        head: 'PATCH'
       },
       npm: packageVersions,
       lerna: packageVersions
@@ -81,9 +106,9 @@ describe('pre with three packages', function() {
 
     it('should make 3 git commits', function () {
       expect(io.git.commit.innerTask.callCount).to.equal(3);
-      expect(isPatchReleaseCommit(io.git.commit.firstCall.args[0], 'a')).to.equal(true);
-      expect(isPatchReleaseCommit(io.git.commit.secondCall.args[0], 'b')).to.equal(true);
-      expect(isPatchReleaseCommit(io.git.commit.thirdCall.args[0], 'c')).to.equal(true);
+      expect(isPatchReleaseCommit(io.git.commit.firstCall.args[0], 'a', 'PATCH')).to.equal(true);
+      expect(isPatchReleaseCommit(io.git.commit.secondCall.args[0], 'b', 'PATCH')).to.equal(true);
+      expect(isPatchReleaseCommit(io.git.commit.thirdCall.args[0], 'c', 'PATCH')).to.equal(true);
     });
   });
 });
@@ -115,7 +140,7 @@ describe('pre with a private package', function() {
       },
       git: {
         allTags: [
-          'a@1.0.0'
+          {tag: 'a@1.0.0', hash: 'BREAK'}
         ],
         head: 'FOO',
         log: [{
@@ -162,11 +187,14 @@ describe('pre with a private package', function() {
 
     it('should make 1 git commit', function () {
       expect(io.git.commit.innerTask.callCount).to.equal(1);
-      expect(isPatchReleaseCommit(io.git.commit.firstCall.args[0], 'a')).to.equal(true);
+      expect(isPatchReleaseCommit(io.git.commit.firstCall.args[0], 'a', 'FOO')).to.equal(true);
     });
 
-    it.only('should leave the version as 1.0.1', function () {
-      expect(JSON.parse(io.fs.readFileSync('packages/a/package.json')).version).to.equal('1.0.1');
+    it('should leave the version as 1.0.1', function () {
+      // We can't assert that the file has changed since npm is mocked, but we *can* check that it
+      // has been called with the correct arguments
+      expect(io.npm.version.innerTask.callCount).to.equal(1);
+      expect(io.npm.version.firstCall.args[0]).to.equal('patch');
     });
   });
 });
