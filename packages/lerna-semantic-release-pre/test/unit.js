@@ -3,15 +3,15 @@ var expect = require('expect.js');
 var path = require('path');
 var pre = require('../index');
 
-function isPatchReleaseCommit (commit, packageName, expectedReleaseHash) {
+function isPatchReleaseCommit (commit, {name, releaseHash, version}) {
   var isPatchReleaseCommit = true;
   var commitParts = commit.split('\n\n');
 
   console.log('lernasr', commit);
 
   isPatchReleaseCommit = isPatchReleaseCommit && commitParts[0].indexOf(`chore`) === 0;
-  isPatchReleaseCommit = isPatchReleaseCommit && commitParts[1].indexOf(`affects: ${packageName}@0.0.1`) === 0;
-  isPatchReleaseCommit = isPatchReleaseCommit && commitParts[2].indexOf(`Released from sha ${expectedReleaseHash}`) === 0;
+  isPatchReleaseCommit = isPatchReleaseCommit && commitParts[1].indexOf(`affects: ${name}@${version}`) === 0;
+  isPatchReleaseCommit = isPatchReleaseCommit && commitParts[2].indexOf(`Released from sha ${releaseHash}`) === 0;
   return isPatchReleaseCommit;
 }
 
@@ -106,9 +106,9 @@ describe('pre with three packages', function() {
 
     it('should make 3 git commits', function () {
       expect(io.git.commit.innerTask.callCount).to.equal(3);
-      expect(isPatchReleaseCommit(io.git.commit.firstCall.args[0], 'a', 'PATCH')).to.equal(true);
-      expect(isPatchReleaseCommit(io.git.commit.secondCall.args[0], 'b', 'PATCH')).to.equal(true);
-      expect(isPatchReleaseCommit(io.git.commit.thirdCall.args[0], 'c', 'PATCH')).to.equal(true);
+      expect(isPatchReleaseCommit(io.git.commit.firstCall.args[0], {name: 'a', releaseHash: 'PATCH', version: '0.0.1'})).to.equal(true);
+      expect(isPatchReleaseCommit(io.git.commit.secondCall.args[0], {name: 'b', releaseHash: 'PATCH', version: '0.0.1'})).to.equal(true);
+      expect(isPatchReleaseCommit(io.git.commit.thirdCall.args[0], {name: 'c', releaseHash: 'PATCH', version: '0.0.1'})).to.equal(true);
     });
   });
 });
@@ -149,7 +149,7 @@ describe('pre with a private package', function() {
             date: '2015-08-22 12:01:42 +0200'
           },
           {
-            message: 'fix: a\n\naffects: a\n\nBREAKING CHANGE: this is a breaking change, for testing',
+            message: 'fix: a\n\naffects: a\n\nBREAKING CHANGE: this is an already released breaking change, for testing',
             hash: 'BREAK',
             date: '2015-08-22 12:01:42 +0200',
             tags: '1.0.0'
@@ -187,7 +187,7 @@ describe('pre with a private package', function() {
 
     it('should make 1 git commit', function () {
       expect(io.git.commit.innerTask.callCount).to.equal(1);
-      expect(isPatchReleaseCommit(io.git.commit.firstCall.args[0], 'a', 'FOO')).to.equal(true);
+      expect(isPatchReleaseCommit(io.git.commit.firstCall.args[0], {name: 'a', releaseHash: 'FOO', version: '1.0.1'})).to.equal(true);
     });
 
     it('should leave the version as 1.0.1', function () {
