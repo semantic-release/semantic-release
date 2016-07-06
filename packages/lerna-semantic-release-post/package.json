@@ -5,9 +5,9 @@
     "url": "https://github.com/atlassian/lerna-semantic-release/issues"
   },
   "dependencies": {
-    "lerna-semantic-release-utils": "^0.0.0",
-    "lerna-semantic-release-io": "^0.0.0",
-    "lerna-semantic-release-analyze-commits": "^0.0.0",
+    "lerna-semantic-release-utils": "^1.0.0",
+    "lerna-semantic-release-io": "^1.0.0",
+    "lerna-semantic-release-analyze-commits": "^1.0.0",
     "async": "~0.5.0",
     "dateformat": "~1.0.0",
     "conventional-changelog": "~1.1.0"
@@ -34,5 +34,5 @@
   "release": {
     "branch": "caribou"
   },
-  "version": "0.0.0"
+  "version": "1.0.0"
 }

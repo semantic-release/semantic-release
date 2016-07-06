@@ -5,8 +5,8 @@
     "url": "https://github.com/atlassian/lerna-semantic-release/issues"
   },
   "dependencies": {
-    "lerna-semantic-release-utils": "^0.0.0",
-    "lerna-semantic-release-io": "^0.0.0"
+    "lerna-semantic-release-utils": "^1.0.0",
+    "lerna-semantic-release-io": "^1.0.0"
   },
   "peerDependencies": {
     "semantic-release": "~4.3.0",
@@ -28,5 +28,5 @@
   "scripts": {
     "test": "echo 'no tests'; exit 0"
   },
-  "version": "0.0.0"
+  "version": "1.0.0"
 }

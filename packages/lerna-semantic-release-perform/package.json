@@ -5,8 +5,8 @@
     "url": "https://github.com/atlassian/lerna-semantic-release/issues"
   },
   "dependencies": {
-    "lerna-semantic-release-utils": "^0.0.0",
-    "lerna-semantic-release-io": "^0.0.0",
+    "lerna-semantic-release-utils": "^1.0.0",
+    "lerna-semantic-release-io": "^1.0.0",
     "async": "^1.5.0"
   },
   "devDependencies": {
@@ -31,5 +31,5 @@
   "release": {
     "branch": "caribou"
   },
-  "version": "0.0.0"
+  "version": "1.0.0"
 }
