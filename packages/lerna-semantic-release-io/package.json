@@ -27,7 +27,7 @@
   "license": "MIT",
   "main": "index.js",
   "files": [
-    "bin"
+    "io", "mocks"
   ],
   "repository": {
     "type": "git",
