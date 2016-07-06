@@ -14,7 +14,7 @@ delete require.cache[require.resolve('semantic-release/dist/pre')];
 
 mockery.registerMock('./lib/commits', function (_ref, cb) {
   const lastRelease = _ref.lastRelease;
-  const logHashes = mockGitState.log.map(({ hash }) => hash);
+  const logHashes = mockGitState.log.map((function (log) { return log.hash }));
   const indexOfLastReleaseCommit = logHashes.indexOf(lastRelease.gitHead);
   const commitsSinceLastRelease = mockGitState.log.slice(0, indexOfLastReleaseCommit);
   cb(null, commitsSinceLastRelease);

@@ -59,7 +59,7 @@ module.exports = {
   },
   revParse: function revParse () {
     return function (tagToMatch, done) {
-      const matchingTagAndHash = module.exports._state.allTags.filter(({tag, hash}) => tag === tagToMatch)[0];
+      const matchingTagAndHash = module.exports._state.allTags.filter(function (t) { return t.tag === tagToMatch })[0];
       const matchFound = matchingTagAndHash && matchingTagAndHash.hash;
       done(null,  matchFound ? matchingTagAndHash.hash : 'tagnotfound');
     }

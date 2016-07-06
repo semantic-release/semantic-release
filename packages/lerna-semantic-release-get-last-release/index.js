@@ -1,4 +1,6 @@
-const {log, tagging} = require('lerna-semantic-release-utils');
+const utils = require('lerna-semantic-release-utils');
+const log = utils.log;
+const tagging = utils.tagging;
 
 module.exports = function (pluginConfig, _ref, cb) {
   var pkg = _ref.pkg;
