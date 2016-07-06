@@ -14,10 +14,10 @@
     }
   },
   "dependencies": {
-    "lerna-semantic-release-pre": "^0.0.0",
-    "lerna-semantic-release-post": "^0.0.0",
-    "lerna-semantic-release-perform": "^0.0.0",
-    "lerna-semantic-release-io": "^0.0.0"
+    "lerna-semantic-release-pre": "^1.0.0",
+    "lerna-semantic-release-post": "^1.0.0",
+    "lerna-semantic-release-perform": "^1.0.0",
+    "lerna-semantic-release-io": "^1.0.0"
   },
   "peerDependencies": {
     "lerna": "*"
