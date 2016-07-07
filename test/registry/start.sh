@@ -37,4 +37,5 @@ export DEPLOY_VERSION=nope
 # setup npm-registry-couchapp
 npm explore npm-registry-couchapp -- npm start --npm-registry-couchapp:couch=$COUCH/registry
 npm explore npm-registry-couchapp -- npm run load --npm-registry-couchapp:couch=$COUCH/registry
-npm explore npm-registry-couchapp -- NO_PROMPT=yes npm run copy --npm-registry-couchapp:couch=$COUCH/registry
+export NO_PROMPT=yes
+npm explore npm-registry-couchapp -- npm run copy --npm-registry-couchapp:couch=$COUCH/registry
