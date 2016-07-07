@@ -11,6 +11,12 @@ function pushTags (done) {
   });
 }
 
+function pullTags (done) {
+  this.io.git.pullTags()(function(err) {
+    done(err);
+  });
+}
+
 function pushCommits (done) {
   this.io.git.push()(function(err) {
     done(err);
@@ -113,6 +119,7 @@ function writeReleasedPackagesFile (releasedPackages, done) {
 module.exports = function perform (config) {
   async.waterfall(bindTasks([
     pushCommits,
+    pullTags,
     pushTags,
     getUpdatedPackages,
     publishUpdatedPackages,
