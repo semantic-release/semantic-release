@@ -8,6 +8,7 @@ notifications:
 node_js:
   - "4"
 before_script:
+  - if [[ `npm -v` != 3* ]]; then npm i -g npm@3; fi
   - npm prune
 after_success:
   - npm run semantic-release
