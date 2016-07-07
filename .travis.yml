@@ -6,9 +6,9 @@ cache:
 notifications:
   email: false
 node_js:
-  - "4"
+  - "5"
 before_script:
-  - npm i -g npm@3 && npm prune
+  - npm prune
 after_success:
   - npm run semantic-release
 branches:
