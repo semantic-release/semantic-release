@@ -9,6 +9,10 @@ node_js:
   - "5"
 before_script:
   - npm prune
+  - git config --global user.email "jonelson@atlassian.com"
+  - git config --global user.name "Joshua Nelson"
+  - git remote rm origin
+  - git remote add origin https://jpnelson:${RELEASE_GH_TOKEN}@github.com/atlassian/lerna-semantic-release.git
 after_success:
   - npm run semantic-release
 branches:
