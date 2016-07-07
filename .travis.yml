@@ -1,14 +1,12 @@
 sudo: false
 language: node_js
-node_js:
-  - "4"
 cache:
   directories:
     - node_modules
 notifications:
   email: false
 node_js:
-  - stable
+  - "4"
 before_script:
   - npm prune
 after_success:
