@@ -26,7 +26,7 @@ function makeSrConfig (npmConfig, done) {
 
   var defaults = {
     options: {
-      branch: 'master'
+      branch: (pkg.release && pkg.release.branch) || 'master'
     }
   };
 
