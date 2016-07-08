@@ -14,7 +14,8 @@ before_script:
   - git config --global push.default simple
   - git remote rm origin
   - git remote add origin https://lerna-sr-travis-ci:${RELEASE_GH_TOKEN}@github.com/atlassian/lerna-semantic-release.git
-  - git checkout $TRAVIS_BRANCH
+  - git checkout $TRAVIS_BRANCH #Travis CI starts in a detached state, need to set up so we're on a branch that can push to the remote
+  - git push --set-upstream origin caribou
   - git log -E --format=%H==SPLIT==%B==END== 6e246a7f245f3da766cd43e07408d0266d6bc756..HEAD #debug
 after_success:
   - npm run semantic-release
