@@ -27,7 +27,8 @@
   "license": "MIT",
   "main": "index.js",
   "files": [
-    "io", "mocks"
+    "io",
+    "mocks"
   ],
   "repository": {
     "type": "git",
@@ -39,5 +40,5 @@
   "scripts": {
     "test": "echo 'no tests'; exit 0"
   },
-  "version": "1.0.2"
+  "version": "1.0.3"
 }
