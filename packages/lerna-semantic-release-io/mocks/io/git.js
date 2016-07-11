@@ -69,6 +69,7 @@ module.exports = {
     done(null, module.exports._state.head)
   },
   push: makeMockTask(sandbox),
+  pullTags: makeMockTask(sandbox),
   pushTags: makeMockTask(sandbox),
   add: makeMockTask(sandbox)
 };
