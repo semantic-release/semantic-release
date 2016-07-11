@@ -56,6 +56,33 @@ describe('perform', function() {
       io.restore();
     });
 
+    describe('when npm publish fails', function () {
+      const oldNpmPublish = io.npm.publish;
+      beforeEach(function (done) {
+        io.npm.publish = function () {
+          return function failNpmPublish(cb) {
+            var error = Object.create(Error.prototype);
+            error.message = 'Mock error for npm publish';
+            cb(error);
+          };
+        };
+
+        perform({
+          io: io,
+          callback: done
+        });
+      });
+
+      afterEach(function() {
+        io.npm.publish = oldNpmPublish;
+      });
+
+      it('does not write to the released packages file', function () {
+        var fileContents = io.fs.readFileSync('./.released-packages').toString();
+        expect(fileContents.trim().length).to.equal(0);
+      });
+    });
+
     describe('executing perform', function () {
       beforeEach(function (done) {
         perform({

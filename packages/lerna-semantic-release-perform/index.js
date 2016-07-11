@@ -80,24 +80,33 @@ function getUpdatedPackages (done) {
 }
 
 function publishUpdatedPackages (updatedPackages, done) {
-  var io = this.io;
+  const io = this.io;
   log.info('Publishing', updatedPackages.length, 'updated packages');
 
-  var updatedPackageLocations = updatedPackages.map(function (pkg) {
-    return pkg.location
+  const updatedPackageLocations = updatedPackages.map(function (pkg) {
+    return {pkg: pkg, path: pkg.location}
   });
 
-  var updatedPackageRelativeLocations = updatedPackageLocations.map(function (location) {
-    return path.relative(io.shell.cwdSync(), location);
+  const updatedPackageRelativeLocations = updatedPackageLocations.map(function (packageLocation) {
+    return {pkg: packageLocation.pkg, path: path.relative(io.shell.cwdSync(), packageLocation.path)};
   });
 
-  var releasedPackages = updatedPackages.map(function (pkg) {
-    return tagging.lerna(pkg.name, pkg.version);
-  });
+  var releasedPackages = [];
 
-  async.series(updatedPackageRelativeLocations.map(function (path) {
+  async.series(updatedPackageRelativeLocations.map(function (packageRelativeLocation) {
     return function (packagePublishedCallback) {
-      publishPackage(path, io, packagePublishedCallback)
+      publishPackage(packageRelativeLocation.path, io, function (err) {
+        const pkg = packageRelativeLocation.pkg;
+        if (err) {
+          log.info(`Failed to publish ${pkg.name}@${pkg.version}`);
+          packagePublishedCallback(null);
+          return;
+        }
+        const tag = tagging.lerna(pkg.name, pkg.version);
+        releasedPackages.push(tag);
+        packagePublishedCallback(null);
+
+      });
     };
   }), function (err) {
     done(err, releasedPackages);
