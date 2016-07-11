@@ -9,7 +9,7 @@ module.exports = {
   },
   getVersion: function getVersion (packageName) {
     return function (done) {
-      execAsTask(['npm view', packageName, 'version'].join(' '))(function (err, stdout) {
+      execAsTask(`npm view ${packageName} version`, {silent: true})(function (err, stdout) {
         done(err, stdout.trim());
       });
     }
