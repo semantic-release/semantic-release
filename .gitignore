@@ -8,3 +8,4 @@ test/tmp
 .DS_Store
 .nyc_output
 npm-debug.log.*
+.released-packages
