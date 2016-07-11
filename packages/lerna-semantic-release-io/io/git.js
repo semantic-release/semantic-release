@@ -23,6 +23,9 @@ module.exports = {
     return execAsTask('git commit -anm\'' + message +'\' --allow-empty');
   },
   head: gitHead,
+  pull: function pull () {
+    return execAsTask('git pull origin --no-edit');
+  },
   push: function push () {
     return execAsTask('git push origin');
   },
