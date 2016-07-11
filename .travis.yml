@@ -23,3 +23,5 @@ after_success:
 branches:
   only:
     - caribou
+git:
+  depth: 100
