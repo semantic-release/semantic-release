@@ -27,7 +27,7 @@ module.exports = {
     return execAsTask('git push origin');
   },
   pullTags: function pullTags () {
-    return execAsTask('git pull --tags');
+    return execAsTask('git fetch --tags');
   },
   pushTags: function pushTags () {
     return execAsTask('git push origin --tags');
