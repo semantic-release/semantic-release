@@ -10,8 +10,8 @@ RELATIVE_PKG=packages/$PKG
 VERSION_TYPE=$2
 
 [ -z $PKG ] && echo "need to set package" && exit 1
-[ -z $NPM_TOKEN] && echo "need to set NPM_TOKEN" && exit 1
-[ -z $VERSION_TYPE] && echo "need to set VERSION_TYPE" && exit 1
+[ -z $NPM_TOKEN ] && echo "need to set NPM_TOKEN" && exit 1
+[ -z $VERSION_TYPE ] && echo "need to set VERSION_TYPE" && exit 1
 
 git fetch
 git pull
