@@ -22,9 +22,9 @@ popd
 git commit -am"chore(release): manual bump for release of $PKG@$VERSION"
 git tag $PKG@$VERSION
 
-git push --tags
-
-
 $LERNA exec -- ln -sf ../../.git .git
 npm publish packages/$PKG
 $LERNA exec -- unlink .git
+
+git push
+git push --tags
