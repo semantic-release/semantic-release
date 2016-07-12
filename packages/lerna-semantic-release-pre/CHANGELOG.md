@@ -1,5 +1,16 @@
-<a name="1.1.1"></a>
-## [1.1.1](https://github.com/atlassian/https://github.com/atlassian/lerna-semantic-release.git/compare/1.1.1-semver-tag-for-lerna-semantic-release-pre...v1.1.1) (2016-07-12)
+<a name="1.1.2"></a>
+## [1.1.2](https://github.com/atlassian/https://github.com/atlassian/lerna-semantic-release.git/compare/1.1.2-semver-tag-for-lerna-semantic-release-pre...v1.1.2) (2016-07-12)
+
+
+
+<a name="1.1.2-semver-tag-for-lerna-semantic-release-pre"></a>
+## [1.1.2-semver-tag-for-lerna-semantic-release-pre](https://github.com/atlassian/https://github.com/atlassian/lerna-semantic-release.git/compare/1.1.1-semver-tag-for-lerna-semantic-release-pre...1.1.2-semver-tag-for-lerna-semantic-release-pre) (2016-07-12)
+
+
+### Bug Fixes
+
+* **test:** test fix to make sure release process is working ([47a758e](https://github.com/atlassian/https://github.com/atlassian/lerna-semantic-release.git/commit/47a758e))
+
 
 
 <a name="1.1.1-semver-tag-for-lerna-semantic-release-pre"></a>
@@ -24,11 +35,6 @@
 
 <a name="1.0.4-semver-tag-for-lerna-semantic-release-pre"></a>
 ## [1.0.4-semver-tag-for-lerna-semantic-release-pre](https://github.com/atlassian/https://github.com/atlassian/lerna-semantic-release.git/compare/1.0.3-semver-tag-for-lerna-semantic-release-pre...1.0.4-semver-tag-for-lerna-semantic-release-pre) (2016-07-12)
-
-
-### Bug Fixes
-
-* **tests:** Fix tests so that they don't leak mocked modules into production ([b18a24f](https://github.com/atlassian/https://github.com/atlassian/lerna-semantic-release.git/commit/b18a24f))
 
 
 
@@ -80,32 +86,13 @@
 
 
 <a name="1.1.6"></a>
-## [1.1.6](https://github.com/atlassian/https://github.com/atlassian/lerna-semantic-release.git/compare/v1.1.5...v1.1.6) (2016-06-23)
+## [1.1.6](https://github.com/atlassian/https://github.com/atlassian/lerna-semantic-release.git/compare/10dd41b...v1.1.6) (2016-06-23)
 
 
 ### Bug Fixes
 
 * errors in bin do not result in non-zero exit ([84b66e4](https://github.com/atlassian/https://github.com/atlassian/lerna-semantic-release.git/commit/84b66e4))
-
-
-
-<a name="1.1.5"></a>
-## [1.1.5](https://github.com/atlassian/https://github.com/atlassian/lerna-semantic-release.git/compare/v1.1.4...v1.1.5) (2016-06-22)
-
-
-### Bug Fixes
-
-* make lerna-semantic-release work with lerna 2.0.0-beta.20 and up ([f006429](https://github.com/atlassian/https://github.com/atlassian/lerna-semantic-release.git/commit/f006429))
-
-
-
-<a name="1.1.4"></a>
-## [1.1.4](https://github.com/atlassian/https://github.com/atlassian/lerna-semantic-release.git/compare/7420884...v1.1.4) (2016-06-15)
-
-
-### Bug Fixes
-
-* **all:** Added tests and refactored to use io utils ([7420884](https://github.com/atlassian/https://github.com/atlassian/lerna-semantic-release.git/commit/7420884)), closes [#1](https://github.com/atlassian/https://github.com/atlassian/lerna-semantic-release.git/issues/1) [#4](https://github.com/atlassian/https://github.com/atlassian/lerna-semantic-release.git/issues/4)
+* work w/o callback and specify default one ([10dd41b](https://github.com/atlassian/https://github.com/atlassian/lerna-semantic-release.git/commit/10dd41b))
 
 
 
