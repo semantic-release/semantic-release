@@ -4,7 +4,12 @@
 
 
 <a name="4.0.2-semver-tag-for-lerna-semantic-release"></a>
-## [4.0.2-semver-tag-for-lerna-semantic-release](https://github.com/atlassian/https://github.com/atlassian/lerna-semantic-release.git/compare/1.2.0-semver-tag-for-lerna-semantic-release-perform...4.0.2-semver-tag-for-lerna-semantic-release) (2016-07-12)
+## [4.0.2-semver-tag-for-lerna-semantic-release](https://github.com/atlassian/https://github.com/atlassian/lerna-semantic-release.git/compare/4.0.1-semver-tag-for-lerna-semantic-release...4.0.2-semver-tag-for-lerna-semantic-release) (2016-07-12)
+
+
+
+<a name="4.0.1-semver-tag-for-lerna-semantic-release"></a>
+## [4.0.1-semver-tag-for-lerna-semantic-release](https://github.com/atlassian/https://github.com/atlassian/lerna-semantic-release.git/compare/1.2.0-semver-tag-for-lerna-semantic-release-perform...4.0.1-semver-tag-for-lerna-semantic-release) (2016-07-12)
 
 
 
@@ -14,7 +19,12 @@
 
 
 <a name="1.1.1-semver-tag-for-lerna-semantic-release-perform"></a>
-## [1.1.1-semver-tag-for-lerna-semantic-release-perform](https://github.com/atlassian/https://github.com/atlassian/lerna-semantic-release.git/compare/1.1.0-semver-tag-for-lerna-semantic-release-perform...1.1.1-semver-tag-for-lerna-semantic-release-perform) (2016-07-12)
+## [1.1.1-semver-tag-for-lerna-semantic-release-perform](https://github.com/atlassian/https://github.com/atlassian/lerna-semantic-release.git/compare/3.0.0-semver-tag-for-lerna-semantic-release...1.1.1-semver-tag-for-lerna-semantic-release-perform) (2016-07-12)
+
+
+
+<a name="3.0.0-semver-tag-for-lerna-semantic-release"></a>
+# [3.0.0-semver-tag-for-lerna-semantic-release](https://github.com/atlassian/https://github.com/atlassian/lerna-semantic-release.git/compare/1.1.0-semver-tag-for-lerna-semantic-release-perform...3.0.0-semver-tag-for-lerna-semantic-release) (2016-07-12)
 
 
 ### Bug Fixes
@@ -53,6 +63,7 @@
 * pull tags before pushing them ([c707192](https://github.com/atlassian/https://github.com/atlassian/lerna-semantic-release.git/commit/c707192))
 * **perform:** does not write to .released-packages if there was a publishing error ([5fd2c0c](https://github.com/atlassian/https://github.com/atlassian/lerna-semantic-release.git/commit/5fd2c0c))
 * **pre:** use branch asked for ([ee43e3b](https://github.com/atlassian/https://github.com/atlassian/lerna-semantic-release.git/commit/ee43e3b))
+* **syntax:** fixed syntax problem in the binary ([0999e0b](https://github.com/atlassian/https://github.com/atlassian/lerna-semantic-release.git/commit/0999e0b))
 
 
 ### Code Refactoring
@@ -63,32 +74,6 @@
 ### BREAKING CHANGES
 
 * package: lerna-semantic-release is now run with pre/perform/post commands
-
-
-
-<a name="1.1.8"></a>
-## [1.1.8](https://github.com/atlassian/https://github.com/atlassian/lerna-semantic-release.git/compare/v1.1.7...v1.1.8) (2016-06-23)
-
-
-
-<a name="1.1.7"></a>
-## [1.1.7](https://github.com/atlassian/https://github.com/atlassian/lerna-semantic-release.git/compare/v1.1.6...v1.1.7) (2016-06-23)
-
-
-### Bug Fixes
-
-* **syntax:** fixed syntax problem in the binary ([0999e0b](https://github.com/atlassian/https://github.com/atlassian/lerna-semantic-release.git/commit/0999e0b))
-
-
-
-<a name="1.1.6"></a>
-## [1.1.6](https://github.com/atlassian/https://github.com/atlassian/lerna-semantic-release.git/compare/10dd41b...v1.1.6) (2016-06-23)
-
-
-### Bug Fixes
-
-* errors in bin do not result in non-zero exit ([84b66e4](https://github.com/atlassian/https://github.com/atlassian/lerna-semantic-release.git/commit/84b66e4))
-* work w/o callback and specify default one ([10dd41b](https://github.com/atlassian/https://github.com/atlassian/lerna-semantic-release.git/commit/10dd41b))
 
 
 
