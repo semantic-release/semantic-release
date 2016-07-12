@@ -16,7 +16,7 @@ module.exports = {
   },
   revParse: function revParse () {
     return function (done) {
-      simpleGit().revParse(done)
+      simpleGit().revparse(done)
     }
   },
   commit: function commit (message) {
