@@ -1,0 +1,39 @@
+{
+  "name": "lerna-semantic-release-dummy",
+  "description": "This is a dummy package used for testing changes to the build system.",
+  "author": "Joshua Nelson <jonelson@atlassian.com>, Joscha Feth <jfeth@atlassian.com>",
+  "private": "true",
+  "bugs": {
+    "url": "https://github.com/atlassian/lerna-semantic-release/issues"
+  },
+  "config": {
+    "commitizen": {
+      "path": "node_modules/cz-conventional-changelog/"
+    }
+  },
+  "dependencies": {
+    "lerna-semantic-release-pre": "^1.0.0",
+    "lerna-semantic-release-post": "^1.0.0",
+    "lerna-semantic-release-perform": "^1.0.0",
+    "lerna-semantic-release-io": "^2.0.0"
+  },
+  "peerDependencies": {
+    "lerna": "*"
+  },
+  "engines": {
+    "node": ">=4",
+    "npm": ">=3"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/atlassian/lerna-semantic-release.git"
+  },
+  "scripts": {
+    "test": "echo 'no tests'; exit 0"
+  },
+  "release": {
+    "branch": "caribou"
+  },
+  "version": "0.0.0"
+}
