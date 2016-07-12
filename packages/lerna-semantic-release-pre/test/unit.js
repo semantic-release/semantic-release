@@ -115,6 +115,83 @@ describe('pre with three packages', function() {
   });
 });
 
+describe('pre with substring packages', function () {
+  beforeEach(function () {
+    var packageVersions = {
+      versions: {
+        'a': '1.0.0',
+        'aa': '1.0.0'
+      },
+      latestVersions: {
+        'a': {
+          version: '1.0.0',
+          gitHead: 'BREAK'
+        },
+        'aa': {
+          version: '1.0.0',
+          gitHead: 'BREAK'
+        }
+      }
+    };
+
+    io.mock({
+      fs: {
+        'packages': {
+          'a': {
+            'index.js': 'A',
+            'package.json': JSON.stringify({name: 'a', version: '1.0.0'})
+          },
+          'aa': {
+            'index.js': 'AA',
+            'package.json': JSON.stringify({name: 'aa', version: '1.0.0'})
+          }
+        },
+        'package.json': JSON.stringify({name: 'main', version: '0.0.0'}),
+        'lerna.json': JSON.stringify({lerna: '2.0.0-beta.17', version: 'independent'})
+      },
+      git: {
+        allTags: [
+          {tag: 'a@1.0.0', hash: 'BREAK'},
+          {tag: 'aa@1.0.0', hash: 'BREAK'}
+        ],
+        head: 'FOO',
+        log: [{
+          message: 'fix: aa\n\naffects: aa\n\nThis is not a breaking change',
+          hash: 'FOO',
+          date: '2015-08-22 12:01:42 +0200'
+        },
+          {
+            message: 'fix: a\n\naffects: a, aa\n\nBREAKING CHANGE: this is an already released breaking change, for testing',
+            hash: 'BREAK',
+            date: '2015-08-22 12:01:42 +0200',
+            tags: '1.0.0'
+          }
+        ]
+      },
+      npm: packageVersions,
+      lerna: packageVersions
+    });
+  });
+
+  afterEach(function () {
+    io.restore();
+  });
+
+  describe('executing', function() {
+    beforeEach(function (done) {
+      pre({
+        io: io,
+        callback: done
+      });
+    });
+
+    it('should make 1 release for aa', function () {
+      expect(io.git.commit.innerTask.callCount).to.equal(1);
+      expect(isPatchReleaseCommit(io.git.commit.firstCall.args[0], {name: 'aa', releaseHash: 'FOO', version: '1.0.1'})).to.equal(true);
+    });
+  });
+});
+
 describe('pre with a private package', function() {
   beforeEach(function () {
     var packageVersions = {
