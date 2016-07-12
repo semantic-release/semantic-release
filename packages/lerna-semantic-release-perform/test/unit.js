@@ -1,4 +1,4 @@
-var io = require('lerna-semantic-release-io').mocks();
+var io = require('lerna-semantic-release-io').mocks;
 var expect = require('expect.js');
 var path = require('path');
 var perform = require('../index');
