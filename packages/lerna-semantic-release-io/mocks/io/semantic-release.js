@@ -11,7 +11,6 @@ mockery.enable({
 // For some reason using the clean cache doesn't work, we need to delete the cache entry too
 delete require.cache[require.resolve('semantic-release/dist/pre')];
 
-
 mockery.registerMock('./lib/commits', function (_ref, cb) {
   const lastRelease = _ref.lastRelease;
   const logHashes = mockGitState.log.map((function (log) { return log.hash }));
@@ -19,7 +18,6 @@ mockery.registerMock('./lib/commits', function (_ref, cb) {
   const commitsSinceLastRelease = mockGitState.log.slice(0, indexOfLastReleaseCommit);
   cb(null, commitsSinceLastRelease);
 });
-
 
 var getLastRelease = require('lerna-semantic-release-get-last-release').bind(null, {
   lastReleaseNpm: function (pluginConfig, _ref, cb) {
