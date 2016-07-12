@@ -23,6 +23,6 @@ module.exports = {
   isRelevant: function (affectsLine, packageName) {
     var affectsDelimiter = 'affects:';
     return affectsLine && affectsLine.indexOf(affectsDelimiter) === 0 &&
-      affectsLine.slice(affectsDelimiter.length).indexOf(packageName) > -1;
+      affectsLine.split(affectsDelimiter)[1].trim().split(', ').indexOf(packageName) > -1;
   }
 };
