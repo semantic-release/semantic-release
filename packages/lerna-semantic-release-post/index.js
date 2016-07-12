@@ -72,7 +72,20 @@ function createChangelog (done) {
     },
     releaseCount: 0
   }, {
-    repository: typeof rootPackageRepository !== 'object' ? rootPackageRepository : rootPackageRepository.url
+    repoUrl: typeof rootPackageRepository !== 'object' ? rootPackageRepository : rootPackageRepository.url
+  }, {}, {}, {
+    finalizeContext: function (context) {
+      const tagParts = tagging.getTagParts(context.version);
+      if (!tagParts) {
+        return context;
+      }
+      context.version = tagging.lerna(tagParts.name, tagParts.version);
+      context.gitSemverTags = context.gitSemverTags.map(function (gitSemverTag) {
+        const tagParts = tagging.getTagParts(gitSemverTag);
+        return tagging.lerna(tagParts.name, tagParts.version);
+      });
+      return context;
+    }
   }).pipe(writeStream);
 
   stream.on('close', function () {
