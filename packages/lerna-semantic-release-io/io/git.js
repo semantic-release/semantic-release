@@ -24,7 +24,7 @@ module.exports = {
   },
   head: gitHead,
   pull: function pull () {
-    return execAsTask('git pull origin --no-edit');
+    return execAsTask('git pull --ff-only --no-edit origin');
   },
   push: function push () {
     return execAsTask('git push origin');
