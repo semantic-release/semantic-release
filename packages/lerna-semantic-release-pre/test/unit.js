@@ -11,8 +11,6 @@ function isPatchReleaseCommit (commit, expectations) {
   var isPatchReleaseCommit = true;
   var commitParts = commit.split('\n\n');
 
-  console.log('lernasr', commit);
-
   isPatchReleaseCommit = isPatchReleaseCommit && commitParts[0].indexOf(`chore`) === 0;
   isPatchReleaseCommit = isPatchReleaseCommit && commitParts[1].indexOf(`affects: ${name}@${version}`) === 0;
   isPatchReleaseCommit = isPatchReleaseCommit && commitParts[2].indexOf(`Released from sha ${releaseHash}`) === 0;

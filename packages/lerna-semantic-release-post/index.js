@@ -8,7 +8,6 @@ var dateFormat = require('dateformat');
 var forEachPackage = require('lerna-semantic-release-utils').forEachPackage;
 var tagging = require('lerna-semantic-release-utils').tagging;
 var analyzer = require('lerna-semantic-release-analyze-commits');
-var log = require('lerna-semantic-release-utils').log;
 
 var CHANGELOG_FILE_NAME = 'CHANGELOG.md';
 
