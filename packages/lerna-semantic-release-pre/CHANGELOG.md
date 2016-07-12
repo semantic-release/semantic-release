@@ -2,7 +2,6 @@
 ## [1.1.1](https://github.com/atlassian/https://github.com/atlassian/lerna-semantic-release.git/compare/1.1.1-semver-tag-for-lerna-semantic-release-pre...v1.1.1) (2016-07-12)
 
 
-
 <a name="1.1.1-semver-tag-for-lerna-semantic-release-pre"></a>
 ## [1.1.1-semver-tag-for-lerna-semantic-release-pre](https://github.com/atlassian/https://github.com/atlassian/lerna-semantic-release.git/compare/4.0.2-semver-tag-for-lerna-semantic-release...1.1.1-semver-tag-for-lerna-semantic-release-pre) (2016-07-12)
 
