@@ -27,7 +27,8 @@ var getLastRelease = require('lerna-semantic-release-get-last-release').bind(nul
       gitHead: mockNpmLatestVersions[packageName].gitHead
     });
   },
-  revParse: require('./git').revParse()
+  revParse: require('./git').revParse(),
+  tagList: require('./git').tagList()
 });
 
 var srNormalize = require('semantic-release/dist/lib/plugins').normalize;

@@ -6,7 +6,7 @@ module.exports = function (pluginConfig, _ref, cb) {
   var pkg = _ref.pkg;
   const lastReleaseNpm = pluginConfig.lastReleaseNpm;
   const revParse = pluginConfig.revParse;
-  const tagList = pluginConfig.revParse;
+  const tagList = pluginConfig.tagList;
 
   if (pkg.private) {
     log.info('Package', pkg.name, 'is marked as private, doing last version calculation locally');
@@ -14,7 +14,7 @@ module.exports = function (pluginConfig, _ref, cb) {
     const versionTag = tagging.lerna(pkg.name, version);
 
     tagList(function (err, tags) {
-      if (tags.indexOf(versionTag) === -1) {
+      if (tags && tags.all.indexOf(versionTag) === -1) {
         log.info(`Tag ${versionTag} not found, so no last release detected`);
         cb(null, {});
         return;
