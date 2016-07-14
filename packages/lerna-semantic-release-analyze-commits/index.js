@@ -13,9 +13,9 @@ module.exports = {
 
     commitAnalyzer({}, Object.assign(_ref, {commits: relevantCommits}), function (err, type) {
       log.info('Anaylzed', relevantCommits.length, '/', commits.length, 'commits to determine type', type, 'for', pkg.name);
-      relevantCommits.length && log.verbose('Commits:\n', relevantCommits.map(function (commit) {
-        return commit.hash + ': ' + commit.message;
-      }).join('\n----\n'));
+      relevantCommits.length && log.info('Relevant commits:\n* ', relevantCommits.map(function (commit) {
+        return commit.hash;
+      }).join('\n* '));
       cb(err, type);
     });
   },
