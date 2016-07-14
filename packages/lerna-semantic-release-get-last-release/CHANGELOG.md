@@ -1,5 +1,5 @@
 <a name="2.0.0"></a>
-# 2.0.0 (2016-07-12)
+# 2.0.0 (2016-07-14)
 
 
 
@@ -48,11 +48,6 @@
 ### Code Refactoring
 
 * **package:** manually bump the version to 2.0.0 ([f452b24](https://github.com/atlassian/lerna-semantic-release/commit/f452b24))
-
-
-### Features
-
-* **lerna-semantic-release-io:** mock revParse from git for usage in mocks ([576317c](https://github.com/atlassian/lerna-semantic-release/commit/576317c))
 
 
 ### BREAKING CHANGES

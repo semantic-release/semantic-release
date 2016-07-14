@@ -1,5 +1,15 @@
-<a name="2.0.3"></a>
-## 2.0.3 (2016-07-12)
+<a name="2.0.4"></a>
+## 2.0.4 (2016-07-14)
+
+
+
+<a name="lerna-semantic-release-io@2.0.4"></a>
+## lerna-semantic-release-io@2.0.4 (2016-07-14)
+
+
+### Bug Fixes
+
+* **bump:** bump to 2.0.0 of get-last-release to get fixes. tagList is already being provided ([f53a349](https://github.com/atlassian/lerna-semantic-release/commit/f53a349))
 
 
 
@@ -108,11 +118,6 @@
 ### Code Refactoring
 
 * **package:** manually bump the version to 2.0.0 ([f452b24](https://github.com/atlassian/lerna-semantic-release/commit/f452b24))
-
-
-### Features
-
-* **lerna-semantic-release-io:** mock revParse from git for usage in mocks ([576317c](https://github.com/atlassian/lerna-semantic-release/commit/576317c))
 
 
 ### BREAKING CHANGES

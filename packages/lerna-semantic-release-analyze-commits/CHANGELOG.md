@@ -1,5 +1,15 @@
-<a name="1.0.19"></a>
-## 1.0.19 (2016-07-12)
+<a name="1.0.20"></a>
+## 1.0.20 (2016-07-14)
+
+
+
+<a name="lerna-semantic-release-analyze-commits@1.0.20"></a>
+## lerna-semantic-release-analyze-commits@1.0.20 (2016-07-14)
+
+
+### Bug Fixes
+
+* **logging:** change logging so that relevant shas are printed to the logs ([722f40e](https://github.com/atlassian/lerna-semantic-release/commit/722f40e))
 
 
 
