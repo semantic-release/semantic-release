@@ -26,7 +26,7 @@
     "nopt": "^3.0.3",
     "normalize-package-data": "^2.3.4",
     "npmconf": "^2.1.2",
-    "npmlog": "^2.0.0",
+    "npmlog": "^4.0.0",
     "require-relative": "^0.8.7",
     "run-auto": "^2.0.0",
     "run-series": "^1.1.3",
