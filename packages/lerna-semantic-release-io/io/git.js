@@ -3,7 +3,7 @@ var execAsTask = require('lerna-semantic-release-utils').execAsTask;
 var simpleGit = require('simple-git');
 
 module.exports = {
-  tag: function commit (tag, message) {
+  tag: function tag (tag, message) {
     return execAsTask('git tag -am"' + message + '" ' + tag)
   },
   tagDelete: function tagDelete (tags) {

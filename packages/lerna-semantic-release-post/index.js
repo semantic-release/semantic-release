@@ -64,7 +64,6 @@ function createChangelog (done) {
       }
 
       commit = reformatCommit(commit);
-
       cb(null, commit);
     },
     pkg: {
@@ -82,7 +81,8 @@ function createChangelog (done) {
       context.version = tagging.lerna(tagParts.name, tagParts.version);
       context.gitSemverTags = context.gitSemverTags.map(function (gitSemverTag) {
         const tagParts = tagging.getTagParts(gitSemverTag);
-        return tagging.lerna(tagParts.name, tagParts.version);
+        const transformedTag = tagParts ? tagging.lerna(tagParts.name, tagParts.version) : gitSemverTag;
+        return transformedTag;
       });
       return context;
     }
