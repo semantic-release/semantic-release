@@ -64,7 +64,6 @@ function createChangelog (done) {
       }
 
       commit = reformatCommit(commit);
-
       cb(null, commit);
     },
     pkg: {

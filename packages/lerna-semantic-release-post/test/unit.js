@@ -1,4 +1,5 @@
 var io = require('lerna-semantic-release-io').mocks();
+var realIo = require('lerna-semantic-release-io').default;
 var expect = require('expect.js');
 var path = require('path');
 var post = require('../index');
@@ -124,8 +125,7 @@ function makeBasicState () {
 }
 
 describe('post', function() {
-
-  describe('with a four packages', function() {
+  describe('with four packages', function() {
     beforeEach(function () {
       io.mock(makeBasicState());
     });
@@ -187,43 +187,51 @@ describe('post', function() {
     });
   });
 
-  describe('with a semantic tag that is not ours', function() {
-    /**
-     *  A dependency of conventional changelog, `git-semver-tags` queries the `git log` *in the repo*
-     *  directly. We cannot mock it. For that reason, this test is incomplete.
-     *
-     *  A commit which is not following our own convention has been added to the repository so that
-     *  this can be tested, however it would be better to be able to mock the call to `git log`.
-     */
-    beforeEach(function () {
-      let state = makeBasicState();
-      state.git.allTags.push({
-        tag: '0.0.1-rogue',
-        hash: 'ROGUE',
-      });
-      state.git.log.push({
-        message: 'chore(rogue): chore for rogue\n\naffects: rogue',
-        hash: 'ROGUE',
-        date: '2015-08-22 12:01:42 +0200',
-        tags: '0.0.1-rogue'
-      });
-      io.mock(state);
+  describe('with a real rogue tag in the repo', function () {
+    const rogueTagName = '0.0.1-semver-tag-that-does-not-follow-conventions';
+    beforeEach(function (done) {
+      /**
+       *  A dependency of conventional changelog, `git-semver-tags` queries the `git log` *in the repo*
+       *  directly. We cannot mock it. For that reason, we need to tag in the actual repo in this test
+       */
+      realIo.git.tag(rogueTagName)(done);
     });
 
-    afterEach(function () {
-      io.restore();
+    afterEach(function (done) {
+      realIo.git.tagDelete([rogueTagName])(done);
     });
 
-    describe('executing', function () {
-      beforeEach(function (done) {
-        post({
-          io: io,
-          callback: done
+    describe('with a commit that does follow our conventions', function () {
+      beforeEach(function () {
+        let state = makeBasicState();
+        state.git.allTags.push({
+          tag: '0.0.1-semver-tag-for-rogue',
+          hash: 'ROGUE',
         });
+        state.git.log.push({
+          message: 'chore(rogue): chore for rogue\n\naffects: rogue',
+          hash: 'ROGUE',
+          date: '2015-08-22 12:01:42 +0200',
+          tags: '0.0.1-semver-tag-for-rogue'
+        });
+        io.mock(state);
       });
-      
-      it('git push is called once', function () {
-        expect(io.git.push.innerTask.callCount).to.equal(1);
+
+      afterEach(function () {
+        io.restore();
+      });
+
+      describe('executing', function () {
+        beforeEach(function (done) {
+          post({
+            io: io,
+            callback: done
+          });
+        });
+
+        it('git push is called once', function () {
+          expect(io.git.push.innerTask.callCount).to.equal(1);
+        });
       });
     });
   });
