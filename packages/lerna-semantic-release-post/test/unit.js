@@ -188,10 +188,24 @@ describe('post', function() {
   });
 
   describe('with a semantic tag that is not ours', function() {
+    /**
+     *  A dependency of conventional changelog, `git-semver-tags` queries the `git log` *in the repo*
+     *  directly. We cannot mock it. For that reason, this test is incomplete.
+     *
+     *  A commit which is not following our own convention has been added to the repository so that
+     *  this can be tested, however it would be better to be able to mock the call to `git log`.
+     */
     beforeEach(function () {
       let state = makeBasicState();
       state.git.allTags.push({
-        '0.0.1-rogue-tag': 'ROGUE',
+        tag: '0.0.1-rogue',
+        hash: 'ROGUE',
+      });
+      state.git.log.push({
+        message: 'chore(rogue): chore for rogue\n\naffects: rogue',
+        hash: 'ROGUE',
+        date: '2015-08-22 12:01:42 +0200',
+        tags: '0.0.1-rogue'
       });
       io.mock(state);
     });
