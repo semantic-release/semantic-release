@@ -203,7 +203,7 @@ describe('post', function() {
 
     describe('with a commit that does follow our conventions', function () {
       beforeEach(function () {
-        let state = makeBasicState();
+        var state = makeBasicState();
         state.git.allTags.push({
           tag: '0.0.1-semver-tag-for-rogue',
           hash: 'ROGUE',
