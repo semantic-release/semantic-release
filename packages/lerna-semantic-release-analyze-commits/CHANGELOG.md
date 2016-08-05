@@ -1,5 +1,10 @@
-<a name="1.0.20"></a>
-## 1.0.20 (2016-08-05)
+<a name="2.0.0"></a>
+# 2.0.0 (2016-08-05)
+
+
+
+<a name="lerna-semantic-release-analyze-commits@1.0.0"></a>
+# lerna-semantic-release-analyze-commits@1.0.0 (2016-08-05)
 
 
 
@@ -42,15 +47,8 @@
 ## lerna-semantic-release-analyze-commits@1.0.18 (2016-07-11)
 
 
-
-<a name="lerna-semantic-release-analyze-commits@1.0.2"></a>
-## lerna-semantic-release-analyze-commits@1.0.2 (2016-07-08)
-
-
 ### Bug Fixes
 
-* **logs:** change to verbose logging ([d7f928c](https://github.com/atlassian/lerna-semantic-release/commit/d7f928c))
-* **package:** Not all files were published correctly ([4fc2cc4](https://github.com/atlassian/lerna-semantic-release/commit/4fc2cc4))
 * **pre:** use branch asked for ([ee43e3b](https://github.com/atlassian/lerna-semantic-release/commit/ee43e3b))
 
 
