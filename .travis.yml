@@ -8,7 +8,7 @@ notifications:
 node_js:
   - "5"
 before_script:
-  - npm config set registry //registry.npmjs.org/:_authToken=${NPM_TOKEN}
+  - npm config set registry https://registry.npmjs.org/:_authToken=${NPM_TOKEN}
   - npm prune
   - git config --global user.email "jonelson+lerna-sr-travis-ci@atlassian.com"
   - git config --global user.name "Joshua Nelson"
