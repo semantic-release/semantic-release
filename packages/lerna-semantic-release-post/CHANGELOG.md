@@ -1,5 +1,15 @@
-<a name="1.1.1"></a>
-## 1.1.1 (2016-07-14)
+<a name="1.1.2"></a>
+## 1.1.2 (2016-08-05)
+
+
+
+<a name="lerna-semantic-release-post@1.1.2"></a>
+## lerna-semantic-release-post@1.1.2 (2016-08-05)
+
+
+### Bug Fixes
+
+* **post:** fixed a bug where a rogue tag in the repository that did not conform to our conventions w ([787a324](https://github.com/atlassian/lerna-semantic-release/commit/787a324))
 
 
 
@@ -51,16 +61,6 @@
 
 * **package:** Not all files were published correctly ([4fc2cc4](https://github.com/atlassian/lerna-semantic-release/commit/4fc2cc4))
 * **pre:** use branch asked for ([ee43e3b](https://github.com/atlassian/lerna-semantic-release/commit/ee43e3b))
-
-
-### Code Refactoring
-
-* **package:** manually bump the version to 2.0.0 ([f452b24](https://github.com/atlassian/lerna-semantic-release/commit/f452b24))
-
-
-### BREAKING CHANGES
-
-* package: lerna-semantic-release is now run with pre/perform/post commands
 
 
 

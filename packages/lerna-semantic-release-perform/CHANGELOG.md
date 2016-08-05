@@ -1,5 +1,5 @@
 <a name="1.2.0"></a>
-# 1.2.0 (2016-07-14)
+# 1.2.0 (2016-08-05)
 
 
 
@@ -63,16 +63,6 @@
 * pull tags before pushing them ([c707192](https://github.com/atlassian/lerna-semantic-release/commit/c707192))
 * **perform:** does not write to .released-packages if there was a publishing error ([5fd2c0c](https://github.com/atlassian/lerna-semantic-release/commit/5fd2c0c))
 * **pre:** use branch asked for ([ee43e3b](https://github.com/atlassian/lerna-semantic-release/commit/ee43e3b))
-
-
-### Code Refactoring
-
-* **package:** manually bump the version to 2.0.0 ([f452b24](https://github.com/atlassian/lerna-semantic-release/commit/f452b24))
-
-
-### BREAKING CHANGES
-
-* package: lerna-semantic-release is now run with pre/perform/post commands
 
 
 

@@ -1,5 +1,5 @@
 <a name="2.0.4"></a>
-## 2.0.4 (2016-07-14)
+## 2.0.4 (2016-08-05)
 
 
 
@@ -113,16 +113,6 @@
 ### Bug Fixes
 
 * **package:** Not all files were published correctly ([4fc2cc4](https://github.com/atlassian/lerna-semantic-release/commit/4fc2cc4))
-
-
-### Code Refactoring
-
-* **package:** manually bump the version to 2.0.0 ([f452b24](https://github.com/atlassian/lerna-semantic-release/commit/f452b24))
-
-
-### BREAKING CHANGES
-
-* package: lerna-semantic-release is now run with pre/perform/post commands
 
 
 
