@@ -29,6 +29,3 @@
 ### BREAKING CHANGES
 
 * package: lerna-semantic-release is now run with pre/perform/post commands
-
-
-
