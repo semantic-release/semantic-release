@@ -1,5 +1,10 @@
-<a name="3.0.0"></a>
-# 3.0.0 (2016-08-05)
+<a name="5.0.0"></a>
+# 5.0.0 (2016-08-09)
+
+
+
+<a name="lerna-semantic-release@5.0.1"></a>
+## lerna-semantic-release@5.0.1 (2016-08-09)
 
 
 
