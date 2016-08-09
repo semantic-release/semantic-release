@@ -18,7 +18,6 @@ before_script:
   - git checkout $TRAVIS_BRANCH #Travis CI starts in a detached state, need to set up so we're on a branch that can push to the remote
   - git fetch
   - git branch -u origin/$TRAVIS_BRANCH
-  - git log -E --format=%H==SPLIT==%B==END== 6e246a7f245f3da766cd43e07408d0266d6bc756..HEAD #debug
   - npm whoami #debug
 after_success:
   - npm run semantic-release
