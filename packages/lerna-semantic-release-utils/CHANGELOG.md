@@ -1,5 +1,10 @@
-<a name="1.0.9"></a>
-## 1.0.9 (2016-08-05)
+<a name="2.0.0"></a>
+# 2.0.0 (2016-08-05)
+
+
+
+<a name="lerna-semantic-release-utils@1.0.0"></a>
+# lerna-semantic-release-utils@1.0.0 (2016-08-05)
 
 
 
@@ -30,7 +35,6 @@
 ### Bug Fixes
 
 * **logging:** improved logging, less verbose for npm version ([87eb71f](https://github.com/atlassian/lerna-semantic-release/commit/87eb71f))
-* **package:** Not all files were published correctly ([4fc2cc4](https://github.com/atlassian/lerna-semantic-release/commit/4fc2cc4))
 * **pre:** use branch asked for ([ee43e3b](https://github.com/atlassian/lerna-semantic-release/commit/ee43e3b))
 
 
