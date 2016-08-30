@@ -220,19 +220,6 @@ describe('post', function() {
       afterEach(function () {
         io.restore();
       });
-
-      describe('executing', function () {
-        beforeEach(function (done) {
-          post({
-            io: io,
-            callback: done
-          });
-        });
-
-        it('git push is called once', function () {
-          expect(io.git.push.innerTask.callCount).to.equal(1);
-        });
-      });
     });
   });
 
