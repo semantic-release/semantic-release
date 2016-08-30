@@ -93,15 +93,6 @@ function createChangelog (done) {
   });
 }
 
-function enterPackage (done) {
-  this.io.shell.pushdSync(this.packagePath);
-  done();
-}
-function exitPackage (done) {
-  this.io.shell.popdSync();
-  done();
-}
-
 function isTagRelevant (packageName, tag) {
   var tagParts = tagging.getTagParts(tag);
   return tagParts && tagParts.version && tagParts.name === packageName;
@@ -144,11 +135,7 @@ module.exports = function (config) {
   forEachPackage([
     createSemverTags,
     createChangelog,
-    removeSemverTags,
-    enterPackage,
-    config.io.shell.touch(CHANGELOG_FILE_NAME),
-    config.io.git.add(CHANGELOG_FILE_NAME),
-    exitPackage
+    removeSemverTags
   ], {
     allPackages: config.io.lerna.getAllPackages(),
     extraContext: {
@@ -156,13 +143,8 @@ module.exports = function (config) {
       io: config.io
     }
   }, function done () {
-    async.series([
-      config.io.git.commit('docs(changelog): appending to changelog'),
-      config.io.git.push()
-    ], (err) => {
-      if (typeof config.callback === 'function') {
-        config.callback(err);
-      }
-    });
+    if (typeof config.callback === 'function') {
+      config.callback(err);
+    }
   });
 };

@@ -44,6 +44,6 @@ lerna-semantic-release pre # Set up the versions, tags and commits
 lerna-semantic-release perform # Publishes to npm
 
 # Post
-lerna-semantic-release post # Generates a changelog in each package
+lerna-semantic-release post # Generates a changelog in each package in a file named CHANGELOG.md - will not commit or push that file any more after version 7.0.5 any more. If you want to do something with it, you will need to do this manually.
 
 This will publish all npm packages, including creating commits and tags for each release, in the format that lerna expects for the `lerna updated` command.
