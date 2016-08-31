@@ -9,7 +9,7 @@
     "lerna-semantic-release-io": "^5.0.0"
   },
   "peerDependencies": {
-    "semantic-release": "~4.3.0",
+    "semantic-release": "joscha/semantic-release#84a7a91",
     "@semantic-release/last-release-npm": "~1.0.0"
   },
   "engines": {

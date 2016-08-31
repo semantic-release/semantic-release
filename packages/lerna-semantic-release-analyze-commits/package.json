@@ -8,7 +8,7 @@
     "lerna-semantic-release-utils": "^4.0.0"
   },
   "peerDependencies": {
-    "semantic-release": "~4.3.0",
+    "semantic-release": "joscha/semantic-release#84a7a91",
     "@semantic-release/commit-analyzer": "~2.0.0"
   },
   "engines": {
