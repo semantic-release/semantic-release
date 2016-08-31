@@ -1,6 +1,10 @@
 #!/bin/bash
 set -e
 
+if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
+  exit 0
+fi
+
 if [[ $TRAVIS_BRANCH == 'caribou' ]]; then
   npm config set //registry.npmjs.org/:_authToken=$NPM_TOKEN -q
   npm prune
