@@ -7,9 +7,7 @@ notifications:
   email: false
 node_js:
   - "5"
-before_script:
-  - .travis/before_script.sh
-after_success:
-  - .travis/after_success.sh
+before_script: .travis/before_script.sh
+after_success: .travis/after_success.sh
 git:
   depth: 100
