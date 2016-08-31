@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-if [[ $TRAVIS_BRANCH == 'caribou' ]]
+if [[ $TRAVIS_BRANCH == 'caribou' ]]; then
   npm config set //registry.npmjs.org/:_authToken=$NPM_TOKEN -q
   npm prune
   git config --global user.email "jonelson+lerna-sr-travis-ci@atlassian.com"
