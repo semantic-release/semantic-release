@@ -3,6 +3,11 @@
 
 
 
+<a name="lerna-semantic-release@8.0.0"></a>
+# lerna-semantic-release@8.0.0 (2016-08-31)
+
+
+
 <a name="lerna-semantic-release@5.0.1"></a>
 ## lerna-semantic-release@5.0.1 (2016-08-09)
 
@@ -60,6 +65,11 @@
 
 <a name="lerna-semantic-release-pre@1.0.3"></a>
 ## lerna-semantic-release-pre@1.0.3 (2016-07-11)
+
+
+### Bug Fixes
+
+* **logging:** improved logging, less verbose for npm version ([87eb71f](https://github.com/atlassian/lerna-semantic-release/commit/87eb71f))
 
 
 

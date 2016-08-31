@@ -3,6 +3,11 @@
 
 
 
+<a name="lerna-semantic-release@8.0.0"></a>
+# lerna-semantic-release@8.0.0 (2016-08-31)
+
+
+
 <a name="lerna-semantic-release@5.0.1"></a>
 ## lerna-semantic-release@5.0.1 (2016-08-09)
 

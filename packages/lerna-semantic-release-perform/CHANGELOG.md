@@ -3,6 +3,11 @@
 
 
 
+<a name="lerna-semantic-release@8.0.0"></a>
+# lerna-semantic-release@8.0.0 (2016-08-31)
+
+
+
 <a name="lerna-semantic-release@5.0.1"></a>
 ## lerna-semantic-release@5.0.1 (2016-08-09)
 
@@ -64,8 +69,9 @@
 
 ### Bug Fixes
 
-* **pre:** use branch asked for ([ee43e3b](https://github.com/atlassian/lerna-semantic-release/commit/ee43e3b))
 * pull tags before pushing them ([c707192](https://github.com/atlassian/lerna-semantic-release/commit/c707192))
+* **logging:** improved logging, less verbose for npm version ([87eb71f](https://github.com/atlassian/lerna-semantic-release/commit/87eb71f))
+* **pre:** use branch asked for ([ee43e3b](https://github.com/atlassian/lerna-semantic-release/commit/ee43e3b))
 
 
 
