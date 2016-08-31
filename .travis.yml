@@ -8,8 +8,8 @@ notifications:
 node_js:
   - "5"
 before_script:
-  - '[[ "$TRAVIS_BRANCH" == "caribou" ]] && { $TRAVIS_BUILD_DIR/bin/before.sh; };'
+  - .travis/before_script.sh
 after_success:
-  - '[[ "$TRAVIS_BRANCH" == "caribou" ]] && { npm run semantic-release; };'
+  - .travis/after_success.sh
 git:
   depth: 100
