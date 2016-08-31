@@ -146,19 +146,6 @@ describe('post', function() {
         expect(io.npm.publish.innerTask.callCount).to.equal(0);
       });
 
-      it('git push is called once', function () {
-        expect(io.git.push.innerTask.callCount).to.equal(1);
-      });
-
-      it('git commit is called once', function () {
-        expect(io.git.commit.innerTask.callCount).to.equal(1);
-      });
-
-      it('changelogs are touched and added four times', function () {
-        expect(io.shell.touch.innerTask.callCount).to.equal(4);
-        expect(io.git.add.innerTask.callCount).to.equal(4);
-      });
-
       function countOccurrences (s, regex) {
         return (s.match(regex) || []).length;
       }

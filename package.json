@@ -28,8 +28,8 @@
   ],
   "license": "MIT",
   "devDependencies": {
-    "lerna-semantic-release": "^4.0.0",
-    "lerna": "2.0.0-beta.20",
+    "lerna-semantic-release": "^7.0.5",
+    "lerna": "2.0.0-beta.26",
     "cz-lerna-changelog": "0.2.1"
   },
   "repository": {

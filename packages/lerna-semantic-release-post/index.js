@@ -142,7 +142,7 @@ module.exports = function (config) {
       rootPackageRepository: rootPackageRepository,
       io: config.io
     }
-  }, function done () {
+  }, (err) => {
     if (typeof config.callback === 'function') {
       config.callback(err);
     }
