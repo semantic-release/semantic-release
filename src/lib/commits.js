@@ -49,6 +49,9 @@ module.exports = function (config, cb) {
   function extract () {
     exec(
       'git log -E --format=%H==SPLIT==%B==END== ' + range,
+      {
+        maxBuffer: 1024 * 1024 // 1MB instead of 220KB (issue #286)
+      },
       function (err, stdout) {
         if (err) return cb(err)
 
