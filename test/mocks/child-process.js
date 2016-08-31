@@ -4,7 +4,10 @@ const rawCommits = [
 ]
 
 module.exports = {
-  exec: function (command, cb) {
+  exec: function (command, options, cb) {
+    if (typeof cb === 'undefined' && typeof options === 'function') {
+      cb = options
+    }
     if (/contains/.test(command)) {
       if (/notinhistory/.test(command)) return cb(new Error())
       return cb(null, 'whatever\nmaster\n')
