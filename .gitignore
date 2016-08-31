@@ -9,3 +9,4 @@ test/tmp
 .nyc_output
 npm-debug.log.*
 .released-packages
+packages/**/CHANGELOG.md
