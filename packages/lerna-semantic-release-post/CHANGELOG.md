@@ -1,5 +1,25 @@
-<a name="4.0.0"></a>
-# 4.0.0 (2016-08-09)
+<a name="5.0.0"></a>
+# 5.0.0 (2016-08-31)
+
+
+
+<a name="lerna-semantic-release-post@5.0.0"></a>
+# lerna-semantic-release-post@5.0.0 (2016-08-31)
+
+
+### Bug Fixes
+
+* Fixes passed error parameter for -post ([c66a37e](https://github.com/atlassian/lerna-semantic-release/commit/c66a37e))
+
+
+### Code Refactoring
+
+* Removes committing & pushing the changelog ([76aba23](https://github.com/atlassian/lerna-semantic-release/commit/76aba23))
+
+
+### BREAKING CHANGES
+
+* does not longer commit & push the CHANGELOG.md file
 
 
 
