@@ -1,6 +1,5 @@
 #!/bin/bash
 set -e
-set -x
 
 if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
   echo "We are in a pull request, not setting up release"
