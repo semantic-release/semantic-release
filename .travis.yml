@@ -10,4 +10,4 @@ node_js:
 before_script: .travis/before_script.sh
 after_success: .travis/after_success.sh
 git:
-  depth: 100
+  depth: 9999
