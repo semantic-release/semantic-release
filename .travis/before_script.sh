@@ -8,17 +8,12 @@ if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
 fi
 
 if [[ $TRAVIS_BRANCH == 'caribou' ]]; then
-  pwd #debug
-  ls #debug
-  ls ../ #debug
-  ls ../.. #debug
   git config credential.helper store
   echo "https://lerna-sr-travis-ci:${RELEASE_GH_TOKEN}@github.com/atlassian/lerna-semantic-release.git" > ~/.git-credentials
+  cd ../..
   rm -rf $TRAVIS_REPO_SLUG
   git clone https://github.com/$TRAVIS_REPO_SLUG.git $TRAVIS_REPO_SLUG
-
-  pwd #debug
-  ls #debug
+  cd $TRAVIS_REPO_SLUG
 
   npm config set //registry.npmjs.org/:_authToken=$NPM_TOKEN -q
   npm prune
