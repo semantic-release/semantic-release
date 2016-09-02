@@ -9,10 +9,17 @@ fi
 
 if [[ $TRAVIS_BRANCH == 'caribou' ]]; then
   ls -la
+  tree -L 3
   git config credential.helper store
   echo "https://lerna-sr-travis-ci:${RELEASE_GH_TOKEN}@github.com/atlassian/lerna-semantic-release.git" > ~/.git-credentials
+
+  pushd ../..
   rm -rf $TRAVIS_REPO_SLUG
   git clone https://github.com/$TRAVIS_REPO_SLUG.git $TRAVIS_REPO_SLUG
+  popd
+  
+  ls -la
+  tree -L 3
 
   npm config set //registry.npmjs.org/:_authToken=$NPM_TOKEN -q
   npm prune
