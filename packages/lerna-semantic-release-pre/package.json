@@ -7,13 +7,13 @@
   "dependencies": {
     "lerna-semantic-release-utils": "^4.0.0",
     "lerna-semantic-release-io": "^5.0.0",
-    "async": "~1.5.0",
+    "async": "~2.0.1",
     "npmconf": "~2.1.0",
     "rc": "~1.1.0",
     "semantic-release": "semantic-release/semantic-release#a5cb9ea7f7a66657f95f0d913126e812adb6d9f8"
   },
   "devDependencies": {
-    "mocha": "~2.5.0",
+    "mocha": "~3.0.2",
     "expect.js": "~0.3.0",
     "chai": "~3.5.0",
     "sinon": "~1.17.0"
