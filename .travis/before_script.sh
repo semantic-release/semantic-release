@@ -10,6 +10,8 @@ fi
 if [[ $TRAVIS_BRANCH == 'caribou' ]]; then
   pwd #debug
   ls #debug
+  ls ../ #debug
+  ls ../.. #debug
   git config credential.helper store
   echo "https://lerna-sr-travis-ci:${RELEASE_GH_TOKEN}@github.com/atlassian/lerna-semantic-release.git" > ~/.git-credentials
   rm -rf $TRAVIS_REPO_SLUG
