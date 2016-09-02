@@ -12,10 +12,13 @@ if [[ $TRAVIS_BRANCH == 'caribou' ]]; then
   git config --global user.email "jonelson+lerna-sr-travis-ci@atlassian.com"
   git config --global user.name "Joshua Nelson"
   git config --global push.default simple
-  git remote rm origin
-  git remote add origin https://lerna-sr-travis-ci:${RELEASE_GH_TOKEN}@github.com/atlassian/lerna-semantic-release.git
+  git config credential.helper store
+  echo "https://lerna-sr-travis-ci:${RELEASE_GH_TOKEN}@github.com/atlassian/lerna-semantic-release.git" > ~/.git-credentials
+  git remote set-url origin "https://github.com/atlassian/lerna-semantic-release.git"
   git checkout $TRAVIS_BRANCH #Travis CI starts in a detached state, need to set up so we're on a branch that can push to the remote
-  git fetch
+  git fetch --unshallow
+  git fetch --tags
   git branch -u origin/$TRAVIS_BRANCH
+  git tag --list #debug
   npm whoami #debug
 fi
