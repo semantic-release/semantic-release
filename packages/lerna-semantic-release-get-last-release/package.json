@@ -23,5 +23,5 @@
   "scripts": {
     "test": "echo 'no tests'; exit 0"
   },
-  "version": "5.0.2"
+  "version": "5.0.3"
 }
