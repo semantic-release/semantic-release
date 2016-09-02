@@ -28,7 +28,7 @@
   ],
   "license": "MIT",
   "devDependencies": {
-    "lerna-semantic-release": "^7.0.5",
+    "lerna-semantic-release": "^8.0.0",
     "lerna": "2.0.0-beta.26",
     "cz-lerna-changelog": "0.2.1"
   },
@@ -37,7 +37,7 @@
     "url": "https://github.com/atlassian/lerna-semantic-release.git"
   },
   "scripts": {
-    "semantic-release": "lerna-semantic-release pre && lerna-semantic-release perform && if [ -s .released-packages ]; then lerna-semantic-release post; else return 0; fi",
+    "semantic-release": "lerna-semantic-release pre && lerna-semantic-release post && lerna-semantic-release perform",
     "postinstall": "lerna bootstrap",
     "test": "lerna run test"
   },
