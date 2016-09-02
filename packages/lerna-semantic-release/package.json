@@ -39,7 +39,6 @@
     "lerna"
   ],
   "license": "MIT",
-  "main": "bin/semantic-release.js",
   "files": [
     "bin"
   ],
