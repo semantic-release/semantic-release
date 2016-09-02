@@ -19,6 +19,7 @@ if [[ $TRAVIS_BRANCH == 'caribou' ]]; then
   git fetch --unshallow
   git fetch --tags
   git branch -u origin/$TRAVIS_BRANCH
+  git fsck --full #debug
   git tag --list #debug
   npm whoami #debug
 fi
