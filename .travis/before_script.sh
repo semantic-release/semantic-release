@@ -20,7 +20,7 @@ if [[ $TRAVIS_BRANCH == 'caribou' ]]; then
   git config --global push.default simple
 
   # git remote set-url origin "https://github.com/atlassian/lerna-semantic-release.git"
-  # git checkout $TRAVIS_BRANCH #Travis CI starts in a detached state, need to set up so we're on a branch that can push to the remote
+  git checkout $TRAVIS_BRANCH #Travis CI starts in a detached state, need to set up so we're on a branch that can push to the remote
   # git fetch --unshallow
   git fetch --tags
   git branch -u origin/$TRAVIS_BRANCH
