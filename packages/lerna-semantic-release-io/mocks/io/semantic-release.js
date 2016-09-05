@@ -9,7 +9,7 @@ mockery.enable({
   useCleanCache: true
 });
 // For some reason using the clean cache doesn't work, we need to delete the cache entry too
-delete require.cache[require.resolve('semantic-release/dist/pre')];
+delete require.cache[require.resolve('semantic-release/src/pre')];
 
 mockery.registerMock('./lib/commits', function (_ref, cb) {
   const lastRelease = _ref.lastRelease;
@@ -31,10 +31,10 @@ var getLastRelease = require('lerna-semantic-release-get-last-release').bind(nul
   tagList: require('./git').tagList()
 });
 
-var srNormalize = require('semantic-release/dist/lib/plugins').normalize;
-var srPre = require('semantic-release/dist/pre.js');
+var srNormalize = require('semantic-release/src/lib/plugins').normalize;
+var srPre = require('semantic-release/src/pre');
 
-var noop = srNormalize({}, 'semantic-release/dist/lib/plugin-noop');
+var noop = srNormalize({}, 'semantic-release/src/lib/plugin-noop');
 var analyzeCommits = require('lerna-semantic-release-analyze-commits').analyze;
 
 module.exports = {

@@ -3,7 +3,7 @@ var path = require('path');
 var npmconf = require('npmconf');
 var rc = require('rc');
 
-var srRegistry = require('semantic-release/dist/lib/get-registry');
+var srRegistry = require('semantic-release/src/lib/get-registry');
 
 var tagging = require('lerna-semantic-release-utils').tagging;
 var log = require('lerna-semantic-release-utils').log;
