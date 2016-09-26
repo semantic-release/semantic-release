@@ -1,5 +1,15 @@
 var commitAnalyzer = require('@semantic-release/commit-analyzer');
 var log = require('lerna-semantic-release-utils').log;
+var affectsDelimiter = 'affects:';
+
+function findAffectsLine(commit) {
+  var message = (commit && commit.message) ? commit.message : '';
+  var affectsLine = message.split('\n\n').filter(function (line) {
+    return line.indexOf(affectsDelimiter) === 0;
+  })[0];
+  console.log(affectsLine);
+  return affectsLine;
+}
 
 module.exports = {
   analyze: function (_ref, cb) {
@@ -7,8 +17,7 @@ module.exports = {
     var commits = _ref.commits;
 
     var relevantCommits = commits.filter(function (commit) {
-      var affectsLine = (commit && commit.message) ? commit.message.split('\n\n')[1] : '';
-      return module.exports.isRelevant(affectsLine, pkg.name);
+      return module.exports.isRelevant(findAffectsLine(commit), pkg.name);
     });
 
     commitAnalyzer({}, Object.assign(_ref, {commits: relevantCommits}), function (err, type) {
@@ -19,9 +28,7 @@ module.exports = {
       cb(err, type);
     });
   },
-
   isRelevant: function (affectsLine, packageName) {
-    var affectsDelimiter = 'affects:';
     return affectsLine && affectsLine.indexOf(affectsDelimiter) === 0 &&
       affectsLine.split(affectsDelimiter)[1].trim().split(', ').indexOf(packageName) > -1;
   }

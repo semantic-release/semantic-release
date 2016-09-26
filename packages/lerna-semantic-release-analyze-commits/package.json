@@ -22,7 +22,11 @@
     "branch": "caribou"
   },
   "scripts": {
-    "test": "echo 'no tests'; exit 0"
+    "test": "mocha test/unit.js"
   },
-  "version": "4.0.13"
+  "version": "4.0.13",
+  "devDependencies": {
+    "expect.js": "^0.3.1",
+    "mocha": "^3.0.2"
+  }
 }
