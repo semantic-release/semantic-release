@@ -50,6 +50,10 @@
     "node": ">=0.10",
     "npm": ">=2"
   },
+  "files": [
+    "bin",
+    "src"
+  ],
   "homepage": "https://github.com/semantic-release/semantic-release/tree/next#readme",
   "keywords": [
     "author",
@@ -64,10 +68,6 @@
   ],
   "license": "MIT",
   "main": "bin/semantic-release.js",
-  "files": [
-    "bin",
-    "src"
-  ],
   "publishConfig": {
     "tag": "next"
   },
