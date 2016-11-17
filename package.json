@@ -77,6 +77,9 @@
   "release": {
     "branch": "badger"
   },
+  "publishConfig": {
+    "tag": "badger"
+  },
   "scripts": {
     "build": "rimraf dist && mkdirp dist && babel src --out-dir dist",
     "coverage": "nyc report",
