@@ -13,7 +13,7 @@ module.exports = function (config, cb) {
 
   if (!from) return extract()
 
-  exec('git branch --contains ' + from, function (err, stdout) {
+  exec('git branch --no-color --contains ' + from, function (err, stdout) {
     var inHistory = false
     var branches
 
