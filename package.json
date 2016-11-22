@@ -42,7 +42,7 @@
     "nyc": "^7.0.0",
     "proxyquire": "^1.7.3",
     "rimraf": "^2.5.0",
-    "standard": "^7.0.1",
+    "standard": "^8.3.0",
     "tap": "^6.2.0"
   },
   "engines": {
