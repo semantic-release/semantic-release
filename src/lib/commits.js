@@ -1,4 +1,4 @@
-var exec = require('child_process').exec
+var childProcess = require('child_process')
 
 var log = require('npmlog')
 
@@ -13,7 +13,7 @@ module.exports = function (config, cb) {
 
   if (!from) return extract()
 
-  exec('git branch --no-color --contains ' + from, function (err, stdout) {
+  childProcess.exec('git branch --no-color --contains ' + from, function (err, stdout) {
     var inHistory = false
     var branches
 
@@ -47,28 +47,33 @@ module.exports = function (config, cb) {
   })
 
   function extract () {
-    exec(
-      'git log -E --format=%H==SPLIT==%B==END== ' + range,
-      {
-        maxBuffer: 1024 * 1024 // 1MB instead of 220KB (issue #286)
-      },
-      function (err, stdout) {
-        if (err) return cb(err)
+    var child = childProcess.spawn('git', ['log', '-E', '--format=%H==SPLIT==%B==END==', range])
+    var stdout = ''
+    var err = ''
 
-        cb(null, String(stdout).split('==END==\n')
+    child.stdout.on('data', function (data) {
+      stdout += data
+    })
 
+    child.stderr.on('data', function (data) {
+      err += data
+    })
+
+    child.on('close', function (code) {
+      if (err || code) return cb(err)
+
+      cb(null, String(stdout).split('==END==\n')
         .filter(function (raw) {
           return !!raw.trim()
         })
-
         .map(function (raw) {
           var data = raw.split('==SPLIT==')
           return {
             hash: data[0],
             message: data[1]
           }
-        }))
-      }
-    )
+        })
+      )
+    })
   }
 }

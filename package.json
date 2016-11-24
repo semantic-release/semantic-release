@@ -36,6 +36,7 @@
     "coveralls": "^2.11.4",
     "cz-conventional-changelog": "^1.1.4",
     "mkdirp": "^0.5.1",
+    "mock-spawn": "^0.2.6",
     "nixt": "^0.5.0",
     "nock": "^8.0.0",
     "npm-registry-couchapp": "^2.6.11",
