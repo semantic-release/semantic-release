@@ -99,11 +99,11 @@ npmconf.load({}, function (err, conf) {
       if (env.NPM_OLD_TOKEN && env.NPM_EMAIL) {
         // Using the old auth token format is not considered part of the public API
         // This might go away anytime (i.e. once we have a better testing strategy)
-        conf.set('_auth', '${NPM_OLD_TOKEN}', 'project')
-        conf.set('email', '${NPM_EMAIL}', 'project')
+        conf.set('_auth', '${NPM_OLD_TOKEN}', 'project') // eslint-disable-line no-template-curly-in-string
+        conf.set('email', '${NPM_EMAIL}', 'project') // eslint-disable-line no-template-curly-in-string
         wroteNpmRc = true
       } else if (env.NPM_TOKEN) {
-        conf.set(nerfDart + ':_authToken', '${NPM_TOKEN}', 'project')
+        conf.set(nerfDart + ':_authToken', '${NPM_TOKEN}', 'project') // eslint-disable-line no-template-curly-in-string
         wroteNpmRc = true
       }
 
