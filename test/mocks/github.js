@@ -3,7 +3,7 @@ module.exports = function () {
     authenticate: function () {
       return true
     },
-    releases: {
+    repos: {
       createRelease: function (release, cb) {
         cb(null)
       }

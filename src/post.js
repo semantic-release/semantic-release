@@ -11,7 +11,6 @@ module.exports = function (config, cb) {
   var ghConfig = options.githubUrl ? url.parse(options.githubUrl) : {}
 
   var github = new GitHubApi({
-    version: '3.0.0',
     port: ghConfig.port,
     protocol: (ghConfig.protocol || '').split(':')[0] || null,
     host: ghConfig.hostname,
@@ -40,11 +39,11 @@ module.exports = function (config, cb) {
       }
 
       github.authenticate({
-        type: 'oauth',
+        type: 'token',
         token: options.githubToken
       })
 
-      github.releases.createRelease(release, function (err) {
+      github.repos.createRelease(release, function (err) {
         if (err) return cb(err)
 
         cb(null, true, release)
