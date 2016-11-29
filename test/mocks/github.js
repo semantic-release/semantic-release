@@ -5,6 +5,9 @@ module.exports = function () {
     },
     repos: {
       createRelease: function (release, cb) {
+        cb(null, {id: 1})
+      },
+      editRelease: function (release, cb) {
         cb(null)
       }
     }

@@ -43,10 +43,22 @@ module.exports = function (config, cb) {
         token: options.githubToken
       })
 
-      github.repos.createRelease(release, function (err) {
+      github.repos.createRelease(release, function (err, res) {
         if (err) return cb(err)
+        if (options.debug) return cb(null, true, release)
 
-        cb(null, true, release)
+        var editingRelease = {
+          owner: ghRepo[0],
+          repo: ghRepo[1],
+          id: res.id,
+          target_commitish: options.branch
+        }
+
+        github.repos.editRelease(editingRelease, function (err) {
+          if (err) return cb(err)
+
+          cb(null, true, release)
+        })
       })
     })
   })
