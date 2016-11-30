@@ -3,11 +3,13 @@ module.exports = function () {
     authenticate: function () {
       return true
     },
+    gitdata: {
+      createReference: function (release, cb) {
+        cb(null)
+      }
+    },
     repos: {
       createRelease: function (release, cb) {
-        cb(null, {id: 1})
-      },
-      editRelease: function (release, cb) {
         cb(null)
       }
     }
