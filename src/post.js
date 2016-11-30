@@ -24,12 +24,18 @@ module.exports = function (config, cb) {
       if (err) return cb(err)
 
       var ghRepo = parseSlug(pkg.repository.url)
+      var tag = {
+        owner: ghRepo[0],
+        repo: ghRepo[1],
+        ref: 'refs/heads/v' + pkg.version,
+        sha: hash
+      }
       var release = {
         owner: ghRepo[0],
         repo: ghRepo[1],
-        name: 'v' + pkg.version,
         tag_name: 'v' + pkg.version,
-        target_commitish: hash,
+        name: 'v' + pkg.version,
+        target_commitish: options.branch,
         draft: !!options.debug,
         body: log
       }
@@ -43,18 +49,18 @@ module.exports = function (config, cb) {
         token: options.githubToken
       })
 
-      github.repos.createRelease(release, function (err, res) {
+      if (options.debug) {
+        return github.repos.createRelease(release, function (err) {
+          if (err) return cb(err)
+
+          cb(null, true, release)
+        })
+      }
+
+      github.gitdata.createReference(tag, function (err) {
         if (err) return cb(err)
-        if (options.debug) return cb(null, true, release)
 
-        var editingRelease = {
-          owner: ghRepo[0],
-          repo: ghRepo[1],
-          id: res.id,
-          target_commitish: options.branch
-        }
-
-        github.repos.editRelease(editingRelease, function (err) {
+        github.repos.createRelease(release, function (err) {
           if (err) return cb(err)
 
           cb(null, true, release)
