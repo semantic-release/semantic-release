@@ -114,12 +114,13 @@ npmconf.load({}, function (err, conf) {
 
         require('../src/pre')(config, function (err, release) {
           if (err) {
-            log.error('pre', 'Failed to determine new version.')
+            var level = err.stop ? 'error' : 'info'
+            log[level]('pre', 'Failed to determine new version.')
 
             var args = ['pre', (err.code ? err.code + ' ' : '') + err.message]
             if (err.stack) args.push(err.stack)
-            log.error.apply(log, args)
-            process.exit(1)
+            log[level].apply(log, args)
+            process.exit(Number(err.stop))
           }
 
           var message = 'Determined version ' + release.version + ' as "' + npm.tag + '".'
@@ -127,7 +128,7 @@ npmconf.load({}, function (err, conf) {
           log.verbose('pre', message)
 
           if (options.debug) {
-            log.error('pre', message + ' Not publishing in debug mode.', release)
+            log.info('pre', message + ' Not publishing in debug mode.', release)
             process.exit(1)
           }
 
