@@ -22,7 +22,7 @@
     "github": "^7.0.0",
     "lodash": "^4.0.0",
     "nerf-dart": "^1.0.0",
-    "nopt": "^3.0.3",
+    "nopt": "^4.0.0",
     "normalize-package-data": "^2.3.4",
     "npmconf": "^2.1.2",
     "npmlog": "^4.0.0",
