@@ -44,7 +44,7 @@
     "proxyquire": "^1.7.3",
     "rimraf": "^2.5.0",
     "standard": "^8.6.0",
-    "tap": "^8.0.1"
+    "tap": "^9.0.0"
   },
   "engines": {
     "node": ">=0.10",
