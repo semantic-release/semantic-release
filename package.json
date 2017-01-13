@@ -19,10 +19,10 @@
     "@semantic-release/last-release-npm": "^1.2.1",
     "@semantic-release/release-notes-generator": "^2.0.0",
     "git-head": "^1.2.1",
-    "github": "^7.0.0",
+    "github": "^8.0.0",
     "lodash": "^4.0.0",
     "nerf-dart": "^1.0.0",
-    "nopt": "^3.0.3",
+    "nopt": "^4.0.0",
     "normalize-package-data": "^2.3.4",
     "npmconf": "^2.1.2",
     "npmlog": "^4.0.0",
@@ -44,7 +44,7 @@
     "proxyquire": "^1.7.3",
     "rimraf": "^2.5.0",
     "standard": "^8.6.0",
-    "tap": "^8.0.1"
+    "tap": "^9.0.0"
   },
   "engines": {
     "node": ">=0.10",
