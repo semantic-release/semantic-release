@@ -54,7 +54,7 @@
     "bin",
     "src"
   ],
-  "homepage": "https://github.com/semantic-release/semantic-release/tree/next#readme",
+  "homepage": "https://github.com/semantic-release/semantic-release#readme",
   "keywords": [
     "author",
     "automation",
