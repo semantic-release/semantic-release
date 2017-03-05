@@ -29,6 +29,8 @@ module.exports = function (config) {
     ))
   }
 
+  if (options.createNpmrc === false) return errors
+
   if (!(env.NPM_TOKEN || (env.NPM_OLD_TOKEN && env.NPM_EMAIL))) {
     errors.push(new SemanticReleaseError(
       'No npm token specified.',

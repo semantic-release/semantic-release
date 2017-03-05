@@ -58,13 +58,20 @@ test('verify pkg, options and env', function (t) {
 
     tt.is(noErrors.length, 0)
 
-    var errors = verify({env: {}, options: {}, pkg: {}})
+    var allErrors = verify({env: {}, options: {}, pkg: {}})
 
-    tt.is(errors.length, 4)
-    tt.is(errors[0].code, 'ENOPKGNAME')
-    tt.is(errors[1].code, 'ENOPKGREPO')
-    tt.is(errors[2].code, 'ENOGHTOKEN')
-    tt.is(errors[3].code, 'ENONPMTOKEN')
+    tt.is(allErrors.length, 4)
+    tt.is(allErrors[0].code, 'ENOPKGNAME')
+    tt.is(allErrors[1].code, 'ENOPKGREPO')
+    tt.is(allErrors[2].code, 'ENOGHTOKEN')
+    tt.is(allErrors[3].code, 'ENONPMTOKEN')
+
+    var allButNpmTokenErrors = verify({env: {}, options: { createNpmrc: false }, pkg: {}})
+
+    tt.is(allButNpmTokenErrors.length, 3)
+    tt.is(allButNpmTokenErrors[0].code, 'ENOPKGNAME')
+    tt.is(allButNpmTokenErrors[1].code, 'ENOPKGREPO')
+    tt.is(allButNpmTokenErrors[2].code, 'ENOGHTOKEN')
 
     tt.end()
   })

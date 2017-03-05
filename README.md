@@ -156,6 +156,7 @@ These options are currently available:
 - `branch`: The branch on which releases should happen. Default: `'master'`
 - `debug`: If true doesn’t actually publish to npm or write things to file. Default: `!process.env.CI`
 - `githubToken`: The token used to authenticate with GitHub. Default: `process.env.GH_TOKEN`
+- `createNpmrc`: If true, it will create a `.npmrc` file at the project level using the NPM credentials. Default: `true`
 - `githubUrl`: Optional. Pass your GitHub Enterprise endpoint.
 - `githubApiPathPrefix`: Optional. The path prefix for your GitHub Enterprise API.
 
@@ -254,7 +255,7 @@ Of course you can, but this doesn’t necessarily mean you should. Running your 
 
 ### Can I manually trigger the release of a specific version?
 
-You can trigger a release by pushing to your GitHub repository. You deliberately cannot trigger a _specific_ version release, because this is the whole point of `semantic-release`. Start your packages with `1.0.0` and semver on.  
+You can trigger a release by pushing to your GitHub repository. You deliberately cannot trigger a _specific_ version release, because this is the whole point of `semantic-release`. Start your packages with `1.0.0` and semver on.
 
 ### Is it _really_ a good idea to release on every push?
 
