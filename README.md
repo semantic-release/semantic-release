@@ -106,7 +106,7 @@ format that includes a **type**, a **scope** and a **subject** ([full explanatio
 <footer>
 ```
 
-You can simplify using this convention for yourself and contributors by using [commitizen](https://github.com/commitizen/cz-cli) and [validate-commit-msg](https://github.com/kentcdodds/validate-commit-msg).
+You can simplify using this convention for yourself and contributors by using [commitizen](https://github.com/commitizen/cz-cli) and [validate-commit-msg](https://github.com/kentcdodds/validate-commit-msg) or [semantic-git-commit-cli](https://github.com/JPeer264/node-semantic-git-commit-cli).
 
 ### Patch Release
 
