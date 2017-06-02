@@ -40,7 +40,7 @@
     "nixt": "^0.5.0",
     "nock": "^9.0.2",
     "npm-registry-couchapp": "^2.6.12",
-    "nyc": "^10.0.0",
+    "nyc": "^11.0.1",
     "proxyquire": "^1.7.3",
     "rimraf": "^2.5.0",
     "standard": "^9.0.0",
