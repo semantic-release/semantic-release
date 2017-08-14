@@ -5,7 +5,7 @@ var _ = require('lodash')
 var env = process.env
 var log = require('npmlog')
 
-module.exports = function (err, conf, options, plugins, pkg, cb) {
+module.exports = function (err, conf, options, plugins, originalPkg, pkg, cb) {
   if (err) {
     log.error('init', 'Failed to load npm config.', err)
     process.exit(1)

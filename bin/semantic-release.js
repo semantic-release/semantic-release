@@ -1,16 +1,20 @@
 #!/usr/bin/env node
-var run = require('../src/run.js')
-var readPkg = require('../src/lib/read-pkg.js')
+
+var run = require('../src/run')
+var fs = require('fs')
 var path = require('path')
 
 var _ = require('lodash')
 var log = require('npmlog')
 var nopt = require('nopt')
 var npmconf = require('npmconf')
+var normalizeData = require('normalize-package-data')
 
 log.heading = 'semantic-release'
 var env = process.env
-var pkg = readPkg('./package.json')
+var pkg = JSON.parse(fs.readFileSync('./package.json'))
+var originalPkg = _.cloneDeep(pkg)
+normalizeData(pkg)
 var knownOptions = {
   branch: String,
   debug: Boolean,
@@ -39,7 +43,7 @@ var options = _.defaults(
 var plugins = require('../src/lib/plugins')(options)
 
 npmconf.load({}, function (err, conf) {
-  run(err, conf, options, plugins, pkg)
+  run(err, conf, options, plugins, originalPkg, pkg)
 })
 
 exports.run = run
