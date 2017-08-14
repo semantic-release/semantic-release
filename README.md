@@ -262,7 +262,13 @@ It is indeed a great idea because it _forces_ you to follow best practices. If y
 
 ### Why should I trust `semantic-release` with my releases?
 
-`semantic-release` has a full unit- and integration-test-suite that tests _actual_ `npm` publishes against the [npm-registry-couchapp](https://github.com/npm/npm-registry-couchapp/) on all major node.js versions from `^0.10` on. A new version won’t get published if it doesn’t pass on all these engines.
+`semantic-release` has a full unit- and integration-test-suite that tests _actual_ `npm` publishes against the [npm-registry-couchapp](https://github.com/npm/npm-registry-couchapp/). A new version won’t get published if it doesn’t pass on all these engines.
+
+### Why does `semantic-release` require node version >= 8
+
+Being able to write code for just the most recent node versions greatly simplifies development. More language features are available, no transpilation is required, less test builds are to be run, awaited and debugged.
+
+For a special purpose tool like `semantic-release`, that's only meant to be used in controlled CI environments, we think it's okay to have such a high version requirement. As `semantic-release` handles package publishing we expect almost every project to have at least one build job running node 8 already – and that's all it takes. Even if that's not that case `semantic-release` can still be executed with the help of [npx](https://www.npmjs.com/package/npx) (`npx -p node@8 npm run semantic-release`).
 
 ## Badge
 

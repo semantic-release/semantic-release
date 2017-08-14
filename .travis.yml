@@ -1,4 +1,4 @@
-sudo: false
+dist: trusty
 language: node_js
 cache:
   directories:
@@ -6,11 +6,7 @@ cache:
 notifications:
   email: false
 node_js:
-- 8 # stable
-- 6 # LTS
-- 4 # maintenance
-before_script:
-- npm prune
+- 8
 after_success:
 - npm run coverage:upload
 - npm run semantic-release
