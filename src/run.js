@@ -5,7 +5,7 @@ var _ = require('lodash')
 var env = process.env
 var log = require('npmlog')
 
-module.exports = function (err, conf, options, plugins, pkg) {
+module.exports = function (err, conf, options, plugins, pkg, cb) {
   if (err) {
     log.error('init', 'Failed to load npm config.', err)
     process.exit(1)
@@ -108,6 +108,8 @@ module.exports = function (err, conf, options, plugins, pkg) {
           }), null, 2))
 
           log.verbose('pre', 'Wrote version ' + release.version + ' to package.json.')
+
+          if (cb) cb()
         })
       })
     })
@@ -121,8 +123,13 @@ module.exports = function (err, conf, options, plugins, pkg) {
       }
 
       log.verbose('post', (published ? 'Published' : 'Generated') + ' release notes.', release)
+
+      if (cb) cb()
     })
   } else {
-    log.error('post', 'Command "' + options.argv.remain[0] + '" not recognized. Use either "pre" or "post"')
+    log.error('post', 'Command "' + options.argv.remain[0] + '" not recognized. User either "pre" or "post"')
+    process.exit(1)
+
+    if (cb) cb()
   }
 }
