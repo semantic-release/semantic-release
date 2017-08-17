@@ -27,7 +27,7 @@ module.exports = function (config, cb) {
       var tag = {
         owner: ghRepo[0],
         repo: ghRepo[1],
-        ref: 'refs/heads/v' + pkg.version,
+        ref: 'refs/tags/v' + pkg.version,
         sha: hash
       }
       var release = {
