@@ -18,6 +18,7 @@ normalizeData(pkg)
 var knownOptions = {
   branch: String,
   debug: Boolean,
+  'create-npmrc': Boolean,
   'github-token': String,
   'github-url': String,
   'analyze-commits': [path, String],
@@ -36,6 +37,7 @@ var options = _.defaults(
       next: 'latest'
     },
     debug: !env.CI,
+    createNpmrc: true,
     githubToken: env.GH_TOKEN || env.GITHUB_TOKEN,
     githubUrl: env.GH_URL
   }
@@ -96,57 +98,30 @@ npmconf.load({}, function (err, conf) {
       var nerfDart = require('nerf-dart')(npm.registry)
       var wroteNpmRc = false
 
-      if (env.NPM_OLD_TOKEN && env.NPM_EMAIL) {
-        // Using the old auth token format is not considered part of the public API
-        // This might go away anytime (i.e. once we have a better testing strategy)
-        conf.set('_auth', '${NPM_OLD_TOKEN}', 'project') // eslint-disable-line no-template-curly-in-string
-        conf.set('email', '${NPM_EMAIL}', 'project') // eslint-disable-line no-template-curly-in-string
-        wroteNpmRc = true
-      } else if (env.NPM_TOKEN) {
-        conf.set(nerfDart + ':_authToken', '${NPM_TOKEN}', 'project') // eslint-disable-line no-template-curly-in-string
-        wroteNpmRc = true
-      }
+      var defineVersion = require('../src/lib/define-version')
+      if (options.createNpmrc) {
+        if (env.NPM_OLD_TOKEN && env.NPM_EMAIL) {
+          // Using the old auth token format is not considered part of the public API
+          // This might go away anytime (i.e. once we have a better testing strategy)
+          conf.set('_auth', '${NPM_OLD_TOKEN}', 'project') // eslint-disable-line no-template-curly-in-string
+          conf.set('email', '${NPM_EMAIL}', 'project') // eslint-disable-line no-template-curly-in-string
+          wroteNpmRc = true
+        } else if (env.NPM_TOKEN) {
+          conf.set(nerfDart + ':_authToken', '${NPM_TOKEN}', 'project') // eslint-disable-line no-template-curly-in-string
+          wroteNpmRc = true
+        }
 
-      conf.save('project', function (err) {
-        if (err) return log.error('pre', 'Failed to save npm config.', err)
+        conf.save('project', function (err) {
+          if (err) return log.error('pre', 'Failed to save npm config.', err)
 
-        if (wroteNpmRc) log.verbose('pre', 'Wrote authToken to .npmrc.')
+          if (wroteNpmRc) log.verbose('pre', 'Wrote authToken to .npmrc.')
 
-        require('../src/pre')(config, function (err, release) {
-          if (err) {
-            log.error('pre', 'Failed to determine new version.')
-
-            var args = ['pre', (err.code ? err.code + ' ' : '') + err.message]
-            if (err.stack) args.push(err.stack)
-            log.error.apply(log, args)
-            process.exit(1)
-          }
-
-          var message = 'Determined version ' + release.version + ' as "' + npm.tag + '".'
-
-          log.verbose('pre', message)
-
-          if (options.debug) {
-            log.error('pre', message + ' Not publishing in debug mode.', release)
-            process.exit(1)
-          }
-
-          try {
-            var shrinkwrap = JSON.parse(fs.readFileSync('./npm-shrinkwrap.json'))
-            shrinkwrap.version = release.version
-            fs.writeFileSync('./npm-shrinkwrap.json', JSON.stringify(shrinkwrap, null, 2))
-            log.verbose('pre', 'Wrote version ' + release.version + 'to npm-shrinkwrap.json.')
-          } catch (e) {
-            log.silly('pre', 'Couldn\'t find npm-shrinkwrap.json.')
-          }
-
-          fs.writeFileSync('./package.json', JSON.stringify(_.assign(originalPkg, {
-            version: release.version
-          }), null, 2))
-
-          log.verbose('pre', 'Wrote version ' + release.version + ' to package.json.')
+          defineVersion(config, options, originalPkg, npm)
         })
-      })
+      } else {
+        log.verbose('pre', 'Skipped creation of .npmrc.')
+        defineVersion(config, options, originalPkg, npm)
+      }
     })
   } else if (options.argv.remain[0] === 'post') {
     log.verbose('post', 'Running post-script.')
