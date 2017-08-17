@@ -71,6 +71,7 @@
   "publishConfig": {
     "tag": "next"
   },
+  "preferGlobal": true,
   "release": {
     "branch": "caribou"
   },
