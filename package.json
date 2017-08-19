@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@semantic-release/commit-analyzer": "^2.0.0",
-    "@semantic-release/condition-travis": "^5.0.2",
+    "@semantic-release/condition-travis": "^6.0.0",
     "@semantic-release/error": "^1.0.0",
     "@semantic-release/last-release-npm": "^1.2.1",
     "@semantic-release/release-notes-generator": "^3.0.1",
