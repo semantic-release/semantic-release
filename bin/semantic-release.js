@@ -9,13 +9,11 @@ if (semver.lt(process.version, '8.0.0')) {
   console.error(
 `semantic-release: node version >= 8 is required. Found ${process.version}.
 
-If this error appears on a build job that is not your build leader, you can
-safely ignore it. On Travis CI the build leader is the first job in the build
-matrix.
+If there is another job running on node version >= 8, it will be picked as
+the build leader and you can safely ignore this message.
 
-Only a single job in your entire build-matrix needs to run on node 8. All others
-may safely fail with this message. If you don't have node 8 in your build
-matrix "npx" allows to restore compatibility with minimal overhead.
+If you don't have node 8 in your build matrix you can use "npx" to restore
+compatibility with minimal overhead:
 
 $ npx -p node@8 npm run semantic-release
 
