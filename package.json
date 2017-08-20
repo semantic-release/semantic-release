@@ -19,7 +19,7 @@
     "@semantic-release/last-release-npm": "^1.2.1",
     "@semantic-release/release-notes-generator": "^3.0.1",
     "git-head": "^1.2.1",
-    "github": "^8.0.0",
+    "github": "^9.3.1",
     "lodash": "^4.0.0",
     "nerf-dart": "^1.0.0",
     "nopt": "^4.0.0",
