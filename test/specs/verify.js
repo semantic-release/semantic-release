@@ -39,7 +39,6 @@ test('verify pkg, options and env', function (t) {
       }
     })
 
-    console.log(noErrors)
     tt.is(noErrors.length, 0)
     tt.end()
   })
