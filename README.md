@@ -292,36 +292,6 @@ Use this in one of your projects? Include one of these badges in your README.md 
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg?style=flat-square)](https://github.com/semantic-release/semantic-release)
 ```
 
-## Troubleshooting
-
-### ENOTINHISTORY Commit not in history
-
-```
-semantic-release ERR! commits The commit the last release of this package was derived from is not in the direct history of the "master" branch.
-semantic-release ERR! commits This means semantic-release can not extract the commits between now and then.
-semantic-release ERR! commits This is usually caused by force pushing, releasing from an unrelated branch, or using an already existing package name.
-semantic-release ERR! commits You can recover from this error by publishing manually or restoring the commit "123".
-semantic-release ERR! pre Failed to determine new version.
-semantic-release ERR! pre ENOTINHISTORY Commit not in history
-```
-
-To restore semantic-release, follow these steps:
-
-```
-git pull
-git reset --hard origin/master
-npm version x.y.z
-git checkout -B chore/release
-git commit -am 'chore: release'
-git push
-— merge (not squash-merge) on github (this is important before running git push)
-git checkout master
-git pull
-git push --tags
-npm publish
-```
-
-
 ## License
 
 MIT License
