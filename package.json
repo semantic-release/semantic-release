@@ -13,7 +13,7 @@
     "path": "node_modules/cz-conventional-changelog/"
   },
   "dependencies": {
-    "@semantic-release/commit-analyzer": "^2.0.0",
+    "@semantic-release/commit-analyzer": "^3.0.0",
     "@semantic-release/condition-travis": "^6.0.0",
     "@semantic-release/error": "^1.0.0",
     "@semantic-release/last-release-npm": "^1.2.1",
