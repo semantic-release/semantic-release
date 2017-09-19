@@ -9,8 +9,10 @@
   "bugs": {
     "url": "https://github.com/semantic-release/semantic-release/issues"
   },
-  "czConfig": {
-    "path": "node_modules/cz-conventional-changelog/"
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
   },
   "dependencies": {
     "@semantic-release/commit-analyzer": "^3.0.1",
