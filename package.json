@@ -18,7 +18,7 @@
     "@semantic-release/commit-analyzer": "^3.0.1",
     "@semantic-release/condition-travis": "^6.0.0",
     "@semantic-release/error": "^1.0.0",
-    "@semantic-release/last-release-npm": "^1.2.1",
+    "@semantic-release/last-release-npm": "^2.0.0",
     "@semantic-release/release-notes-generator": "^4.0.0",
     "git-head": "^1.2.1",
     "github": "^8.0.0",
