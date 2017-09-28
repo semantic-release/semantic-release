@@ -7,6 +7,7 @@ var log = require('npmlog')
 var nopt = require('nopt')
 var npmconf = require('npmconf')
 var normalizeData = require('normalize-package-data')
+var gitHead = require('git-head')
 
 log.heading = 'semantic-release'
 var env = process.env
@@ -138,11 +139,21 @@ npmconf.load({}, function (err, conf) {
             log.silly('pre', 'Couldn\'t find npm-shrinkwrap.json.')
           }
 
-          fs.writeFileSync('./package.json', JSON.stringify(_.assign(originalPkg, {
-            version: release.version
-          }), null, 2))
+          gitHead(function (err, hash) {
+            var add = {
+              version: release.version
+            }
+            var msg = 'Wrote version ' + release.version
+            if (err) {
+              log.error("Couldn't determine gitHead", hash, err)
+            } else {
+              add.gitHead = hash
+              msg += ', gitHead ' + add.gitHead
+            }
+            fs.writeFileSync('./package.json', JSON.stringify(_.assign(originalPkg, add), null, 2))
 
-          log.verbose('pre', 'Wrote version ' + release.version + ' to package.json.')
+            log.verbose('pre', msg + ' to package.json.')
+          })
         })
       })
     })
