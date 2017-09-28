@@ -12,6 +12,14 @@ var pkg = {
   repository: {url: 'http://github.com/whats/up.git'}
 }
 
+var customTagPkg = {
+  version: '1.0.0',
+  repository: {url: 'http://github.com/whats/up.git'},
+  publishConfig: {
+    tag: 'beta'
+  }
+}
+
 var plugins = {
   generateNotes: function (pkg, cb) {
     cb(null, 'the log')
@@ -66,6 +74,19 @@ test('full post run', function (t) {
       tt.is(published, true)
       tt.match(release, defaultRelease)
 
+      tt.end()
+    })
+  })
+
+  t.test('production with custom tag', function (tt) {
+    post({
+      options: {githubToken: 'yo', branch: 'master'},
+      pkg: customTagPkg,
+      plugins: plugins
+    }, function (err, published, release) {
+      tt.error(err)
+      tt.is(published, true)
+      tt.match(release, defaultRelease)
       tt.end()
     })
   })

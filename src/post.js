@@ -24,17 +24,30 @@ module.exports = function (config, cb) {
       if (err) return cb(err)
 
       var ghRepo = parseSlug(pkg.repository.url)
-      var tag = {
+      var versionName = 'v' + pkg.version
+      var customTagName = (pkg.publishConfig || {}).tag
+
+      var refPart = 'tags'
+
+      var versionTag = {
         owner: ghRepo[0],
         repo: ghRepo[1],
-        ref: 'refs/tags/v' + pkg.version,
+        ref: 'refs/' + refPart + '/' + versionName,
         sha: hash
       }
+
+      var customTag = customTagName ? {
+        owner: ghRepo[0],
+        repo: ghRepo[1],
+        ref: 'refs/' + refPart + '/' + customTagName,
+        sha: hash
+      } : null
+
       var release = {
         owner: ghRepo[0],
         repo: ghRepo[1],
-        tag_name: 'v' + pkg.version,
-        name: 'v' + pkg.version,
+        tag_name: versionName,
+        name: versionName,
         target_commitish: options.branch,
         draft: !!options.debug,
         body: log
@@ -57,8 +70,37 @@ module.exports = function (config, cb) {
         })
       }
 
-      github.gitdata.createReference(tag, function (err) {
+      github.gitdata.createReference(versionTag, function (err) {
         if (err) return cb(err)
+
+        // create reference based on the custom tag
+        var customReference = {
+          owner: ghRepo[0],
+          repo: ghRepo[1],
+          ref: refPart + '/' + customTagName
+        }
+
+        // try to retrive it
+        github.gitdata.getReference(customReference, function (err, ref) {
+          // if it doesn't exist,
+          if (err) {
+            // try to create it
+            github.gitdata.createReference(customTag, function (err) {
+              if (err) return cb(err)
+            })
+          } else if (ref) {
+            // if reference exists, try to delete it
+            github.gitdata.deleteReference(customReference, function (err, msg) {
+              if (err) return cb(err)
+              else if (msg) {
+                // if delete was successful, try to create again
+                github.gitdata.createReference(customTag, function (err) {
+                  if (err) return cb(err)
+                })
+              }
+            })
+          }
+        })
 
         github.repos.createRelease(release, function (err) {
           if (err) return cb(err)
