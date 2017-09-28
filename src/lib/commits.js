@@ -13,14 +13,14 @@ module.exports = function (config, cb) {
 
   if (!from) return extract()
 
-  childProcess.exec('git branch --no-color --contains ' + from, function (err, stdout) {
+  childProcess.exec('git branch --no-color --remote --contains ' + from, function (err, stdout) {
     var inHistory = false
     var branches
 
     if (!err && stdout) {
       branches = stdout.split('\n')
       .map(function (result) {
-        if (branch === result.replace('*', '').trim()) {
+        if (branch === result.replace('*', '').replace('origin/', '').trim()) {
           inHistory = true
           return null
         }
