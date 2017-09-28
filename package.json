@@ -35,7 +35,7 @@
     "semver": "^5.2.0"
   },
   "devDependencies": {
-    "coveralls": "^2.11.4",
+    "coveralls": "^3.0.0",
     "cz-conventional-changelog": "^2.0.0",
     "mkdirp": "^0.5.1",
     "mock-spawn": "^0.2.6",
