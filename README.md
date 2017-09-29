@@ -16,7 +16,7 @@
 [![devDependency Status](https://david-dm.org/semantic-release/semantic-release/caribou/dev-status.svg)](https://david-dm.org/semantic-release/semantic-release/caribou#info=devDependencies)
 
 [![Build Status](https://travis-ci.org/semantic-release/semantic-release.svg?branch=caribou)](https://travis-ci.org/semantic-release/semantic-release)
-[![Coverage Status](https://coveralls.io/repos/semantic-release/semantic-release/badge.svg?branch=caribou&service=github)](https://coveralls.io/github/semantic-release/semantic-release?branch=caribou)
+[![Codecov](https://img.shields.io/codecov/c/github/semantic-release/semantic-release/caribou.svg)](https://codecov.io/gh/semantic-release/semantic-release)
 
 Out of the box this is just about _commit-messages_, but you can do so much more.
 
