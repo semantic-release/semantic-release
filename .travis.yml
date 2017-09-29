@@ -7,11 +7,11 @@ notifications:
   email: false
 node_js:
 - 8
-after_success:
-- npm run coverage:upload
-- npm run semantic-release
 services:
 - couchdb
 branches:
   except:
   - /^v\d+\.\d+\.\d+$/
+after_success:
+  - npm run codecov
+  - npm run semantic-release

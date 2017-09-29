@@ -36,8 +36,8 @@
     "semver": "^5.4.1"
   },
   "devDependencies": {
-    "coveralls": "^3.0.0",
     "ava": "^0.22.0",
+    "codecov": "^2.3.0",
     "commitizen": "^2.9.6",
     "cz-conventional-changelog": "^2.0.0",
     "eslint": "^4.7.0",
@@ -120,10 +120,9 @@
     "url": "git+https://github.com/semantic-release/semantic-release.git"
   },
   "scripts": {
-    "coverage": "nyc report",
-    "coverage:upload": "npm run coverage -s -- --reporter=text-lcov | coveralls",
     "clean": "rimraf coverage && rimraf .nyc_output",
     "cm": "git-cz",
+    "codecov": "codecov -f coverage/coverage-final.json",
     "lint": "eslint .",
     "pretest": "npm run clean && npm run lint",
     "semantic-release": "./bin/semantic-release.js pre && npm publish && ./bin/semantic-release.js post",
