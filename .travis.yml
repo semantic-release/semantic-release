@@ -1,17 +1,29 @@
-dist: trusty
 language: node_js
-cache:
-  directories:
-  - $HOME/.npm
+services:
+  - couchdb
 notifications:
   email: false
 node_js:
-- 8
-services:
-- couchdb
+  - 8
+
+# Trigger a push build on caribou and greenkeeper branches + PRs build on every branches
+# Avoid double build on PRs (See https://github.com/travis-ci/travis-ci/issues/1147)
 branches:
-  except:
-  - /^v\d+\.\d+\.\d+$/
+  only:
+    - caribou
+    - /^greenkeeper.*$/
+
+# Retrieve 999 commits (default is 50) so semantic-release can analyze all commits when there is more than 50 on a PR
+git:
+  depth: 999
+
+# Retry install on fail to avoid failing a build on network/disk/external errors
+install:
+  - travis_retry npm install
+
+script:
+  - npm run test
+
 after_success:
   - npm run codecov
   - npm run semantic-release
