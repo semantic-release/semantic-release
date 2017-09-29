@@ -1,71 +1,38 @@
-var url = require('url')
+const {promisify} = require('util');
+const url = require('url');
+const gitHead = require('git-head');
+const GitHubApi = require('github');
+const parseSlug = require('parse-github-repo-url');
 
-var gitHead = require('git-head')
-var GitHubApi = require('github')
-var parseSlug = require('parse-github-repo-url')
+module.exports = async config => {
+  const {pkg, options: {branch, debug, githubUrl, githubToken, githubApiPathPrefix}, plugins} = config;
+  const [owner, repo] = parseSlug(pkg.repository.url);
+  const name = `v${pkg.version}`;
+  const tag = {owner, repo, ref: `refs/tags/${name}`, sha: await promisify(gitHead)()};
+  const body = await promisify(plugins.generateNotes)(config);
+  const release = {owner, repo, tag_name: name, name, target_commitish: branch, draft: !!debug, body};
 
-module.exports = function (config, cb) {
-  var pkg = config.pkg
-  var options = config.options
-  var plugins = config.plugins
-  var ghConfig = options.githubUrl ? url.parse(options.githubUrl) : {}
+  if (debug && !githubToken) {
+    return {published: false, release};
+  }
 
-  var github = new GitHubApi({
-    port: ghConfig.port,
-    protocol: (ghConfig.protocol || '').split(':')[0] || null,
-    host: ghConfig.hostname,
-    pathPrefix: options.githubApiPathPrefix || null
-  })
+  const {port, protocol, hostname} = githubUrl ? url.parse(githubUrl) : {};
+  const github = new GitHubApi({
+    port,
+    protocol: (protocol || '').split(':')[0] || null,
+    host: hostname,
+    pathPrefix: githubApiPathPrefix || null,
+  });
 
-  plugins.generateNotes(config, function (err, log) {
-    if (err) return cb(err)
+  github.authenticate({type: 'token', token: githubToken});
 
-    gitHead(function (err, hash) {
-      if (err) return cb(err)
+  if (debug) {
+    await github.repos.createRelease(release);
+    return {published: true, release};
+  }
 
-      var ghRepo = parseSlug(pkg.repository.url)
-      var tag = {
-        owner: ghRepo[0],
-        repo: ghRepo[1],
-        ref: 'refs/tags/v' + pkg.version,
-        sha: hash
-      }
-      var release = {
-        owner: ghRepo[0],
-        repo: ghRepo[1],
-        tag_name: 'v' + pkg.version,
-        name: 'v' + pkg.version,
-        target_commitish: options.branch,
-        draft: !!options.debug,
-        body: log
-      }
+  await github.gitdata.createReference(tag);
+  await github.repos.createRelease(release);
 
-      if (options.debug && !options.githubToken) {
-        return cb(null, false, release)
-      }
-
-      github.authenticate({
-        type: 'token',
-        token: options.githubToken
-      })
-
-      if (options.debug) {
-        return github.repos.createRelease(release, function (err) {
-          if (err) return cb(err)
-
-          cb(null, true, release)
-        })
-      }
-
-      github.gitdata.createReference(tag, function (err) {
-        if (err) return cb(err)
-
-        github.repos.createRelease(release, function (err) {
-          if (err) return cb(err)
-
-          cb(null, true, release)
-        })
-      })
-    })
-  })
-}
+  return {published: true, release};
+};
