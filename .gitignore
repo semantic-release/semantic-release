@@ -7,3 +7,6 @@ test/tmp
 *.dump
 .DS_Store
 .nyc_output
+
+package-lock.json
+yarn.lock
