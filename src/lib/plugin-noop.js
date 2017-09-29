@@ -1,4 +1,3 @@
-/* istanbul ignore next */
-module.exports = function (config, options, cb) {
-  cb(null)
-}
+module.exports = (config, options, cb) => {
+  cb(null);
+};

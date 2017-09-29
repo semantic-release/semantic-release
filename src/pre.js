@@ -1,45 +1,23 @@
-var _ = require('lodash')
-var auto = require('run-auto')
-var semver = require('semver')
+const {promisify} = require('util');
+const {assign} = require('lodash');
+const semver = require('semver');
 
-var getCommits = require('./lib/commits')
-var getType = require('./lib/type')
+const getCommits = require('./lib/get-commits');
+const getReleaseType = require('./lib/get-release-type');
 
-module.exports = function (config, cb) {
-  var plugins = config.plugins
+module.exports = async config => {
+  const {getLastRelease, verifyRelease} = config.plugins;
 
-  auto({
-    lastRelease: plugins.getLastRelease.bind(null, config),
-    commits: ['lastRelease', function (results, cb) {
-      getCommits(_.assign({
-        lastRelease: results.lastRelease
-      }, config),
-      cb)
-    }],
-    type: ['commits', 'lastRelease', function (results, cb) {
-      getType(_.assign({
-        commits: results.commits,
-        lastRelease: results.lastRelease
-      }, config),
-      cb)
-    }]
-  }, function (err, results) {
-    if (err) return cb(err)
+  const lastRelease = await promisify(getLastRelease)(config);
+  const commits = await getCommits(assign({lastRelease}, config));
+  const type = await getReleaseType(assign({commits, lastRelease}, config));
 
-    var nextRelease = {
-      type: results.type,
-      version: results.type === 'initial'
-        ? '1.0.0'
-        : semver.inc(results.lastRelease.version, results.type)
-    }
+  const nextRelease = {
+    type: type,
+    version: type === 'initial' ? '1.0.0' : semver.inc(lastRelease.version, type),
+  };
 
-    plugins.verifyRelease(_.assign({
-      commits: results.commits,
-      lastRelease: results.lastRelease,
-      nextRelease: nextRelease
-    }, config), function (err) {
-      if (err) return cb(err)
-      cb(null, nextRelease)
-    })
-  })
-}
+  await promisify(verifyRelease)(assign({commits, lastRelease, nextRelease}, config));
+
+  return nextRelease;
+};
