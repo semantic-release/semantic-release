@@ -9,6 +9,11 @@ module.exports = function (config, cb) {
   var options = config.options
   var branch = options.branch
   var from = lastRelease.gitHead
+  if (!from) {
+    from = config.lastRelease.version ? 'v' + config.lastRelease.version : false
+    console.warn('NPM registry does not contain "gitHead" in latest package version data. It\'s probably because ' +
+      'the publish happened outside of repository folder. Will try last version\'s Git tag instead: "' + from + '"')
+  }
   var range = (from ? from + '..' : '') + 'HEAD'
 
   if (!from) return extract()
