@@ -1,5 +1,5 @@
 import test from 'ava';
-import {gitRepo, gitCommits, gitCheckout} from './helpers/git-utils';
+import {gitRepo, gitCommits, gitCheckout, gitTagVersion, gitShallowClone, gitTags, gitLog} from './helpers/git-utils';
 import proxyquire from 'proxyquire';
 import {stub} from 'sinon';
 import SemanticReleaseError from '@semantic-release/error';
@@ -30,7 +30,7 @@ test.serial('Get all commits when there is no last release', async t => {
   // Retrieve the commits with the commits module
   const result = await getCommits({lastRelease: {}, options: {branch: 'master'}});
 
-  // The commits created and and retrieved by the module are identical
+  // Verify the commits created and retrieved by the module are identical
   t.is(result.length, 2);
   t.is(result[0].hash.substring(0, 7), commits[0].hash);
   t.is(result[0].message, commits[0].message);
@@ -38,7 +38,29 @@ test.serial('Get all commits when there is no last release', async t => {
   t.is(result[1].message, commits[1].message);
 });
 
-test.serial('Get all commits since lastRelease gitHead', async t => {
+test.serial('Get all commits when there is no last release, including the ones not in the shallow clone', async t => {
+  // Create a git repository, set the current working directory at the root of the repo
+  const repo = await gitRepo();
+  // Add commits to the master branch
+  const commits = await gitCommits(['fix: First fix', 'feat: Second feature']);
+  // Create a shallow clone with only 1 commit
+  await gitShallowClone(repo);
+
+  // Verify the shallow clone contains only one commit
+  t.is((await gitLog()).length, 1);
+
+  // Retrieve the commits with the commits module
+  const result = await getCommits({lastRelease: {}, options: {branch: 'master'}});
+
+  // Verify the commits created and retrieved by the module are identical
+  t.is(result.length, 2);
+  t.is(result[0].hash.substring(0, 7), commits[0].hash);
+  t.is(result[0].message, commits[0].message);
+  t.is(result[1].hash.substring(0, 7), commits[1].hash);
+  t.is(result[1].message, commits[1].message);
+});
+
+test.serial('Get all commits since gitHead (from lastRelease)', async t => {
   // Create a git repository, set the current working directory at the root of the repo
   await gitRepo();
   // Add commits to the master branch
@@ -49,7 +71,76 @@ test.serial('Get all commits since lastRelease gitHead', async t => {
     lastRelease: {gitHead: commits[commits.length - 1].hash},
     options: {branch: 'master'},
   });
-  // The commits created and retrieved by the module are identical
+
+  // Verify the commits created and retrieved by the module are identical
+  t.is(result.length, 2);
+  t.is(result[0].hash.substring(0, 7), commits[0].hash);
+  t.is(result[0].message, commits[0].message);
+  t.is(result[1].hash.substring(0, 7), commits[1].hash);
+  t.is(result[1].message, commits[1].message);
+});
+
+test.serial('Get all commits since gitHead (from tag) ', async t => {
+  // Create a git repository, set the current working directory at the root of the repo
+  await gitRepo();
+  // Add commits to the master branch
+  let commits = await gitCommits(['fix: First fix']);
+  // Create the tag corresponding to version 1.0.0
+  await gitTagVersion('1.0.0');
+  // Add new commits to the master branch
+  commits = (await gitCommits(['feat: Second feature', 'feat: Third feature'])).concat(commits);
+
+  // Retrieve the commits with the commits module
+  const result = await getCommits({lastRelease: {version: `1.0.0`}, options: {branch: 'master'}});
+
+  // Verify the commits created and retrieved by the module are identical
+  t.is(result.length, 2);
+  t.is(result[0].hash.substring(0, 7), commits[0].hash);
+  t.is(result[0].message, commits[0].message);
+  t.is(result[1].hash.substring(0, 7), commits[1].hash);
+  t.is(result[1].message, commits[1].message);
+});
+
+test.serial('Get all commits since gitHead (from tag formatted like v<version>) ', async t => {
+  // Create a git repository, set the current working directory at the root of the repo
+  await gitRepo();
+  // Add commits to the master branch
+  let commits = await gitCommits(['fix: First fix']);
+  // Create the tag corresponding to version 1.0.0
+  await gitTagVersion('v1.0.0');
+  // Add new commits to the master branch
+  commits = (await gitCommits(['feat: Second feature', 'feat: Third feature'])).concat(commits);
+
+  // Retrieve the commits with the commits module
+  const result = await getCommits({lastRelease: {version: `1.0.0`}, options: {branch: 'master'}});
+
+  // Verify the commits created and retrieved by the module are identical
+  t.is(result.length, 2);
+  t.is(result[0].hash.substring(0, 7), commits[0].hash);
+  t.is(result[0].message, commits[0].message);
+  t.is(result[1].hash.substring(0, 7), commits[1].hash);
+  t.is(result[1].message, commits[1].message);
+});
+
+test.serial('Get all commits since gitHead from tag, when tags are mising from the shallow clone', async t => {
+  // Create a git repository, set the current working directory at the root of the repo
+  const repo = await gitRepo();
+  // Add commits to the master branch
+  let commits = await gitCommits(['fix: First fix']);
+  // Create the tag corresponding to version 1.0.0
+  await gitTagVersion('v1.0.0');
+  // Add new commits to the master branch
+  commits = (await gitCommits(['feat: Second feature', 'feat: Third feature'])).concat(commits);
+  // Create a shallow clone with only 1 commit and no tags
+  await gitShallowClone(repo);
+
+  // Verify the shallow clone does not contains any tags
+  t.is((await gitTags()).length, 0);
+
+  // Retrieve the commits with the commits module
+  const result = await getCommits({lastRelease: {version: `1.0.0`}, options: {branch: 'master'}});
+
+  // Verify the commits created and retrieved by the module are identical
   t.is(result.length, 2);
   t.is(result[0].hash.substring(0, 7), commits[0].hash);
   t.is(result[0].message, commits[0].message);
@@ -81,6 +172,25 @@ test.serial('Return empty array if lastRelease.gitHead is the last commit', asyn
   t.deepEqual(result, []);
 });
 
+test.serial('Throws ENOGITHEAD error if the gitHead of the last release cannot be found', async t => {
+  // Create a git repository, set the current working directory at the root of the repo
+  await gitRepo();
+  // Add commits to the master branch
+  await gitCommits(['fix: First fix', 'feat: Second feature']);
+
+  // Retrieve the commits with the commits module
+  const error = await t.throws(getCommits({lastRelease: {version: '1.0.0'}, options: {branch: 'master'}}));
+
+  // Verify error code and message
+  t.is(error.code, 'ENOGITHEAD');
+  t.true(error instanceof SemanticReleaseError);
+  // Verify the log function has been called with a message explaining the error
+  t.regex(
+    errorLog.firstCall.args[1],
+    /The commit the last release of this package was derived from cannot be determined from the release metadata not from the repository tags/
+  );
+});
+
 test.serial('Throws ENOTINHISTORY error if gitHead is not in history', async t => {
   // Create a git repository, set the current working directory at the root of the repo
   await gitRepo();
@@ -93,7 +203,6 @@ test.serial('Throws ENOTINHISTORY error if gitHead is not in history', async t =
   // Verify error code and message
   t.is(error.code, 'ENOTINHISTORY');
   t.true(error instanceof SemanticReleaseError);
-
   // Verify the log function has been called with a message mentionning the branch
   t.regex(errorLog.firstCall.args[1], /history of the "master" branch/);
   // Verify the log function has been called with a message mentionning the missing gitHead
@@ -106,11 +215,11 @@ test.serial('Throws ENOTINHISTORY error if gitHead is not in branch history but 
   // Add commits to the master branch
   await gitCommits(['First', 'Second']);
   // Create the new branch 'other-branch' from master
-  await gitCheckout('other-branch', true);
+  await gitCheckout('other-branch');
   // Add commits to the 'other-branch' branch
   const commitsBranch = await gitCommits(['Third', 'Fourth']);
   // Create the new branch 'another-branch' from 'other-branch'
-  await gitCheckout('another-branch', true);
+  await gitCheckout('another-branch');
 
   // Retrieve the commits with the commits module
   const error = await t.throws(
@@ -120,7 +229,6 @@ test.serial('Throws ENOTINHISTORY error if gitHead is not in branch history but 
   // Verify error code and message
   t.is(error.code, 'ENOTINHISTORY');
   t.true(error instanceof SemanticReleaseError);
-
   // Verify the log function has been called with a message mentionning the branch
   t.regex(errorLog.firstCall.args[1], /history of the "master" branch/);
   // Verify the log function has been called with a message mentionning the missing gitHead
