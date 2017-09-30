@@ -13,10 +13,6 @@ branches:
     - caribou
     - /^greenkeeper.*$/
 
-# Retrieve 999 commits (default is 50) so semantic-release can analyze all commits when there is more than 50 on a PR
-git:
-  depth: 999
-
 # Retry install on fail to avoid failing a build on network/disk/external errors
 install:
   - travis_retry npm install
