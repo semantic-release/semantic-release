@@ -14,10 +14,9 @@ const getVersionHead = require('./get-version-head');
  * Retrieve the list of commits on the current branch since the last released version, or all the commits of the current branch if there is no last released version.
  * 
  * The commit correspoding to the last released version is determined as follow:
- * - Use `lastRelease.gitHead` is defined and present in `config.options.branch` history.
- * - Search for a tag named `v<version>` or `<version>` and it's associated commit sha if present in `config.options.branch` history.
- *
- * If a commit corresponding to the last released is not found, unshallow the repository (as most CI create a shallow clone with limited number of commits and no tags) and try again.
+ * - Use `lastRelease.gitHead` if defined and present in `config.options.branch` history.
+ * - If `lastRelease.gitHead` is not in the `config.options.branch` history, unshallow the repository and try again.
+ * -  If `lastRelease.gitHead` is still not in the `config.options.branch` history, search for a tag named `v<version>` or `<version>` and verify if it's associated commit sha is present in `config.options.branch` history.
  *
  * @param {Object} config
  * @param {Object} config.lastRelease The lastRelease object obtained from the getLastRelease plugin.
@@ -34,20 +33,12 @@ const getVersionHead = require('./get-version-head');
 module.exports = async ({lastRelease: {version, gitHead}, options: {branch}}) => {
   if (gitHead || version) {
     try {
-      gitHead = await getVersionHead(version, branch, gitHead);
-    } catch (err) {
-      // Unshallow the repository if the gitHead cannot be found and the branch for the last release version
-      await execa('git', ['fetch', '--unshallow', '--tags'], {reject: false});
-    }
-
-    // Try to find the gitHead on the branch again with an unshallowed repository
-    try {
-      gitHead = await getVersionHead(version, branch, gitHead);
+      gitHead = await getVersionHead(gitHead, version, branch);
     } catch (err) {
       if (err.code === 'ENOTINHISTORY') {
-        log.error('commits', notInHistoryMessage(gitHead, branch, version, err.branches));
-      } else if (err.code === 'ENOGITHEAD') {
-        log.error('commits', noGitHeadMessage());
+        log.error('commits', notInHistoryMessage(err.gitHead, branch, version));
+      } else {
+        log.error('commits', noGitHeadMessage(branch, version));
       }
       throw err;
     }
@@ -73,20 +64,24 @@ module.exports = async ({lastRelease: {version, gitHead}, options: {branch}}) =>
   }
 };
 
-function noGitHeadMessage(version) {
+function noGitHeadMessage(branch, version) {
   return `The commit the last release of this package was derived from cannot be determined from the release metadata not from the repository tags.
-  This means semantic-release can not extract the commits between now and then.
-  This is usually caused by releasing from outside the repository directory or with innaccessible git metadata.
-  You can recover from this error by publishing manually.`;
+This means semantic-release can not extract the commits between now and then.
+This is usually caused by releasing from outside the repository directory or with innaccessible git metadata.
+
+You can recover from this error by creating a tag for the version "${version}" on the commit corresponding to this release:
+$ git tag -f v${version} <commit sha1 corresponding to last release>
+$ git push -f --tags origin ${branch}
+`;
 }
 
-function notInHistoryMessage(gitHead, branch, version, branches) {
+function notInHistoryMessage(gitHead, branch, version) {
   return `The commit the last release of this package was derived from is not in the direct history of the "${branch}" branch.
-  This means semantic-release can not extract the commits between now and then.
-  This is usually caused by force pushing, releasing from an unrelated branch, or using an already existing package name.
-  You can recover from this error by publishing manually or restoring the commit "${gitHead}".
-  
-  ${branches && branches.length
-    ? `Here is a list of branches that still contain the commit in question: \n * ${branches.join('\n * ')}`
-    : ''}`;
+This means semantic-release can not extract the commits between now and then.
+This is usually caused by force pushing, releasing from an unrelated branch, or using an already existing package name.
+
+You can recover from this error by restoring the commit "${gitHead}" or by creating a tag for the version "${version}" on the commit corresponding to this release:
+$ git tag -f v${version || '<version>'} <commit sha1 corresponding to last release>
+$ git push -f --tags origin ${branch}
+`;
 }

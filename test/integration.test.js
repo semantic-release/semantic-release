@@ -1,8 +1,17 @@
 import test from 'ava';
 import {writeJson, readJson} from 'fs-extra';
 import {start, stop, uri} from './helpers/registry';
-import {gitRepo, gitCommits, gitHead, gitTagVersion, gitPackRefs} from './helpers/git-utils';
+import {gitRepo, gitCommits, gitHead, gitTagVersion, gitPackRefs, gitAmmendCommit} from './helpers/git-utils';
 import execa from 'execa';
+
+// Environment variables used with cli
+const env = {
+  CI: true,
+  npm_config_registry: uri,
+  GH_TOKEN: 'github_token',
+  NPM_OLD_TOKEN: 'aW50ZWdyYXRpb246c3VjaHNlY3VyZQ==',
+  NPM_EMAIL: 'integration@test.com',
+};
 
 test.before(async t => {
   // Start the local NPM registry
@@ -25,14 +34,6 @@ test.after.always(async t => {
 });
 
 test.serial('Release patch, minor and major versions', async t => {
-  // Environment variables used with cli
-  const env = {
-    CI: true,
-    npm_config_registry: uri,
-    GH_TOKEN: 'github_token',
-    NPM_OLD_TOKEN: 'aW50ZWdyYXRpb246c3VjaHNlY3VyZQ==',
-    NPM_EMAIL: 'integration@test.com',
-  };
   // Create a git repository, set the current working directory at the root of the repo
   t.log('Create git repository');
   await gitRepo();
@@ -146,14 +147,6 @@ test.serial('Release patch, minor and major versions', async t => {
 });
 
 test.serial('Release versions from a packed git repository, using tags to determine last release gitHead', async t => {
-  // Environment variables used with cli
-  const env = {
-    CI: true,
-    npm_config_registry: uri,
-    GH_TOKEN: 'github_token',
-    NPM_OLD_TOKEN: 'aW50ZWdyYXRpb246c3VjaHNlY3VyZQ==',
-    NPM_EMAIL: 'integration@test.com',
-  };
   // Create a git repository, set the current working directory at the root of the repo
   t.log('Create git repository');
   await gitRepo();
@@ -229,4 +222,83 @@ test.serial('Exit with 1 in a plugin is not found', async t => {
 
   const {code} = await t.throws(execa(require.resolve('../bin/semantic-release'), ['pre'], {env}));
   t.is(code, 1);
+});
+
+test.serial('Create a tag as a recovery solution for "ENOTINHISTORY" error', async t => {
+  // Create a git repository, set the current working directory at the root of the repo
+  t.log('Create git repository');
+  await gitRepo();
+
+  // Create package.json in repository root
+  await writeJson('./package.json', {
+    name: 'test-module-4',
+    version: '0.0.0-dev',
+    repository: {url: 'git+https://github.com/semantic-release/test-module-2'},
+    release: {verifyConditions: require.resolve('../src/lib/plugin-noop')},
+  });
+
+  /** Minor release **/
+
+  t.log('Commit a feature');
+  await gitCommits(['feat: Initial commit']);
+  t.log('$ semantic-release pre');
+  let {stdout, stderr, code} = await execa(require.resolve('../bin/semantic-release'), ['pre'], {env});
+  // Verify package.json has been updated
+  t.is((await readJson('./package.json')).version, '1.0.0');
+  t.log('$ npm publish');
+  ({stdout, code} = await execa('npm', ['publish'], {env}));
+  // Verify output of npm publish
+  t.regex(stdout, /test-module-4@1.0.0/);
+  t.is(code, 0);
+  // Retrieve the published package from the registry and check version and gitHead
+  let [, version, releaseGitHead] = /^version = '(.+)'\s+gitHead = '(.+)'$/.exec(
+    (await execa('npm', ['show', 'test-module-4', 'version', 'gitHead'], {env})).stdout
+  );
+  const head = await gitHead();
+  t.is(releaseGitHead, head);
+  t.log(`+ released ${version}`);
+  t.is(version, '1.0.0');
+  // Create a tag version so the tag can be used later to determine the commit associated with the version
+  await gitTagVersion('v1.0.0');
+  t.log('Create git tag v1.0.0');
+
+  /** Rewrite sha of commit used for release **/
+
+  t.log('Amend release commit');
+  const {hash} = await gitAmmendCommit('feat: Initial commit');
+
+  /** Patch release **/
+
+  t.log('Commit a fix');
+  await gitCommits(['fix: bar']);
+  t.log('$ semantic-release pre');
+  ({stderr, stdout, code} = await execa(require.resolve('../bin/semantic-release'), ['pre'], {env, reject: false}));
+
+  t.log('Fail with "ENOTINHISTORY" error');
+  t.is(code, 1);
+  t.regex(
+    stderr,
+    new RegExp(
+      `You can recover from this error by restoring the commit "${head}" or by creating a tag for the version "1.0.0" on the commit corresponding to this release`
+    )
+  );
+
+  /** Create a tag to recover and redo release **/
+
+  t.log('Create git tag v1.0.0 to recover');
+  await gitTagVersion('v1.0.0', hash);
+
+  t.log('$ semantic-release pre');
+  ({stderr, stdout, code} = await execa(require.resolve('../bin/semantic-release'), ['pre'], {env}));
+  // Verify package.json has been updated
+  t.is((await readJson('./package.json')).version, '1.0.1');
+  t.log('$ npm publish');
+  ({stdout, code} = await execa('npm', ['publish'], {env}));
+  // Verify output of npm publish
+  t.regex(stdout, /test-module-4@1.0.1/);
+  t.is(code, 0);
+  // Retrieve the published package from the registry and check version and gitHead
+  version = (await execa('npm', ['show', 'test-module-4', 'version'], {env})).stdout;
+  t.is(version, '1.0.1');
+  t.log(`+ released ${version}`);
 });
