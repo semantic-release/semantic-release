@@ -131,7 +131,5 @@ package-lock.json
 yarn.lock
 
 # Registry tests
-
 test/helpers/registry/couch
 test/helpers/registry/data
-test/helpers/tmp

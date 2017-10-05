@@ -1,49 +1,68 @@
 import test from 'ava';
 import {writeJson, readJson} from 'fs-extra';
-import {start, stop, uri} from './helpers/registry';
-import {gitRepo, gitCommits, gitHead, gitTagVersion, gitPackRefs, gitAmmendCommit} from './helpers/git-utils';
+import {stub} from 'sinon';
 import execa from 'execa';
+import {gitRepo, gitCommits, gitHead, gitTagVersion, gitPackRefs, gitAmmendCommit} from './helpers/git-utils';
+import registry from './helpers/registry';
+import mockServer from './helpers/mockserver';
+import semanticRelease from '../src';
 
 // Environment variables used with cli
 const env = {
-  CI: true,
-  npm_config_registry: uri,
+  npm_config_registry: registry.uri,
   GH_TOKEN: 'github_token',
   NPM_OLD_TOKEN: 'aW50ZWdyYXRpb246c3VjaHNlY3VyZQ==',
   NPM_EMAIL: 'integration@test.com',
 };
+const cli = require.resolve('../bin/semantic-release');
+const noop = require.resolve('../src/lib/plugin-noop');
+const pluginError = require.resolve('./fixtures/plugin-error-a');
 
 test.before(async t => {
+  await mockServer.start();
   // Start the local NPM registry
-  await start();
+  await registry.start();
 });
 
 test.beforeEach(async t => {
+  // Save the current process.env
+  t.context.env = Object.assign({}, process.env);
   // Save the current working diretory
   t.context.cwd = process.cwd();
+
+  t.context.log = stub(console, 'log');
+  t.context.error = stub(console, 'error');
 });
 
 test.afterEach.always(async t => {
+  console.log();
+  // Restore process.env
+  process.env = Object.assign({}, t.context.env);
   // Restore the current working directory
   process.chdir(t.context.cwd);
+
+  t.context.log.restore();
+  t.context.error.restore();
 });
 
 test.after.always(async t => {
+  await mockServer.stop();
   // Stop the local NPM registry
-  await stop();
+  await registry.stop();
 });
 
 test.serial('Release patch, minor and major versions', async t => {
+  const packageName = 'test-module';
+  const repo = 'test-repo';
   // Create a git repository, set the current working directory at the root of the repo
-  t.log('Create git repository');
+  t.log('Create git repository and package.json');
   await gitRepo();
-
   // Create package.json in repository root
   await writeJson('./package.json', {
-    name: 'test-module',
+    name: packageName,
     version: '0.0.0-dev',
-    repository: {url: 'git+https://github.com/semantic-release/test-module'},
-    release: {verifyConditions: require.resolve('../src/lib/plugin-noop')},
+    repository: {url: `git+https://github.com/${repo}/${packageName}`},
+    release: {verifyConditions: noop, githubUrl: mockServer.url},
   });
   // Create a npm-shrinkwrap.json file
   await execa('npm', ['shrinkwrap'], {env});
@@ -52,215 +71,325 @@ test.serial('Release patch, minor and major versions', async t => {
 
   t.log('Commit a chore');
   await gitCommits(['chore: Init repository']);
-  t.log('$ semantic-release pre');
-  let {stdout, stderr, code} = await t.throws(execa(require.resolve('../bin/semantic-release'), ['pre'], {env}));
-  t.regex(stderr, /ENOCHANGE There are no relevant changes, so no new version is released/);
-  t.is(code, 1);
+  t.log('$ semantic-release');
+  let {stdout, code} = await execa(cli, [], {env});
+  t.regex(stdout, /There are no relevant changes, so no new version is released/);
+  t.is(code, 0);
 
-  /** Minor release **/
+  /** Initial release **/
+  let version = '1.0.0';
+  let createRefMock = mockServer.mock(
+    `/repos/${repo}/${packageName}/git/refs`,
+    {body: {ref: `refs/tags/v${version}`}, headers: [{name: 'Authorization', values: [`token ${env.GH_TOKEN}`]}]},
+    {body: {ref: `refs/tags/${version}`}}
+  );
+  let createReleaseMock = mockServer.mock(
+    `/repos/${repo}/${packageName}/releases`,
+    {
+      body: {tag_name: `v${version}`, target_commitish: 'master', name: `v${version}`},
+      headers: [{name: 'Authorization', values: [`token ${env.GH_TOKEN}`]}],
+    },
+    {body: {html_url: `release-url/${version}`}}
+  );
 
   t.log('Commit a feature');
   await gitCommits(['feat: Initial commit']);
-  t.log('$ semantic-release pre');
-  ({stdout, stderr, code} = await execa(require.resolve('../bin/semantic-release'), ['pre'], {env}));
-  // Verify package.json and npm-shrinkwrap.json have been updated
-  t.is((await readJson('./package.json')).version, '1.0.0');
-  t.is((await readJson('./npm-shrinkwrap.json')).version, '1.0.0');
-  t.log('$ npm publish');
-  ({stdout, stderr, code} = await execa('npm', ['publish'], {env}));
-  // Verify output of npm publish
-  t.regex(stdout, /test-module@1.0.0/);
+  t.log('$ semantic-release');
+  ({stdout, code} = await execa(cli, [], {env}));
+  t.regex(stdout, new RegExp(`Published Github release: release-url/${version}`));
+  t.regex(stdout, new RegExp(`Publishing version ${version} to npm registry ${registry.uri}`));
   t.is(code, 0);
+
+  // Verify package.json and npm-shrinkwrap.json have been updated
+  t.is((await readJson('./package.json')).version, version);
+  t.is((await readJson('./npm-shrinkwrap.json')).version, version);
+
   // Retrieve the published package from the registry and check version and gitHead
-  let [, version, releaseGitHead] = /^version = '(.+)'\s+gitHead = '(.+)'$/.exec(
-    (await execa('npm', ['show', 'test-module', 'version', 'gitHead'], {env})).stdout
+  let [, releasedVersion, releasedGitHead] = /^version = '(.+)'\s+gitHead = '(.+)'$/.exec(
+    (await execa('npm', ['show', packageName, 'version', 'gitHead'], {env})).stdout
   );
-  t.is(version, '1.0.0');
-  t.is(releaseGitHead, await gitHead());
-  t.log(`+ released ${version} with gitHead ${releaseGitHead}`);
+  t.is(releasedVersion, version);
+  t.is(releasedGitHead, await gitHead());
+  t.log(`+ released ${releasedVersion} with gitHead ${releasedGitHead}`);
+
+  await mockServer.verify(createRefMock);
+  await mockServer.verify(createReleaseMock);
 
   /** Patch release **/
+  version = '1.0.1';
+  createRefMock = mockServer.mock(
+    `/repos/${repo}/${packageName}/git/refs`,
+    {body: {ref: `refs/tags/v${version}`}, headers: [{name: 'Authorization', values: [`token ${env.GH_TOKEN}`]}]},
+    {body: {ref: `refs/tags/${version}`}}
+  );
+  createReleaseMock = mockServer.mock(
+    `/repos/${repo}/${packageName}/releases`,
+    {
+      body: {tag_name: `v${version}`, target_commitish: 'master', name: `v${version}`},
+      headers: [{name: 'Authorization', values: [`token ${env.GH_TOKEN}`]}],
+    },
+    {body: {html_url: `release-url/${version}`}}
+  );
 
   t.log('Commit a fix');
   await gitCommits(['fix: bar']);
-  t.log('$ semantic-release pre');
-  ({stdout, stderr, code} = await execa(require.resolve('../bin/semantic-release'), ['pre'], {env}));
-  // Verify package.json and npm-shrinkwrap.json have been updated
-  t.is((await readJson('./package.json')).version, '1.0.1');
-  t.is((await readJson('./npm-shrinkwrap.json')).version, '1.0.1');
-  t.log('$ npm publish');
-  ({stdout, stderr, code} = await execa('npm', ['publish'], {env}));
-  // Verify output of npm publish
-  t.regex(stdout, /test-module@1.0.1/);
+  t.log('$ semantic-release');
+  ({stdout, code} = await execa(cli, [], {env}));
+  t.regex(stdout, new RegExp(`Published Github release: release-url/${version}`));
+  t.regex(stdout, new RegExp(`Publishing version ${version} to npm registry ${registry.uri}`));
   t.is(code, 0);
+
+  // Verify package.json and npm-shrinkwrap.json have been updated
+  t.is((await readJson('./package.json')).version, version);
+  t.is((await readJson('./npm-shrinkwrap.json')).version, version);
+
   // Retrieve the published package from the registry and check version and gitHead
-  [, version, releaseGitHead] = /^version = '(.+)'\s+gitHead = '(.+)'$/.exec(
+  [, releasedVersion, releasedGitHead] = /^version = '(.+)'\s+gitHead = '(.+)'$/.exec(
     (await execa('npm', ['show', 'test-module', 'version', 'gitHead'], {env})).stdout
   );
-  t.is(version, '1.0.1');
-  t.is(releaseGitHead, await gitHead());
-  t.log(`+ released ${version} with gitHead ${releaseGitHead}`);
+  t.is(releasedVersion, version);
+  t.is(releasedGitHead, await gitHead());
+  t.log(`+ released ${releasedVersion} with gitHead ${releasedGitHead}`);
+
+  await mockServer.verify(createRefMock);
+  await mockServer.verify(createReleaseMock);
 
   /** Minor release **/
+  version = '1.1.0';
+  createRefMock = mockServer.mock(
+    `/repos/${repo}/${packageName}/git/refs`,
+    {body: {ref: `refs/tags/v${version}`}, headers: [{name: 'Authorization', values: [`token ${env.GH_TOKEN}`]}]},
+    {body: {ref: `refs/tags/${version}`}}
+  );
+  createReleaseMock = mockServer.mock(
+    `/repos/${repo}/${packageName}/releases`,
+    {
+      body: {tag_name: `v${version}`, target_commitish: 'master', name: `v${version}`},
+      headers: [{name: 'Authorization', values: [`token ${env.GH_TOKEN}`]}],
+    },
+    {body: {html_url: `release-url/${version}`}}
+  );
 
   t.log('Commit a feature');
   await gitCommits(['feat: baz']);
-  t.log('$ semantic-release pre');
-  ({stdout, stderr, code} = await execa(require.resolve('../bin/semantic-release'), ['pre'], {env}));
-  // Verify package.json and npm-shrinkwrap.json have been updated
-  t.is((await readJson('./package.json')).version, '1.1.0');
-  t.is((await readJson('./npm-shrinkwrap.json')).version, '1.1.0');
-  t.log('$ npm publish');
-  ({stdout, stderr, code} = await execa('npm', ['publish'], {env}));
-  // Verify output of npm publish
-  t.regex(stdout, /test-module@1.1.0/);
+  t.log('$ semantic-release');
+  ({stdout, code} = await execa(cli, [], {env}));
+  t.regex(stdout, new RegExp(`Published Github release: release-url/${version}`));
+  t.regex(stdout, new RegExp(`Publishing version ${version} to npm registry ${registry.uri}`));
   t.is(code, 0);
+
+  // Verify package.json and npm-shrinkwrap.json have been updated
+  t.is((await readJson('./package.json')).version, version);
+  t.is((await readJson('./npm-shrinkwrap.json')).version, version);
+
   // Retrieve the published package from the registry and check version and gitHead
-  [, version, releaseGitHead] = /^version = '(.+)'\s+gitHead = '(.+)'$/.exec(
+  [, releasedVersion, releasedGitHead] = /^version = '(.+)'\s+gitHead = '(.+)'$/.exec(
     (await execa('npm', ['show', 'test-module', 'version', 'gitHead'], {env})).stdout
   );
-  t.is(version, '1.1.0');
-  t.is(releaseGitHead, await gitHead());
-  t.log(`+ released ${version} with gitHead ${releaseGitHead}`);
+  t.is(releasedVersion, version);
+  t.is(releasedGitHead, await gitHead());
+  t.log(`+ released ${releasedVersion} with gitHead ${releasedGitHead}`);
+
+  await mockServer.verify(createRefMock);
+  await mockServer.verify(createReleaseMock);
 
   /** Major release **/
+  version = '2.0.0';
+  createRefMock = mockServer.mock(
+    `/repos/${repo}/${packageName}/git/refs`,
+    {body: {ref: `refs/tags/v${version}`}, headers: [{name: 'Authorization', values: [`token ${env.GH_TOKEN}`]}]},
+    {body: {ref: `refs/tags/${version}`}}
+  );
+  createReleaseMock = mockServer.mock(
+    `/repos/${repo}/${packageName}/releases`,
+    {
+      body: {tag_name: `v${version}`, target_commitish: 'master', name: `v${version}`},
+      headers: [{name: 'Authorization', values: [`token ${env.GH_TOKEN}`]}],
+    },
+    {body: {html_url: `release-url/${version}`}}
+  );
 
   t.log('Commit a breaking change');
   await gitCommits(['feat: foo\n\n BREAKING CHANGE: bar']);
-  t.log('$ semantic-release pre');
-  ({stdout, stderr, code} = await execa(require.resolve('../bin/semantic-release'), ['pre'], {env}));
-  // Verify package.json and npm-shrinkwrap.json have been updated
-  t.is((await readJson('./package.json')).version, '2.0.0');
-  t.is((await readJson('./npm-shrinkwrap.json')).version, '2.0.0');
-  t.log('$ npm publish');
-  ({stdout, stderr, code} = await execa('npm', ['publish'], {env}));
-  // Verify output of npm publish
-  t.regex(stdout, /test-module@2.0.0/);
+  t.log('$ semantic-release');
+  ({stdout, code} = await execa(cli, [], {env}));
+  t.regex(stdout, new RegExp(`Published Github release: release-url/${version}`));
+  t.regex(stdout, new RegExp(`Publishing version ${version} to npm registry ${registry.uri}`));
   t.is(code, 0);
+
+  // Verify package.json and npm-shrinkwrap.json have been updated
+  t.is((await readJson('./package.json')).version, version);
+  t.is((await readJson('./npm-shrinkwrap.json')).version, version);
+
   // Retrieve the published package from the registry and check version and gitHead
-  [, version, releaseGitHead] = /^version = '(.+)'\s+gitHead = '(.+)'$/.exec(
+  [, releasedVersion, releasedGitHead] = /^version = '(.+)'\s+gitHead = '(.+)'$/.exec(
     (await execa('npm', ['show', 'test-module', 'version', 'gitHead'], {env})).stdout
   );
-  t.is(version, '2.0.0');
-  t.is(releaseGitHead, await gitHead());
-  t.log(`+ released ${version} with gitHead ${releaseGitHead}`);
+  t.is(releasedVersion, version);
+  t.is(releasedGitHead, await gitHead());
+  t.log(`+ released ${releasedVersion} with gitHead ${releasedGitHead}`);
+
+  await mockServer.verify(createRefMock);
+  await mockServer.verify(createReleaseMock);
 });
 
 test.serial('Release versions from a packed git repository, using tags to determine last release gitHead', async t => {
+  const packageName = 'test-module-2';
+  const repo = 'test-repo';
   // Create a git repository, set the current working directory at the root of the repo
   t.log('Create git repository');
   await gitRepo();
 
   // Create package.json in repository root
   await writeJson('./package.json', {
-    name: 'test-module-2',
+    name: packageName,
     version: '0.0.0-dev',
-    repository: {url: 'git+https://github.com/semantic-release/test-module-2'},
-    release: {verifyConditions: require.resolve('../src/lib/plugin-noop')},
+    repository: {url: `git@github.com:${repo}/${packageName}.git`},
+    release: {verifyConditions: noop, githubUrl: mockServer.url},
   });
 
-  /** Minor release **/
-
+  /** Initial release **/
+  let version = '1.0.0';
+  let createRefMock = mockServer.mock(
+    `/repos/${repo}/${packageName}/git/refs`,
+    {body: {ref: `refs/tags/v${version}`}, headers: [{name: 'Authorization', values: [`token ${env.GH_TOKEN}`]}]},
+    {body: {ref: `refs/tags/${version}`}}
+  );
+  let createReleaseMock = mockServer.mock(
+    `/repos/${repo}/${packageName}/releases`,
+    {
+      body: {tag_name: `v${version}`, target_commitish: 'master', name: `v${version}`},
+      headers: [{name: 'Authorization', values: [`token ${env.GH_TOKEN}`]}],
+    },
+    {body: {html_url: `release-url/${version}`}}
+  );
   t.log('Commit a feature');
   await gitCommits(['feat: Initial commit']);
   t.log('$ git pack-refs --all');
   await gitPackRefs();
-  t.log('$ semantic-release pre');
-  let {stdout, code} = await execa(require.resolve('../bin/semantic-release'), ['pre'], {env});
-  // Verify package.json has been updated
-  t.is((await readJson('./package.json')).version, '1.0.0');
-  t.log('$ npm publish');
-  ({stdout, code} = await execa('npm', ['publish'], {env}));
-  // Verify output of npm publish
-  t.regex(stdout, /test-module-2@1.0.0/);
+  t.log('$ semantic-release');
+  let {stdout, code} = await execa(cli, [], {env});
+  t.regex(stdout, new RegExp(`Published Github release: release-url/${version}`));
+  t.regex(stdout, new RegExp(`Publishing version ${version} to npm registry ${registry.uri}`));
   t.is(code, 0);
-  // Retrieve the published package from the registry and check version and gitHead
-  let version = (await execa('npm', ['show', 'test-module-2', 'version'], {env})).stdout;
-  t.is(version, '1.0.0');
-  t.log(`+ released ${version}`);
+  // Verify package.json has been updated
+  t.is((await readJson('./package.json')).version, version);
+  // Retrieve the published package from the registry and check version
+  let releasedVersion = (await execa('npm', ['show', packageName, 'version'], {env})).stdout;
+  t.is(releasedVersion, version);
+  t.log(`+ released ${releasedVersion}`);
+  await mockServer.verify(createRefMock);
+  await mockServer.verify(createReleaseMock);
   // Create a tag version so the tag can be used later to determine the commit associated with the version
-  await gitTagVersion('v1.0.0');
-  t.log('Create git tag v1.0.0');
+  await gitTagVersion(`v${version}`);
+  t.log(`Create git tag v${version}`);
 
   /** Patch release **/
-
+  version = '1.0.1';
+  createRefMock = mockServer.mock(
+    `/repos/${repo}/${packageName}/git/refs`,
+    {body: {ref: `refs/tags/v${version}`}, headers: [{name: 'Authorization', values: [`token ${env.GH_TOKEN}`]}]},
+    {body: {ref: `refs/tags/${version}`}}
+  );
+  createReleaseMock = mockServer.mock(
+    `/repos/${repo}/${packageName}/releases`,
+    {
+      body: {tag_name: `v${version}`, target_commitish: 'master', name: `v${version}`},
+      headers: [{name: 'Authorization', values: [`token ${env.GH_TOKEN}`]}],
+    },
+    {body: {html_url: `release-url/${version}`}}
+  );
   t.log('Commit a fix');
   await gitCommits(['fix: bar']);
-  t.log('$ semantic-release pre');
-  ({stdout, code} = await execa(require.resolve('../bin/semantic-release'), ['pre'], {env}));
-  // Verify package.json has been updated
-  t.is((await readJson('./package.json')).version, '1.0.1');
-  t.log('$ npm publish');
-  ({stdout, code} = await execa('npm', ['publish'], {env}));
-  // Verify output of npm publish
-  t.regex(stdout, /test-module-2@1.0.1/);
+  t.log('$ semantic-release');
+  ({stdout, code} = await execa(cli, [], {env}));
+  t.regex(stdout, new RegExp(`Published Github release: release-url/${version}`));
+  t.regex(stdout, new RegExp(`Publishing version ${version} to npm registry ${registry.uri}`));
   t.is(code, 0);
-  // Retrieve the published package from the registry and check version and gitHead
-  version = (await execa('npm', ['show', 'test-module-2', 'version'], {env})).stdout;
-  t.is(version, '1.0.1');
-  t.log(`+ released ${version}`);
+  // Verify package.json has been updated
+  t.is((await readJson('./package.json')).version, version);
+
+  // Retrieve the published package from the registry and check version
+  releasedVersion = (await execa('npm', ['show', packageName, 'version'], {env})).stdout;
+  t.is(releasedVersion, version);
+  t.log(`+ released ${releasedVersion}`);
+
+  await mockServer.verify(createRefMock);
+  await mockServer.verify(createReleaseMock);
 });
 
-test.serial('Exit with 1 in a plugin is not found', async t => {
-  // Environment variables used with cli
-  const env = {
-    CI: true,
-    npm_config_registry: uri,
-    GH_TOKEN: 'github_token',
-    NPM_OLD_TOKEN: 'aW50ZWdyYXRpb246c3VjaHNlY3VyZQ==',
-    NPM_EMAIL: 'integration@test.com',
-  };
+test.serial('Exit with 1 if a plugin is not found', async t => {
+  const packageName = 'test-module-3';
+  const repo = 'test-repo';
   // Create a git repository, set the current working directory at the root of the repo
   t.log('Create git repository');
   await gitRepo();
   await writeJson('./package.json', {
-    name: 'test-module-3',
+    name: packageName,
     version: '0.0.0-dev',
-    repository: {url: 'git+https://github.com/semantic-release/test-module-4'},
+    repository: {url: `git+https://github.com/${repo}/${packageName}`},
     release: {analyzeCommits: 'non-existing-path'},
   });
 
-  const {code} = await t.throws(execa(require.resolve('../bin/semantic-release'), ['pre'], {env}));
+  const {code, stderr} = await t.throws(execa(cli, [], {env}));
   t.is(code, 1);
+  t.regex(stderr, /Cannot find module/);
 });
 
 test.serial('Create a tag as a recovery solution for "ENOTINHISTORY" error', async t => {
+  const packageName = 'test-module-4';
+  const repo = 'test-repo';
   // Create a git repository, set the current working directory at the root of the repo
   t.log('Create git repository');
   await gitRepo();
 
   // Create package.json in repository root
   await writeJson('./package.json', {
-    name: 'test-module-4',
+    name: packageName,
     version: '0.0.0-dev',
-    repository: {url: 'git+https://github.com/semantic-release/test-module-2'},
-    release: {verifyConditions: require.resolve('../src/lib/plugin-noop')},
+    repository: {url: `git+https://github.com/${repo}/${packageName}`},
+    release: {verifyConditions: noop, githubUrl: mockServer.url},
   });
 
-  /** Minor release **/
-
+  /** Initial release **/
+  let version = '1.0.0';
+  let createRefMock = mockServer.mock(
+    `/repos/${repo}/${packageName}/git/refs`,
+    {body: {ref: `refs/tags/v${version}`}, headers: [{name: 'Authorization', values: [`token ${env.GH_TOKEN}`]}]},
+    {body: {ref: `refs/tags/${version}`}}
+  );
+  let createReleaseMock = mockServer.mock(
+    `/repos/${repo}/${packageName}/releases`,
+    {
+      body: {tag_name: `v${version}`, target_commitish: 'master', name: `v${version}`},
+      headers: [{name: 'Authorization', values: [`token ${env.GH_TOKEN}`]}],
+    },
+    {body: {html_url: `release-url/${version}`}}
+  );
   t.log('Commit a feature');
   await gitCommits(['feat: Initial commit']);
-  t.log('$ semantic-release pre');
-  let {stdout, stderr, code} = await execa(require.resolve('../bin/semantic-release'), ['pre'], {env});
-  // Verify package.json has been updated
-  t.is((await readJson('./package.json')).version, '1.0.0');
-  t.log('$ npm publish');
-  ({stdout, code} = await execa('npm', ['publish'], {env}));
-  // Verify output of npm publish
-  t.regex(stdout, /test-module-4@1.0.0/);
+  t.log('$ semantic-release');
+  let {stderr, stdout, code} = await execa(cli, [], {env});
+  t.regex(stdout, new RegExp(`Published Github release: release-url/${version}`));
+  t.regex(stdout, new RegExp(`Publishing version ${version} to npm registry ${registry.uri}`));
   t.is(code, 0);
+  // Verify package.json has been updated
+  t.is((await readJson('./package.json')).version, version);
+
   // Retrieve the published package from the registry and check version and gitHead
-  let [, version, releaseGitHead] = /^version = '(.+)'\s+gitHead = '(.+)'$/.exec(
-    (await execa('npm', ['show', 'test-module-4', 'version', 'gitHead'], {env})).stdout
+  let [, releasedVersion, releasedGitHead] = /^version = '(.+)'\s+gitHead = '(.+)'$/.exec(
+    (await execa('npm', ['show', packageName, 'version', 'gitHead'], {env})).stdout
   );
   const head = await gitHead();
-  t.is(releaseGitHead, head);
-  t.log(`+ released ${version}`);
-  t.is(version, '1.0.0');
+  t.is(releasedGitHead, head);
+  t.is(releasedVersion, version);
+  t.log(`+ released ${releasedVersion}`);
+  await mockServer.verify(createRefMock);
+  await mockServer.verify(createReleaseMock);
+
   // Create a tag version so the tag can be used later to determine the commit associated with the version
-  await gitTagVersion('v1.0.0');
-  t.log('Create git tag v1.0.0');
+  await gitTagVersion(`v${version}`);
+  t.log(`Create git tag v${version}`);
 
   /** Rewrite sha of commit used for release **/
 
@@ -271,34 +400,262 @@ test.serial('Create a tag as a recovery solution for "ENOTINHISTORY" error', asy
 
   t.log('Commit a fix');
   await gitCommits(['fix: bar']);
-  t.log('$ semantic-release pre');
-  ({stderr, stdout, code} = await execa(require.resolve('../bin/semantic-release'), ['pre'], {env, reject: false}));
+  t.log('$ semantic-release');
+  ({stderr, stdout, code} = await execa(cli, [], {env, reject: false}));
 
-  t.log('Fail with "ENOTINHISTORY" error');
-  t.is(code, 1);
+  t.log('Log "ENOTINHISTORY" message');
+  t.is(code, 0);
   t.regex(
     stderr,
     new RegExp(
-      `You can recover from this error by restoring the commit "${head}" or by creating a tag for the version "1.0.0" on the commit corresponding to this release`
+      `You can recover from this error by restoring the commit "${head}" or by creating a tag for the version "${version}" on the commit corresponding to this release`
     )
   );
 
   /** Create a tag to recover and redo release **/
 
-  t.log('Create git tag v1.0.0 to recover');
-  await gitTagVersion('v1.0.0', hash);
+  t.log(`Create git tag v${version} to recover`);
+  await gitTagVersion(`v${version}`, hash);
 
-  t.log('$ semantic-release pre');
-  ({stderr, stdout, code} = await execa(require.resolve('../bin/semantic-release'), ['pre'], {env}));
-  // Verify package.json has been updated
-  t.is((await readJson('./package.json')).version, '1.0.1');
-  t.log('$ npm publish');
-  ({stdout, code} = await execa('npm', ['publish'], {env}));
-  // Verify output of npm publish
-  t.regex(stdout, /test-module-4@1.0.1/);
+  version = '1.0.1';
+  createRefMock = mockServer.mock(
+    `/repos/${repo}/${packageName}/git/refs`,
+    {body: {ref: `refs/tags/v${version}`}, headers: [{name: 'Authorization', values: [`token ${env.GH_TOKEN}`]}]},
+    {body: {ref: `refs/tags/${version}`}}
+  );
+  createReleaseMock = mockServer.mock(
+    `/repos/${repo}/${packageName}/releases`,
+    {
+      body: {tag_name: `v${version}`, target_commitish: 'master', name: `v${version}`},
+      headers: [{name: 'Authorization', values: [`token ${env.GH_TOKEN}`]}],
+    },
+    {body: {html_url: `release-url/${version}`}}
+  );
+
+  t.log('$ semantic-release');
+  ({stderr, stdout, code} = await execa(cli, [], {env}));
+  t.regex(stdout, new RegExp(`Published Github release: release-url/${version}`));
+  t.regex(stdout, new RegExp(`Publishing version ${version} to npm registry ${registry.uri}`));
   t.is(code, 0);
+  // Verify package.json has been updated
+  t.is((await readJson('./package.json')).version, version);
+
   // Retrieve the published package from the registry and check version and gitHead
-  version = (await execa('npm', ['show', 'test-module-4', 'version'], {env})).stdout;
-  t.is(version, '1.0.1');
-  t.log(`+ released ${version}`);
+  releasedVersion = (await execa('npm', ['show', packageName, 'version'], {env})).stdout;
+  t.is(releasedVersion, version);
+  t.log(`+ released ${releasedVersion}`);
+  await mockServer.verify(createRefMock);
+  await mockServer.verify(createReleaseMock);
+});
+
+test.serial('Dry-run', async t => {
+  const packageName = 'test-module-5';
+  const repo = 'test-repo';
+  // Create a git repository, set the current working directory at the root of the repo
+  t.log('Create git repository and package.json');
+  await gitRepo();
+  // Create package.json in repository root
+  await writeJson('./package.json', {
+    name: packageName,
+    version: '0.0.0-dev',
+    repository: {url: `git+https://github.com/${repo}/${packageName}`},
+    release: {githubUrl: mockServer.url},
+  });
+
+  /** Initial release **/
+  const version = '1.0.0';
+  t.log('Commit a feature');
+  await gitCommits(['feat: Initial commit']);
+  t.log('$ semantic-release -d');
+  let {stdout, code} = await execa(cli, ['-d'], {env});
+  t.regex(stdout, new RegExp(`There is no previous release, the next release version is ${version}`));
+  t.regex(stdout, new RegExp(`Release note for version ${version}`));
+  t.regex(stdout, /Initial commit/);
+  t.is(code, 0);
+
+  // Verify package.json and has not been modified
+  t.is((await readJson('./package.json')).version, '0.0.0-dev');
+});
+
+test.serial('Pass options via CLI arguments', async t => {
+  const packageName = 'test-module-6';
+  const repo = 'test-repo';
+  const githubToken = 'OTHER_TOKEN';
+  // Create a git repository, set the current working directory at the root of the repo
+  t.log('Create git repository and package.json');
+  await gitRepo();
+  // Create package.json in repository root
+  await writeJson('./package.json', {
+    name: packageName,
+    version: '0.0.0-dev',
+    repository: {url: `git+https://github.com/${repo}/${packageName}`},
+    release: {githubUrl: mockServer.url},
+  });
+
+  /** Initial release **/
+  let version = '1.0.0';
+  let createRefMock = mockServer.mock(
+    `/repos/${repo}/${packageName}/git/refs`,
+    {body: {ref: `refs/tags/v${version}`}, headers: [{name: 'Authorization', values: [`token ${githubToken}`]}]},
+    {body: {ref: `refs/tags/${version}`}}
+  );
+  let createReleaseMock = mockServer.mock(
+    `/repos/${repo}/${packageName}/releases`,
+    {
+      body: {tag_name: `v${version}`, target_commitish: 'master', name: `v${version}`},
+      headers: [{name: 'Authorization', values: [`token ${githubToken}`]}],
+    },
+    {body: {html_url: `release-url/${version}`}}
+  );
+
+  t.log('Commit a feature');
+  await gitCommits(['feat: Initial commit']);
+  t.log('$ semantic-release');
+  let {stdout, code} = await execa(
+    cli,
+    ['--github-token', githubToken, '--verify-conditions', `${noop}, ${noop}`, '--debug'],
+    {env}
+  );
+  t.regex(stdout, new RegExp(`Published Github release: release-url/${version}`));
+  t.regex(stdout, new RegExp(`Publishing version ${version} to npm registry ${registry.uri}`));
+  t.is(code, 0);
+
+  // Verify package.json and has been updated
+  t.is((await readJson('./package.json')).version, version);
+
+  // Retrieve the published package from the registry and check version and gitHead
+  let [, releasedVersion, releasedGitHead] = /^version = '(.+)'\s+gitHead = '(.+)'$/.exec(
+    (await execa('npm', ['show', packageName, 'version', 'gitHead'], {env})).stdout
+  );
+  t.is(releasedVersion, version);
+  t.is(releasedGitHead, await gitHead());
+  t.log(`+ released ${releasedVersion} with gitHead ${releasedGitHead}`);
+
+  await mockServer.verify(createRefMock);
+  await mockServer.verify(createReleaseMock);
+});
+
+test.serial('Run via JS API', async t => {
+  const packageName = 'test-module-7';
+  const repo = 'test-repo';
+  const githubToken = 'OTHER_TOKEN';
+  // Create a git repository, set the current working directory at the root of the repo
+  t.log('Create git repository and package.json');
+  await gitRepo();
+  // Create package.json in repository root
+  await writeJson('./package.json', {
+    name: packageName,
+    version: '0.0.0-dev',
+    repository: {url: `git+https://github.com/${repo}/${packageName}`},
+    release: {githubUrl: mockServer.url},
+  });
+
+  /** Initial release **/
+  let version = '1.0.0';
+  let createRefMock = mockServer.mock(
+    `/repos/${repo}/${packageName}/git/refs`,
+    {body: {ref: `refs/tags/v${version}`}, headers: [{name: 'Authorization', values: [`token ${githubToken}`]}]},
+    {body: {ref: `refs/tags/${version}`}}
+  );
+  let createReleaseMock = mockServer.mock(
+    `/repos/${repo}/${packageName}/releases`,
+    {
+      body: {tag_name: `v${version}`, target_commitish: 'master', name: `v${version}`},
+      headers: [{name: 'Authorization', values: [`token ${githubToken}`]}],
+    },
+    {body: {html_url: `release-url/${version}`}}
+  );
+
+  process.env = Object.assign(process.env, env);
+
+  t.log('Commit a feature');
+  await gitCommits(['feat: Initial commit']);
+  t.log('$ Call semantic-release via API');
+  await semanticRelease({githubToken, verifyConditions: [noop, noop], debug: true});
+
+  t.true(t.context.log.calledWithMatch(/Published Github release: /, new RegExp(`release-url/${version}`)));
+  t.true(t.context.log.calledWithMatch(/Publishing version %s to npm registry %s/, version, registry.uri));
+
+  // Verify package.json and has been updated
+  t.is((await readJson('./package.json')).version, version);
+
+  // Retrieve the published package from the registry and check version and gitHead
+  let [, releasedVersion, releasedGitHead] = /^version = '(.+)'\s+gitHead = '(.+)'$/.exec(
+    (await execa('npm', ['show', packageName, 'version', 'gitHead'], {env})).stdout
+  );
+  t.is(releasedVersion, version);
+  t.is(releasedGitHead, await gitHead());
+  t.log(`+ released ${releasedVersion} with gitHead ${releasedGitHead}`);
+
+  await mockServer.verify(createRefMock);
+  await mockServer.verify(createReleaseMock);
+});
+
+test.serial('Returns and error code if NPM token is invalid', async t => {
+  const env = {npm_config_registry: registry.uri, GH_TOKEN: 'github_token', NPM_TOKEN: 'wrong_token'};
+  const packageName = 'test-module-8';
+  const repo = 'test-repo';
+  // Create a git repository, set the current working directory at the root of the repo
+  t.log('Create git repository and package.json');
+  await gitRepo();
+  // Create package.json in repository root
+  await writeJson('./package.json', {
+    name: packageName,
+    version: '0.0.0-dev',
+    repository: {url: `git+https://github.com/${repo}/${packageName}`},
+    release: {verifyConditions: noop, githubUrl: mockServer.url},
+  });
+
+  t.log('Commit a feature');
+  await gitCommits(['feat: Initial commit']);
+  t.log('$ semantic-release');
+  let {stderr, code} = await execa(cli, [], {env, reject: false});
+
+  t.regex(stderr, /forbidden Please log in before writing to the db/);
+  t.is(code, 1);
+});
+
+test.serial('Log unexpected errors from plugins', async t => {
+  const packageName = 'test-module-9';
+  const repo = 'test-repo';
+  // Create a git repository, set the current working directory at the root of the repo
+  t.log('Create git repository and package.json');
+  await gitRepo();
+  // Create package.json in repository root
+  await writeJson('./package.json', {
+    name: packageName,
+    version: '0.0.0-dev',
+    repository: {url: `git+https://github.com/${repo}/${packageName}`},
+    release: {githubUrl: mockServer.url, verifyConditions: pluginError},
+  });
+
+  /** Initial release **/
+  t.log('Commit a feature');
+  await gitCommits(['feat: Initial commit']);
+  t.log('$ semantic-release');
+  let {stderr, code} = await execa(cli, [], {env, reject: false});
+  t.regex(stderr, /Error: a/);
+  t.regex(stderr, new RegExp(pluginError));
+  t.is(code, 1);
+});
+
+test.serial('CLI returns error code and prints help if called with a command', async t => {
+  t.log('$ semantic-release pre');
+  let {stdout, code} = await execa(cli, ['pre'], {env, reject: false});
+  t.regex(stdout, /Usage: semantic-release/);
+  t.is(code, 1);
+});
+
+test.serial('CLI prints help if called with --help', async t => {
+  t.log('$ semantic-release --help');
+  let {stdout, code} = await execa(cli, ['--help'], {env});
+  t.regex(stdout, /Usage: semantic-release/);
+  t.is(code, 0);
+});
+
+test.serial('CLI returns error code with invalid option', async t => {
+  t.log('$ semantic-release --unknown-option');
+  let {stderr, code} = await execa(cli, ['--unknown-option'], {env, reject: false});
+  t.regex(stderr, /unknown option/);
+  t.is(code, 1);
 });

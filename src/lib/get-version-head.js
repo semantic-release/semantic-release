@@ -1,5 +1,7 @@
-const SemanticReleaseError = require('@semantic-release/error');
 const execa = require('execa');
+const debug = require('debug')('semantic-release:get-version-head');
+const SemanticReleaseError = require('@semantic-release/error');
+const {debugShell} = require('./debug');
 
 /**
  * Get the commit sha for a given tag.
@@ -10,8 +12,11 @@ const execa = require('execa');
  */
 async function gitTagHead(tagName) {
   try {
-    return (await execa('git', ['rev-list', '-1', '--tags', tagName])).stdout;
+    const shell = await execa('git', ['rev-list', '-1', '--tags', tagName]);
+    debugShell('Get git tag head', shell, debug);
+    return shell.stdout;
   } catch (err) {
+    debug(err);
     return null;
   }
 }
@@ -24,7 +29,9 @@ async function gitTagHead(tagName) {
  * @return {boolean} `true` if the commit `sha` is in the history of the current branch, `false` otherwise.
  */
 async function isCommitInHistory(sha) {
-  return (await execa('git', ['merge-base', '--is-ancestor', sha, 'HEAD'], {reject: false})).code === 0;
+  const shell = await execa('git', ['merge-base', '--is-ancestor', sha, 'HEAD'], {reject: false});
+  debugShell('Check if commit is in history', shell, debug);
+  return shell.code === 0;
 }
 
 /**
@@ -41,14 +48,17 @@ async function isCommitInHistory(sha) {
 module.exports = async (gitHead, version) => {
   // Check if gitHead is defined and exists in release branch
   if (gitHead && (await isCommitInHistory(gitHead))) {
+    debug('Use gitHead: %s', gitHead);
     return gitHead;
   }
 
   // Ushallow the repository
-  await execa('git', ['fetch', '--unshallow', '--tags'], {reject: false});
+  const shell = await execa('git', ['fetch', '--unshallow', '--tags'], {reject: false});
+  debugShell('Unshallow repo', shell, debug);
 
   // Check if gitHead is defined and exists in release branch again
   if (gitHead && (await isCommitInHistory(gitHead))) {
+    debug('Use gitHead: %s', gitHead);
     return gitHead;
   }
 
@@ -59,6 +69,7 @@ module.exports = async (gitHead, version) => {
 
     // Check if tagHead is found and exists in release branch again
     if (tagHead && (await isCommitInHistory(tagHead))) {
+      debug('Use tagHead: %s', tagHead);
       return tagHead;
     }
   }

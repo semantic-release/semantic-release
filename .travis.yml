@@ -1,6 +1,7 @@
 language: node_js
 services:
   - couchdb
+  - docker
 notifications:
   email: false
 node_js:
