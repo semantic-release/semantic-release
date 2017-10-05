@@ -1,6 +1,7 @@
 const {promisify} = require('util');
 const relative = require('require-relative');
 const pSeries = require('p-series');
+const logger = require('./logger');
 
 module.exports = options => {
   const plugins = {
@@ -10,17 +11,15 @@ module.exports = options => {
   };
   ['verifyConditions', 'verifyRelease'].forEach(plugin => {
     if (!Array.isArray(options[plugin])) {
-      plugins[plugin] = promisify(
-        normalize(
-          options[plugin],
-          plugin === 'verifyConditions' ? '@semantic-release/condition-travis' : './plugin-noop'
-        )
+      plugins[plugin] = normalize(
+        options[plugin],
+        plugin === 'verifyConditions' ? '@semantic-release/condition-travis' : './plugin-noop'
       );
     } else {
       plugins[plugin] = async pluginOptions => {
         return pSeries(
           options[plugin].map(step => {
-            return () => promisify(normalize(step, './plugin-noop'))(pluginOptions);
+            return () => normalize(step, './plugin-noop')(pluginOptions);
           })
         );
       };
@@ -31,13 +30,16 @@ module.exports = options => {
 };
 
 const normalize = (pluginConfig, fallback) => {
-  if (typeof pluginConfig === 'string') return relative(pluginConfig).bind(null, {});
-
-  if (pluginConfig && typeof pluginConfig.path === 'string') {
-    return relative(pluginConfig.path).bind(null, pluginConfig);
+  if (typeof pluginConfig === 'string') {
+    logger.log('Load plugin %s', pluginConfig);
+    return promisify(relative(pluginConfig).bind(null, {}));
   }
 
-  return require(fallback).bind(null, pluginConfig || {});
+  if (pluginConfig && typeof pluginConfig.path === 'string') {
+    logger.log('Load plugin %s', pluginConfig.path);
+    return promisify(relative(pluginConfig.path).bind(null, pluginConfig));
+  }
+  return promisify(require(fallback).bind(null, pluginConfig || {}));
 };
 
 module.exports.normalize = normalize;

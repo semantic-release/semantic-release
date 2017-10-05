@@ -83,11 +83,17 @@ When `semantic-release` is set up it will do that after every successful continu
 
 If you fear the loss of control over timing and marketing implications of software releases you should know that `semantic-release` supports [release channels](https://github.com/npm/npm/issues/2718) using `npm`’s [dist-tags](https://docs.npmjs.com/cli/dist-tag). This way you can keep control over what your users end up using by default, you can decide when to promote an automatically released version to the stable channel, and you can choose which versions to write blogposts and tweets about. You can use the same mechanism to [support older versions of your software](https://gist.github.com/boennemann/54042374e49c7ade8910), for example with important security fixes.
 
-This is what happens in series:
+When pushing new commits with `git push` a CI build is triggered. After running the tests the command `semantic-release` will execute the following tasks in series:
 
-| 1. `git push` | 2. `semantic-release pre` | 3. `npm publish` | 4. `semantic-release post` |
-| :--- | :--- | :--- | :---- |
-| New code is pushed and triggers a CI build. | Based on all commits that happened since the last release, the new version number gets written to the `package.json`. | The new version gets published to `npm`. | A changelog gets generated and a [release](https://help.github.com/articles/about-releases/) (including a git tag) on GitHub gets created. |
+| Step               | Description                                                                                 |
+| ------------------ | ------------------------------------------------------------------------------------------- |
+| Verify Conditions` | Run the [verifyConditions](#verifyConditions) plugin)                                       |
+| Get last release`  | Obtain last release with the [getLastRelease](#getLastRelease) plugin                       |
+| Analyze commits    | Determine the type of release to do with the [analyzeCommits](#analyzeCommits) plugin       |
+| Verify release     | Call the [verifyRelease](#verifyRelease) plugin                                             |
+| npm publish        | Update the version in `package.json` and call `npm publish`                                 |
+| Generate notes     | Generate release notes with plugin [generateNotes](#generateNotes)                          |
+| Github release     | A git tag and [Github release](https://help.github.com/articles/about-releases/) is created |
 
 _Note:_ The current release/tag implementation is tied to GitHub, but could be opened up to Bitbucket, GitLab, et al. Feel free to send PRs for these services.
 
@@ -147,14 +153,25 @@ _[This is what happens under the hood.](https://github.com/semantic-release/cli#
 
 You can pass options either via command line (in [kebab-case](https://lodash.com/docs#kebabCase)) or in the `release` field of your `package.json` (in [camelCase](https://lodash.com/docs#camelCase)). The following two examples are the same, but CLI arguments take precedence.
 
-| CLI | package.json |
-| --- | --- |
-| <pre><code>semantic-release pre --no-debug</code><pre> | <pre><code><div>//package.json</div><div>"release": {</div><div>  "debug": false</div><div>}</div></code></pre><pre><code>semantic-release pre</code></pre> |
+##### CLI
+```bash
+semantic-release --branch next
+```
 
+##### package.json
+```json
+"release": {
+  "branch": "next"
+}
+```
+```bash
+semantic-release
+```
 
 These options are currently available:
 - `branch`: The branch on which releases should happen. Default: `'master'`
-- `debug`: If true doesn’t actually publish to npm or write things to file. Default: `!process.env.CI`
+- `dry-run`: Dry-run mode, skipping verifyConditions, publishing and release, printing next version and release notes
+- `debug`: Output debugging information
 - `githubToken`: The token used to authenticate with GitHub. Default: `process.env.GH_TOKEN`
 - `githubUrl`: Optional. Pass your GitHub Enterprise endpoint.
 - `githubApiPathPrefix`: Optional. The path prefix for your GitHub Enterprise API.
@@ -181,11 +198,12 @@ There are numerous steps where you can customize `semantic-release`’s behaviou
       "path": "./path/to/a/module",
       "additional": "config"
     }
+  }
 }
 ```
 
 ```
-semantic-release pre --analyze-commits="npm-module-name"
+semantic-release --analyze-commits="npm-module-name"
 ```
 
 A plugin itself is an async function that always receives three arguments.
@@ -215,6 +233,7 @@ Have a look at the [default implementation](https://github.com/semantic-release/
 ### `generateNotes`
 
 This plugin is responsible for generating release notes. Call the callback with the notes as a string. Have a look at the [default implementation](https://github.com/semantic-release/release-notes-generator/).
+It receives a `commits` array, the `lastRelease` and `nextRelease` inside `config`.
 
 ### `verifyConditions`
 

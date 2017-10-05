@@ -1,7 +1,7 @@
 {
   "name": "semantic-release",
   "description": "Automated semver compliant package publishing",
-  "version": "0.0.0-placeholder",
+  "version": "0.0.0-development",
   "author": "Stephan Bönnemann <stephan@boennemann.me> (http://boennemann.me)",
   "bin": {
     "semantic-release": "bin/semantic-release.js"
@@ -20,16 +20,19 @@
     "@semantic-release/error": "^2.0.0",
     "@semantic-release/last-release-npm": "^2.0.0",
     "@semantic-release/release-notes-generator": "^4.0.0",
+    "chalk": "^2.3.0",
+    "commander": "^2.11.0",
+    "debug": "^3.1.0",
     "execa": "^0.8.0",
     "fs-extra": "^4.0.2",
     "git-head": "^1.2.1",
     "github": "^12.0.0",
     "lodash": "^4.0.0",
+    "marked": "^0.3.6",
+    "marked-terminal": "^2.0.0",
     "nerf-dart": "^1.0.0",
-    "nopt": "^4.0.0",
     "normalize-package-data": "^2.3.4",
-    "npmconf": "^2.1.2",
-    "npmlog": "^4.0.0",
+    "npm-conf": "^1.1.2",
     "p-series": "^1.0.0",
     "parse-github-repo-url": "^1.3.0",
     "require-relative": "^0.8.7",
@@ -40,6 +43,7 @@
     "codecov": "^3.0.0",
     "commitizen": "^2.9.6",
     "cz-conventional-changelog": "^2.0.0",
+    "dockerode": "^2.5.2",
     "eslint": "^4.7.0",
     "eslint-config-prettier": "^2.5.0",
     "eslint-config-standard": "^10.2.1",
@@ -48,12 +52,14 @@
     "eslint-plugin-prettier": "^2.3.0",
     "eslint-plugin-promise": "^3.5.0",
     "eslint-plugin-standard": "^3.0.1",
+    "get-stream": "^3.0.0",
+    "mockserver-client": "^1.0.16",
     "nock": "^9.0.2",
     "npm-registry-couchapp": "^2.6.12",
     "nyc": "^11.2.1",
     "p-map-series": "^1.0.0",
     "prettier": "^1.7.0",
-    "proxyquire": "^1.7.3",
+    "proxyquire": "^1.8.0",
     "rimraf": "^2.5.0",
     "sinon": "^4.0.0",
     "tempy": "^0.2.1"
@@ -91,7 +97,7 @@
     "version"
   ],
   "license": "MIT",
-  "main": "bin/semantic-release.js",
+  "main": "index.js",
   "nyc": {
     "include": [
       "src/**/*.js"
@@ -125,7 +131,7 @@
     "codecov": "codecov -f coverage/coverage-final.json",
     "lint": "eslint .",
     "pretest": "npm run clean && npm run lint",
-    "semantic-release": "./bin/semantic-release.js pre && npm publish && ./bin/semantic-release.js post",
+    "semantic-release": "./bin/semantic-release.js",
     "test": "nyc ava -v"
   }
 }

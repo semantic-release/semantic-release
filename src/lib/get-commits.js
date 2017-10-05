@@ -1,6 +1,8 @@
 const execa = require('execa');
-const log = require('npmlog');
+const debug = require('debug')('semantic-release:get-commits');
 const getVersionHead = require('./get-version-head');
+const {debugShell} = require('./debug');
+const logger = require('./logger');
 
 /**
  * Commit message.
@@ -11,61 +13,84 @@ const getVersionHead = require('./get-version-head');
  */
 
 /**
+ * Last release.
+ * 
+ * @typedef {Object} LastRelease
+ * @property {string} version The version number of the last release.
+ * @property {string} [gitHead] The commit sha used to make the last release.
+ */
+
+/**
+ * Result object.
+ * 
+ * @typedef {Object} Result
+ * @property {Array<Commit>} commits The list of commits since the last release.
+ * @property {LastRelease} lastRelease The updated lastRelease.
+ */
+
+/**
  * Retrieve the list of commits on the current branch since the last released version, or all the commits of the current branch if there is no last released version.
  * 
  * The commit correspoding to the last released version is determined as follow:
- * - Use `lastRelease.gitHead` if defined and present in `config.options.branch` history.
- * - If `lastRelease.gitHead` is not in the `config.options.branch` history, unshallow the repository and try again.
- * -  If `lastRelease.gitHead` is still not in the `config.options.branch` history, search for a tag named `v<version>` or `<version>` and verify if it's associated commit sha is present in `config.options.branch` history.
+ * - Use `lastRelease.gitHead` if defined and present in `branch` history.
+ * - If `lastRelease.gitHead` is not in the `branch` history, unshallow the repository and try again.
+ * - If `lastRelease.gitHead` is still not in the `branch` history, search for a tag named `v<version>` or `<version>` and verify if it's associated commit sha is present in `branch` history.
  *
- * @param {Object} config
- * @param {Object} config.lastRelease The lastRelease object obtained from the getLastRelease plugin.
- * @param {string} [config.lastRelease.version] The version number of the last release.
- * @param {string} [config.lastRelease.gitHead] The commit sha used to make the last release.
- * @param {Object} config.options The semantic-relese options.
- * @param {string} config.options.branch The branch to release from.
+ * @param {LastRelease} lastRelease The lastRelease object obtained from the getLastRelease plugin.
+ * @param {string} branch The branch to release from.
+ * @param {Object} logger Global logger.
  * 
- * @return {Promise<Array<Commit>>} The list of commits on the branch `config.options.branch` since the last release.
+ * @return {Promise<Result>} The list of commits on the branch `branch` since the last release and the updated lastRelease with the gitHead used to retrieve the commits.
  * 
- * @throws {SemanticReleaseError} with code `ENOTINHISTORY` if `config.lastRelease.gitHead` or the commit sha derived from `config.lastRelease.version` is not in the direct history of `config.options.branch`.
- * @throws {SemanticReleaseError} with code `ENOGITHEAD` if `config.lastRelease.gitHead` is undefined and no commit sha can be found for the `config.lastRelease.version`.
+ * @throws {SemanticReleaseError} with code `ENOTINHISTORY` if `lastRelease.gitHead` or the commit sha derived from `config.lastRelease.version` is not in the direct history of `branch`.
+ * @throws {SemanticReleaseError} with code `ENOGITHEAD` if `lastRelease.gitHead` is undefined and no commit sha can be found for the `config.lastRelease.version`.
  */
-module.exports = async ({lastRelease: {version, gitHead}, options: {branch}}) => {
+module.exports = async ({version, gitHead}, branch) => {
   if (gitHead || version) {
     try {
       gitHead = await getVersionHead(gitHead, version, branch);
     } catch (err) {
       if (err.code === 'ENOTINHISTORY') {
-        log.error('commits', notInHistoryMessage(err.gitHead, branch, version));
+        logger.error(notInHistoryMessage(err.gitHead, branch, version));
       } else {
-        log.error('commits', noGitHeadMessage(branch, version));
+        logger.error(noGitHeadMessage(branch, version));
       }
       throw err;
     }
+    logger.log('Retrieving commits since %s, corresponding to version %s', gitHead, version);
   } else {
+    logger.log('No previous release found, retrieving all commits');
     // If there is no gitHead nor a version, there is no previous release. Unshallow the repo in order to retrieve all commits
-    await execa('git', ['fetch', '--unshallow', '--tags'], {reject: false});
+    const shell = await execa('git', ['fetch', '--unshallow', '--tags'], {reject: false});
+    debugShell('Unshallow repo', shell, debug);
   }
 
   try {
-    return (await execa('git', [
+    const shell = await execa('git', [
       'log',
       '--format=format:%H==SPLIT==%B==END==',
       `${gitHead ? gitHead + '..' : ''}HEAD`,
-    ])).stdout
+    ]);
+    debugShell('Get commits', shell, debug);
+    const commits = shell.stdout
       .split('==END==')
       .filter(raw => !!raw.trim())
       .map(raw => {
         const [hash, message] = raw.trim().split('==SPLIT==');
         return {hash, message};
       });
+    logger.log('Found %s commits since last release', commits.length);
+    debug('Parsed commits: %o', commits);
+    return {commits, lastRelease: {version, gitHead}};
   } catch (err) {
-    return [];
+    debug(err);
+    logger.log('Found no commit since last release');
+    return {commits: [], lastRelease: {version, gitHead}};
   }
 };
 
 function noGitHeadMessage(branch, version) {
-  return `The commit the last release of this package was derived from cannot be determined from the release metadata not from the repository tags.
+  return `The commit the last release of this package was derived from cannot be determined from the release metadata nor from the repository tags.
 This means semantic-release can not extract the commits between now and then.
 This is usually caused by releasing from outside the repository directory or with innaccessible git metadata.
 
