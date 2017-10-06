@@ -23,4 +23,6 @@ npx is bundled with npm >= 5.4, or available via npm. More info: npm.im/npx`
 }
 
 // node 8+ from this point on
-require('../src')();
+require('../src')().catch(() => {
+  process.exit(1);
+});

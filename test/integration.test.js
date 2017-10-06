@@ -207,3 +207,26 @@ test.serial('Release versions from a packed git repository, using tags to determ
   t.is(version, '1.0.1');
   t.log(`+ released ${version}`);
 });
+
+test.serial('Exit with 1 in a plugin is not found', async t => {
+  // Environment variables used with cli
+  const env = {
+    CI: true,
+    npm_config_registry: uri,
+    GH_TOKEN: 'github_token',
+    NPM_OLD_TOKEN: 'aW50ZWdyYXRpb246c3VjaHNlY3VyZQ==',
+    NPM_EMAIL: 'integration@test.com',
+  };
+  // Create a git repository, set the current working directory at the root of the repo
+  t.log('Create git repository');
+  await gitRepo();
+  await writeJson('./package.json', {
+    name: 'test-module-3',
+    version: '0.0.0-dev',
+    repository: {url: 'git+https://github.com/semantic-release/test-module-4'},
+    release: {analyzeCommits: 'non-existing-path'},
+  });
+
+  const {code} = await t.throws(execa(require.resolve('../bin/semantic-release'), ['pre'], {env}));
+  t.is(code, 1);
+});
