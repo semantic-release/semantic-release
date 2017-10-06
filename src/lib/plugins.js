@@ -1,5 +1,5 @@
 const {promisify} = require('util');
-const relative = require('require-relative');
+const importFrom = require('import-from');
 const pSeries = require('p-series');
 
 module.exports = options => {
@@ -30,13 +30,17 @@ module.exports = options => {
 };
 
 const normalize = (pluginConfig, fallback) => {
-  if (typeof pluginConfig === 'string') return relative(pluginConfig).bind(null, {});
+  if (typeof pluginConfig === 'string') return importPlugin(pluginConfig).bind(null, {});
 
   if (pluginConfig && typeof pluginConfig.path === 'string') {
-    return relative(pluginConfig.path).bind(null, pluginConfig);
+    return importPlugin(pluginConfig.path).bind(null, pluginConfig);
   }
 
   return require(fallback).bind(null, pluginConfig || {});
 };
+
+function importPlugin(path) {
+  return importFrom.silent(__dirname, path) || importFrom(process.cwd(), path);
+}
 
 module.exports.normalize = normalize;
