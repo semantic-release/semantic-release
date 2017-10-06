@@ -1,8 +1,18 @@
+import path from 'path';
 import test from 'ava';
-import {writeJson, readJson} from 'fs-extra';
+import {writeJson, readJson, copy} from 'fs-extra';
 import {start, stop, uri} from './helpers/registry';
 import {gitRepo, gitCommits, gitHead, gitTagVersion, gitPackRefs} from './helpers/git-utils';
 import execa from 'execa';
+
+// Environment variables used with cli
+const env = {
+  CI: true,
+  npm_config_registry: uri,
+  GH_TOKEN: 'github_token',
+  NPM_OLD_TOKEN: 'aW50ZWdyYXRpb246c3VjaHNlY3VyZQ==',
+  NPM_EMAIL: 'integration@test.com',
+};
 
 test.before(async t => {
   // Start the local NPM registry
@@ -25,14 +35,6 @@ test.after.always(async t => {
 });
 
 test.serial('Release patch, minor and major versions', async t => {
-  // Environment variables used with cli
-  const env = {
-    CI: true,
-    npm_config_registry: uri,
-    GH_TOKEN: 'github_token',
-    NPM_OLD_TOKEN: 'aW50ZWdyYXRpb246c3VjaHNlY3VyZQ==',
-    NPM_EMAIL: 'integration@test.com',
-  };
   // Create a git repository, set the current working directory at the root of the repo
   t.log('Create git repository');
   await gitRepo();
@@ -146,14 +148,6 @@ test.serial('Release patch, minor and major versions', async t => {
 });
 
 test.serial('Release versions from a packed git repository, using tags to determine last release gitHead', async t => {
-  // Environment variables used with cli
-  const env = {
-    CI: true,
-    npm_config_registry: uri,
-    GH_TOKEN: 'github_token',
-    NPM_OLD_TOKEN: 'aW50ZWdyYXRpb246c3VjaHNlY3VyZQ==',
-    NPM_EMAIL: 'integration@test.com',
-  };
   // Create a git repository, set the current working directory at the root of the repo
   t.log('Create git repository');
   await gitRepo();
@@ -209,14 +203,6 @@ test.serial('Release versions from a packed git repository, using tags to determ
 });
 
 test.serial('Exit with 1 in a plugin is not found', async t => {
-  // Environment variables used with cli
-  const env = {
-    CI: true,
-    npm_config_registry: uri,
-    GH_TOKEN: 'github_token',
-    NPM_OLD_TOKEN: 'aW50ZWdyYXRpb246c3VjaHNlY3VyZQ==',
-    NPM_EMAIL: 'integration@test.com',
-  };
   // Create a git repository, set the current working directory at the root of the repo
   t.log('Create git repository');
   await gitRepo();
@@ -229,4 +215,33 @@ test.serial('Exit with 1 in a plugin is not found', async t => {
 
   const {code} = await t.throws(execa(require.resolve('../bin/semantic-release'), ['pre'], {env}));
   t.is(code, 1);
+});
+
+test.serial('Load plugin from package and local file when running globally', async t => {
+  // Package local project and install globally
+  t.log('Install semantic-release globally');
+  await execa('npm', ['install', '--global', (await execa('npm', ['pack', '.'])).stdout]);
+  // Create a git repository, set the current working directory at the root of the repo
+  t.log('Create git repository');
+  const repo = await gitRepo();
+  // Copy noop plugin to the temporary git repo
+  await copy(require.resolve('../src/lib/plugin-noop'), path.join(repo, 'local-plugin', 'plugin-noop.js'));
+  // Create package.json in repository root, referencing plugin via package name and local file
+  await writeJson('./package.json', {
+    name: 'test-module-4',
+    version: '0.0.0-dev',
+    repository: {url: 'git+https://github.com/semantic-release/test-module-4'},
+    release: {
+      analyzeCommits: '@semantic-release/commit-analyzer',
+      verifyConditions: './local-plugin/plugin-noop',
+      verifyRelease: {path: './local-plugin/plugin-noop'},
+      getLastRelease: {path: '@semantic-release/last-release-npm'},
+    },
+  });
+  t.log('Commit a feature');
+  await gitCommits(['feat: Initial commit']);
+
+  t.log('$ semantic-release pre');
+  const {code} = await execa('semantic-release', ['pre'], {env});
+  t.is(code, 0);
 });
