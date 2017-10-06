@@ -1,3 +1,4 @@
+import {promisify} from 'util';
 import test from 'ava';
 import plugins from '../src/lib/plugins';
 
@@ -69,10 +70,34 @@ test('Normalize and load plugin from object', t => {
   t.is(typeof plugin, 'function');
 });
 
-test('load from fallback', t => {
+test('Load from fallback', t => {
   // Call the normalize function with a fallback
   const plugin = plugins.normalize(null, '../lib/plugin-noop');
 
   // Verify the fallback plugin is loaded
   t.is(typeof plugin, 'function');
+});
+
+test('Always pass a defined "pluginConfig" for plugin defined with string', async t => {
+  // Call the normalize function with the path of a plugin that returns its config
+  const plugin = plugins.normalize('./test/fixtures/plugin-result-config');
+  const pluginResult = await promisify(plugin)({});
+
+  t.deepEqual(pluginResult.pluginConfig, {});
+});
+
+test('Always pass a defined "pluginConfig" for plugin defined with path', async t => {
+  // Call the normalize function with the path of a plugin that returns its config
+  const plugin = plugins.normalize({path: './test/fixtures/plugin-result-config'});
+  const pluginResult = await promisify(plugin)({});
+
+  t.deepEqual(pluginResult.pluginConfig, {path: './test/fixtures/plugin-result-config'});
+});
+
+test('Always pass a defined "pluginConfig" for fallback plugin', async t => {
+  // Call the normalize function with the path of a plugin that returns its config
+  const plugin = plugins.normalize(null, '../../test/fixtures/plugin-result-config');
+  const pluginResult = await promisify(plugin)({});
+
+  t.deepEqual(pluginResult.pluginConfig, {});
 });

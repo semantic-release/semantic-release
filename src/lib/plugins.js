@@ -36,7 +36,7 @@ const normalize = (pluginConfig, fallback) => {
     return relative(pluginConfig.path).bind(null, pluginConfig);
   }
 
-  return require(fallback).bind(null, pluginConfig);
+  return require(fallback).bind(null, pluginConfig || {});
 };
 
 module.exports.normalize = normalize;
