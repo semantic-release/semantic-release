@@ -10,20 +10,21 @@ module.exports = options => {
   };
   ['verifyConditions', 'verifyRelease'].forEach(plugin => {
     if (!Array.isArray(options[plugin])) {
-      plugins[plugin] = normalize(
-        options[plugin],
-        plugin === 'verifyConditions' ? '@semantic-release/condition-travis' : './plugin-noop'
+      plugins[plugin] = promisify(
+        normalize(
+          options[plugin],
+          plugin === 'verifyConditions' ? '@semantic-release/condition-travis' : './plugin-noop'
+        )
       );
-      return;
+    } else {
+      plugins[plugin] = async pluginOptions => {
+        return pSeries(
+          options[plugin].map(step => {
+            return () => promisify(normalize(step, './plugin-noop'))(pluginOptions);
+          })
+        );
+      };
     }
-
-    plugins[plugin] = async pluginOptions => {
-      return pSeries(
-        options[plugin].map(step => {
-          return () => promisify(normalize(step, './plugin-noop'))(pluginOptions);
-        })
-      );
-    };
   });
 
   return plugins;

@@ -17,7 +17,7 @@ module.exports = async config => {
     version: type === 'initial' ? '1.0.0' : semver.inc(lastRelease.version, type),
   };
 
-  await promisify(verifyRelease)(assign({commits, lastRelease, nextRelease}, config));
+  await verifyRelease(assign({commits, lastRelease, nextRelease}, config));
 
   return nextRelease;
 };
