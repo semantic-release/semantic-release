@@ -154,6 +154,7 @@ You can pass options either via command line (in [kebab-case](https://lodash.com
 
 These options are currently available:
 - `branch`: The branch on which releases should happen. Default: `'master'`
+- `no-pre-release`: By default, the releases with a npm dist-tag other than `latest` will produce a [Github release](https://help.github.com/articles/creating-releases/) with the __pre-release__ tag. You can add any dist-tag in the `no-pre-release` array in order to produce a regular release (non pre-release) on Github for those dist-tag. Default: `['latest']`
 - `debug`: If true doesn’t actually publish to npm or write things to file. Default: `!process.env.CI`
 - `githubToken`: The token used to authenticate with GitHub. Default: `process.env.GH_TOKEN`
 - `githubUrl`: Optional. Pass your GitHub Enterprise endpoint.
