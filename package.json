@@ -19,7 +19,7 @@
     "@semantic-release/condition-travis": "^6.0.0",
     "@semantic-release/error": "^2.0.0",
     "@semantic-release/last-release-npm": "^2.0.0",
-    "@semantic-release/release-notes-generator": "^4.0.0",
+    "@semantic-release/release-notes-generator": "^5.0.0",
     "chalk": "^2.3.0",
     "commander": "^2.11.0",
     "debug": "^3.1.0",
