@@ -1,5 +1,4 @@
 const program = require('commander');
-const SemanticReleaseError = require('@semantic-release/error');
 const logger = require('./lib/logger');
 
 function list(values) {
@@ -49,7 +48,7 @@ module.exports = async () => {
   } catch (err) {
     // If error is a SemanticReleaseError then it's an expected exception case (no release to be done, running on a PR etc..) and the cli will return with 0
     // Otherwise it's an unexpected error (configuration issue, code issue, plugin issue etc...) and the cli will return 1
-    if (err instanceof SemanticReleaseError) {
+    if (err.semanticRelease) {
       logger.log(`%s ${err.message}`, err.code);
     } else {
       process.exitCode = 1;
