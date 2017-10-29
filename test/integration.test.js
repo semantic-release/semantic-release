@@ -36,7 +36,6 @@ test.beforeEach(async t => {
 });
 
 test.afterEach.always(async t => {
-  console.log();
   // Restore process.env
   process.env = Object.assign({}, t.context.env);
   // Restore the current working directory
