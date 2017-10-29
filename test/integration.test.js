@@ -17,6 +17,7 @@ const env = {
 const cli = require.resolve('../bin/semantic-release');
 const noop = require.resolve('../src/lib/plugin-noop');
 const pluginError = require.resolve('./fixtures/plugin-error-a');
+const pluginInheritedError = require.resolve('./fixtures/plugin-error-inherited');
 
 test.before(async t => {
   await mockServer.start();
@@ -574,7 +575,7 @@ test.serial('Run via JS API', async t => {
   await semanticRelease({githubToken, verifyConditions: [noop, noop], debug: true});
 
   t.true(t.context.log.calledWithMatch(/Published Github release: /, new RegExp(`release-url/${version}`)));
-  t.true(t.context.log.calledWithMatch(/Publishing version %s to npm registry %s/, version, registry.uri));
+  t.true(t.context.log.calledWithMatch(/Publishing version .* to npm registry/, version, registry.uri));
 
   // Verify package.json and has been updated
   t.is((await readJson('./package.json')).version, version);
@@ -615,7 +616,7 @@ test.serial('Returns and error code if NPM token is invalid', async t => {
   t.is(code, 1);
 });
 
-test.serial('Log unexpected errors from plugins', async t => {
+test.serial('Log unexpected errors from plugins and exit with 1', async t => {
   const packageName = 'test-module-9';
   const repo = 'test-repo';
   // Create a git repository, set the current working directory at the root of the repo
@@ -637,6 +638,30 @@ test.serial('Log unexpected errors from plugins', async t => {
   t.regex(stderr, /Error: a/);
   t.regex(stderr, new RegExp(pluginError));
   t.is(code, 1);
+});
+
+test.serial('Log errors inheriting SemanticReleaseError and exit with 0', async t => {
+  const packageName = 'test-module-10';
+  const repo = 'test-repo';
+  // Create a git repository, set the current working directory at the root of the repo
+  t.log('Create git repository and package.json');
+  await gitRepo();
+  // Create package.json in repository root
+  await writeJson('./package.json', {
+    name: packageName,
+    version: '0.0.0-dev',
+    repository: {url: `git+https://github.com/${repo}/${packageName}`},
+    release: {githubUrl: mockServer.url, verifyConditions: pluginInheritedError},
+  });
+
+  /** Initial release **/
+  t.log('Commit a feature');
+  await gitCommits(['feat: Initial commit']);
+  t.log('$ semantic-release');
+  let {stdout, code} = await execa(cli, [], {env, reject: false});
+  // Verify the type and message are logged
+  t.regex(stdout, /EINHERITED Inherited error/);
+  t.is(code, 0);
 });
 
 test.serial('CLI returns error code and prints help if called with a command', async t => {
