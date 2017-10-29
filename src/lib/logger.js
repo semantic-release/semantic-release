@@ -6,13 +6,18 @@ const chalk = require('chalk');
 module.exports = {
   log(...args) {
     const [format, ...rest] = args;
-    console.log(`${chalk.grey('[Semantic release]:')} ${format}`, ...rest.map(arg => chalk.magenta(arg)));
+    console.log(
+      `${chalk.grey('[Semantic release]:')}${typeof format === 'string'
+        ? ` ${format.replace(/%[^%]/g, seq => chalk.magenta(seq))}`
+        : ''}`,
+      ...(typeof format === 'string' ? [] : [format]).concat(rest)
+    );
   },
   error(...args) {
     const [format, ...rest] = args;
     console.error(
-      `${chalk.grey('[Semantic release]:')} ${chalk.red(format instanceof Error ? format.stack : format)}`,
-      ...rest.map(arg => chalk.red(arg instanceof Error ? arg.stack : arg))
+      `${chalk.grey('[Semantic release]:')}${typeof format === 'string' ? ` ${chalk.red(format)}` : ''}`,
+      ...(typeof format === 'string' ? [] : [format]).concat(rest)
     );
   },
 };

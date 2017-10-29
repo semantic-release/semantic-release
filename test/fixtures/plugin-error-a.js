@@ -1,3 +1,5 @@
 module.exports = function(config, options, cb) {
-  cb(new Error('a'));
+  const error = new Error('a');
+  error.errorProperty = 'errorProperty';
+  cb(error);
 };
