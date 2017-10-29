@@ -52,7 +52,7 @@ module.exports = async () => {
       logger.log(`%s ${err.message}`, err.code);
     } else {
       process.exitCode = 1;
-      logger.error(err);
+      logger.error('An error occurred while running semantic-release: %O', err);
     }
   }
 };

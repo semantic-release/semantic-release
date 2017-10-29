@@ -634,8 +634,12 @@ test.serial('Log unexpected errors from plugins and exit with 1', async t => {
   await gitCommits(['feat: Initial commit']);
   t.log('$ semantic-release');
   let {stderr, code} = await execa(cli, [], {env, reject: false});
+  // Verify the type and message are logged
   t.regex(stderr, /Error: a/);
+  // Verify the the stacktrace is logged
   t.regex(stderr, new RegExp(pluginError));
+  // Verify the Error properties are logged
+  t.regex(stderr, /errorProperty: 'errorProperty'/);
   t.is(code, 1);
 });
 
