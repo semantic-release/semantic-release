@@ -42,12 +42,46 @@ test.serial('Get all commits when there is no last release', async t => {
   t.is(result.commits.length, 2);
   t.is(result.commits[0].hash.substring(0, 7), commits[0].hash);
   t.is(result.commits[0].message, commits[0].message);
+  t.truthy(result.commits[0].committerDate);
+  t.truthy(result.commits[0].author.name);
+  t.truthy(result.commits[0].committer.name);
   t.is(result.commits[1].hash.substring(0, 7), commits[1].hash);
   t.is(result.commits[1].message, commits[1].message);
+  t.truthy(result.commits[1].committerDate);
+  t.truthy(result.commits[1].author.name);
+  t.truthy(result.commits[1].committer.name);
   // Verify the last release is returned and updated
   t.truthy(result.lastRelease);
   t.falsy(result.lastRelease.gitHead);
   t.falsy(result.lastRelease.version);
+});
+
+test.serial('Get all commits with gitTags', async t => {
+  // Create a git repository, set the current working directory at the root of the repo
+  await gitRepo();
+  // Add commits to the master branch
+  let commits = await gitCommits(['First']);
+  // Create the tag corresponding to version 1.0.0
+  await gitTagVersion('v1.0.0');
+  // Add new commits to the master branch
+  commits = (await gitCommits(['Second'])).concat(commits);
+
+  // Retrieve the commits with the commits module
+  const result = await t.context.getCommits({}, 'master');
+  // Verify the commits created and retrieved by the module are identical
+  t.is(result.commits.length, 2);
+  t.is(result.commits[0].hash.substring(0, 7), commits[0].hash);
+  t.is(result.commits[0].message, commits[0].message);
+  t.truthy(result.commits[0].committerDate);
+  t.truthy(result.commits[0].author.name);
+  t.truthy(result.commits[0].committer.name);
+  t.is(result.commits[0].gitTags, '(HEAD -> master)');
+  t.is(result.commits[1].hash.substring(0, 7), commits[1].hash);
+  t.is(result.commits[1].message, commits[1].message);
+  t.truthy(result.commits[1].committerDate);
+  t.truthy(result.commits[1].author.name);
+  t.truthy(result.commits[1].committer.name);
+  t.is(result.commits[1].gitTags, '(tag: v1.0.0)');
 });
 
 test.serial('Get all commits when there is no last release, including the ones not in the shallow clone', async t => {
@@ -68,8 +102,14 @@ test.serial('Get all commits when there is no last release, including the ones n
   t.is(result.commits.length, 2);
   t.is(result.commits[0].hash.substring(0, 7), commits[0].hash);
   t.is(result.commits[0].message, commits[0].message);
+  t.truthy(result.commits[0].committerDate);
+  t.truthy(result.commits[0].author.name);
+  t.truthy(result.commits[0].committer.name);
   t.is(result.commits[1].hash.substring(0, 7), commits[1].hash);
   t.is(result.commits[1].message, commits[1].message);
+  t.truthy(result.commits[1].committerDate);
+  t.truthy(result.commits[1].author.name);
+  t.truthy(result.commits[1].committer.name);
   // Verify the last release is returned and updated
   t.truthy(result.lastRelease);
   t.falsy(result.lastRelease.gitHead);
@@ -89,8 +129,14 @@ test.serial('Get all commits since gitHead (from lastRelease)', async t => {
   t.is(result.commits.length, 2);
   t.is(result.commits[0].hash.substring(0, 7), commits[0].hash);
   t.is(result.commits[0].message, commits[0].message);
+  t.truthy(result.commits[0].committerDate);
+  t.truthy(result.commits[0].author.name);
+  t.truthy(result.commits[0].committer.name);
   t.is(result.commits[1].hash.substring(0, 7), commits[1].hash);
   t.is(result.commits[1].message, commits[1].message);
+  t.truthy(result.commits[1].committerDate);
+  t.truthy(result.commits[1].author.name);
+  t.truthy(result.commits[1].committer.name);
   // Verify the last release is returned and updated
   t.truthy(result.lastRelease);
   t.is(result.lastRelease.gitHead, commits[commits.length - 1].hash);
@@ -112,6 +158,9 @@ test.serial('Get all commits since gitHead (from lastRelease) on a detached head
   t.is(result.commits.length, 1);
   t.is(result.commits[0].hash.substring(0, 7), commits[1].hash);
   t.is(result.commits[0].message, commits[1].message);
+  t.truthy(result.commits[0].committerDate);
+  t.truthy(result.commits[0].author.name);
+  t.truthy(result.commits[0].committer.name);
   // Verify the last release is returned and updated
   t.truthy(result.lastRelease);
   t.is(result.lastRelease.gitHead, commits[commits.length - 1].hash);
@@ -135,8 +184,14 @@ test.serial('Get all commits since gitHead (from tag) ', async t => {
   t.is(result.commits.length, 2);
   t.is(result.commits[0].hash.substring(0, 7), commits[0].hash);
   t.is(result.commits[0].message, commits[0].message);
+  t.truthy(result.commits[0].committerDate);
+  t.truthy(result.commits[0].author.name);
+  t.truthy(result.commits[0].committer.name);
   t.is(result.commits[1].hash.substring(0, 7), commits[1].hash);
   t.is(result.commits[1].message, commits[1].message);
+  t.truthy(result.commits[1].committerDate);
+  t.truthy(result.commits[1].author.name);
+  t.truthy(result.commits[1].committer.name);
   // Verify the last release is returned and updated
   t.truthy(result.lastRelease);
   t.is(result.lastRelease.gitHead.substring(0, 7), commits[commits.length - 1].hash);
@@ -162,6 +217,9 @@ test.serial('Get all commits since gitHead (from tag) on a detached head repo', 
   t.is(result.commits.length, 1);
   t.is(result.commits[0].hash.substring(0, 7), commits[1].hash);
   t.is(result.commits[0].message, commits[1].message);
+  t.truthy(result.commits[0].committerDate);
+  t.truthy(result.commits[0].author.name);
+  t.truthy(result.commits[0].committer.name);
   // Verify the last release is returned and updated
   t.truthy(result.lastRelease);
   t.is(result.lastRelease.gitHead.substring(0, 7), commits[commits.length - 1].hash);
@@ -185,8 +243,14 @@ test.serial('Get all commits since gitHead (from tag formatted like v<version>) 
   t.is(result.commits.length, 2);
   t.is(result.commits[0].hash.substring(0, 7), commits[0].hash);
   t.is(result.commits[0].message, commits[0].message);
+  t.truthy(result.commits[0].committerDate);
+  t.truthy(result.commits[0].author.name);
+  t.truthy(result.commits[0].committer.name);
   t.is(result.commits[1].hash.substring(0, 7), commits[1].hash);
   t.is(result.commits[1].message, commits[1].message);
+  t.truthy(result.commits[1].committerDate);
+  t.truthy(result.commits[1].author.name);
+  t.truthy(result.commits[1].committer.name);
   // Verify the last release is returned and updated
   t.truthy(result.lastRelease);
   t.is(result.lastRelease.gitHead.substring(0, 7), commits[commits.length - 1].hash);
@@ -210,8 +274,14 @@ test.serial('Get commits when last release gitHead is missing but a tag match th
   t.is(result.commits.length, 2);
   t.is(result.commits[0].hash.substring(0, 7), commits[0].hash);
   t.is(result.commits[0].message, commits[0].message);
+  t.truthy(result.commits[0].committerDate);
+  t.truthy(result.commits[0].author.name);
+  t.truthy(result.commits[0].committer.name);
   t.is(result.commits[1].hash.substring(0, 7), commits[1].hash);
   t.is(result.commits[1].message, commits[1].message);
+  t.truthy(result.commits[1].committerDate);
+  t.truthy(result.commits[1].author.name);
+  t.truthy(result.commits[1].committer.name);
   // Verify the last release is returned and updated
   t.truthy(result.lastRelease);
   t.is(result.lastRelease.gitHead.substring(0, 7), commits[commits.length - 1].hash);
@@ -233,8 +303,14 @@ test.serial('Get all commits since gitHead, when gitHead are mising from the sha
   t.is(result.commits.length, 2);
   t.is(result.commits[0].hash.substring(0, 7), commits[0].hash);
   t.is(result.commits[0].message, commits[0].message);
+  t.truthy(result.commits[0].committerDate);
+  t.truthy(result.commits[0].author.name);
+  t.truthy(result.commits[0].committer.name);
   t.is(result.commits[1].hash.substring(0, 7), commits[1].hash);
   t.is(result.commits[1].message, commits[1].message);
+  t.truthy(result.commits[1].committerDate);
+  t.truthy(result.commits[1].author.name);
+  t.truthy(result.commits[1].committer.name);
   // Verify the last release is returned and updated
   t.truthy(result.lastRelease);
   t.is(result.lastRelease.gitHead.substring(0, 7), commits[commits.length - 1].hash);
@@ -263,8 +339,14 @@ test.serial('Get all commits since gitHead from tag, when tags are mising from t
   t.is(result.commits.length, 2);
   t.is(result.commits[0].hash.substring(0, 7), commits[0].hash);
   t.is(result.commits[0].message, commits[0].message);
+  t.truthy(result.commits[0].committerDate);
+  t.truthy(result.commits[0].author.name);
+  t.truthy(result.commits[0].committer.name);
   t.is(result.commits[1].hash.substring(0, 7), commits[1].hash);
   t.is(result.commits[1].message, commits[1].message);
+  t.truthy(result.commits[1].committerDate);
+  t.truthy(result.commits[1].author.name);
+  t.truthy(result.commits[1].committer.name);
   // Verify the last release is returned and updated
   t.truthy(result.lastRelease);
   t.is(result.lastRelease.gitHead.substring(0, 7), commits[commits.length - 1].hash);
