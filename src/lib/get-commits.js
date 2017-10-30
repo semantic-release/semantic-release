@@ -1,4 +1,6 @@
 const execa = require('execa');
+const gitLogParser = require('git-log-parser');
+const getStream = require('get-stream');
 const debug = require('debug')('semantic-release:get-commits');
 const getVersionHead = require('./get-version-head');
 const {debugShell} = require('./debug');
@@ -65,28 +67,17 @@ module.exports = async ({version, gitHead}, branch) => {
     debugShell('Unshallow repo', shell, debug);
   }
 
-  try {
-    const shell = await execa('git', [
-      'log',
-      '--format=format:%H==SPLIT==%B==END==',
-      `${gitHead ? gitHead + '..' : ''}HEAD`,
-    ]);
-    debugShell('Get commits', shell, debug);
-    const commits = shell.stdout
-      .split('==END==')
-      .filter(raw => !!raw.trim())
-      .map(raw => {
-        const [hash, message] = raw.trim().split('==SPLIT==');
-        return {hash, message};
-      });
-    logger.log('Found %s commits since last release', commits.length);
-    debug('Parsed commits: %o', commits);
-    return {commits, lastRelease: {version, gitHead}};
-  } catch (err) {
-    debug(err);
-    logger.log('Found no commit since last release');
-    return {commits: [], lastRelease: {version, gitHead}};
-  }
+  Object.assign(gitLogParser.fields, {hash: 'H', message: 'B', gitTags: 'd', committerDate: {key: 'ci', type: Date}});
+  const commits = (await getStream.array(
+    gitLogParser.parse({_: `${gitHead ? gitHead + '..' : ''}HEAD`})
+  )).map(commit => {
+    commit.message = commit.message.trim();
+    commit.gitTags = commit.gitTags.trim();
+    return commit;
+  });
+  logger.log('Found %s commits since last release', commits.length);
+  debug('Parsed commits: %o', commits);
+  return {commits, lastRelease: {version, gitHead}};
 };
 
 function noGitHeadMessage(branch, version) {
