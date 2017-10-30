@@ -273,7 +273,7 @@ Of course you can, but this doesn’t necessarily mean you should. Running your 
 
 ### Can I manually trigger the release of a specific version?
 
-You can trigger a release by pushing to your GitHub repository. You deliberately cannot trigger a _specific_ version release, because this is the whole point of `semantic-release`. Start your packages with `1.0.0` and semver on.  
+You can trigger a release by pushing to your GitHub repository. You deliberately cannot trigger a _specific_ version release, because this is the whole point of `semantic-release`. Start your packages with `1.0.0` and semver on.
 
 ### Is it _really_ a good idea to release on every push?
 
@@ -288,6 +288,16 @@ It is indeed a great idea because it _forces_ you to follow best practices. If y
 Being able to write code for just the most recent node versions greatly simplifies development. More language features are available, no transpilation is required, less test builds are to be run, awaited and debugged.
 
 For a special purpose tool like `semantic-release`, that's only meant to be used in controlled CI environments, we think it's okay to have such a high version requirement. As `semantic-release` handles package publishing we expect almost every project to have at least one build job running node 8 already – and that's all it takes. Even if that's not that case `semantic-release` can still be executed with the help of [npx](https://www.npmjs.com/package/npx) (`npx -p node@8 npm run semantic-release`).
+
+### Can I use `semantic-release` with yarn?
+
+Tl;dr: No, not yet.
+
+`yarn publish` does not have feature parity with `npm publish`.
+While npm publishes and tags the current version of the package according the the `version` field in package.json, yarn instead has an interactive step for determining the version which fails on CI inevitably.
+Furthermore, yarn does not use the environment variable `NPM_TOKEN`, which `semantic-release` sets in CI settings, for authentication.
+These issues are expected to be addressed once [yarn#610](https://github.com/yarnpkg/yarn/issues/610) is closed.
+See the original discussion [here](https://github.com/semantic-release/semantic-release/issues/423).
 
 ## Badge
 
