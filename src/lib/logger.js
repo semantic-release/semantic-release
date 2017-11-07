@@ -7,9 +7,9 @@ module.exports = {
   log(...args) {
     const [format, ...rest] = args;
     console.log(
-      `${chalk.grey('[Semantic release]:')}${typeof format === 'string'
-        ? ` ${format.replace(/%[^%]/g, seq => chalk.magenta(seq))}`
-        : ''}`,
+      `${chalk.grey('[Semantic release]:')}${
+        typeof format === 'string' ? ` ${format.replace(/%[^%]/g, seq => chalk.magenta(seq))}` : ''
+      }`,
       ...(typeof format === 'string' ? [] : [format]).concat(rest)
     );
   },

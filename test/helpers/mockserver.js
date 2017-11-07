@@ -47,7 +47,7 @@ const url = `http://${MOCK_SERVER_HOST}:${MOCK_SERVER_PORT}`;
  * @param {Object} request Request expectation. The http request made on `path` has to match those criteria in order to be valid.
  * @param {Object} request.body The JSON body the expected request must match.
  * @param {Object} request.headers The headers the expected request must match.
- * @param {Object} response The http response to return when receiving a request on `path`. 
+ * @param {Object} response The http response to return when receiving a request on `path`.
  * @param {String} [response.method='POST'] The http method for which to respond.
  * @param {number} [response.statusCode=200] The status code to respond.
  * @param {Object} response.body The JSON object to respond in the response body.
