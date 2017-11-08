@@ -19,7 +19,7 @@ test.beforeEach(t => {
   // Stub the logger functions
   t.context.log = stub();
   t.context.error = stub();
-  t.context.getCommits = proxyquire('../src/lib/get-commits', {
+  t.context.getCommits = proxyquire('../lib/get-commits', {
     './logger': {log: t.context.log, error: t.context.error},
   });
 });

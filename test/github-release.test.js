@@ -2,7 +2,7 @@ import test from 'ava';
 import {gitRepo, gitCommits, gitHead} from './helpers/git-utils';
 import nock from 'nock';
 import {authenticate} from './helpers/mock-github';
-import githubRelease from '../src/lib/github-release';
+import githubRelease from '../lib/github-release';
 
 test.beforeEach(t => {
   // Save the current working diretory

@@ -12,7 +12,7 @@ test.beforeEach(t => {
   // Save the current working diretory
   t.context.cwd = process.cwd();
   t.context.plugins = stub().returns({});
-  t.context.getConfig = proxyquire('../src/lib/get-config', {'./plugins': t.context.plugins});
+  t.context.getConfig = proxyquire('../lib/get-config', {'./plugins': t.context.plugins});
 });
 
 test.afterEach.always(t => {

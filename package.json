@@ -83,7 +83,9 @@
   },
   "files": [
     "bin",
-    "src"
+    "lib",
+    "index.js",
+    "cli.js"
   ],
   "homepage": "https://github.com/semantic-release/semantic-release#readme",
   "keywords": [
@@ -101,7 +103,9 @@
   "main": "index.js",
   "nyc": {
     "include": [
-      "src/**/*.js"
+      "lib/**/*.js",
+      "index.js",
+      "cli.js"
     ],
     "reporter": [
       "json",
@@ -130,7 +134,7 @@
     "clean": "rimraf coverage && rimraf .nyc_output",
     "cm": "git-cz",
     "codecov": "codecov -f coverage/coverage-final.json",
-    "lint": "eslint .",
+    "lint": "eslint index.js cli.js lib test",
     "pretest": "npm run clean && npm run lint",
     "semantic-release": "./bin/semantic-release.js",
     "test": "nyc ava -v"

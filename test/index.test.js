@@ -59,7 +59,7 @@ test('Plugins are called with expected values', async t => {
     npm,
   });
 
-  const semanticRelease = proxyquire('../src/index', {
+  const semanticRelease = proxyquire('../index', {
     './lib/logger': logger,
     './lib/verify-auth': verifyAuth,
     './lib/get-config': getConfig,
@@ -152,7 +152,7 @@ test('Dry-run skips verifyAuth, verifyConditions, publishNpm and githubRelease',
     npm,
   });
 
-  const semanticRelease = proxyquire('../src/index', {
+  const semanticRelease = proxyquire('../index', {
     './lib/logger': logger,
     './lib/verify-auth': verifyAuth,
     './lib/get-config': getConfig,
@@ -243,7 +243,7 @@ test('Throw SemanticReleaseError if there is no release to be done', async t => 
     npm,
   });
 
-  const semanticRelease = proxyquire('../src/index', {
+  const semanticRelease = proxyquire('../index', {
     './lib/logger': logger,
     './lib/verify-auth': verifyAuth,
     './lib/get-config': getConfig,

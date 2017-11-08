@@ -1,6 +1,6 @@
 import test from 'ava';
 import {stub} from 'sinon';
-const getRegistry = require('../src/lib/get-registry');
+const getRegistry = require('../lib/get-registry');
 
 test('Get registry from package.json', t => {
   // Retrieve the registry with the get-registry module and verify it returns the one from the package.json in parameter
