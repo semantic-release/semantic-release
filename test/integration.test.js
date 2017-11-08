@@ -5,7 +5,7 @@ import execa from 'execa';
 import {gitRepo, gitCommits, gitHead, gitTagVersion, gitPackRefs, gitAmmendCommit} from './helpers/git-utils';
 import registry from './helpers/registry';
 import mockServer from './helpers/mockserver';
-import semanticRelease from '../src';
+import semanticRelease from '..';
 
 // Environment variables used with cli
 const env = {
@@ -15,7 +15,7 @@ const env = {
   NPM_EMAIL: 'integration@test.com',
 };
 const cli = require.resolve('../bin/semantic-release');
-const noop = require.resolve('../src/lib/plugin-noop');
+const noop = require.resolve('../lib/plugin-noop');
 const pluginError = require.resolve('./fixtures/plugin-error-a');
 const pluginInheritedError = require.resolve('./fixtures/plugin-error-inherited');
 

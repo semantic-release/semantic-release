@@ -1,6 +1,6 @@
 import test from 'ava';
 import SemanticReleaseError from '@semantic-release/error';
-import verify from '../src/lib/verify-pkg';
+import verify from '../lib/verify-pkg';
 
 test('Verify name and repository', t => {
   // Call the verify module with package

@@ -6,7 +6,7 @@ import SemanticReleaseError from '@semantic-release/error';
 test.beforeEach(t => {
   // Stub the logger functions
   t.context.log = stub();
-  t.context.getNextVersion = proxyquire('../src/lib/get-next-version', {'./logger': {log: t.context.log}});
+  t.context.getNextVersion = proxyquire('../lib/get-next-version', {'./logger': {log: t.context.log}});
 });
 
 test('Increase version for patch release', t => {

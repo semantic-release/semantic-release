@@ -1,6 +1,6 @@
 import test from 'ava';
 import SemanticReleaseError from '@semantic-release/error';
-import verify from '../src/lib/verify-auth';
+import verify from '../lib/verify-auth';
 
 test('Verify npm and github auth', t => {
   // Call the verify module with options and env

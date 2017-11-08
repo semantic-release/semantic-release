@@ -6,7 +6,7 @@ import {stub, match} from 'sinon';
 test.beforeEach(t => {
   // Stub the logger functions
   t.context.log = stub();
-  t.context.plugins = proxyquire('../src/lib/plugins', {'./logger': {log: t.context.log}});
+  t.context.plugins = proxyquire('../lib/plugins', {'./logger': {log: t.context.log}});
 });
 
 test('Export plugins', t => {
@@ -24,7 +24,7 @@ test('Export plugins', t => {
 test('Pipeline - Get all results', async t => {
   // Call the plugin module with a verifyRelease plugin pipeline
   const pipelinePlugins = t.context.plugins({
-    verifyRelease: ['./src/lib/plugin-noop', './test/fixtures/plugin-result-a', './test/fixtures/plugin-result-b'],
+    verifyRelease: ['./lib/plugin-noop', './test/fixtures/plugin-result-a', './test/fixtures/plugin-result-b'],
   });
 
   // Call the verifyRelease pipeline
@@ -33,7 +33,7 @@ test('Pipeline - Get all results', async t => {
   // Verify the pipeline return the expected result for each plugin, in order
   t.deepEqual(results, [undefined, 'a', 'b']);
   // Verify the logger has been called with the plugins path
-  t.true(t.context.log.calledWith(match.string, './src/lib/plugin-noop'));
+  t.true(t.context.log.calledWith(match.string, './lib/plugin-noop'));
   t.true(t.context.log.calledWith(match.string, './test/fixtures/plugin-result-a'));
   t.true(t.context.log.calledWith(match.string, './test/fixtures/plugin-result-b'));
 });
@@ -60,34 +60,34 @@ test('Pipeline - Pass pluginConfig and options to each plugins', async t => {
 test('Pipeline - Get first error', async t => {
   // Call the plugin module with a verifyRelease plugin pipeline
   const pipelinePlugins = t.context.plugins({
-    verifyRelease: ['./src/lib/plugin-noop', './test/fixtures/plugin-error-a', './test/fixtures/plugin-error-b'],
+    verifyRelease: ['./lib/plugin-noop', './test/fixtures/plugin-error-a', './test/fixtures/plugin-error-b'],
   });
 
   // Call the verifyRelease pipeline and verify it returns the error thrown by './test/fixtures/plugin-error-a'
   await t.throws(pipelinePlugins.verifyRelease({}), 'a');
   // Verify the logger has been called with the plugins path
-  t.true(t.context.log.calledWith(match.string, './src/lib/plugin-noop'));
+  t.true(t.context.log.calledWith(match.string, './lib/plugin-noop'));
   t.true(t.context.log.calledWith(match.string, './test/fixtures/plugin-error-a'));
 });
 
 test('Normalize and load plugin from string', t => {
   // Call the normalize function with a path
-  const plugin = t.context.plugins.normalize('./src/lib/plugin-noop');
+  const plugin = t.context.plugins.normalize('./lib/plugin-noop');
 
   // Verify the plugin is loaded
   t.is(typeof plugin, 'function');
   // Verify the logger has been called with the plugins path
-  t.true(t.context.log.calledWith(match.string, './src/lib/plugin-noop'));
+  t.true(t.context.log.calledWith(match.string, './lib/plugin-noop'));
 });
 
 test('Normalize and load plugin from object', t => {
   // Call the normalize function with an object (with path property)
-  const plugin = t.context.plugins.normalize({path: './src/lib/plugin-noop'});
+  const plugin = t.context.plugins.normalize({path: './lib/plugin-noop'});
 
   // Verify the plugin is loaded
   t.is(typeof plugin, 'function');
   // Verify the logger has been called with the plugins path
-  t.true(t.context.log.calledWith(match.string, './src/lib/plugin-noop'));
+  t.true(t.context.log.calledWith(match.string, './lib/plugin-noop'));
 });
 
 test('Load from fallback', t => {
@@ -116,7 +116,7 @@ test('Always pass a defined "pluginConfig" for plugin defined with path', async 
 
 test('Always pass a defined "pluginConfig" for fallback plugin', async t => {
   // Call the normalize function with the path of a plugin that returns its config
-  const plugin = t.context.plugins.normalize(null, '../../test/fixtures/plugin-result-config');
+  const plugin = t.context.plugins.normalize(null, '../test/fixtures/plugin-result-config');
   const pluginResult = await promisify(plugin)({});
 
   t.deepEqual(pluginResult.pluginConfig, {});

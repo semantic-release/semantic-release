@@ -1,6 +1,6 @@
 import test from 'ava';
 import {stub, match} from 'sinon';
-import logger from '../src/lib/logger';
+import logger from '../lib/logger';
 
 test.beforeEach(t => {
   t.context.log = stub(console, 'log');
