@@ -1,0 +1,49 @@
+import test from 'ava';
+import {stub} from 'sinon';
+import getPlugins from '../../lib/plugins';
+
+test.beforeEach(t => {
+  // Stub the logger functions
+  t.context.log = stub();
+  t.context.logger = {log: t.context.log};
+});
+
+test('Export default plugins', t => {
+  // Call the plugin module
+  const plugins = getPlugins({}, t.context.logger);
+  // Verify the module returns a function for each plugin
+  t.is(typeof plugins.verifyConditions, 'function');
+  t.is(typeof plugins.getLastRelease, 'function');
+  t.is(typeof plugins.analyzeCommits, 'function');
+  t.is(typeof plugins.verifyRelease, 'function');
+  t.is(typeof plugins.generateNotes, 'function');
+  t.is(typeof plugins.publish, 'function');
+});
+
+test('Export plugins based on config', t => {
+  // Call the plugin module
+  const plugins = getPlugins(
+    {
+      verifyConditions: ['./test/fixtures/plugin-noop', {path: './test/fixtures/plugin-noop'}],
+      getLastRelease: './test/fixtures/plugin-noop',
+      analyzeCommits: {path: './test/fixtures/plugin-noop'},
+      verifyRelease: () => {},
+    },
+    t.context.logger
+  );
+  // Verify the module returns a function for each plugin
+  t.is(typeof plugins.verifyConditions, 'function');
+  t.is(typeof plugins.getLastRelease, 'function');
+  t.is(typeof plugins.analyzeCommits, 'function');
+  t.is(typeof plugins.verifyRelease, 'function');
+  t.is(typeof plugins.generateNotes, 'function');
+  t.is(typeof plugins.publish, 'function');
+});
+
+test('Throw an error if plugin configuration is invalid', t => {
+  const error = t.throws(() => getPlugins({verifyConditions: {}}, t.context.logger));
+  t.is(
+    error.message,
+    'The "verifyConditions" plugin, if defined, must be a single or an array of plugins definition. A plugin definition is either a string or an object with a path property.'
+  );
+});

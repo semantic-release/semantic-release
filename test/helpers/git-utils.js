@@ -1,4 +1,3 @@
-import {mkdir} from 'fs-extra';
 import tempy from 'tempy';
 import execa from 'execa';
 import pMapSeries from 'p-map-series';
@@ -15,17 +14,13 @@ import pMapSeries from 'p-map-series';
 /**
  * Create a temporary git repository and change the current working directory to the repository root.
  *
- * @method gitCommits
- * @param {Array<Commit>} commits the created commits.
- *
  * @return {string} The path of the repository.
  */
 export async function gitRepo() {
   const dir = tempy.directory();
 
   process.chdir(dir);
-  await mkdir('git-templates');
-  await execa('git', ['init', '--template=./git-templates']);
+  await execa('git', ['init']);
   await gitCheckout('master');
   return dir;
 }
