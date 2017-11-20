@@ -1,278 +1,211 @@
+import {callbackify} from 'util';
 import test from 'ava';
+import {writeJson} from 'fs-extra';
 import proxyquire from 'proxyquire';
 import {stub} from 'sinon';
-import SemanticReleaseError from '@semantic-release/error';
-
-const consoleLog = stub(console, 'log');
+import normalizeData from 'normalize-package-data';
+import {gitHead as getGitHead} from '../lib/git';
+import {gitRepo, gitCommits, gitTagVersion} from './helpers/git-utils';
 
 test.beforeEach(t => {
   // Save the current process.env
   t.context.env = Object.assign({}, process.env);
   // Save the current working diretory
   t.context.cwd = process.cwd();
+  // Stub the logger functions
+  t.context.log = stub();
+  t.context.error = stub();
+  t.context.logger = {log: t.context.log, error: t.context.error};
+  t.context.semanticRelease = proxyquire('../index', {'./lib/logger': t.context.logger});
+
+  t.context.stdout = stub(process.stdout, 'write');
+  t.context.stderr = stub(process.stderr, 'write');
 });
 
 test.afterEach.always(t => {
-  // Restore the current working directory
-  process.chdir(t.context.cwd);
   // Restore process.env
   process.env = Object.assign({}, t.context.env);
+  // Restore the current working directory
+  process.chdir(t.context.cwd);
+
+  t.context.stdout.restore();
+  t.context.stderr.restore();
 });
 
-test.after.always(t => {
-  consoleLog.restore();
-});
+test.serial('Plugins are called with expected values', async t => {
+  // Create a git repository, set the current working directory at the root of the repo
+  await gitRepo();
+  // Add commits to the master branch
+  let commits = await gitCommits(['First']);
+  // Create the tag corresponding to version 1.0.0
+  await gitTagVersion('v1.0.0');
+  // Add new commits to the master branch
+  commits = (await gitCommits(['Second'])).concat(commits);
 
-test('Plugins are called with expected values', async t => {
-  const env = {NPM_TOKEN: 'NPM_TOKEN'};
-  const pkgOptions = {branch: 'master'};
-  const cliOptions = {githubToken: 'GH_TOKEN'};
-  const options = Object.assign({}, pkgOptions, cliOptions);
-  const pkg = {name: 'available', release: options, repository: {url: 'http://github.com/whats/up.git'}};
-  const npm = {registry: 'http://test.registry.com'};
-  const lastRelease = {version: '1.0.0', gitHead: 'test_commit_head'};
-  const commitsLastRelease = {version: '1.0.0', gitHead: 'tag_head'};
-  const commits = [{hash: '1', message: 'fix: First fix'}, {hash: '2', message: 'feat: First feature'}];
-  const nextRelease = {type: 'major', version: '2.0.0'};
+  const name = 'package-name';
+  const lastRelease = {version: '1.0.0', gitHead: commits[commits.length - 1].hash, gitTag: 'v1.0.0'};
+  const nextRelease = {type: 'major', version: '2.0.0', gitHead: await getGitHead(), gitTag: 'v2.0.0'};
   const notes = 'Release notes';
 
-  // Stub modules
-  const log = stub();
-  const error = stub();
-  const logger = {log, error};
-  const verifyAuth = stub().returns();
-  const publishNpm = stub().resolves();
-  const githubRelease = stub().resolves();
-  const getCommits = stub().resolves({commits, lastRelease: commitsLastRelease});
-  const getNextVersion = stub().returns(nextRelease.version);
-  // Stub plugins
-  const verifyConditions = stub().resolves();
+  const verifyConditions1 = stub().resolves();
+  const verifyConditions2 = stub().resolves();
   const getLastRelease = stub().resolves(lastRelease);
   const analyzeCommits = stub().resolves(nextRelease.type);
   const verifyRelease = stub().resolves();
   const generateNotes = stub().resolves(notes);
-  const getConfig = stub().resolves({
-    plugins: {getLastRelease, analyzeCommits, verifyRelease, verifyConditions, generateNotes},
-    env,
-    options,
-    pkg,
-    npm,
-  });
+  const publish = stub().resolves();
 
-  const semanticRelease = proxyquire('../index', {
-    './lib/logger': logger,
-    './lib/verify-auth': verifyAuth,
-    './lib/get-config': getConfig,
-    './lib/get-commits': getCommits,
-    './lib/publish-npm': publishNpm,
-    './lib/github-release': githubRelease,
-    './lib/get-next-version': getNextVersion,
-  });
+  const options = {
+    branch: 'master',
+    verifyConditions: [callbackify(verifyConditions1), callbackify(verifyConditions2)],
+    getLastRelease: callbackify(getLastRelease),
+    analyzeCommits: callbackify(analyzeCommits),
+    verifyRelease: callbackify(verifyRelease),
+    generateNotes: callbackify(generateNotes),
+    publish: callbackify(publish),
+  };
+  const pkg = {name, version: '0.0.0-dev'};
+  normalizeData(pkg);
 
-  // Call the index module
-  await semanticRelease(cliOptions);
+  await writeJson('./package.json', pkg);
 
-  // Verify the sub-modules have been called with expected parameters
-  t.true(getConfig.calledOnce);
-  t.true(getConfig.calledWithExactly(cliOptions));
-  t.true(verifyAuth.calledOnce);
-  t.true(verifyAuth.calledWithExactly(options, env));
-  t.true(publishNpm.calledOnce);
-  t.true(publishNpm.calledWithExactly(pkg, npm, nextRelease));
-  t.true(githubRelease.calledOnce);
-  t.true(githubRelease.calledWithExactly(pkg, notes, nextRelease.version, options));
-  // Verify plugins have been called with expected parameters
-  t.true(verifyConditions.calledOnce);
-  t.true(verifyConditions.calledWithExactly({env, options, pkg, npm, logger}));
+  await t.context.semanticRelease(options);
+
+  t.true(verifyConditions1.calledOnce);
+  t.deepEqual(verifyConditions1.firstCall.args[1], {env: process.env, options, pkg, logger: t.context.logger});
+  t.true(verifyConditions2.calledOnce);
+  t.deepEqual(verifyConditions2.firstCall.args[1], {env: process.env, options, pkg, logger: t.context.logger});
+
   t.true(getLastRelease.calledOnce);
-  t.true(getLastRelease.calledWithExactly({env, options, pkg, npm, logger}));
+  t.deepEqual(getLastRelease.firstCall.args[1], {env: process.env, options, pkg, logger: t.context.logger});
+
   t.true(analyzeCommits.calledOnce);
-  t.true(analyzeCommits.calledWithExactly({env, options, pkg, npm, logger, lastRelease: commitsLastRelease, commits}));
+  t.deepEqual(analyzeCommits.firstCall.args[1].env, process.env);
+  t.deepEqual(analyzeCommits.firstCall.args[1].options, options);
+  t.deepEqual(analyzeCommits.firstCall.args[1].pkg, pkg);
+  t.deepEqual(analyzeCommits.firstCall.args[1].logger, t.context.logger);
+  t.deepEqual(analyzeCommits.firstCall.args[1].lastRelease, lastRelease);
+  t.deepEqual(analyzeCommits.firstCall.args[1].commits[0].hash.substring(0, 7), commits[0].hash);
+  t.deepEqual(analyzeCommits.firstCall.args[1].commits[0].message, commits[0].message);
+
   t.true(verifyRelease.calledOnce);
-  t.true(
-    verifyRelease.calledWithExactly({
-      env,
-      options,
-      pkg,
-      npm,
-      logger,
-      lastRelease: commitsLastRelease,
-      commits,
-      nextRelease,
-    })
-  );
+  t.deepEqual(verifyRelease.firstCall.args[1].env, process.env);
+  t.deepEqual(verifyRelease.firstCall.args[1].options, options);
+  t.deepEqual(verifyRelease.firstCall.args[1].pkg, pkg);
+  t.deepEqual(verifyRelease.firstCall.args[1].logger, t.context.logger);
+  t.deepEqual(verifyRelease.firstCall.args[1].lastRelease, lastRelease);
+  t.deepEqual(verifyRelease.firstCall.args[1].commits[0].hash.substring(0, 7), commits[0].hash);
+  t.deepEqual(verifyRelease.firstCall.args[1].commits[0].message, commits[0].message);
+  t.deepEqual(verifyRelease.firstCall.args[1].nextRelease, nextRelease);
+
   t.true(generateNotes.calledOnce);
-  t.true(
-    generateNotes.calledWithExactly({
-      env,
-      options,
-      pkg,
-      npm,
-      logger,
-      lastRelease: commitsLastRelease,
-      commits,
-      nextRelease,
-    })
-  );
+  t.deepEqual(generateNotes.firstCall.args[1].env, process.env);
+  t.deepEqual(generateNotes.firstCall.args[1].options, options);
+  t.deepEqual(generateNotes.firstCall.args[1].pkg, pkg);
+  t.deepEqual(generateNotes.firstCall.args[1].logger, t.context.logger);
+  t.deepEqual(generateNotes.firstCall.args[1].lastRelease, lastRelease);
+  t.deepEqual(generateNotes.firstCall.args[1].commits[0].hash.substring(0, 7), commits[0].hash);
+  t.deepEqual(generateNotes.firstCall.args[1].commits[0].message, commits[0].message);
+  t.deepEqual(generateNotes.firstCall.args[1].nextRelease, nextRelease);
+
+  t.true(publish.calledOnce);
+  t.deepEqual(publish.firstCall.args[1].options, options);
+  t.deepEqual(publish.firstCall.args[1].pkg, pkg);
+  t.deepEqual(publish.firstCall.args[1].logger, t.context.logger);
+  t.deepEqual(publish.firstCall.args[1].lastRelease, lastRelease);
+  t.deepEqual(publish.firstCall.args[1].commits[0].hash.substring(0, 7), commits[0].hash);
+  t.deepEqual(publish.firstCall.args[1].commits[0].message, commits[0].message);
+  t.deepEqual(publish.firstCall.args[1].nextRelease, Object.assign({}, nextRelease, {notes}));
 });
 
-test('Dry-run skips verifyAuth, verifyConditions, publishNpm and githubRelease', async t => {
-  const env = {NPM_TOKEN: 'NPM_TOKEN'};
-  const pkgOptions = {branch: 'master'};
-  const cliOptions = {githubToken: 'GH_TOKEN', dryRun: true};
-  const options = Object.assign({}, pkgOptions, cliOptions);
-  const pkg = {name: 'available', release: options, repository: {url: 'http://github.com/whats/up.git'}};
-  const npm = {registry: 'http://test.registry.com'};
-  const lastRelease = {version: '1.0.0', gitHead: 'test_commit_head'};
-  const commitsLastRelease = {version: '1.0.0', gitHead: 'tag_head'};
-  const commits = [{hash: '1', message: 'fix: First fix'}, {hash: '2', message: 'feat: First feature'}];
-  const nextRelease = {type: 'major', version: '2.0.0'};
+test.serial('Use new gitHead, and recreate release notes if a publish plugin create a commit', async t => {
+  // Create a git repository, set the current working directory at the root of the repo
+  await gitRepo();
+  // Add commits to the master branch
+  let commits = await gitCommits(['First']);
+  // Create the tag corresponding to version 1.0.0
+  await gitTagVersion('v1.0.0');
+  // Add new commits to the master branch
+  commits = (await gitCommits(['Second'])).concat(commits);
+
+  const lastRelease = {version: '1.0.0', gitHead: commits[commits.length - 1].hash, gitTag: 'v1.0.0'};
+  const nextRelease = {type: 'major', version: '2.0.0', gitHead: await getGitHead(), gitTag: 'v2.0.0'};
   const notes = 'Release notes';
 
-  // Stub modules
-  const log = stub();
-  const error = stub();
-  const logger = {log, error};
-  const verifyAuth = stub().returns();
-  const publishNpm = stub().resolves();
-  const githubRelease = stub().resolves();
-  const getCommits = stub().resolves({commits, lastRelease: commitsLastRelease});
-  const getNextVersion = stub().returns(nextRelease.version);
-  // Stub plugins
+  const generateNotes = stub().resolves(notes);
+  const publish1 = stub().callsFake(async () => {
+    await gitCommits(['Third']);
+  });
+  const publish2 = stub().resolves();
+
+  const options = {
+    branch: 'master',
+    verifyConditions: callbackify(stub().resolves()),
+    getLastRelease: callbackify(stub().resolves(lastRelease)),
+    analyzeCommits: callbackify(stub().resolves(nextRelease.type)),
+    verifyRelease: callbackify(stub().resolves()),
+    generateNotes: callbackify(generateNotes),
+    publish: [callbackify(publish1), callbackify(publish2)],
+  };
+
+  await writeJson('./package.json', {});
+  await t.context.semanticRelease(options);
+
+  t.true(generateNotes.calledTwice);
+  t.deepEqual(generateNotes.firstCall.args[1].nextRelease, nextRelease);
+  t.true(publish1.calledOnce);
+  t.deepEqual(publish1.firstCall.args[1].nextRelease, Object.assign({}, nextRelease, {notes}));
+
+  nextRelease.gitHead = await getGitHead();
+
+  t.deepEqual(generateNotes.secondCall.args[1].nextRelease, Object.assign({}, nextRelease, {notes}));
+  t.true(publish2.calledOnce);
+  t.deepEqual(publish2.firstCall.args[1].nextRelease, Object.assign({}, nextRelease, {notes}));
+});
+
+test.serial('Dry-run skips verifyConditions and publish', async t => {
+  // Create a git repository, set the current working directory at the root of the repo
+  await gitRepo();
+  // Add commits to the master branch
+  let commits = await gitCommits(['First']);
+  // Create the tag corresponding to version 1.0.0
+  await gitTagVersion('v1.0.0');
+  // Add new commits to the master branch
+  commits = (await gitCommits(['Second'])).concat(commits);
+
+  const name = 'package-name';
+  const lastRelease = {version: '1.0.0', gitHead: commits[commits.length - 1].hash, gitTag: 'v1.0.0'};
+  const nextRelease = {type: 'major', version: '2.0.0', gitHead: await getGitHead(), gitTag: 'v2.0.0'};
+  const notes = 'Release notes';
+
   const verifyConditions = stub().resolves();
   const getLastRelease = stub().resolves(lastRelease);
   const analyzeCommits = stub().resolves(nextRelease.type);
   const verifyRelease = stub().resolves();
   const generateNotes = stub().resolves(notes);
-  const getConfig = stub().resolves({
-    plugins: {getLastRelease, analyzeCommits, verifyRelease, verifyConditions, generateNotes},
-    env,
-    options,
-    pkg,
-    npm,
-  });
+  const publish = stub().resolves();
 
-  const semanticRelease = proxyquire('../index', {
-    './lib/logger': logger,
-    './lib/verify-auth': verifyAuth,
-    './lib/get-config': getConfig,
-    './lib/get-commits': getCommits,
-    './lib/publish-npm': publishNpm,
-    './lib/github-release': githubRelease,
-    './lib/get-next-version': getNextVersion,
-  });
+  const options = {
+    dryRun: true,
+    branch: 'master',
+    verifyConditions: callbackify(verifyConditions),
+    getLastRelease: callbackify(getLastRelease),
+    analyzeCommits: callbackify(analyzeCommits),
+    verifyRelease: callbackify(verifyRelease),
+    generateNotes: callbackify(generateNotes),
+    publish: callbackify(publish),
+  };
+  const pkg = {name, version: '0.0.0-dev'};
+  normalizeData(pkg);
 
-  // Call the index module
-  await semanticRelease(cliOptions);
+  await writeJson('./package.json', pkg);
 
-  // Verify that publishNpm, githubRelease, verifyAuth, verifyConditions have not been called in a dry run
-  t.true(publishNpm.notCalled);
-  t.true(githubRelease.notCalled);
-  t.true(verifyAuth.notCalled);
+  await t.context.semanticRelease(options);
+
   t.true(verifyConditions.notCalled);
-  // Verify the release notes are logged
-  t.true(consoleLog.calledWithMatch(notes));
-  // Verify the sub-modules have been called with expected parameters
-  t.true(getConfig.calledOnce);
-  t.true(getConfig.calledWithExactly(cliOptions));
-  // Verify plugins have been called with expected parameters
   t.true(getLastRelease.calledOnce);
-  t.true(getLastRelease.calledWithExactly({env, options, pkg, npm, logger}));
   t.true(analyzeCommits.calledOnce);
-  t.true(analyzeCommits.calledWithExactly({env, options, pkg, npm, logger, lastRelease: commitsLastRelease, commits}));
   t.true(verifyRelease.calledOnce);
-  t.true(
-    verifyRelease.calledWithExactly({
-      env,
-      options,
-      pkg,
-      npm,
-      logger,
-      lastRelease: commitsLastRelease,
-      commits,
-      nextRelease,
-    })
-  );
   t.true(generateNotes.calledOnce);
-  t.true(
-    generateNotes.calledWithExactly({
-      env,
-      options,
-      pkg,
-      npm,
-      logger,
-      lastRelease: commitsLastRelease,
-      commits,
-      nextRelease,
-    })
-  );
-});
-
-test('Throw SemanticReleaseError if there is no release to be done', async t => {
-  const env = {NPM_TOKEN: 'NPM_TOKEN'};
-  const pkgOptions = {branch: 'master'};
-  const cliOptions = {githubToken: 'GH_TOKEN'};
-  const options = Object.assign({}, pkgOptions, cliOptions);
-  const pkg = {name: 'available', release: options, repository: {url: 'http://github.com/whats/up.git'}};
-  const npm = {registry: 'http://test.registry.com'};
-  const lastRelease = {version: '1.0.0', gitHead: 'test_commit_head'};
-  const commitsLastRelease = {version: '1.0.0', gitHead: 'tag_head'};
-  const commits = [{hash: '1', message: 'fix: First fix'}, {hash: '2', message: 'feat: First feature'}];
-  const nextRelease = {type: undefined};
-
-  // Stub modules
-  const log = stub();
-  const error = stub();
-  const logger = {log, error};
-  const verifyAuth = stub().returns();
-  const publishNpm = stub().resolves();
-  const githubRelease = stub().resolves();
-  const getCommits = stub().resolves({commits, lastRelease: commitsLastRelease});
-  const getNextVersion = stub().returns(null);
-  // Stub plugins
-  const verifyConditions = stub().resolves();
-  const getLastRelease = stub().resolves(lastRelease);
-  const analyzeCommits = stub().resolves(nextRelease.type);
-  const verifyRelease = stub().resolves();
-  const generateNotes = stub().resolves();
-  const getConfig = stub().resolves({
-    plugins: {getLastRelease, analyzeCommits, verifyRelease, verifyConditions, generateNotes},
-    env,
-    options,
-    pkg,
-    npm,
-  });
-
-  const semanticRelease = proxyquire('../index', {
-    './lib/logger': logger,
-    './lib/verify-auth': verifyAuth,
-    './lib/get-config': getConfig,
-    './lib/get-commits': getCommits,
-    './lib/publish-npm': publishNpm,
-    './lib/github-release': githubRelease,
-    './lib/get-next-version': getNextVersion,
-  });
-
-  // Call the index module
-  const err = await t.throws(semanticRelease(cliOptions));
-  // Verify error code and type
-  t.is(err.code, 'ENOCHANGE');
-  t.true(err instanceof SemanticReleaseError);
-  // Verify the sub-modules have been called with expected parameters
-  t.true(getConfig.calledOnce);
-  t.true(getConfig.calledWithExactly(cliOptions));
-  t.true(verifyAuth.calledOnce);
-  t.true(verifyAuth.calledWithExactly(options, env));
-  // Verify plugins have been called with expected parameters
-  t.true(verifyConditions.calledOnce);
-  t.true(verifyConditions.calledWithExactly({env, options, pkg, npm, logger}));
-  t.true(getLastRelease.calledOnce);
-  t.true(getLastRelease.calledWithExactly({env, options, pkg, npm, logger}));
-  t.true(analyzeCommits.calledOnce);
-  t.true(analyzeCommits.calledWithExactly({env, options, pkg, npm, logger, lastRelease: commitsLastRelease, commits}));
-  // Verify that verifyRelease, publishNpm, generateNotes, githubRelease have not been called when no release is done
-  t.true(verifyRelease.notCalled);
-  t.true(generateNotes.notCalled);
-  t.true(publishNpm.notCalled);
-  t.true(githubRelease.notCalled);
+  t.true(publish.notCalled);
 });

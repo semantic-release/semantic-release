@@ -1,5 +1,4 @@
 import test from 'ava';
-import proxyquire from 'proxyquire';
 import {stub} from 'sinon';
 import SemanticReleaseError from '@semantic-release/error';
 import {
@@ -12,6 +11,7 @@ import {
   gitLog,
   gitDetachedHead,
 } from './helpers/git-utils';
+import getCommits from '../lib/get-commits';
 
 test.beforeEach(t => {
   // Save the current working diretory
@@ -19,9 +19,7 @@ test.beforeEach(t => {
   // Stub the logger functions
   t.context.log = stub();
   t.context.error = stub();
-  t.context.getCommits = proxyquire('../lib/get-commits', {
-    './logger': {log: t.context.log, error: t.context.error},
-  });
+  t.context.logger = {log: t.context.log, error: t.context.error};
 });
 
 test.afterEach.always(t => {
@@ -36,7 +34,7 @@ test.serial('Get all commits when there is no last release', async t => {
   const commits = await gitCommits(['First', 'Second']);
 
   // Retrieve the commits with the commits module
-  const result = await t.context.getCommits({}, 'master');
+  const result = await getCommits({}, 'master', t.context.logger);
 
   // Verify the commits created and retrieved by the module are identical
   t.is(result.commits.length, 2);
@@ -54,6 +52,7 @@ test.serial('Get all commits when there is no last release', async t => {
   t.truthy(result.lastRelease);
   t.falsy(result.lastRelease.gitHead);
   t.falsy(result.lastRelease.version);
+  t.falsy(result.lastRelease.gitTag);
 });
 
 test.serial('Get all commits with gitTags', async t => {
@@ -67,7 +66,7 @@ test.serial('Get all commits with gitTags', async t => {
   commits = (await gitCommits(['Second'])).concat(commits);
 
   // Retrieve the commits with the commits module
-  const result = await t.context.getCommits({}, 'master');
+  const result = await getCommits({}, 'master', t.context.logger);
   // Verify the commits created and retrieved by the module are identical
   t.is(result.commits.length, 2);
   t.is(result.commits[0].hash.substring(0, 7), commits[0].hash);
@@ -96,7 +95,7 @@ test.serial('Get all commits when there is no last release, including the ones n
   t.is((await gitLog()).length, 1);
 
   // Retrieve the commits with the commits module
-  const result = await t.context.getCommits({}, 'master');
+  const result = await getCommits({}, 'master', t.context.logger);
 
   // Verify the commits created and retrieved by the module are identical
   t.is(result.commits.length, 2);
@@ -114,6 +113,7 @@ test.serial('Get all commits when there is no last release, including the ones n
   t.truthy(result.lastRelease);
   t.falsy(result.lastRelease.gitHead);
   t.falsy(result.lastRelease.version);
+  t.falsy(result.lastRelease.gitTag);
 });
 
 test.serial('Get all commits since gitHead (from lastRelease)', async t => {
@@ -123,7 +123,7 @@ test.serial('Get all commits since gitHead (from lastRelease)', async t => {
   const commits = await gitCommits(['First', 'Second', 'Third']);
 
   // Retrieve the commits with the commits module, since commit 'First'
-  const result = await t.context.getCommits({gitHead: commits[commits.length - 1].hash}, 'master');
+  const result = await getCommits({gitHead: commits[commits.length - 1].hash}, 'master', t.context.logger);
 
   // Verify the commits created and retrieved by the module are identical
   t.is(result.commits.length, 2);
@@ -141,6 +141,7 @@ test.serial('Get all commits since gitHead (from lastRelease)', async t => {
   t.truthy(result.lastRelease);
   t.is(result.lastRelease.gitHead, commits[commits.length - 1].hash);
   t.falsy(result.lastRelease.version);
+  t.falsy(result.lastRelease.gitTag);
 });
 
 test.serial('Get all commits since gitHead (from lastRelease) on a detached head repo', async t => {
@@ -152,7 +153,7 @@ test.serial('Get all commits since gitHead (from lastRelease) on a detached head
   await gitDetachedHead(repo, commits[1].hash);
 
   // Retrieve the commits with the commits module, since commit 'First'
-  const result = await t.context.getCommits({gitHead: commits[commits.length - 1].hash}, 'master');
+  const result = await getCommits({gitHead: commits[commits.length - 1].hash}, 'master', t.context.logger);
 
   // Verify the module retrieved only the commit 'feat: Second' (included in the detached and after 'fix: First')
   t.is(result.commits.length, 1);
@@ -165,6 +166,7 @@ test.serial('Get all commits since gitHead (from lastRelease) on a detached head
   t.truthy(result.lastRelease);
   t.is(result.lastRelease.gitHead, commits[commits.length - 1].hash);
   t.falsy(result.lastRelease.version);
+  t.falsy(result.lastRelease.gitTag);
 });
 
 test.serial('Get all commits since gitHead (from tag) ', async t => {
@@ -178,7 +180,7 @@ test.serial('Get all commits since gitHead (from tag) ', async t => {
   commits = (await gitCommits(['Second', 'Third'])).concat(commits);
 
   // Retrieve the commits with the commits module, since commit 'First' (associated with tag v1.0.0)
-  const result = await t.context.getCommits({version: '1.0.0'}, 'master');
+  const result = await getCommits({version: '1.0.0'}, 'master', t.context.logger);
 
   // Verify the commits created and retrieved by the module are identical
   t.is(result.commits.length, 2);
@@ -195,6 +197,7 @@ test.serial('Get all commits since gitHead (from tag) ', async t => {
   // Verify the last release is returned and updated
   t.truthy(result.lastRelease);
   t.is(result.lastRelease.gitHead.substring(0, 7), commits[commits.length - 1].hash);
+  t.is(result.lastRelease.gitTag, '1.0.0');
   t.is(result.lastRelease.version, '1.0.0');
 });
 
@@ -211,7 +214,7 @@ test.serial('Get all commits since gitHead (from tag) on a detached head repo', 
   await gitDetachedHead(repo, commits[1].hash);
 
   // Retrieve the commits with the commits module, since commit 'First' (associated with tag 1.0.0)
-  const result = await t.context.getCommits({version: '1.0.0'}, 'master');
+  const result = await getCommits({version: '1.0.0'}, 'master', t.context.logger);
 
   // Verify the module retrieved only the commit 'feat: Second' (included in the detached and after 'fix: First')
   t.is(result.commits.length, 1);
@@ -223,6 +226,7 @@ test.serial('Get all commits since gitHead (from tag) on a detached head repo', 
   // Verify the last release is returned and updated
   t.truthy(result.lastRelease);
   t.is(result.lastRelease.gitHead.substring(0, 7), commits[commits.length - 1].hash);
+  t.is(result.lastRelease.gitTag, '1.0.0');
   t.is(result.lastRelease.version, '1.0.0');
 });
 
@@ -237,7 +241,7 @@ test.serial('Get all commits since gitHead (from tag formatted like v<version>) 
   commits = (await gitCommits(['Second', 'Third'])).concat(commits);
 
   // Retrieve the commits with the commits module, since commit 'First' (associated with tag v1.0.0)
-  const result = await t.context.getCommits({version: '1.0.0'}, 'master');
+  const result = await getCommits({version: '1.0.0'}, 'master', t.context.logger);
 
   // Verify the commits created and retrieved by the module are identical
   t.is(result.commits.length, 2);
@@ -254,6 +258,7 @@ test.serial('Get all commits since gitHead (from tag formatted like v<version>) 
   // Verify the last release is returned and updated
   t.truthy(result.lastRelease);
   t.is(result.lastRelease.gitHead.substring(0, 7), commits[commits.length - 1].hash);
+  t.is(result.lastRelease.gitTag, 'v1.0.0');
   t.is(result.lastRelease.version, '1.0.0');
 });
 
@@ -268,7 +273,7 @@ test.serial('Get commits when last release gitHead is missing but a tag match th
   commits = (await gitCommits(['Second', 'Third'])).concat(commits);
 
   // Retrieve the commits with the commits module, since commit 'First' (associated with tag v1.0.0)
-  const result = await t.context.getCommits({version: '1.0.0', gitHead: 'missing'}, 'master');
+  const result = await getCommits({version: '1.0.0', gitHead: 'missing'}, 'master', t.context.logger);
 
   // Verify the commits created and retrieved by the module are identical
   t.is(result.commits.length, 2);
@@ -285,6 +290,7 @@ test.serial('Get commits when last release gitHead is missing but a tag match th
   // Verify the last release is returned and updated
   t.truthy(result.lastRelease);
   t.is(result.lastRelease.gitHead.substring(0, 7), commits[commits.length - 1].hash);
+  t.is(result.lastRelease.gitTag, 'v1.0.0');
   t.is(result.lastRelease.version, '1.0.0');
 });
 
@@ -297,7 +303,11 @@ test.serial('Get all commits since gitHead, when gitHead are mising from the sha
   await gitShallowClone(repo);
 
   // Retrieve the commits with the commits module, since commit 'First'
-  const result = await t.context.getCommits({version: '1.0.0', gitHead: commits[commits.length - 1].hash}, 'master');
+  const result = await getCommits(
+    {version: '1.0.0', gitHead: commits[commits.length - 1].hash},
+    'master',
+    t.context.logger
+  );
 
   // Verify the commits created and retrieved by the module are identical
   t.is(result.commits.length, 2);
@@ -315,6 +325,7 @@ test.serial('Get all commits since gitHead, when gitHead are mising from the sha
   t.truthy(result.lastRelease);
   t.is(result.lastRelease.gitHead.substring(0, 7), commits[commits.length - 1].hash);
   t.is(result.lastRelease.version, '1.0.0');
+  t.falsy(result.lastRelease.gitTag);
 });
 
 test.serial('Get all commits since gitHead from tag, when tags are mising from the shallow clone', async t => {
@@ -333,7 +344,7 @@ test.serial('Get all commits since gitHead from tag, when tags are mising from t
   t.is((await gitTags()).length, 0);
 
   // Retrieve the commits with the commits module, since commit 'First' (associated with tag v1.0.0)
-  const result = await t.context.getCommits({version: '1.0.0'}, 'master');
+  const result = await getCommits({version: '1.0.0'}, 'master', t.context.logger);
 
   // Verify the commits created and retrieved by the module are identical
   t.is(result.commits.length, 2);
@@ -350,6 +361,7 @@ test.serial('Get all commits since gitHead from tag, when tags are mising from t
   // Verify the last release is returned and updated
   t.truthy(result.lastRelease);
   t.is(result.lastRelease.gitHead.substring(0, 7), commits[commits.length - 1].hash);
+  t.is(result.lastRelease.gitTag, 'v1.0.0');
   t.is(result.lastRelease.version, '1.0.0');
 });
 
@@ -360,7 +372,7 @@ test.serial('Return empty array if lastRelease.gitHead is the last commit', asyn
   const commits = await gitCommits(['First', 'Second']);
 
   // Retrieve the commits with the commits module, since commit 'Second' (therefore none)
-  const result = await t.context.getCommits({gitHead: commits[0].hash, version: '1.0.0'}, 'master');
+  const result = await getCommits({gitHead: commits[0].hash, version: '1.0.0'}, 'master', t.context.logger);
 
   // Verify no commit is retrieved
   t.deepEqual(result.commits, []);
@@ -368,6 +380,7 @@ test.serial('Return empty array if lastRelease.gitHead is the last commit', asyn
   t.truthy(result.lastRelease);
   t.is(result.lastRelease.gitHead.substring(0, 7), commits[0].hash);
   t.is(result.lastRelease.version, '1.0.0');
+  t.falsy(result.lastRelease.gitTag);
 });
 
 test.serial('Return empty array if there is no commits', async t => {
@@ -375,7 +388,7 @@ test.serial('Return empty array if there is no commits', async t => {
   await gitRepo();
 
   // Retrieve the commits with the commits module
-  const result = await t.context.getCommits({}, 'master');
+  const result = await getCommits({}, 'master', t.context.logger);
 
   // Verify no commit is retrieved
   t.deepEqual(result.commits, []);
@@ -392,7 +405,7 @@ test.serial('Throws ENOGITHEAD error if the gitHead of the last release cannot b
   await gitCommits(['First', 'Second']);
 
   // Retrieve the commits with the commits module
-  const error = await t.throws(t.context.getCommits({version: '1.0.0'}, 'master'));
+  const error = await t.throws(getCommits({version: '1.0.0'}, 'master', t.context.logger));
 
   // Verify error code and type
   t.is(error.code, 'ENOGITHEAD');
@@ -411,7 +424,7 @@ test.serial('Throws ENOTINHISTORY error if gitHead is not in history', async t =
   await gitCommits(['First', 'Second']);
 
   // Retrieve the commits with the commits module
-  const error = await t.throws(t.context.getCommits({gitHead: 'notinhistory'}, 'master'));
+  const error = await t.throws(getCommits({gitHead: 'notinhistory'}, 'master', t.context.logger));
 
   // Verify error code and type
   t.is(error.code, 'ENOTINHISTORY');
@@ -434,7 +447,9 @@ test.serial('Throws ENOTINHISTORY error if gitHead is not in branch history but 
   await gitCheckout('master', false);
 
   // Retrieve the commits with the commits module
-  const error = await t.throws(t.context.getCommits({version: '1.0.1', gitHead: commitsBranch[0].hash}, 'master'));
+  const error = await t.throws(
+    getCommits({version: '1.0.1', gitHead: commitsBranch[0].hash}, 'master', t.context.logger)
+  );
 
   // Verify error code and type
   t.is(error.code, 'ENOTINHISTORY');
@@ -461,7 +476,9 @@ test.serial('Throws ENOTINHISTORY error if gitHead is not in detached head but p
   await gitDetachedHead(repo, commitsMaster[0].hash);
 
   // Retrieve the commits with the commits module, since commit 'Second'
-  const error = await t.throws(t.context.getCommits({version: '1.0.1', gitHead: commitsBranch[0].hash}, 'master'));
+  const error = await t.throws(
+    getCommits({version: '1.0.1', gitHead: commitsBranch[0].hash}, 'master', t.context.logger)
+  );
 
   // Verify error code and type
   t.is(error.code, 'ENOTINHISTORY');
@@ -488,7 +505,7 @@ test.serial('Throws ENOTINHISTORY error when a tag is not in branch history but 
   await gitCommits(['Forth']);
 
   // Retrieve the commits with the commits module
-  const error = await t.throws(t.context.getCommits({version: '1.0.0'}, 'master'));
+  const error = await t.throws(getCommits({version: '1.0.0'}, 'master', t.context.logger));
   // Verify error code and type
   t.is(error.code, 'ENOTINHISTORY');
   t.true(error instanceof SemanticReleaseError);

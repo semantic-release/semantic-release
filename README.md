@@ -54,7 +54,7 @@ This removes the immediate connection between human emotions and version numbers
       “We fail to follow SemVer – and why it needn’t matter”
     </th>
     <th>
-      “semantic-release Q&A with Kent C. Dodds”
+      “semantic-release Q&amp;A with Kent C. Dodds”
     </th>
   </tr>
   <tr>
@@ -91,11 +91,8 @@ When pushing new commits with `git push` a CI build is triggered. After running 
 | Get last release   | Obtain last release with the [getLastRelease](#getlastrelease) plugin                       |
 | Analyze commits    | Determine the type of release to do with the [analyzeCommits](#analyzecommits) plugin       |
 | Verify release     | Call the [verifyRelease](#verifyrelease) plugin                                             |
-| npm publish        | Update the version in `package.json` and call `npm publish`                                 |
 | Generate notes     | Generate release notes with plugin [generateNotes](#generatenotes)                          |
-| Github release     | A git tag and [Github release](https://help.github.com/articles/about-releases/) is created |
-
-_Note:_ The current release/tag implementation is tied to GitHub, but could be opened up to Bitbucket, GitLab, et al. Feel free to send PRs for these services.
+| Publish            | Call the [publish](#publish) plugin                                                         |
 
 ## Default Commit Message Format
 
@@ -172,9 +169,6 @@ These options are currently available:
 - `branch`: The branch on which releases should happen. Default: `'master'`
 - `dry-run`: Dry-run mode, skipping verifyConditions, publishing and release, printing next version and release notes
 - `debug`: Output debugging information
-- `githubToken`: The token used to authenticate with GitHub. Default: `process.env.GH_TOKEN`
-- `githubUrl`: Optional. Pass your GitHub Enterprise endpoint.
-- `githubApiPathPrefix`: Optional. The path prefix for your GitHub Enterprise API.
 
 _A few notes on `npm` config_:
 1. The `npm` token can only be defined in the environment as `NPM_TOKEN`, because that’s where `npm` itself is going to read it from.
@@ -182,8 +176,6 @@ _A few notes on `npm` config_:
 2. In order to publish to a different `npm` registry you can specify that inside the `package.json`’s [`publishConfig`](https://docs.npmjs.com/files/package.json#publishconfig) field.
 
 3. If you want to use another dist-tag for your publishes than `'latest'` you can specify that inside the `package.json`’s [`publishConfig`](https://docs.npmjs.com/files/package.json#publishconfig) field.
-
-4. `semantic-release` generally tries to orientate itself towards `npm` – it inherits the loglevel for example.
 
 ## Plugins
 
@@ -215,7 +207,6 @@ module.exports = function (pluginConfig, config, callback) {}
 - `pluginConfig`: If the user of your plugin specifies additional plugin config in the `package.json` (see the `verifyConditions` example above) then it’s this object.
 - `config`: A config object containing a lot of information to act upon.
   - `env`: All environment variables
-  - `npm`: Select npm configuration bits like `registry`, `tag` and `auth`
   - `options`: `semantic-release` options like `debug`, or `branch`
   - `pkg`: Parsed `package.json`
   - For certain plugins the `config` object contains even more information. See below.
@@ -230,14 +221,13 @@ While it may be tempting to use `'prepatch'`, `'preminor'` & `'prerelease'` as p
 
 Have a look at the [default implementation](https://github.com/semantic-release/commit-analyzer/).
 
-### `generateNotes`
-
-This plugin is responsible for generating release notes. Call the callback with the notes as a string. Have a look at the [default implementation](https://github.com/semantic-release/release-notes-generator/).
-It receives a `commits` array, the `lastRelease` and `nextRelease` inside `config`.
-
 ### `verifyConditions`
 
-This plugins is responsible for verifying that a release should happen in the first place. For example, the [default implementation](https://github.com/semantic-release/condition-travis/) verifies that the publish is happening on Travis, that it’s the right branch, and that all other build jobs succeeded. There are more use cases for this, e.g. verifying that test coverage is above a certain threshold or that there are no [vulnerabilities](https://nodesecurity.io/) in your dependencies. Be creative.
+This plugins is responsible for verifying that a release should happen in the first place.
+The default implementations are:
+- [travis](https://github.com/semantic-release/condition-travis/): verifies that the publish is happening on Travis, that it’s the right branch, and that all other build jobs succeeded. 
+- [github](https://github.com/semantic-release/github/): verifies a Github authentication is set and valid. 
+- [npm](https://github.com/semantic-release/npm/): verifies an npm authentication is set and valid. 
 
 Passing an array of plugins will run them in series.
 
@@ -250,6 +240,17 @@ Passing an array of plugins will run them in series.
 ### `getLastRelease`
 
 This plugin is responsible for determining a package’s last release version. The [default implementation](https://github.com/semantic-release/last-release-npm) uses the last published version on a npm registry.
+
+### `generateNotes`
+
+This plugin is responsible for generating release notes. Call the callback with the notes as a string. Have a look at the [default implementation](https://github.com/semantic-release/release-notes-generator/).
+It receives a `commits` array, the `lastRelease` and `nextRelease` inside `config`.
+
+### `publish`
+
+This plugins is responsible for publishing the release. The default implementations publish on [npm](https://github.com/semantic-release/npm) and [github](https://github.com/semantic-release/github). 
+
+Passing an array of plugins will run them in series.
 
 ## ITYM*FAQ*LT
 > I think you might frequently ask questions like these

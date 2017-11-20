@@ -53,13 +53,13 @@ const url = `http://${MOCK_SERVER_HOST}:${MOCK_SERVER_PORT}`;
  * @param {Object} response.body The JSON object to respond in the response body.
  * @return {Object} An object representation the expectation. Pass to the `verify` function to validate the `mockserver` has been called with a `request` matching the expectations.
  */
-function mock(
+async function mock(
   path,
   {body: requestBody, headers: requestHeaders},
   {method = 'POST', statusCode = 200, body: responseBody}
 ) {
-  client.mockAnyResponse({
-    httpRequest: {path},
+  await client.mockAnyResponse({
+    httpRequest: {path, method},
     httpResponse: {
       statusCode,
       headers: [{name: 'Content-Type', values: ['application/json; charset=utf-8']}],
@@ -72,7 +72,9 @@ function mock(
     method,
     path,
     headers: requestHeaders,
-    body: {type: 'JSON', json: JSON.stringify(requestBody), matchType: 'ONLY_MATCHING_FIELDS'},
+    body: requestBody
+      ? {type: 'JSON', json: JSON.stringify(requestBody), matchType: 'ONLY_MATCHING_FIELDS'}
+      : undefined,
   };
 }
 
