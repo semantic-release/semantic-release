@@ -87,7 +87,7 @@ When pushing new commits with `git push` a CI build is triggered. After running 
 
 | Step               | Description                                                                                 |
 | ------------------ | ------------------------------------------------------------------------------------------- |
-| Verify Conditions  | Run the [verifyConditions](#verifyConditions) plugin)                                       |
+| Verify Conditions  | Run the [verifyConditions](#verifyConditions) plugin                                        |
 | Get last release   | Obtain last release with the [getLastRelease](#getLastRelease) plugin                       |
 | Analyze commits    | Determine the type of release to do with the [analyzeCommits](#analyzeCommits) plugin       |
 | Verify release     | Call the [verifyRelease](#verifyRelease) plugin                                             |
