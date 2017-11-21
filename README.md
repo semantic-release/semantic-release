@@ -87,12 +87,12 @@ When pushing new commits with `git push` a CI build is triggered. After running 
 
 | Step               | Description                                                                                 |
 | ------------------ | ------------------------------------------------------------------------------------------- |
-| Verify Conditions  | Run the [verifyConditions](#verifyConditions) plugin                                        |
-| Get last release   | Obtain last release with the [getLastRelease](#getLastRelease) plugin                       |
-| Analyze commits    | Determine the type of release to do with the [analyzeCommits](#analyzeCommits) plugin       |
-| Verify release     | Call the [verifyRelease](#verifyRelease) plugin                                             |
+| Verify Conditions  | Run the [verifyConditions](#verifyconditions) plugin                                        |
+| Get last release   | Obtain last release with the [getLastRelease](#getlastrelease) plugin                       |
+| Analyze commits    | Determine the type of release to do with the [analyzeCommits](#analyzecommits) plugin       |
+| Verify release     | Call the [verifyRelease](#verifyrelease) plugin                                             |
 | npm publish        | Update the version in `package.json` and call `npm publish`                                 |
-| Generate notes     | Generate release notes with plugin [generateNotes](#generateNotes)                          |
+| Generate notes     | Generate release notes with plugin [generateNotes](#generatenotes)                          |
 | Github release     | A git tag and [Github release](https://help.github.com/articles/about-releases/) is created |
 
 _Note:_ The current release/tag implementation is tied to GitHub, but could be opened up to Bitbucket, GitLab, et al. Feel free to send PRs for these services.
