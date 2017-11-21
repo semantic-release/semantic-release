@@ -5,7 +5,7 @@ import pMapSeries from 'p-map-series';
 
 /**
  * Commit message informations.
- * 
+ *
  * @typedef {Object} Commit
  * @property {string} branch The commit branch.
  * @property {string} hash The commit hash.
@@ -13,13 +13,13 @@ import pMapSeries from 'p-map-series';
  */
 
 /**
-  * Create a temporary git repository and change the current working directory to the repository root.
-  *
-  * @method gitCommits
-  * @param {Array<Commit>} commits the created commits.
-  * 
-  * @return {string} The path of the repository.
-  */
+ * Create a temporary git repository and change the current working directory to the repository root.
+ *
+ * @method gitCommits
+ * @param {Array<Commit>} commits the created commits.
+ *
+ * @return {string} The path of the repository.
+ */
 export async function gitRepo() {
   const dir = tempy.directory();
 
@@ -34,7 +34,7 @@ export async function gitRepo() {
  * Create commits on the current git repository.
  *
  * @param {Array<string>} messages commit messages.
- * 
+ *
  * @returns {Array<Commit>} The created commits, in reverse order (to match `git log` order).
  */
 export async function gitCommits(messages) {
@@ -49,7 +49,7 @@ export async function gitCommits(messages) {
  * Amend a commit (rewriting the sha) on the current git repository.
  *
  * @param {string} messages commit message.
- * 
+ *
  * @returns {Array<Commit>} the created commits.
  */
 export async function gitAmmendCommit(msg) {
@@ -105,7 +105,7 @@ export async function gitLog() {
 /**
  * Create a shallow clone of a git repository and change the current working directory to the cloned repository root.
  * The shallow will contain a limited number of commit and no tags.
- * 
+ *
  * @param {string} origin The path of the repository to clone.
  * @param {number} [depth=1] The number of commit to clone.
  * @return {string} The path of the cloned repository.
@@ -120,7 +120,7 @@ export async function gitShallowClone(origin, branch = 'master', depth = 1) {
 
 /**
  * Create a git repo with a detached head from another git repository and change the current working directory to the new repository root.
- * 
+ *
  * @param {string} origin The path of the repository to clone.
  * @param {number} head A commit sha of the origin repo that will become the detached head of the new one.
  * @return {string} The path of the new repository.

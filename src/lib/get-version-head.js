@@ -7,7 +7,7 @@ const {debugShell} = require('./debug');
  * Get the commit sha for a given tag.
  *
  * @param {string} tagName Tag name for which to retrieve the commit sha.
- * 
+ *
  * @return {string} The commit sha of the tag in parameter or `null`.
  */
 async function gitTagHead(tagName) {
@@ -23,9 +23,9 @@ async function gitTagHead(tagName) {
 
 /**
  * Verify if the commist `sha` is in the direct history of the current branch.
- * 
+ *
  * @param {string} sha The sha of the commit to look for.
- * 
+ *
  * @return {boolean} `true` if the commit `sha` is in the history of the current branch, `false` otherwise.
  */
 async function isCommitInHistory(sha) {
@@ -39,9 +39,9 @@ async function isCommitInHistory(sha) {
  *
  * @param {string} gitHead The commit sha to look for.
  * @param {string} version The version corresponding to the commit sha to look for. Used to search in git tags.
- * 
+ *
  * @return {Promise<string>} A Promise that resolves to the commit sha of the version, either `gitHead` of the commit associated with the `version` tag.
- * 
+ *
  * @throws {SemanticReleaseError} with code `ENOTINHISTORY` if `gitHead` or the commit sha dereived from `version` is not in the direct history of `branch`.
  * @throws {SemanticReleaseError} with code `ENOGITHEAD` if `gitHead` is undefined and no commit sha can be found for the `version`.
  */

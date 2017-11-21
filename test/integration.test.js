@@ -408,7 +408,9 @@ test.serial('Create a tag as a recovery solution for "ENOTINHISTORY" error', asy
   t.regex(
     stderr,
     new RegExp(
-      `You can recover from this error by restoring the commit "${head}" or by creating a tag for the version "${version}" on the commit corresponding to this release`
+      `You can recover from this error by restoring the commit "${head}" or by creating a tag for the version "${
+        version
+      }" on the commit corresponding to this release`
     )
   );
 
