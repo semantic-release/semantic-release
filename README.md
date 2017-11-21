@@ -87,8 +87,8 @@ When pushing new commits with `git push` a CI build is triggered. After running 
 
 | Step               | Description                                                                                 |
 | ------------------ | ------------------------------------------------------------------------------------------- |
-| Verify Conditions` | Run the [verifyConditions](#verifyconditions) plugin                                        |
-| Get last release`  | Obtain last release with the [getLastRelease](#getlastrelease) plugin                       |
+| Verify Conditions  | Run the [verifyConditions](#verifyconditions) plugin                                        |
+| Get last release   | Obtain last release with the [getLastRelease](#getlastrelease) plugin                       |
 | Analyze commits    | Determine the type of release to do with the [analyzeCommits](#analyzecommits) plugin       |
 | Verify release     | Call the [verifyRelease](#verifyrelease) plugin                                             |
 | npm publish        | Update the version in `package.json` and call `npm publish`                                 |
