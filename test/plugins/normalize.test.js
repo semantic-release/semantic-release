@@ -84,7 +84,7 @@ test('Prevent plugins to modify its input', async t => {
   t.is(input.param.subParam, 'originalSubParam');
 });
 
-test('Return noop if the plugin is not defined', async t => {
+test('Return noop if the plugin is not defined', t => {
   const plugin = normalize();
 
   t.is(plugin, noop);
@@ -106,7 +106,7 @@ test('Always pass a defined "pluginConfig" for plugin defined with path', async 
   t.deepEqual(pluginResult.pluginConfig, {});
 });
 
-test('Throws an error if the plugin return an object without the expected plugin function', async t => {
+test('Throws an error if the plugin return an object without the expected plugin function', t => {
   const error = t.throws(() => normalize('inexistantPlugin', './test/fixtures/multi-plugin', t.context.logger));
 
   t.is(

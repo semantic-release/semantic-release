@@ -1,6 +1,6 @@
 import test from 'ava';
-import {gitRepo, gitCommits, gitCheckout, gitTagVersion, gitShallowClone, gitLog} from './helpers/git-utils';
 import {gitTagHead, gitCommitTag, isCommitInHistory, unshallow, gitHead} from '../lib/git';
+import {gitRepo, gitCommits, gitCheckout, gitTagVersion, gitShallowClone, gitLog} from './helpers/git-utils';
 
 test.beforeEach(t => {
   // Save the current working diretory
@@ -74,7 +74,7 @@ test.serial('Get the tag associated with a commit sha or "null" if the commit do
   // Create a git repository, set the current working directory at the root of the repo
   await gitRepo();
   // Add commits to the master branch
-  let commits = await gitCommits(['First']);
+  const commits = await gitCommits(['First']);
   // Create the tag corresponding to version 1.0.0
   await gitTagVersion('v1.0.0');
 
@@ -86,7 +86,7 @@ test.serial('Get the commit sha for a given tag or "null" if the tag does not ex
   // Create a git repository, set the current working directory at the root of the repo
   await gitRepo();
   // Add commits to the master branch
-  let commits = await gitCommits(['First']);
+  const commits = await gitCommits(['First']);
   // Create the tag corresponding to version 1.0.0
   await gitTagVersion('v1.0.0');
 

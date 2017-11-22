@@ -3,6 +3,7 @@
 // Bad news: We have to write plain ES5 in this file
 // Good news: It's the only file of the entire project
 
+// eslint-disable-next-line no-var
 var semver = require('semver');
 
 if (semver.lt(process.version, '8.0.0')) {
@@ -22,7 +23,7 @@ npx is bundled with npm >= 5.4, or available via npm. More info: npm.im/npx`
   process.exit(1);
 }
 
-// node 8+ from this point on
+// Node 8+ from this point on
 require('../cli')().catch(() => {
   process.exitCode = 1;
 });
