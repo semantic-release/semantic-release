@@ -1,6 +1,7 @@
 import test from 'ava';
 import {stub} from 'sinon';
 import SemanticReleaseError from '@semantic-release/error';
+import getCommits from '../lib/get-commits';
 import {
   gitRepo,
   gitCommits,
@@ -11,7 +12,6 @@ import {
   gitLog,
   gitDetachedHead,
 } from './helpers/git-utils';
-import getCommits from '../lib/get-commits';
 
 test.beforeEach(t => {
   // Save the current working diretory

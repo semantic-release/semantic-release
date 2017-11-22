@@ -7,6 +7,8 @@ import registry from './helpers/registry';
 import mockServer from './helpers/mockserver';
 import semanticRelease from '..';
 
+/* eslint-disable camelcase */
+
 // Environment variables used with cli
 const env = {
   npm_config_registry: registry.uri,
@@ -20,14 +22,14 @@ const cli = require.resolve('../bin/semantic-release');
 const pluginError = require.resolve('./fixtures/plugin-error');
 const pluginInheritedError = require.resolve('./fixtures/plugin-error-inherited');
 
-test.before(async t => {
+test.before(async () => {
   // Start Mock Server
   await mockServer.start();
   // Start the local NPM registry
   await registry.start();
 });
 
-test.beforeEach(async t => {
+test.beforeEach(t => {
   // Save the current process.env
   t.context.env = Object.assign({}, process.env);
   // Save the current working diretory
@@ -39,7 +41,7 @@ test.beforeEach(async t => {
   t.context.stderr = stub(process.stderr, 'write');
 });
 
-test.afterEach.always(async t => {
+test.afterEach.always(t => {
   // Restore process.env
   process.env = Object.assign({}, t.context.env);
   // Restore the current working directory
@@ -51,7 +53,7 @@ test.afterEach.always(async t => {
   t.context.stderr.restore();
 });
 
-test.after.always(async t => {
+test.after.always(async () => {
   await mockServer.stop();
   // Stop the local NPM registry
   await registry.stop();
@@ -74,7 +76,7 @@ test.serial('Release patch, minor and major versions', async t => {
   // Create a npm-shrinkwrap.json file
   await execa('npm', ['shrinkwrap'], {env});
 
-  /** No release **/
+  /* No release */
 
   let verifyMock = await mockServer.mock(
     `/repos/${owner}/${packageName}`,
@@ -88,7 +90,7 @@ test.serial('Release patch, minor and major versions', async t => {
   t.regex(stdout, /There are no relevant changes, so no new version is released/);
   t.is(code, 0);
 
-  /** Initial release **/
+  /* Initial release */
   let version = '1.0.0';
   verifyMock = await mockServer.mock(
     `/repos/${owner}/${packageName}`,
@@ -133,7 +135,7 @@ test.serial('Release patch, minor and major versions', async t => {
   await mockServer.verify(createRefMock);
   await mockServer.verify(createReleaseMock);
 
-  /** Patch release **/
+  /* Patch release */
   version = '1.0.1';
   verifyMock = await mockServer.mock(
     `/repos/${owner}/${packageName}`,
@@ -178,7 +180,7 @@ test.serial('Release patch, minor and major versions', async t => {
   await mockServer.verify(createRefMock);
   await mockServer.verify(createReleaseMock);
 
-  /** Minor release **/
+  /* Minor release */
   version = '1.1.0';
   verifyMock = await mockServer.mock(
     `/repos/${owner}/${packageName}`,
@@ -223,7 +225,7 @@ test.serial('Release patch, minor and major versions', async t => {
   await mockServer.verify(createRefMock);
   await mockServer.verify(createReleaseMock);
 
-  /** Major release **/
+  /* Major release */
   version = '2.0.0';
   verifyMock = await mockServer.mock(
     `/repos/${owner}/${packageName}`,
@@ -285,7 +287,7 @@ test.serial('Release versions from a packed git repository, using tags to determ
     publishConfig: {registry: registry.uri},
   });
 
-  /** Initial release **/
+  /* Initial release */
   let version = '1.0.0';
   let verifyMock = await mockServer.mock(
     `/repos/${owner}/${packageName}`,
@@ -327,7 +329,7 @@ test.serial('Release versions from a packed git repository, using tags to determ
   await gitTagVersion(`v${version}`);
   t.log(`Create git tag v${version}`);
 
-  /** Patch release **/
+  /* Patch release */
   version = '1.0.1';
   verifyMock = await mockServer.mock(
     `/repos/${owner}/${packageName}`,
@@ -400,7 +402,7 @@ test.serial('Create a tag as a recovery solution for "ENOTINHISTORY" error', asy
     publishConfig: {registry: registry.uri},
   });
 
-  /** Initial release **/
+  /* Initial release */
   let version = '1.0.0';
   let verifyMock = await mockServer.mock(
     `/repos/${owner}/${packageName}`,
@@ -446,12 +448,12 @@ test.serial('Create a tag as a recovery solution for "ENOTINHISTORY" error', asy
   await gitTagVersion(`v${version}`);
   t.log(`Create git tag v${version}`);
 
-  /** Rewrite sha of commit used for release **/
+  /* Rewrite sha of commit used for release */
 
   t.log('Amend release commit');
   const {hash} = await gitAmmendCommit('feat: Initial commit');
 
-  /** Patch release **/
+  /* Patch release */
   verifyMock = await mockServer.mock(
     `/repos/${owner}/${packageName}`,
     {headers: [{name: 'Authorization', values: [`token ${env.GH_TOKEN}`]}]},
@@ -473,7 +475,7 @@ test.serial('Create a tag as a recovery solution for "ENOTINHISTORY" error', asy
     )
   );
 
-  /** Create a tag to recover and redo release **/
+  /* Create a tag to recover and redo release */
 
   t.log(`Create git tag v${version} to recover`);
   await gitTagVersion(`v${version}`, hash);
@@ -526,14 +528,15 @@ test.serial('Dry-run', async t => {
     name: packageName,
     version: '0.0.0-dev',
     repository: {url: `git+https://github.com/${owner}/${packageName}`},
+    publishConfig: {registry: registry.uri},
   });
 
-  /** Initial release **/
+  /* Initial release */
   const version = '1.0.0';
   t.log('Commit a feature');
   await gitCommits(['feat: Initial commit']);
   t.log('$ semantic-release -d');
-  let {stdout, code} = await execa(cli, ['-d'], {env});
+  const {stdout, code} = await execa(cli, ['-d'], {env});
   t.regex(stdout, new RegExp(`There is no previous release, the next release version is ${version}`));
   t.regex(stdout, new RegExp(`Release note for version ${version}`));
   t.regex(stdout, /Initial commit/);
@@ -557,12 +560,12 @@ test.serial('Pass options via CLI arguments', async t => {
     publishConfig: {registry: registry.uri},
   });
 
-  /** Initial release **/
-  let version = '1.0.0';
+  /* Initial release */
+  const version = '1.0.0';
   t.log('Commit a feature');
   await gitCommits(['feat: Initial commit']);
   t.log('$ semantic-release');
-  let {stdout, code} = await execa(
+  const {stdout, code} = await execa(
     cli,
     ['--verify-conditions', '@semantic-release/npm', '--publish', '@semantic-release/npm', '--debug'],
     {env}
@@ -574,7 +577,7 @@ test.serial('Pass options via CLI arguments', async t => {
   t.is((await readJson('./package.json')).version, version);
 
   // Retrieve the published package from the registry and check version and gitHead
-  let [, releasedVersion, releasedGitHead] = /^version = '(.+)'\s+gitHead = '(.+)'$/.exec(
+  const [, releasedVersion, releasedGitHead] = /^version = '(.+)'\s+gitHead = '(.+)'$/.exec(
     (await execa('npm', ['show', packageName, 'version', 'gitHead'], {env})).stdout
   );
   t.is(releasedVersion, version);
@@ -597,19 +600,19 @@ test.serial('Run via JS API', async t => {
     publishConfig: {registry: registry.uri},
   });
 
-  /** Initial release **/
-  let version = '1.0.0';
-  let verifyMock = await mockServer.mock(
+  /* Initial release */
+  const version = '1.0.0';
+  const verifyMock = await mockServer.mock(
     `/repos/${owner}/${packageName}`,
     {headers: [{name: 'Authorization', values: [`token ${githubToken}`]}]},
     {body: {permissions: {push: true}}, method: 'GET'}
   );
-  let createRefMock = await mockServer.mock(
+  const createRefMock = await mockServer.mock(
     `/repos/${owner}/${packageName}/git/refs`,
     {body: {ref: `refs/tags/v${version}`}, headers: [{name: 'Authorization', values: [`token ${githubToken}`]}]},
     {body: {ref: `refs/tags/${version}`}}
   );
-  let createReleaseMock = await mockServer.mock(
+  const createReleaseMock = await mockServer.mock(
     `/repos/${owner}/${packageName}/releases`,
     {
       body: {tag_name: `v${version}`, target_commitish: 'master', name: `v${version}`},
@@ -636,7 +639,7 @@ test.serial('Run via JS API', async t => {
   t.is((await readJson('./package.json')).version, version);
 
   // Retrieve the published package from the registry and check version and gitHead
-  let [, releasedVersion, releasedGitHead] = /^version = '(.+)'\s+gitHead = '(.+)'$/.exec(
+  const [, releasedVersion, releasedGitHead] = /^version = '(.+)'\s+gitHead = '(.+)'$/.exec(
     (await execa('npm', ['show', packageName, 'version', 'gitHead'], {env})).stdout
   );
   t.is(releasedVersion, version);
@@ -662,11 +665,11 @@ test.serial('Log unexpected errors from plugins and exit with 1', async t => {
     release: {verifyConditions: pluginError},
   });
 
-  /** Initial release **/
+  /* Initial release */
   t.log('Commit a feature');
   await gitCommits(['feat: Initial commit']);
   t.log('$ semantic-release');
-  let {stderr, code} = await execa(cli, [], {env, reject: false});
+  const {stderr, code} = await execa(cli, [], {env, reject: false});
   // Verify the type and message are logged
   t.regex(stderr, /Error: a/);
   // Verify the the stacktrace is logged
@@ -690,11 +693,11 @@ test.serial('Log errors inheriting SemanticReleaseError and exit with 0', async 
     release: {verifyConditions: pluginInheritedError},
   });
 
-  /** Initial release **/
+  /* Initial release */
   t.log('Commit a feature');
   await gitCommits(['feat: Initial commit']);
   t.log('$ semantic-release');
-  let {stdout, code} = await execa(cli, [], {env, reject: false});
+  const {stdout, code} = await execa(cli, [], {env, reject: false});
   // Verify the type and message are logged
   t.regex(stdout, /EINHERITED Inherited error/);
   t.is(code, 0);
@@ -702,21 +705,21 @@ test.serial('Log errors inheriting SemanticReleaseError and exit with 0', async 
 
 test.serial('CLI returns error code and prints help if called with a command', async t => {
   t.log('$ semantic-release pre');
-  let {stdout, code} = await execa(cli, ['pre'], {env, reject: false});
+  const {stdout, code} = await execa(cli, ['pre'], {env, reject: false});
   t.regex(stdout, /Usage: semantic-release/);
   t.is(code, 1);
 });
 
 test.serial('CLI prints help if called with --help', async t => {
   t.log('$ semantic-release --help');
-  let {stdout, code} = await execa(cli, ['--help'], {env});
+  const {stdout, code} = await execa(cli, ['--help'], {env});
   t.regex(stdout, /Usage: semantic-release/);
   t.is(code, 0);
 });
 
 test.serial('CLI returns error code with invalid option', async t => {
   t.log('$ semantic-release --unknown-option');
-  let {stderr, code} = await execa(cli, ['--unknown-option'], {env, reject: false});
+  const {stderr, code} = await execa(cli, ['--unknown-option'], {env, reject: false});
   t.regex(stderr, /unknown option/);
   t.is(code, 1);
 });
