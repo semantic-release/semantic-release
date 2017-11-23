@@ -9,8 +9,8 @@ test.beforeEach(t => {
 });
 
 test('Export default plugins', t => {
-  // Call the plugin module
   const plugins = getPlugins({}, t.context.logger);
+
   // Verify the module returns a function for each plugin
   t.is(typeof plugins.verifyConditions, 'function');
   t.is(typeof plugins.getLastRelease, 'function');
@@ -21,7 +21,6 @@ test('Export default plugins', t => {
 });
 
 test('Export plugins based on config', t => {
-  // Call the plugin module
   const plugins = getPlugins(
     {
       verifyConditions: ['./test/fixtures/plugin-noop', {path: './test/fixtures/plugin-noop'}],
@@ -31,6 +30,7 @@ test('Export plugins based on config', t => {
     },
     t.context.logger
   );
+
   // Verify the module returns a function for each plugin
   t.is(typeof plugins.verifyConditions, 'function');
   t.is(typeof plugins.getLastRelease, 'function');
@@ -40,8 +40,26 @@ test('Export plugins based on config', t => {
   t.is(typeof plugins.publish, 'function');
 });
 
-test('Throw an error if plugin configuration is invalid', t => {
+test('Use default when only options are passed for a single plugin', t => {
+  const plugins = getPlugins({getLastRelease: {}, analyzeCommits: {}}, t.context.logger);
+
+  // Verify the module returns a function for each plugin
+  t.is(typeof plugins.getLastRelease, 'function');
+  t.is(typeof plugins.analyzeCommits, 'function');
+});
+
+test('Throw an error if plugin configuration is missing a path for plugin pipeline', t => {
   const error = t.throws(() => getPlugins({verifyConditions: {}}, t.context.logger));
+
+  t.is(
+    error.message,
+    'The "verifyConditions" plugin, if defined, must be a single or an array of plugins definition. A plugin definition is either a string or an object with a path property.'
+  );
+});
+
+test('Throw an error if an array of plugin configuration is missing a path for plugin pipeline', t => {
+  const error = t.throws(() => getPlugins({verifyConditions: [{path: '@semantic-release/npm'}, {}]}, t.context.logger));
+
   t.is(
     error.message,
     'The "verifyConditions" plugin, if defined, must be a single or an array of plugins definition. A plugin definition is either a string or an object with a path property.'
