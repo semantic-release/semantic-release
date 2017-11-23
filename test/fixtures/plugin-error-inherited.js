@@ -9,6 +9,6 @@ class InheritedError extends SemanticReleaseError {
   }
 }
 
-module.exports = function(config, options, cb) {
-  cb(new InheritedError('Inherited error', 'EINHERITED'));
+module.exports = () => {
+  throw new InheritedError('Inherited error', 'EINHERITED');
 };
