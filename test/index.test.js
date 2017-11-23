@@ -1,8 +1,8 @@
 import test from 'ava';
-import {writeJson} from 'fs-extra';
 import proxyquire from 'proxyquire';
 import {stub} from 'sinon';
-import normalizeData from 'normalize-package-data';
+import tempy from 'tempy';
+import SemanticReleaseError from '@semantic-release/error';
 import {gitHead as getGitHead} from '../lib/git';
 import {gitRepo, gitCommits, gitTagVersion} from './helpers/git-utils';
 
@@ -41,11 +41,9 @@ test.serial('Plugins are called with expected values', async t => {
   // Add new commits to the master branch
   commits = (await gitCommits(['Second'])).concat(commits);
 
-  const name = 'package-name';
   const lastRelease = {version: '1.0.0', gitHead: commits[commits.length - 1].hash, gitTag: 'v1.0.0'};
   const nextRelease = {type: 'major', version: '2.0.0', gitHead: await getGitHead(), gitTag: 'v2.0.0'};
   const notes = 'Release notes';
-
   const verifyConditions1 = stub().resolves();
   const verifyConditions2 = stub().resolves();
   const getLastRelease = stub().resolves(lastRelease);
@@ -56,6 +54,7 @@ test.serial('Plugins are called with expected values', async t => {
 
   const options = {
     branch: 'master',
+    repositoryUrl: 'git@hostname.com:owner/module.git',
     verifyConditions: [verifyConditions1, verifyConditions2],
     getLastRelease,
     analyzeCommits,
@@ -63,34 +62,26 @@ test.serial('Plugins are called with expected values', async t => {
     generateNotes,
     publish,
   };
-  const pkg = {name, version: '0.0.0-dev'};
-  normalizeData(pkg);
-
-  await writeJson('./package.json', pkg);
 
   await t.context.semanticRelease(options);
 
   t.true(verifyConditions1.calledOnce);
-  t.deepEqual(verifyConditions1.firstCall.args[1], {env: process.env, options, pkg, logger: t.context.logger});
+  t.deepEqual(verifyConditions1.firstCall.args[1], {options, logger: t.context.logger});
   t.true(verifyConditions2.calledOnce);
-  t.deepEqual(verifyConditions2.firstCall.args[1], {env: process.env, options, pkg, logger: t.context.logger});
+  t.deepEqual(verifyConditions2.firstCall.args[1], {options, logger: t.context.logger});
 
   t.true(getLastRelease.calledOnce);
-  t.deepEqual(getLastRelease.firstCall.args[1], {env: process.env, options, pkg, logger: t.context.logger});
+  t.deepEqual(getLastRelease.firstCall.args[1], {options, logger: t.context.logger});
 
   t.true(analyzeCommits.calledOnce);
-  t.deepEqual(analyzeCommits.firstCall.args[1].env, process.env);
   t.deepEqual(analyzeCommits.firstCall.args[1].options, options);
-  t.deepEqual(analyzeCommits.firstCall.args[1].pkg, pkg);
   t.deepEqual(analyzeCommits.firstCall.args[1].logger, t.context.logger);
   t.deepEqual(analyzeCommits.firstCall.args[1].lastRelease, lastRelease);
   t.deepEqual(analyzeCommits.firstCall.args[1].commits[0].hash.substring(0, 7), commits[0].hash);
   t.deepEqual(analyzeCommits.firstCall.args[1].commits[0].message, commits[0].message);
 
   t.true(verifyRelease.calledOnce);
-  t.deepEqual(verifyRelease.firstCall.args[1].env, process.env);
   t.deepEqual(verifyRelease.firstCall.args[1].options, options);
-  t.deepEqual(verifyRelease.firstCall.args[1].pkg, pkg);
   t.deepEqual(verifyRelease.firstCall.args[1].logger, t.context.logger);
   t.deepEqual(verifyRelease.firstCall.args[1].lastRelease, lastRelease);
   t.deepEqual(verifyRelease.firstCall.args[1].commits[0].hash.substring(0, 7), commits[0].hash);
@@ -98,9 +89,7 @@ test.serial('Plugins are called with expected values', async t => {
   t.deepEqual(verifyRelease.firstCall.args[1].nextRelease, nextRelease);
 
   t.true(generateNotes.calledOnce);
-  t.deepEqual(generateNotes.firstCall.args[1].env, process.env);
   t.deepEqual(generateNotes.firstCall.args[1].options, options);
-  t.deepEqual(generateNotes.firstCall.args[1].pkg, pkg);
   t.deepEqual(generateNotes.firstCall.args[1].logger, t.context.logger);
   t.deepEqual(generateNotes.firstCall.args[1].lastRelease, lastRelease);
   t.deepEqual(generateNotes.firstCall.args[1].commits[0].hash.substring(0, 7), commits[0].hash);
@@ -109,7 +98,6 @@ test.serial('Plugins are called with expected values', async t => {
 
   t.true(publish.calledOnce);
   t.deepEqual(publish.firstCall.args[1].options, options);
-  t.deepEqual(publish.firstCall.args[1].pkg, pkg);
   t.deepEqual(publish.firstCall.args[1].logger, t.context.logger);
   t.deepEqual(publish.firstCall.args[1].lastRelease, lastRelease);
   t.deepEqual(publish.firstCall.args[1].commits[0].hash.substring(0, 7), commits[0].hash);
@@ -139,6 +127,7 @@ test.serial('Use new gitHead, and recreate release notes if a publish plugin cre
 
   const options = {
     branch: 'master',
+    repositoryUrl: 'git@hostname.com:owner/module.git',
     verifyConditions: stub().resolves(),
     getLastRelease: stub().resolves(lastRelease),
     analyzeCommits: stub().resolves(nextRelease.type),
@@ -147,7 +136,6 @@ test.serial('Use new gitHead, and recreate release notes if a publish plugin cre
     publish: [publish1, publish2],
   };
 
-  await writeJson('./package.json', {});
   await t.context.semanticRelease(options);
 
   t.true(generateNotes.calledTwice);
@@ -172,7 +160,6 @@ test.serial('Dry-run skips verifyConditions and publish', async t => {
   // Add new commits to the master branch
   commits = (await gitCommits(['Second'])).concat(commits);
 
-  const name = 'package-name';
   const lastRelease = {version: '1.0.0', gitHead: commits[commits.length - 1].hash, gitTag: 'v1.0.0'};
   const nextRelease = {type: 'major', version: '2.0.0', gitHead: await getGitHead(), gitTag: 'v2.0.0'};
   const notes = 'Release notes';
@@ -187,6 +174,7 @@ test.serial('Dry-run skips verifyConditions and publish', async t => {
   const options = {
     dryRun: true,
     branch: 'master',
+    repositoryUrl: 'git@hostname.com:owner/module.git',
     verifyConditions,
     getLastRelease,
     analyzeCommits,
@@ -194,10 +182,6 @@ test.serial('Dry-run skips verifyConditions and publish', async t => {
     generateNotes,
     publish,
   };
-  const pkg = {name, version: '0.0.0-dev'};
-  normalizeData(pkg);
-
-  await writeJson('./package.json', pkg);
 
   await t.context.semanticRelease(options);
 
@@ -207,4 +191,26 @@ test.serial('Dry-run skips verifyConditions and publish', async t => {
   t.true(verifyRelease.calledOnce);
   t.true(generateNotes.calledOnce);
   t.true(publish.notCalled);
+});
+
+test.serial('Throw SemanticReleaseError if not running from a git repository', async t => {
+  // Set the current working directory to a temp directory
+  process.chdir(tempy.directory());
+
+  const error = await t.throws(t.context.semanticRelease());
+
+  // Verify error code and type
+  t.is(error.code, 'ENOGITREPO');
+  t.true(error instanceof SemanticReleaseError);
+});
+
+test.serial('Throw SemanticReleaseError if repositoryUrl is not set and canot be found', async t => {
+  // Create a git repository, set the current working directory at the root of the repo
+  await gitRepo();
+
+  const error = await t.throws(t.context.semanticRelease());
+
+  // Verify error code and type
+  t.is(error.code, 'ENOREPOURL');
+  t.true(error instanceof SemanticReleaseError);
 });

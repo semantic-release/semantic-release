@@ -1,6 +1,15 @@
 import test from 'ava';
-import {gitTagHead, gitCommitTag, isCommitInHistory, unshallow, gitHead} from '../lib/git';
-import {gitRepo, gitCommits, gitCheckout, gitTagVersion, gitShallowClone, gitLog} from './helpers/git-utils';
+import fileUrl from 'file-url';
+import {gitTagHead, gitCommitTag, isCommitInHistory, unshallow, gitHead, repoUrl} from '../lib/git';
+import {
+  gitRepo,
+  gitCommits,
+  gitCheckout,
+  gitTagVersion,
+  gitShallowClone,
+  gitLog,
+  gitAddConfig,
+} from './helpers/git-utils';
 
 test.beforeEach(t => {
   // Save the current working diretory
@@ -92,4 +101,30 @@ test.serial('Get the commit sha for a given tag or "null" if the tag does not ex
 
   t.is((await gitTagHead('v1.0.0')).substring(0, 7), commits[0].hash);
   t.falsy(await gitTagHead('missing_tag'));
+});
+
+test.serial('Return git remote repository url from config', async t => {
+  // Create a git repository, set the current working directory at the root of the repo
+  await gitRepo();
+  // Add remote.origin.url config
+  await gitAddConfig('remote.origin.url', 'git@hostname.com:owner/package.git');
+
+  t.is(await repoUrl(), 'git@hostname.com:owner/package.git');
+});
+
+test.serial('Return git remote repository url set while cloning', async t => {
+  // Create a git repository, set the current working directory at the root of the repo
+  const repo = await gitRepo();
+  await gitCommits(['First']);
+  // Create a clone
+  await gitShallowClone(repo);
+
+  t.is(await repoUrl(), fileUrl(repo));
+});
+
+test.serial('Return "null" if git repository url is not set', async t => {
+  // Create a git repository, set the current working directory at the root of the repo
+  await gitRepo();
+
+  t.is(await repoUrl(), null);
 });

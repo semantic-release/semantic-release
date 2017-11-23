@@ -1,32 +1,40 @@
 const marked = require('marked');
 const TerminalRenderer = require('marked-terminal');
 const SemanticReleaseError = require('@semantic-release/error');
-const {gitHead: getGitHead} = require('./lib/git');
 const getConfig = require('./lib/get-config');
 const getNextVersion = require('./lib/get-next-version');
 const getCommits = require('./lib/get-commits');
 const logger = require('./lib/logger');
+const {gitHead: getGitHead, isGitRepo} = require('./lib/git');
 
 module.exports = async opts => {
-  const config = await getConfig(opts, logger);
-  const {plugins, env, options, pkg} = config;
+  if (!await isGitRepo()) {
+    throw new SemanticReleaseError('Semantic-release must run from a git repository', 'ENOGITREPO');
+  }
 
-  logger.log('Run automated release for branch %s', options.branch);
+  const config = await getConfig(opts, logger);
+  const {plugins, options} = config;
+
+  if (!options.repositoryUrl) {
+    throw new SemanticReleaseError('The repositoryUrl option is required', 'ENOREPOURL');
+  }
+
+  logger.log('Run automated release from branch %s', options.name, options.branch);
 
   if (!options.dryRun) {
     logger.log('Call plugin %s', 'verify-conditions');
-    await plugins.verifyConditions({env, options, pkg, logger});
+    await plugins.verifyConditions({options, logger});
   }
 
   logger.log('Call plugin %s', 'get-last-release');
   const {commits, lastRelease} = await getCommits(
-    await plugins.getLastRelease({env, options, pkg, logger}),
+    await plugins.getLastRelease({options, logger}),
     options.branch,
     logger
   );
 
   logger.log('Call plugin %s', 'analyze-commits');
-  const type = await plugins.analyzeCommits({env, options, pkg, logger, lastRelease, commits});
+  const type = await plugins.analyzeCommits({options, logger, lastRelease, commits});
   if (!type) {
     throw new SemanticReleaseError('There are no relevant changes, so no new version is released.', 'ENOCHANGE');
   }
@@ -34,9 +42,9 @@ module.exports = async opts => {
   const nextRelease = {type, version, gitHead: await getGitHead(), gitTag: `v${version}`};
 
   logger.log('Call plugin %s', 'verify-release');
-  await plugins.verifyRelease({env, options, pkg, logger, lastRelease, commits, nextRelease});
+  await plugins.verifyRelease({options, logger, lastRelease, commits, nextRelease});
 
-  const generateNotesParam = {env, options, pkg, logger, lastRelease, commits, nextRelease};
+  const generateNotesParam = {options, logger, lastRelease, commits, nextRelease};
 
   if (options.dryRun) {
     logger.log('Call plugin %s', 'generate-notes');
@@ -49,7 +57,7 @@ module.exports = async opts => {
     nextRelease.notes = await plugins.generateNotes(generateNotesParam);
 
     logger.log('Call plugin %s', 'publish');
-    await plugins.publish({options, pkg, logger, lastRelease, commits, nextRelease}, async prevInput => {
+    await plugins.publish({options, logger, lastRelease, commits, nextRelease}, async prevInput => {
       const newGitHead = await getGitHead();
       // If previous publish plugin has created a commit (gitHead changed)
       if (prevInput.nextRelease.gitHead !== newGitHead) {
@@ -59,7 +67,7 @@ module.exports = async opts => {
         nextRelease.notes = await plugins.generateNotes(generateNotesParam);
       }
       // Call the next publish plugin with the updated `nextRelease`
-      return {options, pkg, logger, lastRelease, commits, nextRelease};
+      return {options, logger, lastRelease, commits, nextRelease};
     });
     logger.log('Published release: %s', nextRelease.version);
   }

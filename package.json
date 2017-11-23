@@ -15,25 +15,25 @@
     }
   },
   "dependencies": {
-    "@semantic-release/commit-analyzer": "^4.0.0",
-    "@semantic-release/condition-travis": "^6.0.0",
+    "@semantic-release/commit-analyzer": "^5.0.0",
+    "@semantic-release/condition-travis": "^7.0.0",
     "@semantic-release/error": "^2.1.0",
-    "@semantic-release/github": "^1.0.0",
-    "@semantic-release/npm": "^1.0.0",
-    "@semantic-release/release-notes-generator": "^5.0.0",
+    "@semantic-release/github": "^2.0.0",
+    "@semantic-release/npm": "^2.0.0",
+    "@semantic-release/release-notes-generator": "^6.0.0",
     "chalk": "^2.3.0",
     "commander": "^2.11.0",
+    "cosmiconfig": "^3.1.0",
     "debug": "^3.1.0",
     "execa": "^0.8.0",
-    "fs-extra": "^4.0.2",
     "get-stream": "^3.0.0",
     "git-log-parser": "^1.2.0",
     "import-from": "^2.1.0",
     "lodash": "^4.0.0",
     "marked": "^0.3.6",
     "marked-terminal": "^2.0.0",
-    "normalize-package-data": "^2.3.4",
     "p-reduce": "^1.0.0",
+    "read-pkg-up": "^3.0.0",
     "semver": "^5.4.1"
   },
   "devDependencies": {
@@ -44,11 +44,13 @@
     "dockerode": "^2.5.2",
     "eslint-config-prettier": "^2.5.0",
     "eslint-plugin-prettier": "^2.3.0",
+    "file-url": "^2.0.2",
+    "fs-extra": "^4.0.2",
+    "js-yaml": "^3.10.0",
     "mockserver-client": "^2.0.0",
     "nock": "^9.0.2",
     "npm-registry-couchapp": "^2.6.12",
     "nyc": "^11.2.1",
-    "p-map-series": "^1.0.0",
     "prettier": "~1.8.0",
     "proxyquire": "^1.8.0",
     "sinon": "^4.0.0",
@@ -124,7 +126,8 @@
       "prettier"
     ],
     "rules": {
-      "prettier/prettier": 2
+      "prettier/prettier": 2,
+      "no-duplicate-imports": 2
     }
   }
 }
