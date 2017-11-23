@@ -1,3 +1,1 @@
-module.exports = function(pluginConfig, options, cb) {
-  cb(null, {pluginConfig, options});
-};
+module.exports = (pluginConfig, options) => ({pluginConfig, options});

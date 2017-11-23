@@ -1,4 +1,3 @@
-import {callbackify} from 'util';
 import test from 'ava';
 import {noop} from 'lodash';
 import {stub, match} from 'sinon';
@@ -39,7 +38,7 @@ test('Normalize and load plugin that retuns multiple functions', t => {
 
 test('Wrap plugin in a function that validate the output of the plugin', async t => {
   const pluginFunction = stub().resolves(1);
-  const plugin = normalize('', callbackify(pluginFunction), t.context.logger, {
+  const plugin = normalize('', pluginFunction, t.context.logger, {
     validator: output => output === 1,
     message: 'The output must be 1',
   });
@@ -53,7 +52,7 @@ test('Wrap plugin in a function that validate the output of the plugin', async t
 
 test('Plugin is called with "pluginConfig" (omitting "path") and input', async t => {
   const pluginFunction = stub().resolves();
-  const conf = {path: callbackify(pluginFunction), conf: 'confValue'};
+  const conf = {path: pluginFunction, conf: 'confValue'};
   const plugin = normalize('', conf, t.context.logger);
   await plugin('param');
 
@@ -61,9 +60,8 @@ test('Plugin is called with "pluginConfig" (omitting "path") and input', async t
 });
 
 test('Prevent plugins to modify "pluginConfig"', async t => {
-  const pluginFunction = stub().callsFake((pluginConfig, options, cb) => {
+  const pluginFunction = stub().callsFake(pluginConfig => {
     pluginConfig.conf.subConf = 'otherConf';
-    cb();
   });
   const conf = {path: pluginFunction, conf: {subConf: 'originalConf'}};
   const plugin = normalize('', conf, t.context.logger);
@@ -73,9 +71,8 @@ test('Prevent plugins to modify "pluginConfig"', async t => {
 });
 
 test('Prevent plugins to modify its input', async t => {
-  const pluginFunction = stub().callsFake((pluginConfig, options, cb) => {
+  const pluginFunction = stub().callsFake((pluginConfig, options) => {
     options.param.subParam = 'otherParam';
-    cb();
   });
   const input = {param: {subParam: 'originalSubParam'}};
   const plugin = normalize('', pluginFunction, t.context.logger);

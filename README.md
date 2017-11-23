@@ -210,8 +210,6 @@ module.exports = function (pluginConfig, config, callback) {}
   - `options`: `semantic-release` options like `debug`, or `branch`
   - `pkg`: Parsed `package.json`
   - For certain plugins the `config` object contains even more information. See below.
-- `callback`: If an error occurs pass it as first argument. Otherwise pass your result as second argument.
-
 
 ### `analyzeCommits`
 

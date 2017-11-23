@@ -1,4 +1,3 @@
-import {callbackify} from 'util';
 import test from 'ava';
 import {writeJson} from 'fs-extra';
 import proxyquire from 'proxyquire';
@@ -57,12 +56,12 @@ test.serial('Plugins are called with expected values', async t => {
 
   const options = {
     branch: 'master',
-    verifyConditions: [callbackify(verifyConditions1), callbackify(verifyConditions2)],
-    getLastRelease: callbackify(getLastRelease),
-    analyzeCommits: callbackify(analyzeCommits),
-    verifyRelease: callbackify(verifyRelease),
-    generateNotes: callbackify(generateNotes),
-    publish: callbackify(publish),
+    verifyConditions: [verifyConditions1, verifyConditions2],
+    getLastRelease,
+    analyzeCommits,
+    verifyRelease,
+    generateNotes,
+    publish,
   };
   const pkg = {name, version: '0.0.0-dev'};
   normalizeData(pkg);
@@ -140,12 +139,12 @@ test.serial('Use new gitHead, and recreate release notes if a publish plugin cre
 
   const options = {
     branch: 'master',
-    verifyConditions: callbackify(stub().resolves()),
-    getLastRelease: callbackify(stub().resolves(lastRelease)),
-    analyzeCommits: callbackify(stub().resolves(nextRelease.type)),
-    verifyRelease: callbackify(stub().resolves()),
-    generateNotes: callbackify(generateNotes),
-    publish: [callbackify(publish1), callbackify(publish2)],
+    verifyConditions: stub().resolves(),
+    getLastRelease: stub().resolves(lastRelease),
+    analyzeCommits: stub().resolves(nextRelease.type),
+    verifyRelease: stub().resolves(),
+    generateNotes,
+    publish: [publish1, publish2],
   };
 
   await writeJson('./package.json', {});
@@ -188,12 +187,12 @@ test.serial('Dry-run skips verifyConditions and publish', async t => {
   const options = {
     dryRun: true,
     branch: 'master',
-    verifyConditions: callbackify(verifyConditions),
-    getLastRelease: callbackify(getLastRelease),
-    analyzeCommits: callbackify(analyzeCommits),
-    verifyRelease: callbackify(verifyRelease),
-    generateNotes: callbackify(generateNotes),
-    publish: callbackify(publish),
+    verifyConditions,
+    getLastRelease,
+    analyzeCommits,
+    verifyRelease,
+    generateNotes,
+    publish,
   };
   const pkg = {name, version: '0.0.0-dev'};
   normalizeData(pkg);

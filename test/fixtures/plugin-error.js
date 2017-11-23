@@ -1,5 +1,5 @@
-module.exports = function(config, options, cb) {
+module.exports = () => {
   const error = new Error('a');
   error.errorProperty = 'errorProperty';
-  cb(error);
+  throw error;
 };
