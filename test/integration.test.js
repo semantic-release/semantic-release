@@ -7,7 +7,7 @@ import registry from './helpers/registry';
 import mockServer from './helpers/mockserver';
 import semanticRelease from '..';
 
-/* eslint-disable camelcase */
+/* eslint camelcase: ["error", {properties: "never"}] */
 
 // Environment variables used with cli
 const env = {

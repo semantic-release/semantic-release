@@ -1,6 +1,7 @@
 import tempy from 'tempy';
 import execa from 'execa';
-import pMapSeries from 'p-map-series';
+import fileUrl from 'file-url';
+import pReduce from 'p-reduce';
 
 /**
  * Commit message informations.
@@ -33,11 +34,16 @@ export async function gitRepo() {
  * @returns {Array<Commit>} The created commits, in reverse order (to match `git log` order).
  */
 export async function gitCommits(messages) {
-  return (await pMapSeries(messages, async msg => {
-    const {stdout} = await execa('git', ['commit', '-m', msg, '--allow-empty', '--no-gpg-sign']);
-    const [, branch, hash, message] = /^\[(\w+)\(?.*?\)?(\w+)\] (.+)$/.exec(stdout);
-    return {branch, hash, message};
-  })).reverse();
+  return (await pReduce(
+    messages,
+    async (commits, msg) => {
+      const {stdout} = await execa('git', ['commit', '-m', msg, '--allow-empty', '--no-gpg-sign']);
+      const [, branch, hash, message] = /^\[(\w+)\(?.*?\)?(\w+)\] (.+)$/.exec(stdout);
+      commits.push({branch, hash, message});
+      return commits;
+    },
+    []
+  )).reverse();
 }
 
 /**
@@ -109,7 +115,7 @@ export async function gitShallowClone(origin, branch = 'master', depth = 1) {
   const dir = tempy.directory();
 
   process.chdir(dir);
-  await execa('git', ['clone', '--no-hardlinks', '--no-tags', '-b', branch, '--depth', depth, `file://${origin}`, dir]);
+  await execa('git', ['clone', '--no-hardlinks', '--no-tags', '-b', branch, '--depth', depth, fileUrl(origin), dir]);
   return dir;
 }
 
@@ -136,4 +142,14 @@ export async function gitDetachedHead(origin, head) {
  */
 export async function gitPackRefs() {
   await execa('git', ['pack-refs', '--all']);
+}
+
+/**
+ * Add a new Git configuration.
+ *
+ * @param {string} name Config name.
+ * @param {string} value Config value.
+ */
+export async function gitAddConfig(name, value) {
+  await execa('git', ['config', '--add', name, value]);
 }

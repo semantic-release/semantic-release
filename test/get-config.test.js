@@ -1,9 +1,9 @@
 import test from 'ava';
-import {writeJson} from 'fs-extra';
+import {writeFile, writeJson} from 'fs-extra';
 import proxyquire from 'proxyquire';
 import {stub} from 'sinon';
-import normalizeData from 'normalize-package-data';
-import {gitRepo} from './helpers/git-utils';
+import yaml from 'js-yaml';
+import {gitRepo, gitCommits, gitShallowClone, gitAddConfig} from './helpers/git-utils';
 
 test.beforeEach(t => {
   // Save the current process.env
@@ -21,85 +21,175 @@ test.afterEach.always(t => {
   process.env = Object.assign({}, t.context.env);
 });
 
-test.serial('Default values', async t => {
-  const pkg = {name: 'package_name', release: {}};
+test.serial('Default values, reading repositoryUrl from package.json', async t => {
+  const pkg = {repository: 'git@package.com:owner/module.git'};
+  // Create a git repository, set the current working directory at the root of the repo
+  await gitRepo();
+  await gitCommits(['First']);
+  // Add remote.origin.url config
+  await gitAddConfig('remote.origin.url', 'git@repo.com:owner/module.git');
+  // Create package.json in repository root
+  await writeJson('./package.json', pkg);
+
+  const {options} = await t.context.getConfig();
+
+  // Verify the default options are set
+  t.is(options.branch, 'master');
+  t.is(options.repositoryUrl, 'git@package.com:owner/module.git');
+});
+
+test.serial('Default values, reading repositoryUrl from repo if not set in package.json', async t => {
+  // Create a git repository, set the current working directory at the root of the repo
+  await gitRepo();
+  // Add remote.origin.url config
+  await gitAddConfig('remote.origin.url', 'git@repo.com:owner/module.git');
+
+  const {options} = await t.context.getConfig();
+
+  // Verify the default options are set
+  t.is(options.branch, 'master');
+  t.is(options.repositoryUrl, 'git@repo.com:owner/module.git');
+});
+
+test.serial('Default values, reading repositoryUrl (http url) from package.json if not set in repo', async t => {
+  const pkg = {repository: 'git+https://hostname.com/owner/module.git'};
   // Create a git repository, set the current working directory at the root of the repo
   await gitRepo();
   // Create package.json in repository root
   await writeJson('./package.json', pkg);
 
-  const result = await t.context.getConfig();
+  const {options} = await t.context.getConfig();
 
-  // Verify the normalized package is returned
-  normalizeData(pkg);
-  t.deepEqual(result.pkg, pkg);
   // Verify the default options are set
-  t.is(result.options.branch, 'master');
+  t.is(options.branch, 'master');
+  t.is(options.repositoryUrl, pkg.repository);
 });
 
-test.serial('Read package.json configuration', async t => {
+test.serial('Read options from package.json', async t => {
   const release = {
     analyzeCommits: 'analyzeCommits',
     generateNotes: 'generateNotes',
-    getLastRelease: {
-      path: 'getLastRelease',
-      param: 'getLastRelease_param',
-    },
+    getLastRelease: {path: 'getLastRelease', param: 'getLastRelease_param'},
     branch: 'test_branch',
+    repositoryUrl: 'git+https://hostname.com/owner/module.git',
   };
-  const pkg = {name: 'package_name', release};
 
   // Create a git repository, set the current working directory at the root of the repo
   await gitRepo();
   // Create package.json in repository root
-  await writeJson('./package.json', pkg);
+  await writeJson('./package.json', {release});
 
-  const result = await t.context.getConfig();
+  const {options} = await t.context.getConfig();
 
   // Verify the options contains the plugin config from package.json
-  t.is(result.options.analyzeCommits, release.analyzeCommits);
-  t.is(result.options.generateNotes, release.generateNotes);
-  t.deepEqual(result.options.getLastRelease, release.getLastRelease);
-  t.is(result.options.branch, release.branch);
-
+  t.deepEqual(options, release);
   // Verify the plugins module is called with the plugin options from package.json
-  t.is(t.context.plugins.firstCall.args[0].analyzeCommits, release.analyzeCommits);
-  t.is(t.context.plugins.firstCall.args[0].generateNotes, release.generateNotes);
-  t.deepEqual(t.context.plugins.firstCall.args[0].getLastRelease, release.getLastRelease);
-  t.is(t.context.plugins.firstCall.args[0].branch, release.branch);
+  t.deepEqual(t.context.plugins.firstCall.args[0], release);
 });
 
-test.serial('Prioritise cli parameters over package.json configuration', async t => {
+test.serial('Read options from .releaserc.yml', async t => {
   const release = {
-    analyzeCommits: 'analyzeCommits',
-    generateNotes: 'generateNotes',
-    getLastRelease: {
-      path: 'getLastRelease',
-      param: 'getLastRelease_pkg',
-    },
+    getLastRelease: {path: 'getLastRelease', param: 'getLastRelease_param'},
+    branch: 'test_branch',
+    repositoryUrl: 'git+https://hostname.com/owner/module.git',
+  };
+
+  // Create a git repository, set the current working directory at the root of the repo
+  await gitRepo();
+  // Create package.json in repository root
+  await writeFile('.releaserc.yml', yaml.safeDump(release));
+
+  const {options} = await t.context.getConfig();
+
+  // Verify the options contains the plugin config from package.json
+  t.deepEqual(options, release);
+  // Verify the plugins module is called with the plugin options from package.json
+  t.deepEqual(t.context.plugins.firstCall.args[0], release);
+});
+
+test.serial('Read options from .releaserc.json', async t => {
+  const release = {
+    getLastRelease: {path: 'getLastRelease', param: 'getLastRelease_param'},
+    branch: 'test_branch',
+    repositoryUrl: 'git+https://hostname.com/owner/module.git',
+  };
+
+  // Create a git repository, set the current working directory at the root of the repo
+  await gitRepo();
+  // Create package.json in repository root
+  await writeJson('.releaserc.json', release);
+
+  const {options} = await t.context.getConfig();
+
+  // Verify the options contains the plugin config from package.json
+  t.deepEqual(options, release);
+  // Verify the plugins module is called with the plugin options from package.json
+  t.deepEqual(t.context.plugins.firstCall.args[0], release);
+});
+
+test.serial('Read options from .releaserc.js', async t => {
+  const release = {
+    getLastRelease: {path: 'getLastRelease', param: 'getLastRelease_param'},
+    branch: 'test_branch',
+    repositoryUrl: 'git+https://hostname.com/owner/module.git',
+  };
+
+  // Create a git repository, set the current working directory at the root of the repo
+  await gitRepo();
+  // Create package.json in repository root
+  await writeFile('.releaserc.js', `module.exports = ${JSON.stringify(release)}`);
+
+  const {options} = await t.context.getConfig();
+
+  // Verify the options contains the plugin config from package.json
+  t.deepEqual(options, release);
+  // Verify the plugins module is called with the plugin options from package.json
+  t.deepEqual(t.context.plugins.firstCall.args[0], release);
+});
+
+test.serial('Read options from release.config.js', async t => {
+  const release = {
+    getLastRelease: {path: 'getLastRelease', param: 'getLastRelease_param'},
+    branch: 'test_branch',
+    repositoryUrl: 'git+https://hostname.com/owner/module.git',
+  };
+
+  // Create a git repository, set the current working directory at the root of the repo
+  await gitRepo();
+  // Create package.json in repository root
+  await writeFile('release.config.js', `module.exports = ${JSON.stringify(release)}`);
+
+  const {options} = await t.context.getConfig();
+
+  // Verify the options contains the plugin config from package.json
+  t.deepEqual(options, release);
+  // Verify the plugins module is called with the plugin options from package.json
+  t.deepEqual(t.context.plugins.firstCall.args[0], release);
+});
+
+test.serial('Prioritise cli parameters over file configuration and git repo', async t => {
+  const release = {
+    getLastRelease: {path: 'getLastRelease', param: 'getLastRelease_pkg'},
     branch: 'branch_pkg',
   };
   const options = {
-    getLastRelease: {
-      path: 'getLastRelease',
-      param: 'getLastRelease_cli',
-    },
+    getLastRelease: {path: 'getLastRelease', param: 'getLastRelease_cli'},
     branch: 'branch_cli',
+    repositoryUrl: 'http://cli-url.com/owner/package',
   };
-  const pkg = {name: 'package_name', release};
-
+  const pkg = {release, repository: 'git@hostname.com:owner/module.git'};
   // Create a git repository, set the current working directory at the root of the repo
-  await gitRepo();
+  const repo = await gitRepo();
+  await gitCommits(['First']);
+  // Create a clone
+  await gitShallowClone(repo);
   // Create package.json in repository root
   await writeJson('./package.json', pkg);
 
   const result = await t.context.getConfig(options);
 
   // Verify the options contains the plugin config from cli
-  t.deepEqual(result.options.getLastRelease, options.getLastRelease);
-  t.is(result.options.branch, options.branch);
-
+  t.deepEqual(result.options, options);
   // Verify the plugins module is called with the plugin options from cli
-  t.deepEqual(t.context.plugins.firstCall.args[0].getLastRelease, options.getLastRelease);
-  t.is(t.context.plugins.firstCall.args[0].branch, options.branch);
+  t.deepEqual(t.context.plugins.firstCall.args[0], options);
 });

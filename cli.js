@@ -10,6 +10,7 @@ module.exports = async () => {
     .name('semantic-release')
     .description('Run automated package publishing')
     .option('-b, --branch <branch>', 'Branch to release from')
+    .option('-r, --repositoryUrl <repositoryUrl>', 'Git repository URL')
     .option(
       '--verify-conditions <paths>',
       'Comma separated list of paths or packages name for the verifyConditions plugin(s)',
@@ -41,7 +42,7 @@ module.exports = async () => {
       program.outputHelp();
       process.exitCode = 1;
     } else {
-      await require('./index')(program.opts());
+      await require('.')(program.opts());
     }
   } catch (err) {
     // If error is a SemanticReleaseError then it's an expected exception case (no release to be done, running on a PR etc..) and the cli will return with 0
