@@ -34,7 +34,24 @@ test.beforeEach(t => {
   t.context.env = Object.assign({}, process.env);
   // Save the current working diretory
   t.context.cwd = process.cwd();
-
+  // Delete env paramaters that could have been set on the machine running the tests
+  delete process.env.NPM_TOKEN;
+  delete process.env.NPM_USERNAME;
+  delete process.env.NPM_PASSWORD;
+  delete process.env.NPM_EMAIL;
+  delete process.env.GH_TOKEN;
+  delete process.env.GITHUB_TOKEN;
+  delete process.env.GH_URL;
+  delete process.env.GITHUB_URL;
+  delete process.env.GH_PREFIX;
+  delete process.env.GITHUB_PREFIX;
+  // Delete all `npm_config` environment variable set by CI as they take precedence over the `.npmrc` because the process that runs the tests is started before the `.npmrc` is created
+  for (let i = 0, keys = Object.keys(process.env); i < keys.length; i++) {
+    if (keys[i].startsWith('npm_config')) {
+      delete process.env[keys[i]];
+    }
+  }
+  // Disable logs during tests
   t.context.log = stub(console, 'log');
   t.context.error = stub(console, 'error');
   t.context.stdout = stub(process.stdout, 'write');
@@ -46,7 +63,7 @@ test.afterEach.always(t => {
   process.env = Object.assign({}, t.context.env);
   // Restore the current working directory
   process.chdir(t.context.cwd);
-
+  // Restore the logs
   t.context.log.restore();
   t.context.error.restore();
   t.context.stdout.restore();
