@@ -3,15 +3,15 @@ import {writeJson, readJson} from 'fs-extra';
 import {stub} from 'sinon';
 import execa from 'execa';
 import {gitRepo, gitCommits, gitHead, gitTagVersion, gitPackRefs, gitAmmendCommit} from './helpers/git-utils';
-import registry from './helpers/registry';
 import mockServer from './helpers/mockserver';
+import npmRegistry from './helpers/npm-registry';
 import semanticRelease from '..';
 
 /* eslint camelcase: ["error", {properties: "never"}] */
 
 // Environment variables used with cli
 const env = {
-  npm_config_registry: registry.uri,
+  npm_config_registry: npmRegistry.url,
   GH_TOKEN: 'github_token',
   GITHUB_URL: mockServer.url,
   NPM_EMAIL: 'integration@test.com',
@@ -23,10 +23,10 @@ const pluginError = require.resolve('./fixtures/plugin-error');
 const pluginInheritedError = require.resolve('./fixtures/plugin-error-inherited');
 
 test.before(async () => {
+  // Start the local NPM registry
+  await npmRegistry.start();
   // Start Mock Server
   await mockServer.start();
-  // Start the local NPM registry
-  await registry.start();
 });
 
 test.beforeEach(t => {
@@ -54,9 +54,10 @@ test.afterEach.always(t => {
 });
 
 test.after.always(async () => {
-  await mockServer.stop();
   // Stop the local NPM registry
-  await registry.stop();
+  await npmRegistry.stop();
+  // Stop Mock Server
+  await mockServer.stop();
 });
 
 test.serial('Release patch, minor and major versions', async t => {
@@ -71,7 +72,7 @@ test.serial('Release patch, minor and major versions', async t => {
     version: '0.0.0-dev',
     repository: {url: `git+https://github.com/${owner}/${packageName}`},
     release: {verifyConditions: ['@semantic-release/github', '@semantic-release/npm']},
-    publishConfig: {registry: registry.uri},
+    publishConfig: {registry: npmRegistry.url},
   });
   // Create a npm-shrinkwrap.json file
   await execa('npm', ['shrinkwrap'], {env});
@@ -284,7 +285,7 @@ test.serial('Release versions from a packed git repository, using tags to determ
     version: '0.0.0-dev',
     repository: {url: `git@github.com:${owner}/${packageName}.git`},
     release: {verifyConditions: ['@semantic-release/github', '@semantic-release/npm']},
-    publishConfig: {registry: registry.uri},
+    publishConfig: {registry: npmRegistry.url},
   });
 
   /* Initial release */
@@ -399,7 +400,7 @@ test.serial('Create a tag as a recovery solution for "ENOTINHISTORY" error', asy
     version: '0.0.0-dev',
     repository: {url: `git+https://github.com/${owner}/${packageName}`},
     release: {verifyConditions: ['@semantic-release/github', '@semantic-release/npm']},
-    publishConfig: {registry: registry.uri},
+    publishConfig: {registry: npmRegistry.url},
   });
 
   /* Initial release */
@@ -528,7 +529,7 @@ test.serial('Dry-run', async t => {
     name: packageName,
     version: '0.0.0-dev',
     repository: {url: `git+https://github.com/${owner}/${packageName}`},
-    publishConfig: {registry: registry.uri},
+    publishConfig: {registry: npmRegistry.url},
   });
 
   /* Initial release */
@@ -557,7 +558,7 @@ test.serial('Pass options via CLI arguments', async t => {
     name: packageName,
     version: '0.0.0-dev',
     repository: {url: `git+https://github.com/${owner}/${packageName}`},
-    publishConfig: {registry: registry.uri},
+    publishConfig: {registry: npmRegistry.url},
   });
 
   /* Initial release */
@@ -597,7 +598,7 @@ test.serial('Run via JS API', async t => {
     name: packageName,
     version: '0.0.0-dev',
     repository: {url: `git+https://github.com/${owner}/${packageName}`},
-    publishConfig: {registry: registry.uri},
+    publishConfig: {registry: npmRegistry.url},
   });
 
   /* Initial release */

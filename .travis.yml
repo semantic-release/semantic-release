@@ -1,11 +1,13 @@
 language: node_js
 services:
-  - couchdb
   - docker
 notifications:
   email: false
 node_js:
+  - 9
   - 8
+os:
+  - linux
 
 # Trigger a push build on caribou and greenkeeper branches + PRs build on every branches
 # Avoid double build on PRs (See https://github.com/travis-ci/travis-ci/issues/1147)
