@@ -21,6 +21,7 @@ install:
   - travis_retry npm install
 
 script:
+  - git config --get user.email
   - npm run test
 
 after_success:
