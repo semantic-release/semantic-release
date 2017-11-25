@@ -295,7 +295,7 @@ Yes you can. All you need is configure the `release` block of `package.json` as 
 
 ```json
 {
-  "release" {
+  "release": {
     "analyzeCommits": {
       "releaseRules": [
         { "breaking": true, "release": "minor" }
