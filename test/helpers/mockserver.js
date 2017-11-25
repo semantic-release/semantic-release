@@ -1,11 +1,21 @@
 import Docker from 'dockerode';
 import getStream from 'get-stream';
+import got from 'got';
+import pRetry from 'p-retry';
 import {mockServerClient} from 'mockserver-client';
 
 const MOCK_SERVER_PORT = 1080;
 const MOCK_SERVER_HOST = 'localhost';
 const docker = new Docker();
 let container;
+
+async function checkStatus() {
+  const response = await got.put(`http://${MOCK_SERVER_HOST}:${MOCK_SERVER_PORT}/status`, {cache: false});
+  if (response.status === 200) {
+    // If the registry returns a 200 status, it's ready. Abort the retry.
+    throw new pRetry.AbortError();
+  }
+}
 
 /**
  * Download the `mockserver` Docker image, create a new container and start it.
@@ -19,7 +29,14 @@ async function start() {
     Image: 'jamesdbloom/mockserver',
     PortBindings: {[`${MOCK_SERVER_PORT}/tcp`]: [{HostPort: `${MOCK_SERVER_PORT}`}]},
   });
-  return container.start();
+  await container.start();
+
+  try {
+    // Wait for the mock server to be ready
+    await pRetry(checkStatus, {retries: 5, minTimeout: 1000, factor: 2});
+  } catch (err) {
+    throw new Error(`Couldn't start mock-server after 30s`);
+  }
 }
 
 /**
