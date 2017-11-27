@@ -23,6 +23,17 @@ test('The "getLastRelease" plugin is mandatory, and must be a single plugin defi
   t.true(definitions.getLastRelease.config.validator(() => {}));
 });
 
+test('The "getCommits" plugin is mandatory, and must be a single plugin definition', t => {
+  t.false(definitions.getCommits.config.validator({}));
+  t.false(definitions.getCommits.config.validator({path: null}));
+  t.false(definitions.getCommits.config.validator([]));
+  t.false(definitions.getCommits.config.validator());
+
+  t.true(definitions.getCommits.config.validator({path: 'plugin-path.js'}));
+  t.true(definitions.getCommits.config.validator('plugin-path.js'));
+  t.true(definitions.getCommits.config.validator(() => {}));
+});
+
 test('The "analyzeCommits" plugin is mandatory, and must be a single plugin definition', t => {
   t.false(definitions.analyzeCommits.config.validator({}));
   t.false(definitions.analyzeCommits.config.validator({path: null}));

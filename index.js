@@ -3,7 +3,6 @@ const TerminalRenderer = require('marked-terminal');
 const SemanticReleaseError = require('@semantic-release/error');
 const getConfig = require('./lib/get-config');
 const getNextVersion = require('./lib/get-next-version');
-const getCommits = require('./lib/get-commits');
 const logger = require('./lib/logger');
 const {gitHead: getGitHead, isGitRepo} = require('./lib/git');
 
@@ -27,19 +26,21 @@ module.exports = async opts => {
   }
 
   logger.log('Call plugin %s', 'get-last-release');
-  const {commits, lastRelease} = await getCommits(
-    await plugins.getLastRelease({options, logger}),
-    options.branch,
-    logger
-  );
+  const lastRelease = await plugins.getLastRelease({options, logger});
+
+  logger.log('Call plugin %s', 'get-commits');
+  const {commits, lastRelease: {version, gitHead, gitTag}} = await plugins.getCommits({lastRelease, options, logger});
+  lastRelease.version = version;
+  lastRelease.gitHead = gitHead;
+  lastRelease.gitTag = gitTag;
 
   logger.log('Call plugin %s', 'analyze-commits');
   const type = await plugins.analyzeCommits({options, logger, lastRelease, commits});
   if (!type) {
     throw new SemanticReleaseError('There are no relevant changes, so no new version is released.', 'ENOCHANGE');
   }
-  const version = getNextVersion(type, lastRelease, logger);
-  const nextRelease = {type, version, gitHead: await getGitHead(), gitTag: `v${version}`};
+  const newVersion = getNextVersion(type, lastRelease, logger);
+  const nextRelease = {type, version: newVersion, gitHead: await getGitHead(), gitTag: `v${newVersion}`};
 
   logger.log('Call plugin %s', 'verify-release');
   await plugins.verifyRelease({options, logger, lastRelease, commits, nextRelease});
