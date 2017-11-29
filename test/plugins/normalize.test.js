@@ -40,7 +40,7 @@ test('Wrap plugin in a function that validate the output of the plugin', async t
   const pluginFunction = stub().resolves(1);
   const plugin = normalize('', pluginFunction, t.context.logger, {
     validator: output => output === 1,
-    message: 'The output must be 1',
+    message: 'The output must be 1.',
   });
 
   await t.notThrows(plugin());
