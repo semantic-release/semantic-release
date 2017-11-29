@@ -127,8 +127,7 @@
       "prettier"
     ],
     "rules": {
-      "prettier/prettier": 2,
-      "no-duplicate-imports": 2
+      "prettier/prettier": 2
     }
   }
 }
