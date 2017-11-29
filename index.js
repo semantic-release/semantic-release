@@ -19,7 +19,7 @@ module.exports = async opts => {
     throw new SemanticReleaseError('The repositoryUrl option is required', 'ENOREPOURL');
   }
 
-  logger.log('Run automated release from branch %s', options.name, options.branch);
+  logger.log('Run automated release from branch %s', options.branch);
 
   if (!options.dryRun) {
     logger.log('Call plugin %s', 'verify-conditions');
