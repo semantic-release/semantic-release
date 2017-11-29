@@ -193,6 +193,54 @@ test.serial('Dry-run skips verifyConditions and publish', async t => {
   t.true(publish.notCalled);
 });
 
+test.serial('Accept "undefined" values for the "getLastRelease" and "generateNotes" plugins', async t => {
+  // Create a git repository, set the current working directory at the root of the repo
+  await gitRepo();
+  // Add commits to the master branch
+  await gitCommits(['First']);
+  // Create the tag corresponding to version 1.0.0
+  await gitTagVersion('v1.0.0');
+  // Add new commits to the master branch
+  await gitCommits(['Second']);
+
+  const lastRelease = {gitHead: undefined, gitTag: undefined, version: undefined};
+  const nextRelease = {type: 'major', version: '2.0.0', gitHead: await getGitHead(), gitTag: 'v2.0.0'};
+  const verifyConditions = stub().resolves();
+  const getLastRelease = stub().resolves();
+  const analyzeCommits = stub().resolves(nextRelease.type);
+  const verifyRelease = stub().resolves();
+  const generateNotes = stub().resolves();
+  const publish = stub().resolves();
+
+  const options = {
+    branch: 'master',
+    repositoryUrl: 'git@hostname.com:owner/module.git',
+    verifyConditions: [verifyConditions],
+    getLastRelease,
+    analyzeCommits,
+    verifyRelease,
+    generateNotes,
+    publish,
+  };
+
+  await t.context.semanticRelease(options);
+
+  t.true(getLastRelease.calledOnce);
+
+  t.true(analyzeCommits.calledOnce);
+  t.deepEqual(analyzeCommits.firstCall.args[1].lastRelease, lastRelease);
+
+  t.true(verifyRelease.calledOnce);
+  t.deepEqual(verifyRelease.firstCall.args[1].lastRelease, lastRelease);
+
+  t.true(generateNotes.calledOnce);
+  t.deepEqual(generateNotes.firstCall.args[1].lastRelease, lastRelease);
+
+  t.true(publish.calledOnce);
+  t.deepEqual(publish.firstCall.args[1].lastRelease, lastRelease);
+  t.falsy(publish.firstCall.args[1].nextRelease.notes);
+});
+
 test.serial('Throw SemanticReleaseError if not running from a git repository', async t => {
   // Set the current working directory to a temp directory
   process.chdir(tempy.directory());
