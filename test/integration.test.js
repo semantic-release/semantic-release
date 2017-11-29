@@ -9,15 +9,20 @@ import semanticRelease from '..';
 
 /* eslint camelcase: ["error", {properties: "never"}] */
 
-// Environment variables used with cli
+// Environment variables used with semantic-release cli (similar to what a user would setup)
 const env = {
-  npm_config_registry: npmRegistry.url,
   GH_TOKEN: 'github_token',
   GITHUB_URL: mockServer.url,
   NPM_EMAIL: 'integration@test.com',
   NPM_USERNAME: 'integration',
   NPM_PASSWORD: 'suchsecure',
 };
+// Environment variables used only for the local npm command used to do verification
+const testEnv = Object.assign({}, process.env, {
+  npm_config_registry: npmRegistry.url,
+  NPM_EMAIL: 'integration@test.com',
+  LEGACY_TOKEN: Buffer.from(`${process.env.NPM_USERNAME}:${process.env.NPM_PASSWORD}`, 'utf8').toString('base64'),
+});
 const cli = require.resolve('../bin/semantic-release');
 const pluginError = require.resolve('./fixtures/plugin-error');
 const pluginInheritedError = require.resolve('./fixtures/plugin-error-inherited');
@@ -92,7 +97,7 @@ test.serial('Release patch, minor and major versions', async t => {
     publishConfig: {registry: npmRegistry.url},
   });
   // Create a npm-shrinkwrap.json file
-  await execa('npm', ['shrinkwrap'], {env});
+  await execa('npm', ['shrinkwrap'], {env: testEnv});
 
   /* No release */
 
@@ -143,7 +148,7 @@ test.serial('Release patch, minor and major versions', async t => {
 
   // Retrieve the published package from the registry and check version and gitHead
   let [, releasedVersion, releasedGitHead] = /^version = '(.+)'\s+gitHead = '(.+)'$/.exec(
-    (await execa('npm', ['show', packageName, 'version', 'gitHead'], {env})).stdout
+    (await execa('npm', ['show', packageName, 'version', 'gitHead'], {env: testEnv})).stdout
   );
   t.is(releasedVersion, version);
   t.is(releasedGitHead, await gitHead());
@@ -188,7 +193,7 @@ test.serial('Release patch, minor and major versions', async t => {
 
   // Retrieve the published package from the registry and check version and gitHead
   [, releasedVersion, releasedGitHead] = /^version = '(.+)'\s+gitHead = '(.+)'$/.exec(
-    (await execa('npm', ['show', packageName, 'version', 'gitHead'], {env})).stdout
+    (await execa('npm', ['show', packageName, 'version', 'gitHead'], {env: testEnv})).stdout
   );
   t.is(releasedVersion, version);
   t.is(releasedGitHead, await gitHead());
@@ -233,7 +238,7 @@ test.serial('Release patch, minor and major versions', async t => {
 
   // Retrieve the published package from the registry and check version and gitHead
   [, releasedVersion, releasedGitHead] = /^version = '(.+)'\s+gitHead = '(.+)'$/.exec(
-    (await execa('npm', ['show', packageName, 'version', 'gitHead'], {env})).stdout
+    (await execa('npm', ['show', packageName, 'version', 'gitHead'], {env: testEnv})).stdout
   );
   t.is(releasedVersion, version);
   t.is(releasedGitHead, await gitHead());
@@ -278,7 +283,7 @@ test.serial('Release patch, minor and major versions', async t => {
 
   // Retrieve the published package from the registry and check version and gitHead
   [, releasedVersion, releasedGitHead] = /^version = '(.+)'\s+gitHead = '(.+)'$/.exec(
-    (await execa('npm', ['show', packageName, 'version', 'gitHead'], {env})).stdout
+    (await execa('npm', ['show', packageName, 'version', 'gitHead'], {env: testEnv})).stdout
   );
   t.is(releasedVersion, version);
   t.is(releasedGitHead, await gitHead());
@@ -337,7 +342,7 @@ test.serial('Release versions from a packed git repository, using tags to determ
   // Verify package.json has been updated
   t.is((await readJson('./package.json')).version, version);
   // Retrieve the published package from the registry and check version
-  let releasedVersion = (await execa('npm', ['show', packageName, 'version'], {env})).stdout;
+  let releasedVersion = (await execa('npm', ['show', packageName, 'version'], {env: testEnv})).stdout;
   t.is(releasedVersion, version);
   t.log(`+ released ${releasedVersion}`);
   await mockServer.verify(verifyMock);
@@ -378,7 +383,7 @@ test.serial('Release versions from a packed git repository, using tags to determ
   t.is((await readJson('./package.json')).version, version);
 
   // Retrieve the published package from the registry and check version
-  releasedVersion = (await execa('npm', ['show', packageName, 'version'], {env})).stdout;
+  releasedVersion = (await execa('npm', ['show', packageName, 'version'], {env: testEnv})).stdout;
   t.is(releasedVersion, version);
   t.log(`+ released ${releasedVersion}`);
   await mockServer.verify(verifyMock);
@@ -452,7 +457,7 @@ test.serial('Create a tag as a recovery solution for "ENOTINHISTORY" error', asy
 
   // Retrieve the published package from the registry and check version and gitHead
   let [, releasedVersion, releasedGitHead] = /^version = '(.+)'\s+gitHead = '(.+)'$/.exec(
-    (await execa('npm', ['show', packageName, 'version', 'gitHead'], {env})).stdout
+    (await execa('npm', ['show', packageName, 'version', 'gitHead'], {env: testEnv})).stdout
   );
   const head = await gitHead();
   t.is(releasedGitHead, head);
@@ -527,7 +532,7 @@ test.serial('Create a tag as a recovery solution for "ENOTINHISTORY" error', asy
   t.is((await readJson('./package.json')).version, version);
 
   // Retrieve the published package from the registry and check version and gitHead
-  releasedVersion = (await execa('npm', ['show', packageName, 'version'], {env})).stdout;
+  releasedVersion = (await execa('npm', ['show', packageName, 'version'], {env: testEnv})).stdout;
   t.is(releasedVersion, version);
   t.log(`+ released ${releasedVersion}`);
   await mockServer.verify(verifyMock);
@@ -596,7 +601,7 @@ test.serial('Pass options via CLI arguments', async t => {
 
   // Retrieve the published package from the registry and check version and gitHead
   const [, releasedVersion, releasedGitHead] = /^version = '(.+)'\s+gitHead = '(.+)'$/.exec(
-    (await execa('npm', ['show', packageName, 'version', 'gitHead'], {env})).stdout
+    (await execa('npm', ['show', packageName, 'version', 'gitHead'], {env: testEnv})).stdout
   );
   t.is(releasedVersion, version);
   t.is(releasedGitHead, await gitHead());
@@ -658,7 +663,7 @@ test.serial('Run via JS API', async t => {
 
   // Retrieve the published package from the registry and check version and gitHead
   const [, releasedVersion, releasedGitHead] = /^version = '(.+)'\s+gitHead = '(.+)'$/.exec(
-    (await execa('npm', ['show', packageName, 'version', 'gitHead'], {env})).stdout
+    (await execa('npm', ['show', packageName, 'version', 'gitHead'], {env: testEnv})).stdout
   );
   t.is(releasedVersion, version);
   t.is(releasedGitHead, await gitHead());
