@@ -49,7 +49,7 @@ test('Use default when only options are passed for a single plugin', t => {
 });
 
 test('Throw an error if plugin configuration is missing a path for plugin pipeline', t => {
-  const error = t.throws(() => getPlugins({verifyConditions: {}}, t.context.logger));
+  const error = t.throws(() => getPlugins({verifyConditions: {}}, t.context.logger), Error);
 
   t.is(
     error.message,
@@ -58,7 +58,10 @@ test('Throw an error if plugin configuration is missing a path for plugin pipeli
 });
 
 test('Throw an error if an array of plugin configuration is missing a path for plugin pipeline', t => {
-  const error = t.throws(() => getPlugins({verifyConditions: [{path: '@semantic-release/npm'}, {}]}, t.context.logger));
+  const error = t.throws(
+    () => getPlugins({verifyConditions: [{path: '@semantic-release/npm'}, {}]}, t.context.logger),
+    Error
+  );
 
   t.is(
     error.message,

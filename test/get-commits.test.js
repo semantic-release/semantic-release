@@ -1,6 +1,5 @@
 import test from 'ava';
 import {stub} from 'sinon';
-import SemanticReleaseError from '@semantic-release/error';
 import getCommits from '../lib/get-commits';
 import {
   gitRepo,
@@ -409,7 +408,7 @@ test.serial('Throws ENOGITHEAD error if the gitHead of the last release cannot b
 
   // Verify error code and type
   t.is(error.code, 'ENOGITHEAD');
-  t.true(error instanceof SemanticReleaseError);
+  t.is(error.name, 'SemanticReleaseError');
   // Verify the log function has been called with a message explaining the error
   t.regex(
     t.context.error.firstCall.args[0],
@@ -428,7 +427,7 @@ test.serial('Throws ENOTINHISTORY error if gitHead is not in history', async t =
 
   // Verify error code and type
   t.is(error.code, 'ENOTINHISTORY');
-  t.true(error instanceof SemanticReleaseError);
+  t.is(error.name, 'SemanticReleaseError');
   // Verify the log function has been called with a message mentionning the branch
   t.regex(t.context.error.firstCall.args[0], /history of the "master" branch/);
   // Verify the log function has been called with a message mentionning the missing gitHead
@@ -453,7 +452,7 @@ test.serial('Throws ENOTINHISTORY error if gitHead is not in branch history but 
 
   // Verify error code and type
   t.is(error.code, 'ENOTINHISTORY');
-  t.true(error instanceof SemanticReleaseError);
+  t.is(error.name, 'SemanticReleaseError');
   // Verify the log function has been called with a message mentionning the branch
   t.regex(t.context.error.firstCall.args[0], /history of the "master" branch/);
   // Verify the log function has been called with a message mentionning the missing gitHead
@@ -482,7 +481,7 @@ test.serial('Throws ENOTINHISTORY error if gitHead is not in detached head but p
 
   // Verify error code and type
   t.is(error.code, 'ENOTINHISTORY');
-  t.true(error instanceof SemanticReleaseError);
+  t.is(error.name, 'SemanticReleaseError');
   // Verify the log function has been called with a message mentionning the branch
   t.regex(t.context.error.firstCall.args[0], /history of the "master" branch/);
   // Verify the log function has been called with a message mentionning the missing gitHead
@@ -508,7 +507,7 @@ test.serial('Throws ENOTINHISTORY error when a tag is not in branch history but 
   const error = await t.throws(getCommits({version: '1.0.0'}, 'master', t.context.logger));
   // Verify error code and type
   t.is(error.code, 'ENOTINHISTORY');
-  t.true(error instanceof SemanticReleaseError);
+  t.is(error.name, 'SemanticReleaseError');
   // Verify the log function has been called with a message mentionning the branch
   t.regex(t.context.error.firstCall.args[0], /history of the "master" branch/);
   // Verify the log function has been called with a message mentionning the missing gitHead

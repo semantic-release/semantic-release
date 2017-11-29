@@ -36,7 +36,7 @@ test.serial('Throw error if the last commit sha cannot be found', async t => {
   // Create a git repository, set the current working directory at the root of the repo
   await gitRepo();
 
-  await t.throws(gitHead());
+  await t.throws(gitHead(), Error);
 });
 
 test.serial('Unshallow repository', async t => {
