@@ -2,7 +2,6 @@ import test from 'ava';
 import proxyquire from 'proxyquire';
 import {stub} from 'sinon';
 import tempy from 'tempy';
-import SemanticReleaseError from '@semantic-release/error';
 import DEFINITIONS from '../lib/plugins/definitions';
 import {gitHead as getGitHead} from '../lib/git';
 import {gitRepo, gitCommits, gitTagVersion} from './helpers/git-utils';
@@ -250,10 +249,10 @@ test.serial('Throw SemanticReleaseError if not running from a git repository', a
 
   // Verify error code and type
   t.is(error.code, 'ENOGITREPO');
-  t.true(error instanceof SemanticReleaseError);
+  t.is(error.name, 'SemanticReleaseError');
 });
 
-test.serial('Throw SemanticReleaseError if repositoryUrl is not set and canot be found', async t => {
+test.serial('Throw SemanticReleaseError if repositoryUrl is not set and cannot be found', async t => {
   // Create a git repository, set the current working directory at the root of the repo
   await gitRepo();
 
@@ -261,7 +260,8 @@ test.serial('Throw SemanticReleaseError if repositoryUrl is not set and canot be
 
   // Verify error code and type
   t.is(error.code, 'ENOREPOURL');
-  t.true(error instanceof SemanticReleaseError);
+  t.is(error.name, 'SemanticReleaseError');
+});
 
 test.serial('Throw an Error if returns an unexpected value', async t => {
   // Create a git repository, set the current working directory at the root of the repo

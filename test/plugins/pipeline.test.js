@@ -32,7 +32,7 @@ test('Stop execution and throw error is a step rejects', async t => {
   const step2 = stub().throws(new Error('test error'));
   const step3 = stub().resolves(3);
 
-  const error = await t.throws(pipeline([step1, step2, step3])(0));
+  const error = await t.throws(pipeline([step1, step2, step3])(0), Error);
   t.is(error.message, 'test error');
   t.true(step1.calledWith(0));
   t.true(step2.calledWith(0));

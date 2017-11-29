@@ -46,7 +46,7 @@ test('Wrap plugin in a function that validate the output of the plugin', async t
   await t.notThrows(plugin());
 
   pluginFunction.resolves(2);
-  const error = await t.throws(plugin());
+  const error = await t.throws(plugin(), Error);
   t.is(error.message, 'The output must be 1. Received: 2');
 });
 
@@ -104,7 +104,7 @@ test('Always pass a defined "pluginConfig" for plugin defined with path', async 
 });
 
 test('Throws an error if the plugin return an object without the expected plugin function', t => {
-  const error = t.throws(() => normalize('inexistantPlugin', './test/fixtures/multi-plugin', t.context.logger));
+  const error = t.throws(() => normalize('inexistantPlugin', './test/fixtures/multi-plugin', t.context.logger), Error);
 
   t.is(
     error.message,
