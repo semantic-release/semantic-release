@@ -89,12 +89,12 @@ test('The "analyzeCommits" plugin output must be either undefined or a valid sem
   t.true(definitions.analyzeCommits.output.validator('major'));
 });
 
-test('The "generateNotes" plugin output must be a string', t => {
-  t.false(definitions.generateNotes.output.validator());
-  t.false(definitions.generateNotes.output.validator(null));
+test('The "generateNotes" plugin output, if defined, must be a string', t => {
   t.false(definitions.generateNotes.output.validator(1));
   t.false(definitions.generateNotes.output.validator({}));
 
+  t.true(definitions.generateNotes.output.validator());
+  t.true(definitions.generateNotes.output.validator(null));
   t.true(definitions.generateNotes.output.validator(''));
   t.true(definitions.generateNotes.output.validator('string'));
 });
