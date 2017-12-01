@@ -287,6 +287,26 @@ Being able to write code for just the most recent node versions greatly simplifi
 
 For a special purpose tool like `semantic-release`, that's only meant to be used in controlled CI environments, we think it's okay to have such a high version requirement. As `semantic-release` handles package publishing we expect almost every project to have at least one build job running node 8 already – and that's all it takes. Even if that's not that case `semantic-release` can still be executed with the help of [npx](https://www.npmjs.com/package/npx) (`npx -p node@8 npm run semantic-release`).
 
+### Does `semantic-release` work with Major Version Zero (0.x.x) development?
+
+Many package releases with Major Version Zero scheme (e.g. [ava](https://github.com/avajs/ava)). Can you use `semantic-release` for those package?
+
+Yes you can. All you need is configure the `release` block of `package.json` as follow:
+
+```json
+{
+  "release": {
+    "analyzeCommits": {
+      "releaseRules": [
+        { "breaking": true, "release": "minor" }
+      ]
+    }
+  }
+}
+```
+
+This mechanism is supported by the default [commit-analyzer](https://github.com/semantic-release/commit-analyzer/).
+
 ## Badge
 
 Use this in one of your projects? Include one of these badges in your README.md to let people know that your package is published using `semantic-release`.
