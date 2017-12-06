@@ -48,7 +48,7 @@
     "fs-extra": "^4.0.2",
     "got": "^8.0.0",
     "js-yaml": "^3.10.0",
-    "mockserver-client": "^2.0.0",
+    "mockserver-client": "^5.1.1",
     "nock": "^9.0.2",
     "nyc": "^11.2.1",
     "p-retry": "^1.0.0",
