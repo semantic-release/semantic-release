@@ -17,51 +17,59 @@ async function gitTagHead(tagName) {
 }
 
 /**
- * Get the list of branches that contains the given commit.
- *
+ * Verify if the commist `sha` is in the direct history of the current branch.
+ * 
  * @param {string} sha The sha of the commit to look for.
  * 
- * @return {Array<string>} The list of branches that contains the commit sha in parameter.
+ * @return {boolean} `true` if the commit `sha` is in the history of the current branch, `false` otherwise.
  */
-async function getCommitBranches(sha) {
-  try {
-    return (await execa('git', ['branch', '--no-color', '--contains', sha])).stdout
-      .split('\n')
-      .map(branch => branch.replace('*', '').trim())
-      .filter(branch => !!branch);
-  } catch (err) {
-    return [];
-  }
+async function isCommitInHistory(sha) {
+  return (await execa('git', ['merge-base', '--is-ancestor', sha, 'HEAD'], {reject: false})).code === 0;
 }
 
 /**
- * Get the commit sha for a given version, if it is contained in the given branch.
+ * Get the commit sha for a given version, if it's contained in the given branch.
  *
+ * @param {string} gitHead The commit sha to look for.
  * @param {string} version The version corresponding to the commit sha to look for. Used to search in git tags.
- * @param {string} branch The branch that must have the commit in its direct history.
- * @param {string} gitHead The commit sha to verify.
  * 
- * @return {Promise<string>} A Promise that resolves to `gitHead` if defined and if present in branch direct history or the commit sha corresponding to `version`.
+ * @return {Promise<string>} A Promise that resolves to the commit sha of the version, either `gitHead` of the commit associated with the `version` tag.
  * 
- * @throws {SemanticReleaseError} with code `ENOTINHISTORY` if `gitHead` or the commit sha dereived from `version` is not in the direct history of `branch`. The Error will have a `branches` attributes with the list of branches containing the commit. 
+ * @throws {SemanticReleaseError} with code `ENOTINHISTORY` if `gitHead` or the commit sha dereived from `version` is not in the direct history of `branch`.
  * @throws {SemanticReleaseError} with code `ENOGITHEAD` if `gitHead` is undefined and no commit sha can be found for the `version`.
  */
-module.exports = async (version, branch, gitHead) => {
-  if (!gitHead && version) {
-    // Look for the version tag only if no gitHead exists
-    gitHead = (await gitTagHead(`v${version}`)) || (await gitTagHead(version));
+module.exports = async (gitHead, version) => {
+  // Check if gitHead is defined and exists in release branch
+  if (gitHead && (await isCommitInHistory(gitHead))) {
+    return gitHead;
   }
 
-  if (gitHead) {
-    // Retrieve the branches containing the gitHead and verify one of them is the branch in param
-    const branches = await getCommitBranches(gitHead);
-    if (!branches.includes(branch)) {
-      const error = new SemanticReleaseError('Commit not in history', 'ENOTINHISTORY');
-      error.branches = branches;
-      throw error;
-    }
-  } else {
-    throw new SemanticReleaseError('There is no commit associated with last release', 'ENOGITHEAD');
+  // Ushallow the repository
+  await execa('git', ['fetch', '--unshallow', '--tags'], {reject: false});
+
+  // Check if gitHead is defined and exists in release branch again
+  if (gitHead && (await isCommitInHistory(gitHead))) {
+    return gitHead;
   }
-  return gitHead;
+
+  let tagHead;
+  if (version) {
+    // If a version is defined search a corresponding tag
+    tagHead = (await gitTagHead(`v${version}`)) || (await gitTagHead(version));
+
+    // Check if tagHead is found and exists in release branch again
+    if (tagHead && (await isCommitInHistory(tagHead))) {
+      return tagHead;
+    }
+  }
+
+  // Either gitHead is defined or a tagHead has been found but none is in the branch history
+  if (gitHead || tagHead) {
+    const error = new SemanticReleaseError('Commit not in history', 'ENOTINHISTORY');
+    error.gitHead = gitHead || tagHead;
+    throw error;
+  }
+
+  // There is no gitHead in the last release and there is no tags correponsing to the last release version
+  throw new SemanticReleaseError('There is no commit associated with last release', 'ENOGITHEAD');
 };

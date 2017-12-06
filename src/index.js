@@ -75,7 +75,7 @@ module.exports = async () => {
     log.verbose('pre', 'Running pre-script.');
     log.verbose('pre', 'Veriying conditions.');
     try {
-      await promisify(plugins.verifyConditions)(config);
+      await plugins.verifyConditions(config);
     } catch (err) {
       log[options.debug ? 'warn' : 'error']('pre', err.message);
       if (!options.debug) process.exit(1);

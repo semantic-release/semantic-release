@@ -44,7 +44,7 @@ test.serial('Increase version', async t => {
     plugins: {
       getLastRelease: callbackify(getLastRelease),
       analyzeCommits: callbackify(analyzeCommits),
-      verifyRelease: callbackify(verifyRelease),
+      verifyRelease: verifyRelease,
     },
   });
 
@@ -89,7 +89,7 @@ test.serial('Initial version', async t => {
     plugins: {
       getLastRelease: callbackify(getLastRelease),
       analyzeCommits: callbackify(analyzeCommits),
-      verifyRelease: callbackify(verifyRelease),
+      verifyRelease: verifyRelease,
     },
   });
 
@@ -137,7 +137,7 @@ test.serial('Throws error if verifyRelease fails', async t => {
       plugins: {
         getLastRelease: callbackify(getLastRelease),
         analyzeCommits: callbackify(analyzeCommits),
-        verifyRelease: callbackify(verifyRelease),
+        verifyRelease: verifyRelease,
       },
     })
   );
