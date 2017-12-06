@@ -5,7 +5,7 @@ import {stub} from 'sinon';
 import nock from 'nock';
 import {authenticate} from './helpers/mock-github';
 import post from '../src/post';
-import getPreRelease from '../src/lib/get-pre-release';
+import isPreRelease from '../src/lib/is-pre-release';
 
 test.beforeEach(t => {
   // Save the current working diretory
@@ -42,7 +42,7 @@ test.serial('Post run with github token', async t => {
   const release = {};
   const npm = {tag: 'latest'};
   const pkg = {version, repository: {url: `git+https://othertesturl.com/${owner}/${repo}.git`}, release};
-  const prerelease = false;
+  const preRelease = false;
 
   // Mock github API for releases and git/refs endpoints
   const github = authenticate({githubUrl, githubToken, githubApiPathPrefix})
@@ -52,7 +52,7 @@ test.serial('Post run with github token', async t => {
       name: tagName,
       body: releaseLog,
       draft: debug,
-      prerelease,
+      prerelease: preRelease,
     })
     .reply({})
     .post(`/repos/${owner}/${repo}/git/refs`, {ref: `refs/tags/${tagName}`, sha})
@@ -77,7 +77,7 @@ test.serial('Post run with github token', async t => {
       target_commitish: branch,
       draft: debug,
       body: releaseLog,
-      prerelease,
+      prerelease: preRelease,
     },
   });
   // Verify the releases and git/refs endpoint have been call with expected requests
@@ -104,7 +104,7 @@ test.serial('Post dry run with github token', async t => {
   const release = {};
   const npm = {tag: 'latest'};
   const pkg = {version, repository: {url: `git+https://othertesturl.com/${owner}/${repo}.git`}, release};
-  const prerelease = false;
+  const preRelease = false;
 
   // Mock github API for releases endpoint
   const github = authenticate({githubToken})
@@ -114,7 +114,7 @@ test.serial('Post dry run with github token', async t => {
       name: tagName,
       body: releaseLog,
       draft: debug,
-      prerelease,
+      prerelease: preRelease,
     })
     .reply({});
 
@@ -137,7 +137,7 @@ test.serial('Post dry run with github token', async t => {
       target_commitish: branch,
       draft: debug,
       body: releaseLog,
-      prerelease,
+      prerelease: preRelease,
     },
   });
   // Verify the releases and git/refs endpoint have been call with expected requests
@@ -163,7 +163,7 @@ test.serial('Post dry run without github token', async t => {
   const npm = {tag: 'latest'};
   const options = {branch, debug};
   const pkg = {version, repository: {url: `git+https://othertesturl.com/${owner}/${repo}.git`}, release};
-  const prerelease = false;
+  const preRelease = false;
 
   // Call the post module
   const result = await post({pkg, options, plugins: {generateNotes: callbackify(generateNotes)}, npm});
@@ -184,7 +184,7 @@ test.serial('Post dry run without github token', async t => {
       target_commitish: branch,
       draft: debug,
       body: releaseLog,
-      prerelease,
+      prerelease: preRelease,
     },
   });
 });
@@ -209,10 +209,10 @@ test.serial('Post dry run with pre-release', async t => {
   const release = {};
   const npm = {tag: 'tagOtherThanLatest'};
   const pkg = {version, repository: {url: `git+https://othertesturl.com/${owner}/${repo}.git`}, release};
-  const prerelease = getPreRelease({pkg, npm});
+  const preRelease = isPreRelease({pkg, npm});
 
   // make sure the module returns the expected value
-  t.true(prerelease);
+  t.true(preRelease);
 
   // Mock github API for releases endpoint
   const github = authenticate({githubToken})
@@ -222,7 +222,7 @@ test.serial('Post dry run with pre-release', async t => {
       name: tagName,
       body: releaseLog,
       draft: debug,
-      prerelease,
+      prerelease: preRelease,
     })
     .reply({});
 
@@ -240,7 +240,7 @@ test.serial('Post dry run with pre-release', async t => {
       target_commitish: branch,
       draft: debug,
       body: releaseLog,
-      prerelease,
+      prerelease: preRelease,
     },
   });
   // Verify the releases and git/refs endpoint have been call with expected requests

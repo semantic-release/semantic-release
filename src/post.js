@@ -3,7 +3,7 @@ const url = require('url');
 const gitHead = require('git-head');
 const GitHubApi = require('github');
 const parseSlug = require('parse-github-repo-url');
-const getPreRelease = require('./lib/get-pre-release');
+const isPreRelease = require('./lib/is-pre-release');
 
 module.exports = async config => {
   const {pkg, options: {branch, debug, githubUrl, githubToken, githubApiPathPrefix}, plugins} = config;
@@ -11,8 +11,17 @@ module.exports = async config => {
   const name = `v${pkg.version}`;
   const tag = {owner, repo, ref: `refs/tags/${name}`, sha: await promisify(gitHead)()};
   const body = await promisify(plugins.generateNotes)(config);
-  const prerelease = getPreRelease(config);
-  const release = {owner, repo, tag_name: name, name, target_commitish: branch, draft: !!debug, body, prerelease};
+  const preRelease = isPreRelease(config);
+  const release = {
+    owner,
+    repo,
+    tag_name: name,
+    name,
+    target_commitish: branch,
+    draft: !!debug,
+    body,
+    prerelease: preRelease,
+  };
 
   if (debug && !githubToken) {
     return {published: false, release};
