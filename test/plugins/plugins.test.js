@@ -48,6 +48,21 @@ test('Use default when only options are passed for a single plugin', t => {
   t.is(typeof plugins.analyzeCommits, 'function');
 });
 
+test('Merge global options with plugin options', async t => {
+  const plugins = getPlugins(
+    {
+      globalOpt: 'global',
+      otherOpt: 'globally-defined',
+      getLastRelease: {path: './test/fixtures/plugin-result-config', localOpt: 'local', otherOpt: 'locally-defined'},
+    },
+    t.context.logger
+  );
+
+  const result = await plugins.getLastRelease();
+
+  t.deepEqual(result.pluginConfig, {localOpt: 'local', globalOpt: 'global', otherOpt: 'locally-defined'});
+});
+
 test('Throw an error if plugin configuration is missing a path for plugin pipeline', t => {
   const error = t.throws(() => getPlugins({verifyConditions: {}}, t.context.logger), Error);
 

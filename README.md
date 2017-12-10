@@ -173,14 +173,12 @@ These options are currently available:
 
 _A few notes on `npm` config_:
 1. The `npm` token can only be defined in the environment as `NPM_TOKEN`, because that’s where `npm` itself is going to read it from.
-
 2. In order to publish to a different `npm` registry you can specify that inside the `package.json`’s [`publishConfig`](https://docs.npmjs.com/files/package.json#publishconfig) field.
-
 3. If you want to use another dist-tag for your publishes than `'latest'` you can specify that inside the `package.json`’s [`publishConfig`](https://docs.npmjs.com/files/package.json#publishconfig) field.
 
 ## Plugins
 
-There are numerous steps where you can customize `semantic-release`’s behaviour using plugins. A plugin is a regular [option](#options), but passed inside the `release` block of `package.json`:
+There are numerous steps where you can customize `semantic-release`’s behavior using plugins. A plugin is a regular [option](#options), but passed inside the `release` block of `package.json`:
 
 ```json
 {
@@ -190,12 +188,13 @@ There are numerous steps where you can customize `semantic-release`’s behaviou
     "verifyConditions": {
       "path": "./path/to/a/module",
       "additional": "config"
-    }
+    },
+    "globalPluginOptions": "globalConfig"
   }
 }
 ```
 
-```
+```bash
 semantic-release --analyze-commits="npm-module-name"
 ```
 
@@ -205,9 +204,9 @@ A plugin itself is an async function that always receives three arguments.
 module.exports = function (pluginConfig, config, callback) {}
 ```
 
-- `pluginConfig`: If the user of your plugin specifies additional plugin config in the `package.json` (see the `verifyConditions` example above) then it’s this object.
+- `pluginConfig`: If the user of your plugin specifies additional plugin config in the `package.json` (see the `verifyConditions` example above) then it’s this object. Options defined directly under `release` will be passed to each plugins. Options defined within a plugin will passed only to that instance of the plugin.
 - `config`: A config object containing a lot of information to act upon.
-  - `options`: `semantic-release` options like `debug`, or `branch`
+  - `options`: `semantic-release` options like `repositoryUrl`, or `branch`
   - For certain plugins the `config` object contains even more information. See below.
 
 ### `analyzeCommits`
@@ -222,9 +221,9 @@ Have a look at the [default implementation](https://github.com/semantic-release/
 
 This plugins is responsible for verifying that a release should happen in the first place.
 The default implementations are:
-- [travis](https://github.com/semantic-release/condition-travis/): verifies that the publish is happening on Travis, that it’s the right branch, and that all other build jobs succeeded. 
-- [github](https://github.com/semantic-release/github/): verifies a Github authentication is set and valid. 
-- [npm](https://github.com/semantic-release/npm/): verifies an npm authentication is set and valid. 
+- [travis](https://github.com/semantic-release/condition-travis/): verifies that the publish is happening on Travis, that it’s the right branch, and that all other build jobs succeeded.
+- [github](https://github.com/semantic-release/github/): verifies a Github authentication is set and valid.
+- [npm](https://github.com/semantic-release/npm/): verifies an npm authentication is set and valid.
 
 Passing an array of plugins will run them in series.
 
@@ -245,7 +244,7 @@ It receives a `commits` array, the `lastRelease` and `nextRelease` inside `confi
 
 ### `publish`
 
-This plugins is responsible for publishing the release. The default implementations publish on [npm](https://github.com/semantic-release/npm) and [github](https://github.com/semantic-release/github). 
+This plugins is responsible for publishing the release. The default implementations publish on [npm](https://github.com/semantic-release/npm) and [github](https://github.com/semantic-release/github).
 
 Passing an array of plugins will run them in series.
 

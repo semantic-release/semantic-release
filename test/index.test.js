@@ -50,9 +50,9 @@ test.serial('Plugins are called with expected values', async t => {
   const generateNotes = stub().resolves(notes);
   const publish = stub().resolves();
 
+  const config = {branch: 'master', repositoryUrl: 'git@hostname.com:owner/module.git', globalOpt: 'global'};
   const options = {
-    branch: 'master',
-    repositoryUrl: 'git@hostname.com:owner/module.git',
+    ...config,
     verifyConditions: [verifyConditions1, verifyConditions2],
     getLastRelease,
     analyzeCommits,
@@ -64,14 +64,17 @@ test.serial('Plugins are called with expected values', async t => {
   await t.context.semanticRelease(options);
 
   t.is(verifyConditions1.callCount, 1);
+  t.deepEqual(verifyConditions1.args[0][0], config);
   t.deepEqual(verifyConditions1.args[0][1], {options, logger: t.context.logger});
   t.is(verifyConditions2.callCount, 1);
   t.deepEqual(verifyConditions2.args[0][1], {options, logger: t.context.logger});
 
   t.is(getLastRelease.callCount, 1);
+  t.deepEqual(getLastRelease.args[0][0], config);
   t.deepEqual(getLastRelease.args[0][1], {options, logger: t.context.logger});
 
   t.is(analyzeCommits.callCount, 1);
+  t.deepEqual(analyzeCommits.args[0][0], config);
   t.deepEqual(analyzeCommits.args[0][1].options, options);
   t.deepEqual(analyzeCommits.args[0][1].logger, t.context.logger);
   t.deepEqual(analyzeCommits.args[0][1].lastRelease, lastRelease);
@@ -79,6 +82,7 @@ test.serial('Plugins are called with expected values', async t => {
   t.deepEqual(analyzeCommits.args[0][1].commits[0].message, commits[0].message);
 
   t.is(verifyRelease.callCount, 1);
+  t.deepEqual(verifyRelease.args[0][0], config);
   t.deepEqual(verifyRelease.args[0][1].options, options);
   t.deepEqual(verifyRelease.args[0][1].logger, t.context.logger);
   t.deepEqual(verifyRelease.args[0][1].lastRelease, lastRelease);
@@ -87,6 +91,7 @@ test.serial('Plugins are called with expected values', async t => {
   t.deepEqual(verifyRelease.args[0][1].nextRelease, nextRelease);
 
   t.is(generateNotes.callCount, 1);
+  t.deepEqual(generateNotes.args[0][0], config);
   t.deepEqual(generateNotes.args[0][1].options, options);
   t.deepEqual(generateNotes.args[0][1].logger, t.context.logger);
   t.deepEqual(generateNotes.args[0][1].lastRelease, lastRelease);
@@ -95,6 +100,7 @@ test.serial('Plugins are called with expected values', async t => {
   t.deepEqual(generateNotes.args[0][1].nextRelease, nextRelease);
 
   t.is(publish.callCount, 1);
+  t.deepEqual(publish.args[0][0], config);
   t.deepEqual(publish.args[0][1].options, options);
   t.deepEqual(publish.args[0][1].logger, t.context.logger);
   t.deepEqual(publish.args[0][1].lastRelease, lastRelease);
