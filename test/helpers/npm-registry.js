@@ -1,6 +1,7 @@
 import Docker from 'dockerode';
 import getStream from 'get-stream';
 import got from 'got';
+import delay from 'delay';
 import pRetry from 'p-retry';
 
 const IMAGE = 'npmjs/npm-docker-couchdb:1.6.1';
@@ -28,6 +29,7 @@ async function start() {
   });
 
   await container.start();
+  await delay(3000);
 
   try {
     // Wait for the registry to be ready
