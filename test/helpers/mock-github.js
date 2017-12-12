@@ -7,8 +7,10 @@ import nock from 'nock';
  * @param {String} [githubUrl='https://api.github.com'] The url on which to intercept http requests.
  * @return {Object} A `nock` object ready to respond to a github authentication request.
  */
-export default function authenticate(
-  {githubToken = 'GH_TOKEN', githubUrl = 'https://api.github.com', githubApiPathPrefix = ''} = {}
-) {
+export default function authenticate({
+  githubToken = 'GH_TOKEN',
+  githubUrl = 'https://api.github.com',
+  githubApiPathPrefix = '',
+} = {}) {
   return nock(`${githubUrl}/${githubApiPathPrefix}`, {reqheaders: {Authorization: `token ${githubToken}`}});
 }
