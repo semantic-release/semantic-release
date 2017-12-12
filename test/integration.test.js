@@ -23,9 +23,16 @@ const testEnv = Object.assign({}, process.env, {
   NPM_EMAIL: 'integration@test.com',
   LEGACY_TOKEN: Buffer.from(`${process.env.NPM_USERNAME}:${process.env.NPM_PASSWORD}`, 'utf8').toString('base64'),
 });
+// Save the current process.env
+const envBackup = Object.assign({}, process.env);
 const cli = require.resolve('../bin/semantic-release');
 const pluginError = require.resolve('./fixtures/plugin-error');
 const pluginInheritedError = require.resolve('./fixtures/plugin-error-inherited');
+// Save the current working diretory
+const cwd = process.cwd();
+// Disable logs during tests
+stub(process.stdout, 'write');
+stub(process.stderr, 'write');
 
 test.before(async () => {
   // Start the local NPM registry
@@ -34,11 +41,7 @@ test.before(async () => {
   await mockServer.start();
 });
 
-test.beforeEach(t => {
-  // Save the current process.env
-  t.context.env = Object.assign({}, process.env);
-  // Save the current working diretory
-  t.context.cwd = process.cwd();
+test.beforeEach(() => {
   // Delete env paramaters that could have been set on the machine running the tests
   delete process.env.NPM_TOKEN;
   delete process.env.NPM_USERNAME;
@@ -56,23 +59,13 @@ test.beforeEach(t => {
       delete process.env[keys[i]];
     }
   }
-  // Disable logs during tests
-  t.context.log = stub(console, 'log');
-  t.context.error = stub(console, 'error');
-  t.context.stdout = stub(process.stdout, 'write');
-  t.context.stderr = stub(process.stderr, 'write');
 });
 
-test.afterEach.always(t => {
+test.afterEach.always(() => {
   // Restore process.env
-  process.env = Object.assign({}, t.context.env);
+  process.env = envBackup;
   // Restore the current working directory
-  process.chdir(t.context.cwd);
-  // Restore the logs
-  t.context.log.restore();
-  t.context.error.restore();
-  t.context.stdout.restore();
-  t.context.stderr.restore();
+  process.chdir(cwd);
 });
 
 test.after.always(async () => {
@@ -652,9 +645,6 @@ test.serial('Run via JS API', async t => {
     publish: [{path: '@semantic-release/github', githubToken}, '@semantic-release/npm'],
     debug: true,
   });
-
-  t.true(t.context.log.calledWithMatch(/Published Github release: /, new RegExp(`release-url/${version}`)));
-  t.true(t.context.log.calledWithMatch(/Publishing version .* to npm registry/, version));
 
   // Verify package.json and has been updated
   t.is((await readJson('./package.json')).version, version);

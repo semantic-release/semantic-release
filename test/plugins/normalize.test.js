@@ -1,6 +1,6 @@
 import test from 'ava';
 import {noop} from 'lodash';
-import {stub, match} from 'sinon';
+import {stub} from 'sinon';
 import normalize from '../../lib/plugins/normalize';
 
 test.beforeEach(t => {
@@ -13,14 +13,14 @@ test('Normalize and load plugin from string', t => {
   const plugin = normalize('verifyConditions', './test/fixtures/plugin-noop', t.context.logger);
 
   t.is(typeof plugin, 'function');
-  t.true(t.context.log.calledWith(match.string, 'verifyConditions', './test/fixtures/plugin-noop'));
+  t.deepEqual(t.context.log.args[0], ['Load plugin %s from %s', 'verifyConditions', './test/fixtures/plugin-noop']);
 });
 
 test('Normalize and load plugin from object', t => {
   const plugin = normalize('publish', {path: './test/fixtures/plugin-noop'}, t.context.logger);
 
   t.is(typeof plugin, 'function');
-  t.true(t.context.log.calledWith(match.string, 'publish', './test/fixtures/plugin-noop'));
+  t.deepEqual(t.context.log.args[0], ['Load plugin %s from %s', 'publish', './test/fixtures/plugin-noop']);
 });
 
 test('Normalize and load plugin from function', t => {
@@ -33,7 +33,7 @@ test('Normalize and load plugin that retuns multiple functions', t => {
   const plugin = normalize('verifyConditions', './test/fixtures/multi-plugin', t.context.logger);
 
   t.is(typeof plugin, 'function');
-  t.true(t.context.log.calledWith(match.string, 'verifyConditions', './test/fixtures/multi-plugin'));
+  t.deepEqual(t.context.log.args[0], ['Load plugin %s from %s', 'verifyConditions', './test/fixtures/multi-plugin']);
 });
 
 test('Wrap plugin in a function that validate the output of the plugin', async t => {

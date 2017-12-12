@@ -1,5 +1,5 @@
 import test from 'ava';
-import {stub, match} from 'sinon';
+import {stub} from 'sinon';
 import logger from '../lib/logger';
 
 test.beforeEach(t => {
@@ -16,8 +16,8 @@ test.serial('Basic log', t => {
   logger.log('test log');
   logger.error('test error');
 
-  t.true(t.context.log.calledWithMatch(/.*test log/));
-  t.true(t.context.error.calledWithMatch(/.*test error/));
+  t.regex(t.context.log.args[0][0], /.*test log/);
+  t.regex(t.context.error.args[0][0], /.*test error/);
 });
 
 test.serial('Log object', t => {
@@ -25,16 +25,18 @@ test.serial('Log object', t => {
   logger.log(obj);
   logger.error(obj);
 
-  t.true(t.context.log.calledWithMatch(match.string, obj));
-  t.true(t.context.error.calledWithMatch(match.string, obj));
+  t.is(t.context.log.args[0][1], obj);
+  t.is(t.context.error.args[0][1], obj);
 });
 
 test.serial('Log with string formatting', t => {
   logger.log('test log %s', 'log value');
   logger.error('test error %s', 'error value');
 
-  t.true(t.context.log.calledWithMatch(/.*test log/, 'log value'));
-  t.true(t.context.error.calledWithMatch(/.*test error/, 'error value'));
+  t.regex(t.context.log.args[0][0], /.*test log/);
+  t.regex(t.context.error.args[0][0], /.*test error/);
+  t.is(t.context.log.args[0][1], 'log value');
+  t.is(t.context.error.args[0][1], 'error value');
 });
 
 test.serial('Log with error stacktrace and properties', t => {
@@ -43,6 +45,7 @@ test.serial('Log with error stacktrace and properties', t => {
   const otherError = new Error('other error message');
   logger.error('test error %O', otherError);
 
-  t.true(t.context.error.calledWithMatch(match.string, error));
-  t.true(t.context.error.calledWithMatch(/.*test error/, otherError));
+  t.is(t.context.error.args[0][1], error);
+  t.regex(t.context.error.args[1][0], /.*test error/);
+  t.is(t.context.error.args[1][1], otherError);
 });

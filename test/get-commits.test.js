@@ -12,18 +12,19 @@ import {
   gitDetachedHead,
 } from './helpers/git-utils';
 
+// Save the current working diretory
+const cwd = process.cwd();
+
 test.beforeEach(t => {
-  // Save the current working diretory
-  t.context.cwd = process.cwd();
   // Stub the logger functions
   t.context.log = stub();
   t.context.error = stub();
   t.context.logger = {log: t.context.log, error: t.context.error};
 });
 
-test.afterEach.always(t => {
+test.afterEach.always(() => {
   // Restore the current working directory
-  process.chdir(t.context.cwd);
+  process.chdir(cwd);
 });
 
 test.serial('Get all commits when there is no last release', async t => {
@@ -411,7 +412,7 @@ test.serial('Throws ENOGITHEAD error if the gitHead of the last release cannot b
   t.is(error.name, 'SemanticReleaseError');
   // Verify the log function has been called with a message explaining the error
   t.regex(
-    t.context.error.firstCall.args[0],
+    t.context.error.args[0][0],
     /The commit the last release of this package was derived from cannot be determined from the release metadata nor from the repository tags/
   );
 });
@@ -429,9 +430,9 @@ test.serial('Throws ENOTINHISTORY error if gitHead is not in history', async t =
   t.is(error.code, 'ENOTINHISTORY');
   t.is(error.name, 'SemanticReleaseError');
   // Verify the log function has been called with a message mentionning the branch
-  t.regex(t.context.error.firstCall.args[0], /history of the "master" branch/);
+  t.regex(t.context.error.args[0][0], /history of the "master" branch/);
   // Verify the log function has been called with a message mentionning the missing gitHead
-  t.regex(t.context.error.firstCall.args[0], /restoring the commit "notinhistory"/);
+  t.regex(t.context.error.args[0][0], /restoring the commit "notinhistory"/);
 });
 
 test.serial('Throws ENOTINHISTORY error if gitHead is not in branch history but present in others', async t => {
@@ -454,9 +455,9 @@ test.serial('Throws ENOTINHISTORY error if gitHead is not in branch history but 
   t.is(error.code, 'ENOTINHISTORY');
   t.is(error.name, 'SemanticReleaseError');
   // Verify the log function has been called with a message mentionning the branch
-  t.regex(t.context.error.firstCall.args[0], /history of the "master" branch/);
+  t.regex(t.context.error.args[0][0], /history of the "master" branch/);
   // Verify the log function has been called with a message mentionning the missing gitHead
-  t.regex(t.context.error.firstCall.args[0], new RegExp(`restoring the commit "${commitsBranch[0].hash}"`));
+  t.regex(t.context.error.args[0][0], new RegExp(`restoring the commit "${commitsBranch[0].hash}"`));
 });
 
 test.serial('Throws ENOTINHISTORY error if gitHead is not in detached head but present in other branch', async t => {
@@ -483,9 +484,9 @@ test.serial('Throws ENOTINHISTORY error if gitHead is not in detached head but p
   t.is(error.code, 'ENOTINHISTORY');
   t.is(error.name, 'SemanticReleaseError');
   // Verify the log function has been called with a message mentionning the branch
-  t.regex(t.context.error.firstCall.args[0], /history of the "master" branch/);
+  t.regex(t.context.error.args[0][0], /history of the "master" branch/);
   // Verify the log function has been called with a message mentionning the missing gitHead
-  t.regex(t.context.error.firstCall.args[0], new RegExp(`restoring the commit "${commitsBranch[0].hash}"`));
+  t.regex(t.context.error.args[0][0], new RegExp(`restoring the commit "${commitsBranch[0].hash}"`));
 });
 
 test.serial('Throws ENOTINHISTORY error when a tag is not in branch history but present in others', async t => {
@@ -509,7 +510,7 @@ test.serial('Throws ENOTINHISTORY error when a tag is not in branch history but 
   t.is(error.code, 'ENOTINHISTORY');
   t.is(error.name, 'SemanticReleaseError');
   // Verify the log function has been called with a message mentionning the branch
-  t.regex(t.context.error.firstCall.args[0], /history of the "master" branch/);
+  t.regex(t.context.error.args[0][0], /history of the "master" branch/);
   // Verify the log function has been called with a message mentionning the missing gitHead
-  t.regex(t.context.error.firstCall.args[0], new RegExp(`restoring the commit "${shaTag}"`));
+  t.regex(t.context.error.args[0][0], new RegExp(`restoring the commit "${shaTag}"`));
 });

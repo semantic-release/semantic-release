@@ -6,29 +6,27 @@ import DEFINITIONS from '../lib/plugins/definitions';
 import {gitHead as getGitHead} from '../lib/git';
 import {gitRepo, gitCommits, gitTagVersion} from './helpers/git-utils';
 
+// Save the current process.env
+const envBackup = Object.assign({}, process.env);
+// Save the current working diretory
+const cwd = process.cwd();
+
+stub(process.stdout, 'write');
+stub(process.stderr, 'write');
+
 test.beforeEach(t => {
-  // Save the current process.env
-  t.context.env = Object.assign({}, process.env);
-  // Save the current working diretory
-  t.context.cwd = process.cwd();
   // Stub the logger functions
   t.context.log = stub();
   t.context.error = stub();
   t.context.logger = {log: t.context.log, error: t.context.error};
   t.context.semanticRelease = proxyquire('../index', {'./lib/logger': t.context.logger});
-
-  t.context.stdout = stub(process.stdout, 'write');
-  t.context.stderr = stub(process.stderr, 'write');
 });
 
-test.afterEach.always(t => {
+test.afterEach.always(() => {
   // Restore process.env
-  process.env = Object.assign({}, t.context.env);
+  process.env = envBackup;
   // Restore the current working directory
-  process.chdir(t.context.cwd);
-
-  t.context.stdout.restore();
-  t.context.stderr.restore();
+  process.chdir(cwd);
 });
 
 test.serial('Plugins are called with expected values', async t => {
@@ -65,44 +63,44 @@ test.serial('Plugins are called with expected values', async t => {
 
   await t.context.semanticRelease(options);
 
-  t.true(verifyConditions1.calledOnce);
-  t.deepEqual(verifyConditions1.firstCall.args[1], {options, logger: t.context.logger});
-  t.true(verifyConditions2.calledOnce);
-  t.deepEqual(verifyConditions2.firstCall.args[1], {options, logger: t.context.logger});
+  t.is(verifyConditions1.callCount, 1);
+  t.deepEqual(verifyConditions1.args[0][1], {options, logger: t.context.logger});
+  t.is(verifyConditions2.callCount, 1);
+  t.deepEqual(verifyConditions2.args[0][1], {options, logger: t.context.logger});
 
-  t.true(getLastRelease.calledOnce);
-  t.deepEqual(getLastRelease.firstCall.args[1], {options, logger: t.context.logger});
+  t.is(getLastRelease.callCount, 1);
+  t.deepEqual(getLastRelease.args[0][1], {options, logger: t.context.logger});
 
-  t.true(analyzeCommits.calledOnce);
-  t.deepEqual(analyzeCommits.firstCall.args[1].options, options);
-  t.deepEqual(analyzeCommits.firstCall.args[1].logger, t.context.logger);
-  t.deepEqual(analyzeCommits.firstCall.args[1].lastRelease, lastRelease);
-  t.deepEqual(analyzeCommits.firstCall.args[1].commits[0].hash.substring(0, 7), commits[0].hash);
-  t.deepEqual(analyzeCommits.firstCall.args[1].commits[0].message, commits[0].message);
+  t.is(analyzeCommits.callCount, 1);
+  t.deepEqual(analyzeCommits.args[0][1].options, options);
+  t.deepEqual(analyzeCommits.args[0][1].logger, t.context.logger);
+  t.deepEqual(analyzeCommits.args[0][1].lastRelease, lastRelease);
+  t.deepEqual(analyzeCommits.args[0][1].commits[0].hash.substring(0, 7), commits[0].hash);
+  t.deepEqual(analyzeCommits.args[0][1].commits[0].message, commits[0].message);
 
-  t.true(verifyRelease.calledOnce);
-  t.deepEqual(verifyRelease.firstCall.args[1].options, options);
-  t.deepEqual(verifyRelease.firstCall.args[1].logger, t.context.logger);
-  t.deepEqual(verifyRelease.firstCall.args[1].lastRelease, lastRelease);
-  t.deepEqual(verifyRelease.firstCall.args[1].commits[0].hash.substring(0, 7), commits[0].hash);
-  t.deepEqual(verifyRelease.firstCall.args[1].commits[0].message, commits[0].message);
-  t.deepEqual(verifyRelease.firstCall.args[1].nextRelease, nextRelease);
+  t.is(verifyRelease.callCount, 1);
+  t.deepEqual(verifyRelease.args[0][1].options, options);
+  t.deepEqual(verifyRelease.args[0][1].logger, t.context.logger);
+  t.deepEqual(verifyRelease.args[0][1].lastRelease, lastRelease);
+  t.deepEqual(verifyRelease.args[0][1].commits[0].hash.substring(0, 7), commits[0].hash);
+  t.deepEqual(verifyRelease.args[0][1].commits[0].message, commits[0].message);
+  t.deepEqual(verifyRelease.args[0][1].nextRelease, nextRelease);
 
-  t.true(generateNotes.calledOnce);
-  t.deepEqual(generateNotes.firstCall.args[1].options, options);
-  t.deepEqual(generateNotes.firstCall.args[1].logger, t.context.logger);
-  t.deepEqual(generateNotes.firstCall.args[1].lastRelease, lastRelease);
-  t.deepEqual(generateNotes.firstCall.args[1].commits[0].hash.substring(0, 7), commits[0].hash);
-  t.deepEqual(generateNotes.firstCall.args[1].commits[0].message, commits[0].message);
-  t.deepEqual(generateNotes.firstCall.args[1].nextRelease, nextRelease);
+  t.is(generateNotes.callCount, 1);
+  t.deepEqual(generateNotes.args[0][1].options, options);
+  t.deepEqual(generateNotes.args[0][1].logger, t.context.logger);
+  t.deepEqual(generateNotes.args[0][1].lastRelease, lastRelease);
+  t.deepEqual(generateNotes.args[0][1].commits[0].hash.substring(0, 7), commits[0].hash);
+  t.deepEqual(generateNotes.args[0][1].commits[0].message, commits[0].message);
+  t.deepEqual(generateNotes.args[0][1].nextRelease, nextRelease);
 
-  t.true(publish.calledOnce);
-  t.deepEqual(publish.firstCall.args[1].options, options);
-  t.deepEqual(publish.firstCall.args[1].logger, t.context.logger);
-  t.deepEqual(publish.firstCall.args[1].lastRelease, lastRelease);
-  t.deepEqual(publish.firstCall.args[1].commits[0].hash.substring(0, 7), commits[0].hash);
-  t.deepEqual(publish.firstCall.args[1].commits[0].message, commits[0].message);
-  t.deepEqual(publish.firstCall.args[1].nextRelease, Object.assign({}, nextRelease, {notes}));
+  t.is(publish.callCount, 1);
+  t.deepEqual(publish.args[0][1].options, options);
+  t.deepEqual(publish.args[0][1].logger, t.context.logger);
+  t.deepEqual(publish.args[0][1].lastRelease, lastRelease);
+  t.deepEqual(publish.args[0][1].commits[0].hash.substring(0, 7), commits[0].hash);
+  t.deepEqual(publish.args[0][1].commits[0].message, commits[0].message);
+  t.deepEqual(publish.args[0][1].nextRelease, Object.assign({}, nextRelease, {notes}));
 });
 
 test.serial('Use new gitHead, and recreate release notes if a publish plugin create a commit', async t => {
@@ -138,16 +136,16 @@ test.serial('Use new gitHead, and recreate release notes if a publish plugin cre
 
   await t.context.semanticRelease(options);
 
-  t.true(generateNotes.calledTwice);
-  t.deepEqual(generateNotes.firstCall.args[1].nextRelease, nextRelease);
-  t.true(publish1.calledOnce);
-  t.deepEqual(publish1.firstCall.args[1].nextRelease, Object.assign({}, nextRelease, {notes}));
+  t.is(generateNotes.callCount, 2);
+  t.deepEqual(generateNotes.args[0][1].nextRelease, nextRelease);
+  t.is(publish1.callCount, 1);
+  t.deepEqual(publish1.args[0][1].nextRelease, Object.assign({}, nextRelease, {notes}));
 
   nextRelease.gitHead = await getGitHead();
 
   t.deepEqual(generateNotes.secondCall.args[1].nextRelease, Object.assign({}, nextRelease, {notes}));
-  t.true(publish2.calledOnce);
-  t.deepEqual(publish2.firstCall.args[1].nextRelease, Object.assign({}, nextRelease, {notes}));
+  t.is(publish2.callCount, 1);
+  t.deepEqual(publish2.args[0][1].nextRelease, Object.assign({}, nextRelease, {notes}));
 });
 
 test.serial('Dry-run skips verifyConditions and publish', async t => {
@@ -185,12 +183,12 @@ test.serial('Dry-run skips verifyConditions and publish', async t => {
 
   await t.context.semanticRelease(options);
 
-  t.true(verifyConditions.notCalled);
-  t.true(getLastRelease.calledOnce);
-  t.true(analyzeCommits.calledOnce);
-  t.true(verifyRelease.calledOnce);
-  t.true(generateNotes.calledOnce);
-  t.true(publish.notCalled);
+  t.is(verifyConditions.callCount, 0);
+  t.is(getLastRelease.callCount, 1);
+  t.is(analyzeCommits.callCount, 1);
+  t.is(verifyRelease.callCount, 1);
+  t.is(generateNotes.callCount, 1);
+  t.is(publish.callCount, 0);
 });
 
 test.serial('Accept "undefined" values for the "getLastRelease" and "generateNotes" plugins', async t => {
@@ -225,20 +223,20 @@ test.serial('Accept "undefined" values for the "getLastRelease" and "generateNot
 
   await t.context.semanticRelease(options);
 
-  t.true(getLastRelease.calledOnce);
+  t.is(getLastRelease.callCount, 1);
 
-  t.true(analyzeCommits.calledOnce);
-  t.deepEqual(analyzeCommits.firstCall.args[1].lastRelease, lastRelease);
+  t.is(analyzeCommits.callCount, 1);
+  t.deepEqual(analyzeCommits.args[0][1].lastRelease, lastRelease);
 
-  t.true(verifyRelease.calledOnce);
-  t.deepEqual(verifyRelease.firstCall.args[1].lastRelease, lastRelease);
+  t.is(verifyRelease.callCount, 1);
+  t.deepEqual(verifyRelease.args[0][1].lastRelease, lastRelease);
 
-  t.true(generateNotes.calledOnce);
-  t.deepEqual(generateNotes.firstCall.args[1].lastRelease, lastRelease);
+  t.is(generateNotes.callCount, 1);
+  t.deepEqual(generateNotes.args[0][1].lastRelease, lastRelease);
 
-  t.true(publish.calledOnce);
-  t.deepEqual(publish.firstCall.args[1].lastRelease, lastRelease);
-  t.falsy(publish.firstCall.args[1].nextRelease.notes);
+  t.is(publish.callCount, 1);
+  t.deepEqual(publish.args[0][1].lastRelease, lastRelease);
+  t.falsy(publish.args[0][1].nextRelease.notes);
 });
 
 test.serial('Throw SemanticReleaseError if not running from a git repository', async t => {
