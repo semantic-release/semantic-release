@@ -41,6 +41,7 @@
     "codecov": "^3.0.0",
     "commitizen": "^2.9.6",
     "cz-conventional-changelog": "^2.0.0",
+    "delay": "^2.0.0",
     "dockerode": "^2.5.2",
     "eslint-config-prettier": "^2.5.0",
     "eslint-plugin-prettier": "^2.3.0",
