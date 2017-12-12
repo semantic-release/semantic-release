@@ -5,20 +5,21 @@ import {stub} from 'sinon';
 import yaml from 'js-yaml';
 import {gitRepo, gitCommits, gitShallowClone, gitAddConfig} from './helpers/git-utils';
 
+// Save the current process.env
+const envBackup = Object.assign({}, process.env);
+// Save the current working diretory
+const cwd = process.cwd();
+
 test.beforeEach(t => {
-  // Save the current process.env
-  t.context.env = Object.assign({}, process.env);
-  // Save the current working diretory
-  t.context.cwd = process.cwd();
   t.context.plugins = stub().returns({});
   t.context.getConfig = proxyquire('../lib/get-config', {'./plugins': t.context.plugins});
 });
 
-test.afterEach.always(t => {
-  // Restore the current working directory
-  process.chdir(t.context.cwd);
+test.afterEach.always(() => {
   // Restore process.env
-  process.env = Object.assign({}, t.context.env);
+  process.env = envBackup;
+  // Restore the current working directory
+  process.chdir(cwd);
 });
 
 test.serial('Default values, reading repositoryUrl from package.json', async t => {
@@ -84,7 +85,7 @@ test.serial('Read options from package.json', async t => {
   // Verify the options contains the plugin config from package.json
   t.deepEqual(options, release);
   // Verify the plugins module is called with the plugin options from package.json
-  t.deepEqual(t.context.plugins.firstCall.args[0], release);
+  t.deepEqual(t.context.plugins.args[0][0], release);
 });
 
 test.serial('Read options from .releaserc.yml', async t => {
@@ -104,7 +105,7 @@ test.serial('Read options from .releaserc.yml', async t => {
   // Verify the options contains the plugin config from package.json
   t.deepEqual(options, release);
   // Verify the plugins module is called with the plugin options from package.json
-  t.deepEqual(t.context.plugins.firstCall.args[0], release);
+  t.deepEqual(t.context.plugins.args[0][0], release);
 });
 
 test.serial('Read options from .releaserc.json', async t => {
@@ -124,7 +125,7 @@ test.serial('Read options from .releaserc.json', async t => {
   // Verify the options contains the plugin config from package.json
   t.deepEqual(options, release);
   // Verify the plugins module is called with the plugin options from package.json
-  t.deepEqual(t.context.plugins.firstCall.args[0], release);
+  t.deepEqual(t.context.plugins.args[0][0], release);
 });
 
 test.serial('Read options from .releaserc.js', async t => {
@@ -144,7 +145,7 @@ test.serial('Read options from .releaserc.js', async t => {
   // Verify the options contains the plugin config from package.json
   t.deepEqual(options, release);
   // Verify the plugins module is called with the plugin options from package.json
-  t.deepEqual(t.context.plugins.firstCall.args[0], release);
+  t.deepEqual(t.context.plugins.args[0][0], release);
 });
 
 test.serial('Read options from release.config.js', async t => {
@@ -164,7 +165,7 @@ test.serial('Read options from release.config.js', async t => {
   // Verify the options contains the plugin config from package.json
   t.deepEqual(options, release);
   // Verify the plugins module is called with the plugin options from package.json
-  t.deepEqual(t.context.plugins.firstCall.args[0], release);
+  t.deepEqual(t.context.plugins.args[0][0], release);
 });
 
 test.serial('Prioritise cli parameters over file configuration and git repo', async t => {
@@ -191,5 +192,5 @@ test.serial('Prioritise cli parameters over file configuration and git repo', as
   // Verify the options contains the plugin config from cli
   t.deepEqual(result.options, options);
   // Verify the plugins module is called with the plugin options from cli
-  t.deepEqual(t.context.plugins.firstCall.args[0], options);
+  t.deepEqual(t.context.plugins.args[0][0], options);
 });
