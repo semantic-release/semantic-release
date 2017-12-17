@@ -117,3 +117,10 @@ test('Throws an error if the plugin return an object without the expected plugin
     'The inexistantPlugin plugin must be a function, or an object with a function in the property inexistantPlugin.'
   );
 });
+
+test('Throws an error if the plugin is not found', t => {
+  const error = t.throws(() => normalize('inexistantPlugin', {}, 'non-existing-path', t.context.logger), Error);
+
+  t.is(error.message, "Cannot find module 'non-existing-path'");
+  t.is(error.code, 'MODULE_NOT_FOUND');
+});
