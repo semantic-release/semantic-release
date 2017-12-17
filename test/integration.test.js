@@ -402,6 +402,45 @@ test.serial('Exit with 1 if a plugin is not found', async t => {
   t.regex(stderr, /Cannot find module/);
 });
 
+test.serial('Exit with 1 if a shareable config is not found', async t => {
+  const packageName = 'test-config-not-found';
+  const owner = 'test-repo';
+  // Create a git repository, set the current working directory at the root of the repo
+  t.log('Create git repository');
+  await gitRepo();
+  await writeJson('./package.json', {
+    name: packageName,
+    version: '0.0.0-dev',
+    repository: {url: `git+https://github.com/${owner}/${packageName}`},
+    release: {extends: 'non-existing-path'},
+  });
+
+  const {code, stderr} = await t.throws(execa(cli, [], {env}));
+  t.is(code, 1);
+  t.regex(stderr, /Cannot find module/);
+});
+
+test.serial('Exit with 1 if a shareable config reference a not found plugin', async t => {
+  const packageName = 'test-config-ref-not-found';
+  const owner = 'test-repo';
+  const shareable = {getLastRelease: 'non-existing-path'};
+
+  // Create a git repository, set the current working directory at the root of the repo
+  t.log('Create git repository');
+  await gitRepo();
+  await writeJson('./package.json', {
+    name: packageName,
+    version: '0.0.0-dev',
+    repository: {url: `git+https://github.com/${owner}/${packageName}`},
+    release: {extends: './shareable.json'},
+  });
+  await writeJson('./shareable.json', shareable);
+
+  const {code, stderr} = await t.throws(execa(cli, [], {env}));
+  t.is(code, 1);
+  t.regex(stderr, /Cannot find module/);
+});
+
 test.serial('Create a tag as a recovery solution for "ENOTINHISTORY" error', async t => {
   const packageName = 'test-recovery';
   const owner = 'test-repo';

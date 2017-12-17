@@ -1,4 +1,5 @@
 const program = require('commander');
+const {pickBy, isUndefined} = require('lodash');
 const logger = require('./lib/logger');
 
 function list(values) {
@@ -11,6 +12,7 @@ module.exports = async () => {
     .description('Run automated package publishing')
     .option('-b, --branch <branch>', 'Branch to release from')
     .option('-r, --repositoryUrl <repositoryUrl>', 'Git repository URL')
+    .option('-e, --extends <paths>', 'Comma separated list of shareable config paths or packages name', list)
     .option(
       '--verify-conditions <paths>',
       'Comma separated list of paths or packages name for the verifyConditions plugin(s)',
@@ -42,7 +44,8 @@ module.exports = async () => {
       program.outputHelp();
       process.exitCode = 1;
     } else {
-      await require('.')(program.opts());
+      // Remove option with undefined values, as commander.js sets non defined options as `undefined`
+      await require('.')(pickBy(program.opts(), value => !isUndefined(value)));
     }
   } catch (err) {
     // If error is a SemanticReleaseError then it's an expected exception case (no release to be done, running on a PR etc..) and the cli will return with 0

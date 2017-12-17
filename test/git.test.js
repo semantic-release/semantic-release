@@ -120,9 +120,9 @@ test.serial('Return git remote repository url set while cloning', async t => {
   t.is(await repoUrl(), fileUrl(repo));
 });
 
-test.serial('Return "null" if git repository url is not set', async t => {
+test.serial('Return "undefined" if git repository url is not set', async t => {
   // Create a git repository, set the current working directory at the root of the repo
   await gitRepo();
 
-  t.is(await repoUrl(), null);
+  t.is(await repoUrl(), undefined);
 });
