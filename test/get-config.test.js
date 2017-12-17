@@ -1,5 +1,7 @@
+import {format} from 'util';
 import test from 'ava';
-import {writeFile, writeJson} from 'fs-extra';
+import {writeFile, outputJson} from 'fs-extra';
+import {omit} from 'lodash';
 import proxyquire from 'proxyquire';
 import {stub} from 'sinon';
 import yaml from 'js-yaml';
@@ -30,7 +32,7 @@ test.serial('Default values, reading repositoryUrl from package.json', async t =
   // Add remote.origin.url config
   await gitAddConfig('remote.origin.url', 'git@repo.com:owner/module.git');
   // Create package.json in repository root
-  await writeJson('./package.json', pkg);
+  await outputJson('./package.json', pkg);
 
   const {options} = await t.context.getConfig();
 
@@ -57,7 +59,7 @@ test.serial('Default values, reading repositoryUrl (http url) from package.json 
   // Create a git repository, set the current working directory at the root of the repo
   await gitRepo();
   // Create package.json in repository root
-  await writeJson('./package.json', pkg);
+  await outputJson('./package.json', pkg);
 
   const {options} = await t.context.getConfig();
 
@@ -78,7 +80,7 @@ test.serial('Read options from package.json', async t => {
   // Create a git repository, set the current working directory at the root of the repo
   await gitRepo();
   // Create package.json in repository root
-  await writeJson('./package.json', {release});
+  await outputJson('./package.json', {release});
 
   const {options} = await t.context.getConfig();
 
@@ -118,7 +120,7 @@ test.serial('Read options from .releaserc.json', async t => {
   // Create a git repository, set the current working directory at the root of the repo
   await gitRepo();
   // Create package.json in repository root
-  await writeJson('.releaserc.json', release);
+  await outputJson('.releaserc.json', release);
 
   const {options} = await t.context.getConfig();
 
@@ -168,7 +170,7 @@ test.serial('Read options from release.config.js', async t => {
   t.deepEqual(t.context.plugins.args[0][0], release);
 });
 
-test.serial('Prioritise cli parameters over file configuration and git repo', async t => {
+test.serial('Prioritise CLI/API parameters over file configuration and git repo', async t => {
   const release = {
     getLastRelease: {path: 'getLastRelease', param: 'getLastRelease_pkg'},
     branch: 'branch_pkg',
@@ -185,12 +187,266 @@ test.serial('Prioritise cli parameters over file configuration and git repo', as
   // Create a clone
   await gitShallowClone(repo);
   // Create package.json in repository root
-  await writeJson('./package.json', pkg);
+  await outputJson('./package.json', pkg);
 
   const result = await t.context.getConfig(options);
 
-  // Verify the options contains the plugin config from cli
+  // Verify the options contains the plugin config from CLI/API
   t.deepEqual(result.options, options);
-  // Verify the plugins module is called with the plugin options from cli
+  // Verify the plugins module is called with the plugin options from CLI/API
   t.deepEqual(t.context.plugins.args[0][0], options);
+});
+
+test.serial('Read configuration from file path in "extends"', async t => {
+  const release = {extends: './shareable.json'};
+  const shareable = {
+    analyzeCommits: 'analyzeCommits',
+    generateNotes: 'generateNotes',
+    getLastRelease: {path: 'getLastRelease', param: 'getLastRelease_param'},
+    branch: 'test_branch',
+    repositoryUrl: 'git+https://hostname.com/owner/module.git',
+  };
+
+  // Create a git repository, set the current working directory at the root of the repo
+  await gitRepo();
+  // Create package.json and shareable.json in repository root
+  await outputJson('./package.json', {release});
+  await outputJson('./shareable.json', shareable);
+
+  const {options} = await t.context.getConfig();
+
+  // Verify the options contains the plugin config from shareable.json
+  t.deepEqual(options, shareable);
+  // Verify the plugins module is called with the plugin options from shareable.json
+  t.deepEqual(t.context.plugins.args[0][0], shareable);
+  t.deepEqual(t.context.plugins.args[0][1], {
+    analyzeCommits: './shareable.json',
+    generateNotes: './shareable.json',
+    getLastRelease: './shareable.json',
+  });
+});
+
+test.serial('Read configuration from module path in "extends"', async t => {
+  const release = {extends: 'shareable'};
+  const shareable = {
+    analyzeCommits: 'analyzeCommits',
+    generateNotes: 'generateNotes',
+    getLastRelease: {path: 'getLastRelease', param: 'getLastRelease_param'},
+    branch: 'test_branch',
+    repositoryUrl: 'git+https://hostname.com/owner/module.git',
+  };
+
+  // Create a git repository, set the current working directory at the root of the repo
+  await gitRepo();
+  // Create package.json and shareable.json in repository root
+  await outputJson('./package.json', {release});
+  await outputJson('./node_modules/shareable/index.json', shareable);
+
+  const {options} = await t.context.getConfig();
+
+  // Verify the options contains the plugin config from shareable.json
+  t.deepEqual(options, shareable);
+  // Verify the plugins module is called with the plugin options from shareable.json
+  t.deepEqual(t.context.plugins.args[0][0], shareable);
+  t.deepEqual(t.context.plugins.args[0][1], {
+    analyzeCommits: 'shareable',
+    generateNotes: 'shareable',
+    getLastRelease: 'shareable',
+  });
+});
+
+test.serial('Read configuration from an array of paths in "extends"', async t => {
+  const release = {extends: ['./shareable1.json', './shareable2.json']};
+  const shareable1 = {
+    analyzeCommits: 'analyzeCommits1',
+    getLastRelease: {path: 'getLastRelease1', param: 'getLastRelease_param1'},
+    branch: 'test_branch',
+    repositoryUrl: 'git+https://hostname.com/owner/module.git',
+  };
+
+  const shareable2 = {
+    analyzeCommits: 'analyzeCommits2',
+    generateNotes: 'generateNotes2',
+    getLastRelease: {path: 'getLastRelease2', param: 'getLastRelease_param2'},
+    branch: 'test_branch',
+  };
+
+  // Create a git repository, set the current working directory at the root of the repo
+  await gitRepo();
+  // Create package.json and shareable.json in repository root
+  await outputJson('./package.json', {release});
+  await outputJson('./shareable1.json', shareable1);
+  await outputJson('./shareable2.json', shareable2);
+
+  const {options} = await t.context.getConfig();
+
+  // Verify the options contains the plugin config from shareable1.json and shareable2.json
+  t.deepEqual(options, {...shareable1, ...shareable2});
+  // Verify the plugins module is called with the plugin options from shareable1.json and shareable2.json
+  t.deepEqual(t.context.plugins.args[0][0], {...shareable1, ...shareable2});
+  t.deepEqual(t.context.plugins.args[0][1], {
+    analyzeCommits1: './shareable1.json',
+    analyzeCommits2: './shareable2.json',
+    generateNotes2: './shareable2.json',
+    getLastRelease1: './shareable1.json',
+    getLastRelease2: './shareable2.json',
+  });
+});
+
+test.serial('Prioritize configuration from config file over "extends"', async t => {
+  const release = {
+    extends: './shareable.json',
+    branch: 'test_pkg',
+    generateNotes: 'generateNotes',
+    publish: [{path: 'publishPkg', param: 'publishPkg_param'}],
+  };
+  const shareable = {
+    analyzeCommits: 'analyzeCommits',
+    generateNotes: 'generateNotesShareable',
+    publish: [{path: 'publishShareable', param: 'publishShareable_param'}],
+    branch: 'test_branch',
+    repositoryUrl: 'git+https://hostname.com/owner/module.git',
+  };
+
+  // Create a git repository, set the current working directory at the root of the repo
+  await gitRepo();
+  // Create package.json and shareable.json in repository root
+  await outputJson('./package.json', {release});
+  await outputJson('./shareable.json', shareable);
+
+  const {options} = await t.context.getConfig();
+
+  // Verify the options contains the plugin config from package.json and shareable.json
+  t.deepEqual(options, omit({...shareable, ...release}, 'extends'));
+  // Verify the plugins module is called with the plugin options from package.json and shareable.json
+  t.deepEqual(t.context.plugins.args[0][0], omit({...shareable, ...release}, 'extends'));
+  t.deepEqual(t.context.plugins.args[0][1], {
+    analyzeCommits: './shareable.json',
+    generateNotesShareable: './shareable.json',
+    publishShareable: './shareable.json',
+  });
+});
+
+test.serial('Prioritize configuration from cli/API options over "extends"', async t => {
+  const opts = {
+    extends: './shareable2.json',
+    branch: 'branch_opts',
+    publish: [{path: 'publishOpts', param: 'publishOpts_param'}],
+    repositoryUrl: 'git+https://hostname.com/owner/module.git',
+  };
+  const release = {
+    extends: './shareable1.json',
+    branch: 'branch_pkg',
+    generateNotes: 'generateNotes',
+    publish: [{path: 'publishPkg', param: 'publishPkg_param'}],
+  };
+  const shareable1 = {
+    analyzeCommits: 'analyzeCommits1',
+    generateNotes: 'generateNotesShareable1',
+    publish: [{path: 'publishShareable', param: 'publishShareable_param1'}],
+    branch: 'test_branch1',
+    repositoryUrl: 'git+https://hostname.com/owner/module.git',
+  };
+  const shareable2 = {
+    analyzeCommits: 'analyzeCommits2',
+    publish: [{path: 'publishShareable', param: 'publishShareable_param2'}],
+    branch: 'test_branch2',
+  };
+
+  // Create a git repository, set the current working directory at the root of the repo
+  await gitRepo();
+  // Create package.json, shareable1.json and shareable2.json in repository root
+  await outputJson('./package.json', {release});
+  await outputJson('./shareable1.json', shareable1);
+  await outputJson('./shareable2.json', shareable2);
+
+  const {options} = await t.context.getConfig(opts);
+
+  // Verify the options contains the plugin config from package.json and shareable2.json
+  t.deepEqual(options, omit({...shareable2, ...release, ...opts}, 'extends'));
+  // Verify the plugins module is called with the plugin options from package.json and shareable2.json
+  t.deepEqual(t.context.plugins.args[0][0], omit({...shareable2, ...release, ...opts}, 'extends'));
+});
+
+test.serial('Allow to unset properties defined in shareable config with "null"', async t => {
+  const release = {
+    extends: './shareable.json',
+    getLastRelease: null,
+    branch: 'test_branch',
+    repositoryUrl: 'git+https://hostname.com/owner/module.git',
+  };
+  const shareable = {
+    generateNotes: 'generateNotes',
+    getLastRelease: {path: 'getLastRelease', param: 'getLastRelease_param'},
+  };
+
+  // Create a git repository, set the current working directory at the root of the repo
+  await gitRepo();
+  // Create package.json and shareable.json in repository root
+  await outputJson('./package.json', {release});
+  await outputJson('./shareable.json', shareable);
+
+  const {options} = await t.context.getConfig();
+
+  // Verify the options contains the plugin config from shareable.json
+  t.deepEqual(options, {...omit(shareable, 'getLastRelease'), ...omit(release, ['extends', 'getLastRelease'])});
+  // Verify the plugins module is called with the plugin options from shareable.json
+  t.deepEqual(t.context.plugins.args[0][0], {
+    ...omit(shareable, 'getLastRelease'),
+    ...omit(release, ['extends', 'getLastRelease']),
+  });
+  t.deepEqual(t.context.plugins.args[0][1], {
+    generateNotes: './shareable.json',
+    getLastRelease: './shareable.json',
+  });
+});
+
+test.serial('Allow to unset properties defined in shareable config with "undefined"', async t => {
+  const release = {
+    extends: './shareable.json',
+    getLastRelease: undefined,
+    branch: 'test_branch',
+    repositoryUrl: 'git+https://hostname.com/owner/module.git',
+  };
+  const shareable = {
+    generateNotes: 'generateNotes',
+    getLastRelease: {path: 'getLastRelease', param: 'getLastRelease_param'},
+  };
+
+  // Create a git repository, set the current working directory at the root of the repo
+  await gitRepo();
+  // Create package.json and release.config.js in repository root
+  // await outputJson('./package.json', {release});
+  await writeFile('release.config.js', `module.exports = ${format(release)}`);
+  await outputJson('./shareable.json', shareable);
+
+  const {options} = await t.context.getConfig();
+
+  // Verify the options contains the plugin config from shareable.json
+  t.deepEqual(options, {...omit(shareable, 'getLastRelease'), ...omit(release, ['extends', 'getLastRelease'])});
+  // Verify the plugins module is called with the plugin options from shareable.json
+  t.deepEqual(t.context.plugins.args[0][0], {
+    ...omit(shareable, 'getLastRelease'),
+    ...omit(release, ['extends', 'getLastRelease']),
+  });
+  t.deepEqual(t.context.plugins.args[0][1], {
+    generateNotes: './shareable.json',
+    getLastRelease: './shareable.json',
+  });
+});
+
+test.serial('Throw an Error if one of the shareable config cannot be found', async t => {
+  const release = {extends: ['./shareable1.json', 'non-existing-path']};
+  const shareable = {analyzeCommits: 'analyzeCommits'};
+
+  // Create a git repository, set the current working directory at the root of the repo
+  await gitRepo();
+  // Create package.json and shareable.json in repository root
+  await outputJson('./package.json', {release});
+  await outputJson('./shareable1.json', shareable);
+
+  const error = await t.throws(t.context.getConfig(), Error);
+
+  t.is(error.message, "Cannot find module 'non-existing-path'");
+  t.is(error.code, 'MODULE_NOT_FOUND');
 });

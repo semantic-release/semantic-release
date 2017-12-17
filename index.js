@@ -15,10 +15,6 @@ module.exports = async opts => {
   const config = await getConfig(opts, logger);
   const {plugins, options} = config;
 
-  if (!options.repositoryUrl) {
-    throw new SemanticReleaseError('The repositoryUrl option is required', 'ENOREPOURL');
-  }
-
   logger.log('Run automated release from branch %s', options.branch);
 
   if (!options.dryRun) {
