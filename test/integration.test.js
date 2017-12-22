@@ -602,7 +602,6 @@ test.serial('Pass options via CLI arguments', async t => {
 test.serial('Run via JS API', async t => {
   const packageName = 'test-js-api';
   const owner = 'test-repo';
-  const githubToken = 'OTHER_TOKEN';
   // Create a git repository, set the current working directory at the root of the repo
   t.log('Create git repository and package.json');
   await gitRepo();
@@ -618,19 +617,22 @@ test.serial('Run via JS API', async t => {
   const version = '1.0.0';
   const verifyMock = await mockServer.mock(
     `/repos/${owner}/${packageName}`,
-    {headers: [{name: 'Authorization', values: [`token ${githubToken}`]}]},
+    {headers: [{name: 'Authorization', values: [`token ${env.GH_TOKEN}`]}]},
     {body: {permissions: {push: true}}, method: 'GET'}
   );
   const createRefMock = await mockServer.mock(
     `/repos/${owner}/${packageName}/git/refs`,
-    {body: {ref: `refs/tags/v${version}`}, headers: [{name: 'Authorization', values: [`token ${githubToken}`]}]},
+    {
+      body: {ref: `refs/tags/v${version}`},
+      headers: [{name: 'Authorization', values: [`token ${env.GH_TOKEN}`]}],
+    },
     {body: {ref: `refs/tags/${version}`}}
   );
   const createReleaseMock = await mockServer.mock(
     `/repos/${owner}/${packageName}/releases`,
     {
       body: {tag_name: `v${version}`, target_commitish: 'master', name: `v${version}`},
-      headers: [{name: 'Authorization', values: [`token ${githubToken}`]}],
+      headers: [{name: 'Authorization', values: [`token ${env.GH_TOKEN}`]}],
     },
     {body: {html_url: `release-url/${version}`}}
   );
@@ -641,8 +643,8 @@ test.serial('Run via JS API', async t => {
   await gitCommits(['feat: Initial commit']);
   t.log('$ Call semantic-release via API');
   await semanticRelease({
-    verifyConditions: [{path: '@semantic-release/github', githubToken}, '@semantic-release/npm'],
-    publish: [{path: '@semantic-release/github', githubToken}, '@semantic-release/npm'],
+    verifyConditions: [{path: '@semantic-release/github'}, '@semantic-release/npm'],
+    publish: [{path: '@semantic-release/github'}, '@semantic-release/npm'],
     debug: true,
   });
 
