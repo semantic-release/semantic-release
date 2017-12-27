@@ -67,15 +67,16 @@ test('The "publish" plugin is mandatory, and must be a single or an array of plu
   t.true(definitions.publish.config.validator([{path: 'plugin-path.js'}, 'plugin-path.js', () => {}]));
 });
 
-test('The "getLastRelease" plugin output if defined, must be an object with an optionnal valid semver version in the "version" property', t => {
+test('The "getLastRelease" plugin output if defined, must be an object with a valid semver version in the "version" property and the corresponding git reference in "gitHead" property', t => {
   t.false(definitions.getLastRelease.output.validator('string'));
   t.false(definitions.getLastRelease.output.validator(1));
+  t.false(definitions.getLastRelease.output.validator({version: 'v1.0.0'}));
   t.false(definitions.getLastRelease.output.validator({version: 'invalid'}));
 
   t.true(definitions.getLastRelease.output.validator());
   t.true(definitions.getLastRelease.output.validator({}));
-  t.true(definitions.getLastRelease.output.validator({version: 'v1.0.0'}));
-  t.true(definitions.getLastRelease.output.validator({version: '1.0.0'}));
+  t.true(definitions.getLastRelease.output.validator({version: 'v1.0.0', gitHead: '123'}));
+  t.true(definitions.getLastRelease.output.validator({version: '1.0.0', gitHead: '123'}));
   t.true(definitions.getLastRelease.output.validator({version: null}));
 });
 

@@ -180,7 +180,7 @@ test.serial('Get all commits since gitHead (from tag) ', async t => {
   commits = (await gitCommits(['Second', 'Third'])).concat(commits);
 
   // Retrieve the commits with the commits module, since commit 'First' (associated with tag v1.0.0)
-  const result = await getCommits({version: '1.0.0'}, 'master', t.context.logger);
+  const result = await getCommits({version: '1.0.0', gitHead: 'missing_ref'}, 'master', t.context.logger);
 
   // Verify the commits created and retrieved by the module are identical
   t.is(result.commits.length, 2);
@@ -214,7 +214,7 @@ test.serial('Get all commits since gitHead (from tag) on a detached head repo', 
   await gitDetachedHead(repo, commits[1].hash);
 
   // Retrieve the commits with the commits module, since commit 'First' (associated with tag 1.0.0)
-  const result = await getCommits({version: '1.0.0'}, 'master', t.context.logger);
+  const result = await getCommits({version: '1.0.0', gitHead: 'missing_ref'}, 'master', t.context.logger);
 
   // Verify the module retrieved only the commit 'feat: Second' (included in the detached and after 'fix: First')
   t.is(result.commits.length, 1);
@@ -241,7 +241,7 @@ test.serial('Get all commits since gitHead (from tag formatted like v<version>) 
   commits = (await gitCommits(['Second', 'Third'])).concat(commits);
 
   // Retrieve the commits with the commits module, since commit 'First' (associated with tag v1.0.0)
-  const result = await getCommits({version: '1.0.0'}, 'master', t.context.logger);
+  const result = await getCommits({version: '1.0.0', gitHead: 'missing_ref'}, 'master', t.context.logger);
 
   // Verify the commits created and retrieved by the module are identical
   t.is(result.commits.length, 2);
@@ -261,40 +261,7 @@ test.serial('Get all commits since gitHead (from tag formatted like v<version>) 
   t.is(result.lastRelease.gitTag, 'v1.0.0');
   t.is(result.lastRelease.version, '1.0.0');
 });
-
-test.serial('Get commits when last release gitHead is missing but a tag match the version', async t => {
-  // Create a git repository, set the current working directory at the root of the repo
-  await gitRepo();
-  // Add commits to the master branch
-  let commits = await gitCommits(['First']);
-  // Create the tag corresponding to version 1.0.0
-  await gitTagVersion('v1.0.0');
-  // Add new commits to the master branch
-  commits = (await gitCommits(['Second', 'Third'])).concat(commits);
-
-  // Retrieve the commits with the commits module, since commit 'First' (associated with tag v1.0.0)
-  const result = await getCommits({version: '1.0.0', gitHead: 'missing'}, 'master', t.context.logger);
-
-  // Verify the commits created and retrieved by the module are identical
-  t.is(result.commits.length, 2);
-  t.is(result.commits[0].hash.substring(0, 7), commits[0].hash);
-  t.is(result.commits[0].message, commits[0].message);
-  t.truthy(result.commits[0].committerDate);
-  t.truthy(result.commits[0].author.name);
-  t.truthy(result.commits[0].committer.name);
-  t.is(result.commits[1].hash.substring(0, 7), commits[1].hash);
-  t.is(result.commits[1].message, commits[1].message);
-  t.truthy(result.commits[1].committerDate);
-  t.truthy(result.commits[1].author.name);
-  t.truthy(result.commits[1].committer.name);
-  // Verify the last release is returned and updated
-  t.truthy(result.lastRelease);
-  t.is(result.lastRelease.gitHead.substring(0, 7), commits[commits.length - 1].hash);
-  t.is(result.lastRelease.gitTag, 'v1.0.0');
-  t.is(result.lastRelease.version, '1.0.0');
-});
-
-test.serial('Get all commits since gitHead, when gitHead are mising from the shallow clone', async t => {
+test.serial('Get all commits since gitHead, when gitHead is missing from the shallow clone', async t => {
   // Create a git repository, set the current working directory at the root of the repo
   const repo = await gitRepo();
   // Add commits to the master branch
@@ -328,7 +295,7 @@ test.serial('Get all commits since gitHead, when gitHead are mising from the sha
   t.falsy(result.lastRelease.gitTag);
 });
 
-test.serial('Get all commits since gitHead from tag, when tags are mising from the shallow clone', async t => {
+test.serial('Get all commits since gitHead from tag, when tags is missing from the shallow clone', async t => {
   // Create a git repository, set the current working directory at the root of the repo
   const repo = await gitRepo();
   // Add commits to the master branch
@@ -344,7 +311,7 @@ test.serial('Get all commits since gitHead from tag, when tags are mising from t
   t.is((await gitTags()).length, 0);
 
   // Retrieve the commits with the commits module, since commit 'First' (associated with tag v1.0.0)
-  const result = await getCommits({version: '1.0.0'}, 'master', t.context.logger);
+  const result = await getCommits({version: '1.0.0', gitHead: 'missing_ref'}, 'master', t.context.logger);
 
   // Verify the commits created and retrieved by the module are identical
   t.is(result.commits.length, 2);
@@ -396,25 +363,6 @@ test.serial('Return empty array if there is no commits', async t => {
   t.truthy(result.lastRelease);
   t.falsy(result.lastRelease.gitHead);
   t.falsy(result.lastRelease.version);
-});
-
-test.serial('Throws ENOGITHEAD error if the gitHead of the last release cannot be found', async t => {
-  // Create a git repository, set the current working directory at the root of the repo
-  await gitRepo();
-  // Add commits to the master branch
-  await gitCommits(['First', 'Second']);
-
-  // Retrieve the commits with the commits module
-  const error = await t.throws(getCommits({version: '1.0.0'}, 'master', t.context.logger));
-
-  // Verify error code and type
-  t.is(error.code, 'ENOGITHEAD');
-  t.is(error.name, 'SemanticReleaseError');
-  // Verify the log function has been called with a message explaining the error
-  t.regex(
-    t.context.error.args[0][0],
-    /The commit the last release of this package was derived from cannot be determined from the release metadata nor from the repository tags/
-  );
 });
 
 test.serial('Throws ENOTINHISTORY error if gitHead is not in history', async t => {
@@ -505,7 +453,7 @@ test.serial('Throws ENOTINHISTORY error when a tag is not in branch history but 
   await gitCommits(['Forth']);
 
   // Retrieve the commits with the commits module
-  const error = await t.throws(getCommits({version: '1.0.0'}, 'master', t.context.logger));
+  const error = await t.throws(getCommits({version: '1.0.0', gitHead: shaTag}, 'master', t.context.logger));
   // Verify error code and type
   t.is(error.code, 'ENOTINHISTORY');
   t.is(error.name, 'SemanticReleaseError');

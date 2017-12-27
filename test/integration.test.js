@@ -288,7 +288,7 @@ test.serial('Release patch, minor and major versions', async t => {
 });
 
 test.serial('Release versions from a packed git repository, using tags to determine last release gitHead', async t => {
-  const packageName = 'test-git-packaed';
+  const packageName = 'test-git-packed';
   const owner = 'test-repo';
   // Create a git repository, set the current working directory at the root of the repo
   t.log('Create git repository');
