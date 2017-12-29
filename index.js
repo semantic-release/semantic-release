@@ -1,6 +1,6 @@
 const marked = require('marked');
 const TerminalRenderer = require('marked-terminal');
-const SemanticReleaseError = require('@semantic-release/error');
+const envCi = require('env-ci');
 const getConfig = require('./lib/get-config');
 const getNextVersion = require('./lib/get-next-version');
 const getCommits = require('./lib/get-commits');
@@ -8,19 +8,39 @@ const logger = require('./lib/logger');
 const {gitHead: getGitHead, isGitRepo} = require('./lib/git');
 
 module.exports = async opts => {
+  const {isCi, branch, isPr} = envCi();
+
+  if (!isCi && !opts.dryRun) {
+    logger.log('This run was not triggered in a known CI environment, running in dry-run mode.');
+    opts.dryRun = true;
+  }
+
+  if (isCi && isPr) {
+    logger.log('This run was triggered by a pull request and therefore a new version won’t be published.');
+    return;
+  }
+
   if (!await isGitRepo()) {
-    throw new SemanticReleaseError('Semantic-release must run from a git repository', 'ENOGITREPO');
+    logger.error('Semantic-release must run from a git repository.');
+    return;
   }
 
   const config = await getConfig(opts, logger);
   const {plugins, options} = config;
 
+  if (branch !== options.branch) {
+    logger.log(
+      `This test run was triggered on the branch ${branch}, while semantic-release is configured to only publish from ${
+        options.branch
+      }, therefore a new version won’t be published.`
+    );
+    return;
+  }
+
   logger.log('Run automated release from branch %s', options.branch);
 
-  if (!options.dryRun) {
-    logger.log('Call plugin %s', 'verify-conditions');
-    await plugins.verifyConditions({options, logger});
-  }
+  logger.log('Call plugin %s', 'verify-conditions');
+  await plugins.verifyConditions({options, logger});
 
   logger.log('Call plugin %s', 'get-last-release');
   const {commits, lastRelease} = await getCommits(
@@ -32,7 +52,8 @@ module.exports = async opts => {
   logger.log('Call plugin %s', 'analyze-commits');
   const type = await plugins.analyzeCommits({options, logger, lastRelease, commits});
   if (!type) {
-    throw new SemanticReleaseError('There are no relevant changes, so no new version is released.', 'ENOCHANGE');
+    logger.log('There are no relevant changes, so no new version is released.');
+    return;
   }
   const version = getNextVersion(type, lastRelease, logger);
   const nextRelease = {type, version, gitHead: await getGitHead(), gitTag: `v${version}`};
@@ -67,4 +88,5 @@ module.exports = async opts => {
     });
     logger.log('Published release: %s', nextRelease.version);
   }
+  return true;
 };
