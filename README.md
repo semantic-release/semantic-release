@@ -170,7 +170,7 @@ semantic-release
 These options are currently available:
 - `branch`: The branch on which releases should happen. Default: `'master'`
 - `repositoryUrl`: The git repository URL. Default: `repository` property in `package.json` or git origin url. Any valid git url format is supported (See [Git protocols](https://git-scm.com/book/en/v2/Git-on-the-Server-The-Protocols)). If the [Github plugin](https://github.com/semantic-release/github) is used the URL must be a valid Github URL that include the `owner`, the `repository` name and the `host`. The Github shorthand URL is not supported.
-- `dry-run`: Dry-run mode, skipping verifyConditions, publishing and release, printing next version and release notes
+- `dry-run`: Dry-run mode, skip publishing, print next version and release notes
 - `extends`: Array of module or files path containing a shareable configuration. Options defined via CLI or in the `release` property will take precedence over the one defined in a shareable configuration.
 - `debug`: Output debugging information
 

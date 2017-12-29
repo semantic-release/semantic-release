@@ -48,12 +48,10 @@ module.exports = async () => {
       await require('.')(pickBy(program.opts(), value => !isUndefined(value)));
     }
   } catch (err) {
-    // If error is a SemanticReleaseError then it's an expected exception case (no release to be done, running on a PR etc..) and the cli will return with 0
-    // Otherwise it's an unexpected error (configuration issue, code issue, plugin issue etc...) and the cli will return 1
+    process.exitCode = 1;
     if (err.semanticRelease) {
       logger.log(`%s ${err.message}`, err.code);
     } else {
-      process.exitCode = 1;
       logger.error('An error occurred while running semantic-release: %O', err);
     }
   }

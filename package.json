@@ -16,7 +16,6 @@
   },
   "dependencies": {
     "@semantic-release/commit-analyzer": "^5.0.0",
-    "@semantic-release/condition-travis": "^7.0.0",
     "@semantic-release/error": "^2.1.0",
     "@semantic-release/github": "^3.0.0",
     "@semantic-release/npm": "^2.0.0",
@@ -25,6 +24,7 @@
     "commander": "^2.11.0",
     "cosmiconfig": "^3.1.0",
     "debug": "^3.1.0",
+    "env-ci": "^1.0.0",
     "execa": "^0.8.0",
     "get-stream": "^3.0.0",
     "git-log-parser": "^1.2.0",

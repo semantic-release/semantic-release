@@ -53,6 +53,12 @@ test.beforeEach(() => {
   delete process.env.GITHUB_URL;
   delete process.env.GH_PREFIX;
   delete process.env.GITHUB_PREFIX;
+
+  process.env.TRAVIS = 'true';
+  process.env.CI = 'true';
+  process.env.TRAVIS_BRANCH = 'master';
+  process.env.TRAVIS_PULL_REQUEST = 'false';
+
   // Delete all `npm_config` environment variable set by CI as they take precedence over the `.npmrc` because the process that runs the tests is started before the `.npmrc` is created
   for (let i = 0, keys = Object.keys(process.env); i < keys.length; i++) {
     if (keys[i].startsWith('npm_config')) {
@@ -86,7 +92,6 @@ test.serial('Release patch, minor and major versions', async t => {
     name: packageName,
     version: '0.0.0-dev',
     repository: {url: `git+https://github.com/${owner}/${packageName}`},
-    release: {verifyConditions: ['@semantic-release/github', '@semantic-release/npm']},
     publishConfig: {registry: npmRegistry.url},
   });
   // Create a npm-shrinkwrap.json file
@@ -299,7 +304,6 @@ test.serial('Release versions from a packed git repository, using tags to determ
     name: packageName,
     version: '0.0.0-dev',
     repository: {url: `git@github.com:${owner}/${packageName}.git`},
-    release: {verifyConditions: ['@semantic-release/github', '@semantic-release/npm']},
     publishConfig: {registry: npmRegistry.url},
   });
 
@@ -453,7 +457,6 @@ test.serial('Create a tag as a recovery solution for "ENOTINHISTORY" error', asy
     name: packageName,
     version: '0.0.0-dev',
     repository: {url: `git+https://github.com/${owner}/${packageName}`},
-    release: {verifyConditions: ['@semantic-release/github', '@semantic-release/npm']},
     publishConfig: {registry: npmRegistry.url},
   });
 
@@ -520,7 +523,7 @@ test.serial('Create a tag as a recovery solution for "ENOTINHISTORY" error', asy
   ({stderr, stdout, code} = await execa(cli, [], {env, reject: false}));
 
   t.log('Log "ENOTINHISTORY" message');
-  t.is(code, 0);
+  t.is(code, 1);
   t.regex(
     stderr,
     new RegExp(
@@ -585,6 +588,11 @@ test.serial('Dry-run', async t => {
   });
 
   /* Initial release */
+  const verifyMock = await mockServer.mock(
+    `/repos/${owner}/${packageName}`,
+    {headers: [{name: 'Authorization', values: [`token ${env.GH_TOKEN}`]}]},
+    {body: {permissions: {push: true}}, method: 'GET'}
+  );
   const version = '1.0.0';
   t.log('Commit a feature');
   await gitCommits(['feat: Initial commit']);
@@ -597,6 +605,7 @@ test.serial('Dry-run', async t => {
 
   // Verify package.json and has not been modified
   t.is((await readJson('./package.json')).version, '0.0.0-dev');
+  await mockServer.verify(verifyMock);
 });
 
 test.serial('Pass options via CLI arguments', async t => {
@@ -681,11 +690,7 @@ test.serial('Run via JS API', async t => {
   t.log('Commit a feature');
   await gitCommits(['feat: Initial commit']);
   t.log('$ Call semantic-release via API');
-  await semanticRelease({
-    verifyConditions: [{path: '@semantic-release/github'}, '@semantic-release/npm'],
-    publish: [{path: '@semantic-release/github'}, '@semantic-release/npm'],
-    debug: true,
-  });
+  await semanticRelease();
 
   // Verify package.json and has been updated
   t.is((await readJson('./package.json')).version, version);
@@ -731,7 +736,7 @@ test.serial('Log unexpected errors from plugins and exit with 1', async t => {
   t.is(code, 1);
 });
 
-test.serial('Log errors inheriting SemanticReleaseError and exit with 0', async t => {
+test.serial('Log errors inheriting SemanticReleaseError and exit with 1', async t => {
   const packageName = 'test-inherited-error';
   const owner = 'test-repo';
   // Create a git repository, set the current working directory at the root of the repo
@@ -752,7 +757,7 @@ test.serial('Log errors inheriting SemanticReleaseError and exit with 0', async 
   const {stdout, code} = await execa(cli, [], {env, reject: false});
   // Verify the type and message are logged
   t.regex(stdout, /EINHERITED Inherited error/);
-  t.is(code, 0);
+  t.is(code, 1);
 });
 
 test.serial('CLI returns error code and prints help if called with a command', async t => {
