@@ -1,10 +1,6 @@
 # :package::rocket: semantic-release
 
-**Fully automated package publishing**
-
-> **Trust us, this will change your workflow for the better.**
-
-> – [egghead.io](https://egghead.io/lessons/javascript-how-to-write-a-javascript-library-automating-releases-with-semantic-release)
+Fully automated version management and package publishing.
 
 [![Gitter](https://badges.gitter.im/semantic-release/semantic-release.svg)](https://gitter.im/semantic-release/semantic-release?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 [![Travis](https://img.shields.io/travis/semantic-release/semantic-release/caribou.svg)](https://travis-ci.org/semantic-release/semantic-release)
@@ -15,123 +11,137 @@
 [![npm](https://img.shields.io/npm/v/semantic-release/latest.svg)](https://www.npmjs.com/package/semantic-release)
 [![npm](https://img.shields.io/npm/v/semantic-release/next.svg)](https://www.npmjs.com/package/semantic-release)
 
-Out of the box this is just about _commit-messages_, but you can do so much more.
+semantic-release automates the whole package release workflow including: determining the next version number, generating the release notes and publishing the package. This removes the immediate connection between human emotions and version numbers, strictly following the [Semantic Versioning](http://semver.org) specification.
 
-* **Detect breaking changes** using the test suite of your last release: [cracks](https://github.com/semantic-release/cracks)
-* Detect breaking changes using your dependents’ test suites: [Help out! Implement the **dont-break** plugin](https://github.com/semantic-release/semantic-release/issues/65)
-* Detect breaking changes diffing your JSDoc interface: [Help out! Implement the **india** plugin](https://github.com/semantic-release/semantic-release/issues/66)
-* Abort releases with **insufficient test coverage**: [Help out! Implement the **istanbul** plugin](https://github.com/semantic-release/semantic-release/issues/68)
-* Abort releases with **vulnerable dependencies** in the tree: [Help out! Implement the **nsp** plugin](https://github.com/semantic-release/semantic-release/issues/67)
-* Everything you can imagine: [Build Plugins!](https://github.com/semantic-release/semantic-release#plugins)
+> Trust us, this will change your workflow for the better. – [egghead.io](https://egghead.io/lessons/javascript-how-to-write-a-javascript-library-automating-releases-with-semantic-release)
 
-&nbsp; | Commands | Comment
---- | --- | ---
-| **manual/before** | <pre><code><div>npm version major</div><div>git push origin master --tags</div><div>npm publish</div></code></pre> | You **manually decide** what the **next version** is. You have to remember what major, minor and patch means. You have to remember to push both commits and tags. You have to wait for the CI to pass. |
-| **semantic-release/after** | <pre><code><div>git commit -m "fix: &lt;message&gt;"</div><div>git push</div></code></pre> | You **describe the changes** you’ve made. A new version is automatically published with the correct version number.
+## Highlights
 
-This removes the immediate connection between human emotions and version numbers, so strictly following the [SemVer](http://semver.org/) spec is not a problem anymore – and that’s ultimately `semantic-release`’s goal.
+- Fully automated release
+- Enforce [Semantic Versioning](https://semver.org) specification
+- New features and fixes are immediately available to users
+- Use formalized commit message convention to document changes in the codebase
+- Integrate with your [continuous integration workflow](docs/recipes/README.md#ci-configurations)
+- Avoid potential errors associated with manual releases
+- Support any  [package managers and languages](docs/recipes/README.md#package-managers-and-languages) via [plugins](#plugins)
+- Simple and reusable configuration via [shareable configurations](#shareable-configurations)
 
-<table>
-  <tr>
-    <th colspan="2">
-      “How to Write a JavaScript Library - Automating Releases with semantic-release” – egghead.io
-    </th>
-  </tr>
-  <tr>
-    <td colspan="2">
-      <a href="https://egghead.io/lessons/javascript-how-to-write-a-javascript-library-automating-releases-with-semantic-release"><img src="https://cloud.githubusercontent.com/assets/908178/9730739/7b1da5d8-5610-11e5-88b6-5c75fdda7ee2.png" alt="egghead.io session"></a>
-    </td>
-  </tr>
-  <tr>
-    <td colspan="2">
-      A free egghead.io tutorial series on how to write an open source library featuring semantic-release.
-    </td>
-  </tr>
-  <tr>
-    <th>
-      “We fail to follow SemVer – and why it needn’t matter”
-    </th>
-    <th>
-      “semantic-release Q&amp;A with Kent C. Dodds”
-    </th>
-  </tr>
-  <tr>
-    <td>
-      <a href="https://www.youtube.com/watch?v=tc2UgG5L7WM&amp;index=6&amp;list=PLFZ5NyC0xHDaaTy6tY9p0C0jd_rRRl5Zm"><img alt="JSConfBP Talk" src="https://cloud.githubusercontent.com/assets/908178/9428178/c337ed26-49a2-11e5-8ad0-a602500a65bf.png"></a>
-    </td>
-    <td>
-      <a href="https://www.youtube.com/watch?v=g6y3DnhkjrI"><img alt="Hangout on Air with Kent C. Dodds" src="https://cloud.githubusercontent.com/assets/908178/9428179/c3387318-49a2-11e5-9f5f-dccd3fbb0c1d.png"></a>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      This talk gives you a complete introduction to the underlying concepts of this module. 38:30
-    </td>
-    <td>
-      A “Hangouts on Air” conversation with hands on questions and answers about how to use semantic-release. 53:52
-    </td>
-  </tr>
-</table>
+## Table of Contents
+
+- [How does it work?](#how-does-it-work)
+- [Installation and Usage](#installation-and-usage)
+- [Plugins](#plugins)
+- [Shareable configurations](#shareable-configurations)
+- [Recipes](#recipes)
+- [Frequently Asked Questions](#frequently-asked-questions)
+- [Resources](#resources)
+- [Support](#support)
+- [Badge](#badge)
+- [Node Support Policy](#node-support-policy)
+- [Team](#team)
 
 ## How does it work?
 
-Instead of writing [meaningless commit messages](http://whatthecommit.com/), we can take our time to think about the changes in the codebase and write them down. Following formalized conventions it is then possible to generate a helpful changelog and to derive the next semantic version number from them.
+### Commit message format
 
-When `semantic-release` is set up it will do that after every successful continuous integration build of your master branch (or any other branch you specify) and publish the new version for you. This way no human is directly involved in the release process and your releases are guaranteed to be [unromantic and unsentimental](http://sentimentalversioning.org/).
+semantic-release uses the commit messages to determine the type of changes in the codebase. Following formalized conventions for commit messages, semantic-release automatically determines the next [semantic version](https://semver.org) number, generates a changelog and publish the release.
 
-If you fear the loss of control over timing and marketing implications of software releases you should know that `semantic-release` supports [release channels](https://github.com/npm/npm/issues/2718) using `npm`’s [dist-tags](https://docs.npmjs.com/cli/dist-tag). This way you can keep control over what your users end up using by default, you can decide when to promote an automatically released version to the stable channel, and you can choose which versions to write blogposts and tweets about. You can use the same mechanism to [support older versions of your software](https://gist.github.com/boennemann/54042374e49c7ade8910), for example with important security fixes.
+By default semantic-release uses [Angular Commit Message Conventions](https://github.com/angular/angular.js/blob/master/DEVELOPERS.md#-git-commit-guidelines). The commit message format that can changed with the [`preset` or `config` options](#options) of the [@semantic-release/commit-analyzer](https://github.com/semantic-release/commit-analyzer#options) and [@semantic-release/release-notes-generator](https://github.com/semantic-release/release-notes-generator#options) plugins.
 
-When pushing new commits with `git push` a CI build is triggered. After running the tests the command `semantic-release` will execute the following tasks in series:
+Tools such as [commitizen](https://github.com/commitizen/cz-cli), [commitlint](https://github.com/marionebl/commitlint) or [semantic-git-commit-cli](https://github.com/JPeer264/node-semantic-git-commit-cli) can be used to help contributor and enforce valid commits message.
 
-| Step               | Description                                                                                 |
-| ------------------ | ------------------------------------------------------------------------------------------- |
-| Verify Conditions  | Run the [verifyConditions](#verifyconditions) plugin                                        |
-| Get last release   | Obtain last release with the [getLastRelease](#getlastrelease) plugin                       |
-| Analyze commits    | Determine the type of release to do with the [analyzeCommits](#analyzecommits) plugin       |
-| Verify release     | Call the [verifyRelease](#verifyrelease) plugin                                             |
-| Generate notes     | Generate release notes with plugin [generateNotes](#generatenotes)                          |
-| Publish            | Call the [publish](#publish) plugin                                                         |
+Here is an example of the release type that will be done based on a commit messages:
 
-## Default Commit Message Format
+| Commit message                                                                                                                                                                                   | Release type               |
+|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------|
+| `fix(pencil): stop graphite breaking when too much pressure applied`                                                                                                                             | Patch Release              |
+| `feat(pencil): add 'graphiteWidth' option`                                                                                                                                                       | ~~Minor~~ Feature Release  |
+| `perf(pencil): remove graphiteWidth option`<br><br>`BREAKING CHANGE: The graphiteWidth option has been removed.`<br>`The default graphite width of 10mm is always used for performance reasons.` | ~~Major~~ Breaking Release |
 
-This module ships with the [AngularJS Commit Message Conventions](https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/edit) and changelog generator, but you can [define your own](#plugins) style.
+### Automation with CI
 
-Each commit message consists of a **header**, a **body** and a **footer**.  The header has a special
-format that includes a **type**, a **scope** and a **subject** ([full explanation](https://github.com/stevemao/conventional-changelog-angular/blob/master/convention.md)):
+semantic-release is meant to be executed on the CI environment after every successful build on the release branch. This way no human is directly involved in the release process and the releases are guaranteed to be [unromantic and unsentimental](http://sentimentalversioning.org).
 
-```
-<type>(<scope>): <subject>
-<BLANK LINE>
-<body>
-<BLANK LINE>
-<footer>
-```
+### Triggering a release
 
-You can simplify using this convention for yourself and contributors by using [commitizen](https://github.com/commitizen/cz-cli) and [commitlint](https://github.com/marionebl/commitlint) or [semantic-git-commit-cli](https://github.com/JPeer264/node-semantic-git-commit-cli).
+When pushing new commits to the release branch (i.e. `master`) with `git push` or by merging a pull request or merging from another branch, a CI build is triggered and runs the `semantic-release` command to make a release if there is relevant codebase changes since the last release.
 
-### Patch Release
+By default a release will be done for each push to the release branch that contains relevant code changes. If you need more control over the timing of releases you have a couple of options:
+- Publish releases on a distribution channel (for example npm’s [dist-tags](https://docs.npmjs.com/cli/dist-tag)). This way you can keep control over what your users end up using by default, and you can decide when to make an automatically released version available to the stable channel, and promote it.
+- Develop on a `dev` branch and merge it to the release branch (i.e. `master`) once you are ready to publish. semantic-release will run only on pushes to the release branch.
 
-```
-fix(pencil): stop graphite breaking when too much pressure applied
-```
+### Release steps
 
-### ~~Minor~~ Feature Release
+After running the tests the command `semantic-release` will execute the following steps:
 
-```
-feat(pencil): add 'graphiteWidth' option
-```
+| Step              | Description                                                                                                                                      |
+|-------------------|--------------------------------------------------------------------------------------------------------------------------------------------------|
+| Verify Conditions | Verify all the conditions to proceed with the release with the [verify conditions plugins](#verifyconditions-plugin).                            |
+| Get last release  | Obtain last release with the [get last release plugin](#getlastrelease-plugin).                                                                  |
+| Analyze commits   | Determine the type of release to do with the [analyze commits plugin](#analyzecommits-plugin) based on the commits added since the last release. |
+| Verify release    | Verify the release conformity with the [verify release plugins](#verifyrelease-plugin).                                                          |
+| Generate notes    | Generate release notes with the [generate notes plugin](#generatenotes-plugin) for the commits added since the last release.                     |
+| Publish           | Publish the release with the [publish plugins](#publish-plugin).                                                                                 |
 
-### ~~Major~~ Breaking Release
+## Installation and Usage
 
-```
-perf(pencil): remove graphiteWidth option
+### Local installation
 
-BREAKING CHANGE: The graphiteWidth option has been removed. The default graphite width of 10mm is always used for performance reasons.
+For [Node modules projects](https://docs.npmjs.com/getting-started/creating-node-modules) we recommend to install semantic-release locally and to run the `semantic-release` command with a [npm script](https://docs.npmjs.com/misc/scripts):
+
+```bash
+$ npm install --save-dev semantic-release
 ```
 
-## Setup
+In your `package.json`:
 
-[![NPM](https://nodei.co/npm/semantic-release.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/semantic-release/)
+```json
+"scripts": {
+  "semantic-release": "semantic-release"
+}
+```
+
+Then in the CI environment:
+
+```bash
+$ npm run semantic-release
+```
+
+### Global installation
+
+For other type of projects we recommend to install semantic-release globally directly in the CI environment:
+
+```bash
+$ npm install -g semantic-release
+$ semantic-release
+```
+
+### CI configuration
+
+#### Run `semantic-release` only after all tests succeeded
+
+The `semantic-release` command must be executed only after all the tests in the CI build pass. If the build runs multiple jobs (for example to test on multiple Operating Systems or Node versions) the CI has to be configured to guarantee that the `semantic-release` command is executed only after all jobs are successful. This can be achieved with [Travis Build Stages](https://docs.travis-ci.com/user/build-stages), [CircleCI Workflows](https://circleci.com/docs/2.0/workflows), [Codeship Deployment Pipelines](https://documentation.codeship.com/basic/builds-and-configuration/deployment-pipelines), [GitLab Pipelines](https://docs.gitlab.com/ee/ci/pipelines.html#introduction-to-pipelines-and-jobs), [Wercker Workflows](http://devcenter.wercker.com/docs/workflows), [GoCD Pipelines](https://docs.gocd.org/current/introduction/concepts_in_go.html#pipeline) or specific tools like [`travis-deploy-once`](https://github.com/semantic-release/travis-deploy-once).
+
+See [CI configuration recipes](docs/recipes/README.md#ci-configurations) for more details.
+
+#### Authentication
+
+Most semantic-release [plugins](#plugins) require to set up authentication in order to publish to your package manager's registry or to access your project's Git hosted service. The authentication token/credentials have to be made available in the CI serice via environment variables.
+
+See each plugin documentation for the environment variable to set up.
+
+The default [npm](https://github.com/semantic-release/npm#environment-variables) and [github](https://github.com/semantic-release/github#environment-variables) plugins require the following environment variables:
+
+| Variable    | Description                                                                                                                                                                                                                                                                                                               |
+|-------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `NPM_TOKEN` | npm token created via [npm token create](https://docs.npmjs.com/getting-started/working_with_tokens#how-to-create-new-tokens).<br/>**Note**: Only the `auth-only` [level of npm two-factor authentication](https://docs.npmjs.com/getting-started/using-two-factor-authentication#levels-of-authentication) is supported. |
+| `GH_TOKEN`  | GitHub authentication token.<br/>**Note**: Only the [personal token](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line) authentication is supported.                                                                                                                                 |
+
+See [CI configuration recipes](docs/recipes/README.md#ci-configurations) for more details on how to configure environment variables in your CI service.
+
+### Automatic setup with `semantic-release-cli`
+
+[`semantic-release-cli`](https://github.com/semantic-release/cli) allow to easily [install](#installation-and-usage) semantic-release in your Node project and set up the [CI configuration](#ci-configuration):
 
 ```bash
 npm install -g semantic-release-cli
@@ -140,184 +150,469 @@ cd your-module
 semantic-release-cli setup
 ```
 
-![dialogue](https://cloud.githubusercontent.com/assets/908178/9428123/3628dfec-499f-11e5-8bdd-8f3042dd95ed.png)
+![dialogue](media/semantic-release-cli.png)
 
-_[This is what happens under the hood.](https://github.com/semantic-release/cli#what-it-does)_
+See the [semantic-release-cli](https://github.com/semantic-release/cli#what-it-does) documentation for more details.
 
-## Options
+### Configuration
 
-You can pass options either via command line (in [kebab-case](https://lodash.com/docs#kebabCase)) or in the `release` field of your `package.json` (in [camelCase](https://lodash.com/docs#camelCase)). Alternatively the configuration can also be defined in `.releaserc.yml`, `.releaserc.js`, `.releaserc.js` or `release.config.js`.
+In order to customize semantic-release’s behavior, [options](#options) and [plugins](#plugins) can be set via:
+- A `.releaserc` file, written in YAML or JSON, with optional extensions: .`yaml`/`.yml`/`.json`/`.js`
+- A `release.config.js` file that exports an object
+- A `release` key in the project's `package.json` file
+- CLI arguments
 
-The following two examples are the same, but CLI arguments take precedence.
+The following two examples are the same.
 
-##### CLI
+Via CLI argument:
+
 ```bash
-semantic-release --branch next
+$ semantic-release --branch next
 ```
 
-##### package.json
+Via `release` key in the project's `package.json` file:
+
 ```json
 "release": {
   "branch": "next"
 }
 ```
 ```bash
-semantic-release
+$ semantic-release
 ```
 
-These options are currently available:
-- `branch`: The branch on which releases should happen. Default: `'master'`
-- `repositoryUrl`: The git repository URL. Default: `repository` property in `package.json` or git origin url. Any valid git url format is supported (See [Git protocols](https://git-scm.com/book/en/v2/Git-on-the-Server-The-Protocols)). If the [Github plugin](https://github.com/semantic-release/github) is used the URL must be a valid Github URL that include the `owner`, the `repository` name and the `host`. The Github shorthand URL is not supported.
-- `no-ci`: Skip Continuous Integration environment verifications, allowing to make releases from a local machine
-- `dry-run`: Dry-run mode, skip publishing, print next version and release notes
-- `extends`: Array of module or files path containing a shareable configuration. Options defined via CLI or in the `release` property will take precedence over the one defined in a shareable configuration.
-- `debug`: Output debugging information
+**Note**: CLI arguments take precedence over options configured in the configuration file.
 
-_A few notes on `npm` config_:
-1. The `npm` token can only be defined in the environment as `NPM_TOKEN`, because that’s where `npm` itself is going to read it from.
-2. In order to publish to a different `npm` registry you can specify that inside the `package.json`’s [`publishConfig`](https://docs.npmjs.com/files/package.json#publishconfig) field.
-3. If you want to use another dist-tag for your publishes than `'latest'` you can specify that inside the `package.json`’s [`publishConfig`](https://docs.npmjs.com/files/package.json#publishconfig) field.
+**Note**: Plugins options cannot be defined via CLI arguments and must be defined in the configuration file.
+
+### Options
+
+#### extends
+
+Type: `Array`, `String`
+
+CLI arguments: `-e`, `--extends`
+
+List of modules or file paths containing a [shareable configuration](#shareable-configurations). If multiple shareable configuration are set, they will be imported in the order defined with each configuration option taking precedence over the options defined in a previous shareable configuration.
+
+**Note**: Options defined via CLI arguments or in the configuration file will take precedence over the ones defined in any shareable configuration.
+
+#### branch
+
+Type: `String`
+
+Default: `master`
+
+CLI arguments: `-b`, `--branch`
+
+The branch on which releases should happen.
+
+#### repositoryUrl
+
+Type: `String`
+
+Default: `repository` property in `package.json` or [git origin url](https://git-scm.com/book/en/v2/Git-Basics-Working-with-Remotes)
+
+CLI arguments: `-r`, `--repository-url`
+
+The git repository URL
+
+Any valid git url format is supported (See [Git protocols](https://git-scm.com/book/en/v2/Git-on-the-Server-The-Protocols)).
+
+**Note**: If the [Github plugin](https://github.com/semantic-release/github) is used the URL must be a valid Github URL that include the `owner`, the `repository` name and the `host`. **The Github shorthand URL is not supported.**
+
+#### dryRun
+
+Type: `Boolean`
+
+Default: `false` if running in a CI environment, `false` otherwise
+
+CLI arguments: `-d`, `--dry-run`
+
+Dry-run mode, skip publishing, print next version and release notes.
+
+#### noCi
+
+Type: `Boolean`
+
+Default: `false`
+
+CLI arguments: `--no-ci`
+
+Skip Continuous Integration environment verifications, allowing to make releases from a local machine.
+
+#### debug
+
+Type: `Boolean`
+
+Default: `false`
+
+CLI argument: `--debug`
+
+Output debugging information. It can also be enabled by set the `DEBUG` environment variable to `semantic-release`.
+
+#### verifyConditions
+
+Type: `Array`, `String`, `Object`
+
+Default: `['@semantic-release/npm', '@semantic-release/github']`
+
+CLI argument: `--verify-conditions`
+
+Define the list of [verify conditions plugins](#verifyconditions-plugin). Plugins will run in series, in the order defined in the `Array`.
+
+See [Plugins configuration](#plugins-configuration) for more details.
+
+#### getLastRelease
+
+Type: `String`, `Object`
+
+Default: `['@semantic-release/npm']`
+
+CLI argument: `--get-last-release`
+
+Define the [get last release plugin](#getlastrelease-plugin).
+
+See [Plugins configuration](#plugins-configuration) for more details.
+
+#### analyzeCommits
+
+Type: `String`, `Object`
+
+Default: `['@semantic-release/commit-analyzer']`
+
+CLI argument: `--analyze-commits`
+
+Define the [analyze commits plugin](#analyzecommits-plugin).
+
+See [Plugins configuration](#plugins-configuration) for more details.
+
+#### verifyRelease
+
+Type: `Array`, `String`, `Object`
+
+Default: `[]`
+
+CLI argument: `--verify-release`
+
+Define the list of [verify release plugins](#verifyrelease-plugin). Plugins will run in series, in the order defined in the `Array`.
+
+See [Plugins configuration](#plugins-configuration) for more details.
+
+#### generateNotes
+
+Type: `String`, `Object`
+
+Default: `['@semantic-release/release-notes-generator']`
+
+CLI argument: `--generate-notes`
+
+Define the [generate notes plugin](#generatenotes-plugin).
+
+See [Plugins configuration](#plugins-configuration) for more details.
+
+#### publish
+
+Type: `Array`, `String`, `Object`
+
+Default: `['@semantic-release/npm', '@semantic-release/github']`
+
+CLI argument: `--publish`
+
+Define the list of [publish plugins](#publish-plugin). Plugins will run in series, in the order defined in the `Array`.
+
+See [Plugins configuration](#plugins-configuration) for more details.
 
 ## Plugins
 
-There are numerous steps where you can customize `semantic-release`’s behavior using plugins. A plugin is a regular [option](#options), but passed inside the `release` block of `package.json`:
+Each [release steps](#release-steps) is implemented within a plugin or a list of plugins that can be configured, allowing to support different [commit message format](#commit-message-format), release not generator and publishing platforms.
 
+See [List of semantic-release plugins](docs/plugins.md#semantic-release-plugins).
+
+See [Plugin developer Guide](docs/developer-guide/plugin.md#semantic-release-plugin-development) for more information on how to develop a plugin.
+
+### Plugin types
+
+#### verifyConditions plugin
+
+Plugin responsible for verifying all the conditions to proceed with the release: configuration is correct, authentication token are valid, etc...
+
+Default implementation: [npm](https://github.com/semantic-release/npm#verifyconditions) and [github](https://github.com/semantic-release/github#verifyconditions).
+
+#### getLastRelease plugin
+
+Plugin responsible for determining the version of the package last release.
+
+Default implementation: [@semantic-release/npm](https://github.com/semantic-release/npm#getlastrelease).
+
+#### analyzeCommits plugin
+
+Plugin responsible for determining the type of the next release (`major`, `minor` or `patch`).
+
+Default implementation: [@semantic-release/commit-analyzer](https://github.com/semantic-release/commit-analyzer).
+
+#### verifyRelease plugin
+
+Plugin responsible for verifying the parameters (version, type, dist-tag etc...) of the release that is about to be published match certain expectations. For example the [cracks plugin](https://github.com/semantic-release/cracks) allows to verify that if a release contains breaking changes, its type must be `major`.
+
+Default implementation: none.
+
+#### generateNotes plugin
+
+Plugin responsible for generating release notes.
+
+Default implementation: [@semantic-release/release-notes-generator](https://github.com/semantic-release/release-notes-generator).
+
+#### publish plugin
+
+Plugin responsible for publishing the release.
+
+Default implementation: [npm](https://github.com/semantic-release/npm#publish) and [github](https://github.com/semantic-release/github#publish).
+
+### Plugins configuration
+
+Plugin can be configured by specifying the plugin's module name or file path directly as a `String` or within the `path` key of an `Object`.
+
+Plugins specific options can be set similarly to the other semantic-release [options](#options) or within the plugin `Object`. Plugins options defined along the other semantic-release [options](#options) will apply to all plugins, while the one defined within the plugin `Object` will apply only to this specific plugin.
+
+For example:
 ```json
 {
   "release": {
-    "analyzeCommits": "npm-module-name",
-    "generateNotes": "./path/to/a/local/module",
-    "verifyConditions": {
-      "path": "./path/to/a/module",
-      "additional": "config"
-    },
-    "globalPluginOptions": "globalConfig"
+    "verifyConditions": [
+      {
+        "path": "@semantic-release/exec",
+        "cmd": "verify-conditions.sh"
+      },
+      "@semantic-release/npm",
+      "@semantic-release/github"
+    ],
+    "analyzeCommits": "custom-plugin",
+    "verifyRelease": [
+      {
+        "path": "@semantic-release/exec",
+        "cmd": "verify-release.sh"
+      },
+    ],
+    "generateNotes": "./build/my-plugin.js",
+    "githubUrl": "https://my-ghe.com",
+    "githubApiPathPrefix": "/api-prefix"
   }
 }
 ```
 
-```bash
-semantic-release --analyze-commits="npm-module-name"
-```
+With this configuration:
+- the `custom-plugin` npm module will be used to [analyze commits](#analyzecommits-plugin)
+- the `./build/my-plugin.js` script will be used to [generate release notes](#generatenotes-plugin)
+- the [`@semantic-release/exec`](https://github.com/semantic-release/exec),  [`@semantic-release/npm`](https://github.com/semantic-release/npm) and [`@semantic-release/exec`](https://github.com/semantic-release/exec) plugins will be used to [verify conditions](#verifyconditions-plugin)
+- the [`@semantic-release/exec`](https://github.com/semantic-release/exec) plugin will be used to [verify the release](#verifyrelease-plugin)
+- the `cmd` option will be set to `verify-conditions.sh` only for the [`@semantic-release/exec`](https://github.com/semantic-release/exec) plugin used to [verify conditions](#verifyconditions-plugin)
+- the `cmd` option will be set to `verify-release.sh` only for the [`@semantic-release/exec`](https://github.com/semantic-release/exec) plugin used to [verify the release](#verifyrelease-plugin)
+- the `githubUrl` and `githubApiPathPrefix` options will be set to respectively `https://my-ghe.com` and `/api-prefix` for all plugins
 
-**Note**: The plugin CLI arguments can be only used to override the plugins to use. Plugins options cannot be defined via CLI arguments and must be defined in the main configuration file or in a shareable config.
+## Shareable configurations
 
-A plugin itself is an async function that always receives three arguments.
+A sharable configuration is an [npm](https://www.npmjs.com/) package that exports a semantic-release configuration object. It allows to easily use the same configuration across several projects.
 
-```js
-module.exports = function (pluginConfig, config, callback) {}
-```
+The shareable configurations to use can be set with the [extends](#extends) option.
 
-- `pluginConfig`: If the user of your plugin specifies additional plugin config in the `package.json` (see the `verifyConditions` example above) then it’s this object. Options defined directly under `release` will be passed to each plugins. Options defined within a plugin will passed only to that instance of the plugin.
-- `config`: A config object containing a lot of information to act upon.
-  - `options`: `semantic-release` options like `repositoryUrl`, or `branch`
-  - For certain plugins the `config` object contains even more information. See below.
+See [List of semantic-release shareable configuration](docs/shareable-configurations.md#semantic-release-shareable-configurations).
 
-### `analyzeCommits`
+See [Shareable configuration developer Guide](docs/developer-guide/shareable-configuration.md#semantic-release-shareable-config-development) for more information on how to develop a shareable configuration.
 
-This plugin is responsible for determining the type of the next release. It additionally receives a `commits` array inside `config`. One commit is an object with a `message` and `hash` property. Call the callback with `'major'`, `'premajor'`, `'minor'`, `'preminor'`, `'patch'`, `'prepatch'`, `'prerelease'`, or `null` if nothing changed.
+## Recipes
 
-While it may be tempting to use `'prepatch'`, `'preminor'` & `'prerelease'` as part of a release process, this is strongly discouraged. A better approach is to use [dist-tags](https://docs.npmjs.com/cli/dist-tag) to create release channels (such as 'latest', 'next', 'stable') and to return only `'major'`, `'premajor'` and `'minor'` from the commit analyzer.
+- [CI configurations](docs/recipes/README.md#ci-configurations)
+- [Package managers and languages](docs/recipes/README.md#package-managers-and-languages)
 
-Have a look at the [default implementation](https://github.com/semantic-release/commit-analyzer/).
-
-### `verifyConditions`
-
-This plugins is responsible for verifying that a release should happen in the first place.
-The default implementations are:
-- [travis](https://github.com/semantic-release/condition-travis/): verifies that the publish is happening on Travis, that it’s the right branch, and that all other build jobs succeeded.
-- [github](https://github.com/semantic-release/github/): verifies a Github authentication is set and valid.
-- [npm](https://github.com/semantic-release/npm/): verifies an npm authentication is set and valid.
-
-Passing an array of plugins will run them in series.
-
-### `verifyRelease`
-
-This plugin is responsible for verifying a release that was determined before and is about to be published. There is no default implementation. It additionally receives `nextRelease`, `lastRelease` and `commits` inside `config`. While `commits` is the same as with analyzeCommits, `nextRelease` contains a `type` (e.g. `'major'`) and the new version (e.g. `'1.0.0'`) and `lastRelease` contains the old `version`, the `gitHead` at the time of the release and the npm dist-`tag` (e.g. `'latest'`). Using this information you could [detect breaking changes](https://github.com/semantic-release/cracks) or hold back certain types of releases. Again: Be creative.
-
-Passing an array of plugins will run them in series.
-
-### `getLastRelease`
-
-This plugin is responsible for determining a package’s last release version. The [default implementation](https://github.com/semantic-release/last-release-npm) uses the last published version on a npm registry.
-
-### `generateNotes`
-
-This plugin is responsible for generating release notes. Call the callback with the notes as a string. Have a look at the [default implementation](https://github.com/semantic-release/release-notes-generator/).
-It receives a `commits` array, the `lastRelease` and `nextRelease` inside `config`.
-
-### `publish`
-
-This plugins is responsible for publishing the release. The default implementations publish on [npm](https://github.com/semantic-release/npm) and [github](https://github.com/semantic-release/github).
-
-Passing an array of plugins will run them in series.
-
-## ITYM*FAQ*LT
-> I think you might frequently ask questions like these
+## Frequently Asked Questions
 
 ### Why is the `package.json`’s version not updated in my repository?
 
-The `npm` docs even state:
+semantic-release takes care of updating the `package.json`’s version before publishing to [npm](https://www.npmjs.com).
 
-> The most important things in your package.json are the name and version fields. Those are actually required, and your package won’t install without them.
-> – [npm docs](https://docs.npmjs.com/files/package.json#version)
+By default, only the published package will contains the version, which is the only place where it is *really* required, but the updated `package.json` will not be pushed to the Git repository
 
-While this entirely true the version number doesn’t have to be checked into source control. `semantic-release` takes care of the version field right before `npm publish` uses it – and this is the only point where it _really_ is required.
+However, the [`@semantic-release/git`](https://github.com/semantic-release/git) plugin can be used to push the updated `package.json` as well as other files to the Git repository.
+
+### How can I use a npm build script that requires the `package.json`’s version ?
+
+The `package.json`’s version will be updated by the `semantic-release` command just before publishing to [npm](https://www.npmjs.com), therefore it won't be available for scripts ran before the `semantic-release` command.
+
+As semantic-release uses the [npm CLI](https://docs.npmjs.com/cli/npm) to publish, all [npm hook scripts](https://docs.npmjs.com/misc/scripts#hook-scripts) will be executed. Therefore you can run your build script in the [`prepublishOnly`](https://docs.npmjs.com/misc/scripts#prepublish-and-prepare) hook. It will be executed after the `semantic-release` command update the `package.json`’s version and before publishing.
 
 ### Is there a way to preview which version would currently get published?
 
-If you run `npm run semantic-release` locally a dry run gets performed, which logs the version that would currently get published.
+Yes with the [dry-run options](#dryrun) which prints to the console the next version to be published and the release notes.
 
-### Can I run this on my own machine rather than on a CI server?
+### Can I use semantic-release with Yarn?
 
-Yes, you can by explicitly setting the [`--no-ci` CLI option](#options), but this doesn’t necessarily mean you should. Running your tests on an independent machine before releasing software is a crucial part of this workflow.
-You will need to set all necessary authentication token (like `GH_TOKEN` and `NPM_TOKEN`) on your local machine.
+If you are using a [local semantic-release installation](#local-installation) and run multiple CI jobs with different versions, the `yarn install` command will fail with Node < 8 as semantic-release require [Node >= 8](#why-does-semantic-release-require-node-version--8). See [yarnpkg/rfcs#69](https://github.com/yarnpkg/rfcs/pull/69).
+
+In order to run semantic-release with [Yarn](https://yarnpkg.com) you would need to:
+- Use a [global semantic-release installation](#global-installation)
+- Make sure to install and run the `semantic-release` command only in a CI jobs running with [Node >= 8](#why-does-semantic-release-require-node-version--8)
+
+If your CI environment provides [nvm](https://github.com/creationix/nvm) you can switch to Node 8 before installing and running the `semantic-release` command:
+
+```bash
+$ nvm install 8 && yarn install -g semantic-release && semantic-release
+```
+
+See the [CI configuration recipes](docs/recipes/README.md#ci-configurations) for more details on specific CI environments.
+
+### Can I use semantic-release to publish non-JavaScript packages?
+
+Yes, semantic-release is a Node CLI application but it can be used to publish any type of packages.
+
+To publish a non-JavaScript package you would need to:
+- Use a [global semantic-release installation](#global-installation)
+- Set [semantic-release options](#options) via [CLI arguments or rc file](#configuration)
+- Make sure your CI job executing the `semantic-release` command has access to [Node >= 8](#why-does-semantic-release-require-node-version--8) to execute the `semantic-release` command
+
+See the [CI configuration recipes](docs/recipes/README.md#ci-configurations) for more details on specific CI environments.
+
+### Can I use semantic-release with any CI service?
+
+Yes, semantic-release can be used with any CI service, as long as it provides:
+- A way to set [authentication](#authentication) via environment variables
+- A way to guarantee that the `semantic-release` command is [executed only after all the tests of all the jobs in the CI build pass](#run-semantic-release-only-after-all-tests-succeeded)
+
+See the [CI configuration recipes](docs/recipes/README.md#ci-configurations) for more details on specific CI environments.
+
+### Can I run semantic-release on my local machine rather than on a CI server?
+
+Yes, you can by explicitly setting the [`--no-ci` CLI option](#options) option. You will also have to set the required [authentication](#authentication) via environment variables on your local machine, for example:
+
+```bash
+$ NPM_TOKEN=<your_npm_token> GH_TOKEN=<your_github_token> npm run semantic-release --no-ci
+```
+
+However this is not the recommended approach, as running unit and integration tests on an independent machine before publishing software is a crucial part of the release workflow.
+
+### Can I use semantic-release with GitLab?
+
+Yes, with the [`@semantic-release/gitlab-config`](https://github.com/semantic-release/gitlab-config) shareable configuration.
+
+See the [GitLab CI recipes](docs/recipes/gitlab-ci.md#using-semantic-release-with-gitlab-ci) for the CI configuration.
+
+### Can I use semantic-release with any Git hosted environment?
+
+By default semantic-release uses the [`@semantic-release/github`](https://github.com/semantic-release/github) plugin to publish a [GitHub release](https://help.github.com/articles/about-releases). For other Git hosted environment the  [`@semantic-release/git`](https://github.com/semantic-release/git) and [`@semantic-release/changelog`](https://github.com/semantic-release/changelog) plugins can be used via [plugins configuration](#plugins-configuration).
+
+See the [`@semantic-release/git`](https://github.com/semantic-release/git#semantic-releasegit) [`@semantic-release/changelog`](https://github.com/semantic-release/changelog#semantic-releasechangelog) plugins documentation for more details.
+
+### Can I skip the release to the npm registry?
+
+Yes, the publishing to the npm registry can be disabled with the [`npmPublish`](https://github.com/semantic-release/npm#options) option of the [`@semantic-release/npm`](https://github.com/semantic-release/npm) plugin. In addition the [`tarballDir`](https://github.com/semantic-release/npm#options) option allow to generate the package tarball in order to publish it to your repository with the [`@semantic-release/git`](https://github.com/semantic-release/git) or to a [GitHub release](https://help.github.com/articles/about-releases) with the [`@semantic-release/github`](https://github.com/semantic-release/github) plugin.
+
+See the [`@semantic-release/npm`](https://github.com/semantic-release/npm#semantic-releasenpm) plugin documentation for more details.
+
+### Can I use `.npmrc` options?
+
+Yes, all the [npm configuration options](https://docs.npmjs.com/misc/config) are supported via the [`.npmrc`](https://docs.npmjs.com/files/npmrc) file at the root of your repository.
+
+See the [`@semantic-release/npm`](https://github.com/semantic-release/npm#npm-configuration) plugin documentation for more details.
+
+### How can I set the access level of the published npm package?
+
+The [npm `access` option](https://docs.npmjs.com/misc/config#access) can be set in the [`.npmrc`](https://docs.npmjs.com/files/npmrc) file at the root of your repository:
+
+```rc
+access=public
+```
+
+Or with the `publishConfig.access` key in your project's `package.json`:
+
+```json
+{
+  "publishConfig": {
+    "access": "public"
+  }
+}
+```
+
+### Can I use semantic-release to publish a package on Artifactory?
+
+Any npm compatible registry is supported with the [`@semantic-release/npm`](https://github.com/semantic-release/npm) plugin. For Artifactory versions prior to 5.4, the legacy authentication has to be used (with `NPM_USERNAME`, `NPM_PASSWORD` and `NPM_EMAIL` [environment variables](https://github.com/semantic-release/npm#environment-variables)).
+
+See [npm registry authentication](https://github.com/semantic-release/npm#npm-registry-authentication) for more details.
+
+See [Artifactory - npm Registry](https://www.jfrog.com/confluence/display/RTF/Npm+Registry#NpmRegistry-AuthenticatingthenpmClient) documentation for Artifactiry configuration.
 
 ### Can I manually trigger the release of a specific version?
 
-You can trigger a release by pushing to your GitHub repository. You deliberately cannot trigger a _specific_ version release, because this is the whole point of `semantic-release`. Start your packages with `1.0.0` and semver on.  
+You can trigger a release by pushing to your Git repository. You deliberately cannot trigger a *specific* version release, because this is the whole point of semantic-release.
 
-### Is it _really_ a good idea to release on every push?
+### Is it *really* a good idea to release on every push?
 
-It is indeed a great idea because it _forces_ you to follow best practices. If you don’t feel comfortable making every passing feature or fix on your master branch addressable via `npm` you might not treat your master right. Have a look at [branch workflows](https://guides.github.com/introduction/flow/index.html). If you still think you should have control over the exact point in time of your release, e.g. because you are following a release schedule, you can release only on the `production`/`deploy`/`release` branch and push your code there in certain intervals, or better yet use [dist-tags](https://docs.npmjs.com/cli/dist-tag).
+It is indeed a great idea because it *forces* you to follow best practices. If you don’t feel comfortable releasing every feature or fix on your `master` you might not treat your `master` branch as intended.
 
-### Why should I trust `semantic-release` with my releases?
+From [Understanding the GitHub Flow](https://guides.github.com/introduction/flow/index.html):
 
-`semantic-release` has a full unit- and integration-test-suite that tests _actual_ `npm` publishes against the [npm-registry-couchapp](https://github.com/npm/npm-registry-couchapp/). A new version won’t get published if it doesn’t pass on all these engines.
+> Branching is a core concept in Git, and the entire GitHub Flow is based upon it. There's only one rule: anything in the master branch is always deployable.
 
-### Why does `semantic-release` require node version >= 8
+If you need more control over the timing of releases, see [Triggering a release](#triggering-a-release) for different options.
 
-Being able to write code for just the most recent node versions greatly simplifies development. More language features are available, no transpilation is required, less test builds are to be run, awaited and debugged.
+### Can I set the initial release version of my package to `0.0.1`?
 
-For a special purpose tool like `semantic-release`, that's only meant to be used in controlled CI environments, we think it's okay to have such a high version requirement. As `semantic-release` handles package publishing we expect almost every project to have at least one build job running node 8 already – and that's all it takes. Even if that's not that case `semantic-release` can still be executed with the help of [npx](https://www.npmjs.com/package/npx) (`npx -p node@8 npm run semantic-release`).
+This is not supported by semantic-release as it's not considered a good practice, mostly because [Semantic Versioning](https://semver.org) rules applies differently to major version zero.
 
-Please see our [Node Support Policy](#node-support-policy) for our long-term promise for supporting Node.
+In early development phase when your package is not ready for production yet we recommend to publish releases on a distribution channel (for example npm’s [dist-tags](https://docs.npmjs.com/cli/dist-tag)) or to develop on a `dev` branch and merge it to `master` periodically. See [Triggering a release](#triggering-a-release) for more details on those solutions.
+
+See [“Introduction to SemVer” - Irina Gebauer](https://blog.greenkeeper.io/introduction-to-semver-d272990c44f2) for more details on [Semantic Versioning](https://semver.org) and the recommendation to start at version `1.0.0`.
+
+### Can I trust semantic-release with my releases?
+
+semantic-release has a full unit and integration test suite that tests `npm` publishes against the [npm-registry-couchapp](https://github.com/npm/npm-registry-couchapp).
+
+In addition the [verify conditions step](#release-steps) verifies that all necessary conditions for proceeding with a release are met, and a new release will be performed [only if all your tests pass](#run-semantic-release-only-after-all-tests-succeeded).
+
+### Why does semantic-release require Node version >= 8?
+
+semantic-release is written using the latest [ECMAScript 2017](https://www.ecma-international.org/publications/standards/Ecma-262.htm) features, without transpilation which **requires Node version 8 or higher**.
+
+See [Node version requirement](docs/node-version.md#node-version-requirement) for more details and solutions.
+
+## Resources
+
+### Videos
+
+- ["Introducing Reliable Dependency and Release Management for npm Packages" - Gregor Martynus](https://www.youtube.com/watch?v=R2RJWLcfzwc)
+- ["Kill all humans" - Jan Lehnardt](https://www.youtube.com/watch?v=ZXyx_1kN1L8&t=2s)
+- [Publishing JavaScript Packages" - JavaScript Air](https://javascriptair.com/episodes/2016-07-20)
+- ["Managing Dependencies like a boss 😎" - JavaScript Air](https://javascriptair.com/episodes/2016-08-17)
+- ["Dependency Hell Just Froze Over" - Stephan Bönnemann](https://www.youtube.com/watch?v=PA139CERNbc)
+- [“semantic-release Q&A with Kent C. Dodds”](https://www.youtube.com/watch?v=g6y3DnhkjrI)
+- [“We fail to follow SemVer – and why it needn’t matter” - Stephan Bönnemann](https://www.youtube.com/watch?v=tc2UgG5L7WM)
+
+### Articles
+
+- [“Introduction to SemVer” - Irina Gebauer](https://blog.greenkeeper.io/introduction-to-semver-d272990c44f2)
+
+### Tutorials
+
+- [“How to Write a JavaScript Library - Automating Releases with semantic-release” – egghead.io](https://egghead.io/lessons/javascript-automating-releases-with-semantic-release)
+
+## Support
+
+- [Stack Overflow](https://stackoverflow.com/questions/tagged/semantic-release)
+- [Gitter chat](https://gitter.im/semantic-release/semantic-release)
+- [Twitter](https://twitter.com/SemanticRelease)
 
 ## Badge
 
-Use this in one of your projects? Include one of these badges in your README.md to let people know that your package is published using `semantic-release`.
+Let people know that your package is published using semantic-release by including this badge in your readme.
 
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 
 ```md
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
-```
-
-[![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg?style=plastic)](https://github.com/semantic-release/semantic-release)
-
-```md
-[![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg?style=plastic)](https://github.com/semantic-release/semantic-release)
-```
-
-[![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg?style=flat-square)](https://github.com/semantic-release/semantic-release)
-
-```md
-[![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg?style=flat-square)](https://github.com/semantic-release/semantic-release)
 ```
 
 ## Node Support Policy
 
-We only support [Long-Term Support](https://github.com/nodejs/Release) versions of Node starting with [Node 8.9.0 (LTS)](https://nodejs.org/en/blog/release/v8.9.0/).
+We only support [Long-Term Support](https://github.com/nodejs/Release) versions of Node starting with [Node 8.9.0 (LTS)](https://nodejs.org/en/blog/release/v8.9.0).
 
 We specifically limit our support to LTS versions of Node, not because this package won't work on other versions, but because we have a limited amount of time, and supporting LTS offers the greatest return on that investment.
 
@@ -329,9 +624,10 @@ We will accept code that allows this package to run on newer, non-LTS, versions 
 
 JavaScript package managers should allow you to install this package with any version of Node, with, at most, a warning if your version of Node does not fall within the range specified by our node engines property. If you encounter issues installing this package, please report the issue to your package manager.
 
-## License
+## Team
 
-MIT License
-2015 © Stephan Bönnemann and [contributors](https://github.com/semantic-release/semantic-release/graphs/contributors)
+| [![Stephan Bönnemann](https://github.com/boennemann.png?size=100)](https://github.com/boennemann) | [![Rolf Erik Lekang](https://github.com/relekang.png?size=100)](https://github.com/relekang) | [![Johannes Jörg Schmidt](https://github.com/jo.png?size=100)](https://github.com/jo) | [![Gregor Martynus](https://github.com/gr2m.png?size=100)](https://github.com/gr2m) | [![Pierre Vanduynslager](https://github.com/finnp.png?size=100)](https://github.com/finnp) | [![Pierre Vanduynslager](https://github.com/pvdlg.png?size=100)](https://github.com/pvdlg) | [![Christoph Witzko](https://github.com/christophwitzko.png?size=100)](https://github.com/christophwitzko) |
+|---------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|
+| [Stephan Bönnemann](https://github.com/boennemann)                                                | [Rolf Erik Lekang](https://github.com/relekang)                                              | [Johannes Jörg Schmidt](https://github.com/jo)                                        | [Gregor Martynus](https://github.com/gr2m)                                          | [Finn Pauls](https://github.com/finnp)                                                     | [Pierre Vanduynslager](https://github.com/pvdlg)                                           | [Christoph Witzko](https://github.com/christophwitzko)                                                     |
 
 [![](https://cloud.githubusercontent.com/assets/908178/6091690/cc86f58c-aeb8-11e4-94cb-15f15f486cde.png)](https://twitter.com/trodrigues/status/509301317467373571)
