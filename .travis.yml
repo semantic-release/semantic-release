@@ -25,5 +25,5 @@ script:
 
 after_success:
   - npm run codecov
-  - npm install -g semantic-release/travis-deploy-once@4
+  - npm install -g travis-deploy-once@4
   - travis-deploy-once "npm run semantic-release"
