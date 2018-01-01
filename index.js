@@ -10,13 +10,13 @@ const {gitHead: getGitHead, isGitRepo} = require('./lib/git');
 module.exports = async opts => {
   const {isCi, branch, isPr} = envCi();
 
-  if (!isCi && !opts.dryRun) {
+  if (!isCi && !opts.dryRun && !opts.noCi) {
     logger.log('This run was not triggered in a known CI environment, running in dry-run mode.');
     opts.dryRun = true;
   }
 
-  if (isCi && isPr) {
-    logger.log('This run was triggered by a pull request and therefore a new version won’t be published.');
+  if (isCi && isPr && !opts.noCi) {
+    logger.log("This run was triggered by a pull request and therefore a new version won't be published.");
     return;
   }
 

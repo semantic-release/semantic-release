@@ -209,7 +209,7 @@ test.serial('Dry-run skips publish', async t => {
   t.is(publish.callCount, 0);
 });
 
-test.serial('Force a dry-run if not on a CI', async t => {
+test.serial('Force a dry-run if not on a CI and ignore "noCi" is not explicitly set', async t => {
   // Create a git repository, set the current working directory at the root of the repo
   await gitRepo();
   // Add commits to the master branch
@@ -255,6 +255,58 @@ test.serial('Force a dry-run if not on a CI', async t => {
   t.is(verifyRelease.callCount, 1);
   t.is(generateNotes.callCount, 1);
   t.is(publish.callCount, 0);
+});
+
+test.serial('Allow local releases with "noCi" option', async t => {
+  // Create a git repository, set the current working directory at the root of the repo
+  await gitRepo();
+  // Add commits to the master branch
+  let commits = await gitCommits(['First']);
+  // Create the tag corresponding to version 1.0.0
+  await gitTagVersion('v1.0.0');
+  // Add new commits to the master branch
+  commits = (await gitCommits(['Second'])).concat(commits);
+
+  const lastRelease = {version: '1.0.0', gitHead: commits[commits.length - 1].hash, gitTag: 'v1.0.0'};
+  const nextRelease = {type: 'major', version: '2.0.0', gitHead: await getGitHead(), gitTag: 'v2.0.0'};
+  const notes = 'Release notes';
+
+  const verifyConditions = stub().resolves();
+  const getLastRelease = stub().resolves(lastRelease);
+  const analyzeCommits = stub().resolves(nextRelease.type);
+  const verifyRelease = stub().resolves();
+  const generateNotes = stub().resolves(notes);
+  const publish = stub().resolves();
+
+  const options = {
+    noCi: true,
+    branch: 'master',
+    repositoryUrl: 'git@hostname.com:owner/module.git',
+    verifyConditions,
+    getLastRelease,
+    analyzeCommits,
+    verifyRelease,
+    generateNotes,
+    publish,
+  };
+
+  const semanticRelease = proxyquire('..', {
+    './lib/logger': t.context.logger,
+    'env-ci': () => ({isCi: false, branch: 'master', isPr: true}),
+  });
+  t.truthy(await semanticRelease(options));
+
+  t.not(t.context.log.args[0][0], 'This run was not triggered in a known CI environment, running in dry-run mode.');
+  t.not(
+    t.context.log.args[0][0],
+    "This run was triggered by a pull request and therefore a new version won't be published."
+  );
+  t.is(verifyConditions.callCount, 1);
+  t.is(getLastRelease.callCount, 1);
+  t.is(analyzeCommits.callCount, 1);
+  t.is(verifyRelease.callCount, 1);
+  t.is(generateNotes.callCount, 1);
+  t.is(publish.callCount, 1);
 });
 
 test.serial('Accept "undefined" values for the "getLastRelease" and "generateNotes" plugins', async t => {
@@ -333,7 +385,7 @@ test.serial('Returns falsy value if triggered by a PR', async t => {
   t.falsy(await semanticRelease({repositoryUrl: 'git@hostname.com:owner/module.git'}));
   t.is(
     t.context.log.args[0][0],
-    'This run was triggered by a pull request and therefore a new version won’t be published.'
+    "This run was triggered by a pull request and therefore a new version won't be published."
   );
 });
 
