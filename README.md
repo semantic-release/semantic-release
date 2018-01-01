@@ -168,6 +168,7 @@ semantic-release
 These options are currently available:
 - `branch`: The branch on which releases should happen. Default: `'master'`
 - `repositoryUrl`: The git repository URL. Default: `repository` property in `package.json` or git origin url. Any valid git url format is supported (See [Git protocols](https://git-scm.com/book/en/v2/Git-on-the-Server-The-Protocols)). If the [Github plugin](https://github.com/semantic-release/github) is used the URL must be a valid Github URL that include the `owner`, the `repository` name and the `host`. The Github shorthand URL is not supported.
+- `no-ci`: Skip Continuous Integration environment verifications, allowing to make releases from a local machine
 - `dry-run`: Dry-run mode, skip publishing, print next version and release notes
 - `extends`: Array of module or files path containing a shareable configuration. Options defined via CLI or in the `release` property will take precedence over the one defined in a shareable configuration.
 - `debug`: Output debugging information
@@ -269,7 +270,8 @@ If you run `npm run semantic-release` locally a dry run gets performed, which lo
 
 ### Can I run this on my own machine rather than on a CI server?
 
-Of course you can, but this doesn’t necessarily mean you should. Running your tests on an independent machine before releasing software is a crucial part of this workflow. Also it is a pain to set this up locally, with tokens lying around and everything. That said, you can run the scripts with `--debug=false` explicitly. You have to export `GH_TOKEN=<your_token>` and `NPM_TOKEN=<your_other_token>`.
+Yes, you can by explicitly setting the [`--no-ci` CLI option](#options), but this doesn’t necessarily mean you should. Running your tests on an independent machine before releasing software is a crucial part of this workflow.
+You will need to set all necessary authentication token (like `GH_TOKEN` and `NPM_TOKEN`) on your local machine.
 
 ### Can I manually trigger the release of a specific version?
 

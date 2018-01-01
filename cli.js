@@ -27,6 +27,10 @@ module.exports = async () => {
     )
     .option('--generate-notes <path>', 'Path or package name for the generateNotes plugin')
     .option('--publish <paths>', 'Comma separated list of paths or packages name for the publish plugin(s)', list)
+    .option(
+      '--no-ci',
+      'Skip Continuous Integration environment verifications, allowing to make releases from a local machine'
+    )
     .option('--debug', 'Output debugging information')
     .option(
       '-d, --dry-run',
