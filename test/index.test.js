@@ -460,6 +460,52 @@ test.serial('Returns falsy value if there is no relevant changes', async t => {
   t.is(t.context.log.args[6][0], 'There are no relevant changes, so no new version is released.');
 });
 
+test.serial('Exclude commits with [skip release] or [release skip] from analysis', async t => {
+  // Create a git repository, set the current working directory at the root of the repo
+  await gitRepo();
+  // Add commits to the master branch
+  const commits = await gitCommits([
+    'Test commit',
+    'Test commit [skip release]',
+    'Test commit [release skip]',
+    'Test commit [Release Skip]',
+    'Test commit [Skip Release]',
+    'Test commit [skip    release]',
+    'Test commit\n\n commit body\n[skip release]',
+    'Test commit\n\n commit body\n[release skip]',
+  ]);
+
+  const verifyConditions1 = stub().resolves();
+  const verifyConditions2 = stub().resolves();
+  const getLastRelease = stub().resolves({});
+  const analyzeCommits = stub().resolves();
+  const verifyRelease = stub().resolves();
+  const generateNotes = stub().resolves();
+  const publish = stub().resolves();
+
+  const config = {branch: 'master', repositoryUrl: 'git@hostname.com:owner/module.git', globalOpt: 'global'};
+  const options = {
+    ...config,
+    verifyConditions: [verifyConditions1, verifyConditions2],
+    getLastRelease,
+    analyzeCommits,
+    verifyRelease,
+    generateNotes,
+    publish,
+  };
+
+  const semanticRelease = proxyquire('..', {
+    './lib/logger': t.context.logger,
+    'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
+  });
+  await semanticRelease(options);
+
+  t.is(analyzeCommits.callCount, 1);
+  t.is(analyzeCommits.args[0][1].commits.length, 1);
+  t.deepEqual(analyzeCommits.args[0][1].commits[0].hash.substring(0, 7), commits[commits.length - 1].hash);
+  t.deepEqual(analyzeCommits.args[0][1].commits[0].message, commits[commits.length - 1].message);
+});
+
 test.serial('Throw SemanticReleaseError if repositoryUrl is not set and cannot be found from repo config', async t => {
   // Create a git repository, set the current working directory at the root of the repo
   await gitRepo();

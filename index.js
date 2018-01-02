@@ -50,7 +50,12 @@ module.exports = async opts => {
   );
 
   logger.log('Call plugin %s', 'analyze-commits');
-  const type = await plugins.analyzeCommits({options, logger, lastRelease, commits});
+  const type = await plugins.analyzeCommits({
+    options,
+    logger,
+    lastRelease,
+    commits: commits.filter(commit => !/\[skip\s+release\]|\[release\s+skip\]/i.test(commit.message)),
+  });
   if (!type) {
     logger.log('There are no relevant changes, so no new version is released.');
     return;
