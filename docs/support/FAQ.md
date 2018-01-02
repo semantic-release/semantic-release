@@ -123,6 +123,10 @@ See [Artifactory - npm Registry](https://www.jfrog.com/confluence/display/RTF/Np
 
 You can trigger a release by pushing to your Git repository. You deliberately cannot trigger a *specific* version release, because this is the whole point of semantic-release.
 
+### Can I exclude commits from the analysis?
+
+Yes, every commits that contains `[skip release]` or `[release skip]` in their message will be excluded from the commit analysis and won't participate in the release type determination.
+
 ## Is it *really* a good idea to release on every push?
 
 It is indeed a great idea because it *forces* you to follow best practices. If you don’t feel comfortable releasing every feature or fix on your `master` you might not treat your `master` branch as intended.
