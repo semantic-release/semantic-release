@@ -136,7 +136,7 @@ test.serial('Release patch, minor and major versions', async t => {
   await gitCommits(['feat: Initial commit']);
   t.log('$ semantic-release');
   ({stdout, code} = await execa(cli, [], {env}));
-  t.regex(stdout, new RegExp(`Published Github release: release-url/${version}`));
+  t.regex(stdout, new RegExp(`Published GitHub release: release-url/${version}`));
   t.regex(stdout, new RegExp(`Publishing version ${version} to npm registry`));
   t.is(code, 0);
 
@@ -181,7 +181,7 @@ test.serial('Release patch, minor and major versions', async t => {
   await gitCommits(['fix: bar']);
   t.log('$ semantic-release');
   ({stdout, code} = await execa(cli, [], {env}));
-  t.regex(stdout, new RegExp(`Published Github release: release-url/${version}`));
+  t.regex(stdout, new RegExp(`Published GitHub release: release-url/${version}`));
   t.regex(stdout, new RegExp(`Publishing version ${version} to npm registry`));
   t.is(code, 0);
 
@@ -226,7 +226,7 @@ test.serial('Release patch, minor and major versions', async t => {
   await gitCommits(['feat: baz']);
   t.log('$ semantic-release');
   ({stdout, code} = await execa(cli, [], {env}));
-  t.regex(stdout, new RegExp(`Published Github release: release-url/${version}`));
+  t.regex(stdout, new RegExp(`Published GitHub release: release-url/${version}`));
   t.regex(stdout, new RegExp(`Publishing version ${version} to npm registry`));
   t.is(code, 0);
 
@@ -271,7 +271,7 @@ test.serial('Release patch, minor and major versions', async t => {
   await gitCommits(['feat: foo\n\n BREAKING CHANGE: bar']);
   t.log('$ semantic-release');
   ({stdout, code} = await execa(cli, [], {env}));
-  t.regex(stdout, new RegExp(`Published Github release: release-url/${version}`));
+  t.regex(stdout, new RegExp(`Published GitHub release: release-url/${version}`));
   t.regex(stdout, new RegExp(`Publishing version ${version} to npm registry`));
   t.is(code, 0);
 
@@ -333,7 +333,7 @@ test.serial('Release versions from a packed git repository, using tags to determ
   await gitPackRefs();
   t.log('$ semantic-release');
   let {stdout, code} = await execa(cli, [], {env});
-  t.regex(stdout, new RegExp(`Published Github release: release-url/${version}`));
+  t.regex(stdout, new RegExp(`Published GitHub release: release-url/${version}`));
   t.regex(stdout, new RegExp(`Publishing version ${version} to npm registry`));
   t.is(code, 0);
   // Verify package.json has been updated
@@ -373,7 +373,7 @@ test.serial('Release versions from a packed git repository, using tags to determ
   await gitCommits(['fix: bar']);
   t.log('$ semantic-release');
   ({stdout, code} = await execa(cli, [], {env}));
-  t.regex(stdout, new RegExp(`Published Github release: release-url/${version}`));
+  t.regex(stdout, new RegExp(`Published GitHub release: release-url/${version}`));
   t.regex(stdout, new RegExp(`Publishing version ${version} to npm registry`));
   t.is(code, 0);
   // Verify package.json has been updated
@@ -484,7 +484,7 @@ test.serial('Create a tag as a recovery solution for "ENOTINHISTORY" error', asy
   await gitCommits(['feat: Initial commit']);
   t.log('$ semantic-release');
   let {stderr, stdout, code} = await execa(cli, [], {env});
-  t.regex(stdout, new RegExp(`Published Github release: release-url/${version}`));
+  t.regex(stdout, new RegExp(`Published GitHub release: release-url/${version}`));
   t.regex(stdout, new RegExp(`Publishing version ${version} to npm registry`));
   t.is(code, 0);
   // Verify package.json has been updated
@@ -558,7 +558,7 @@ test.serial('Create a tag as a recovery solution for "ENOTINHISTORY" error', asy
 
   t.log('$ semantic-release');
   ({stderr, stdout, code} = await execa(cli, [], {env}));
-  t.regex(stdout, new RegExp(`Published Github release: release-url/${version}`));
+  t.regex(stdout, new RegExp(`Published GitHub release: release-url/${version}`));
   t.regex(stdout, new RegExp(`Publishing version ${version} to npm registry`));
   t.is(code, 0);
   // Verify package.json has been updated
