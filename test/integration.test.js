@@ -118,6 +118,11 @@ test.serial('Release patch, minor and major versions', async t => {
     {headers: [{name: 'Authorization', values: [`token ${env.GH_TOKEN}`]}]},
     {body: {permissions: {push: true}}, method: 'GET'}
   );
+  let getRefMock = await mockServer.mock(
+    `/repos/${owner}/${packageName}/git/refs/tags/v${version}`,
+    {},
+    {body: {}, statusCode: 404, method: 'GET'}
+  );
   let createRefMock = await mockServer.mock(
     `/repos/${owner}/${packageName}/git/refs`,
     {body: {ref: `refs/tags/v${version}`}, headers: [{name: 'Authorization', values: [`token ${env.GH_TOKEN}`]}]},
@@ -153,6 +158,7 @@ test.serial('Release patch, minor and major versions', async t => {
   t.log(`+ released ${releasedVersion} with gitHead ${releasedGitHead}`);
 
   await mockServer.verify(verifyMock);
+  await mockServer.verify(getRefMock);
   await mockServer.verify(createRefMock);
   await mockServer.verify(createReleaseMock);
 
@@ -162,6 +168,11 @@ test.serial('Release patch, minor and major versions', async t => {
     `/repos/${owner}/${packageName}`,
     {headers: [{name: 'Authorization', values: [`token ${env.GH_TOKEN}`]}]},
     {body: {permissions: {push: true}}, method: 'GET'}
+  );
+  getRefMock = await mockServer.mock(
+    `/repos/${owner}/${packageName}/git/refs/tags/v${version}`,
+    {},
+    {body: {}, statusCode: 404, method: 'GET'}
   );
   createRefMock = await mockServer.mock(
     `/repos/${owner}/${packageName}/git/refs`,
@@ -198,6 +209,7 @@ test.serial('Release patch, minor and major versions', async t => {
   t.log(`+ released ${releasedVersion} with gitHead ${releasedGitHead}`);
 
   await mockServer.verify(verifyMock);
+  await mockServer.verify(getRefMock);
   await mockServer.verify(createRefMock);
   await mockServer.verify(createReleaseMock);
 
@@ -207,6 +219,11 @@ test.serial('Release patch, minor and major versions', async t => {
     `/repos/${owner}/${packageName}`,
     {headers: [{name: 'Authorization', values: [`token ${env.GH_TOKEN}`]}]},
     {body: {permissions: {push: true}}, method: 'GET'}
+  );
+  getRefMock = await mockServer.mock(
+    `/repos/${owner}/${packageName}/git/refs/tags/v${version}`,
+    {},
+    {body: {}, statusCode: 404, method: 'GET'}
   );
   createRefMock = await mockServer.mock(
     `/repos/${owner}/${packageName}/git/refs`,
@@ -243,6 +260,7 @@ test.serial('Release patch, minor and major versions', async t => {
   t.log(`+ released ${releasedVersion} with gitHead ${releasedGitHead}`);
 
   await mockServer.verify(verifyMock);
+  await mockServer.verify(getRefMock);
   await mockServer.verify(createRefMock);
   await mockServer.verify(createReleaseMock);
 
@@ -252,6 +270,11 @@ test.serial('Release patch, minor and major versions', async t => {
     `/repos/${owner}/${packageName}`,
     {headers: [{name: 'Authorization', values: [`token ${env.GH_TOKEN}`]}]},
     {body: {permissions: {push: true}}, method: 'GET'}
+  );
+  getRefMock = await mockServer.mock(
+    `/repos/${owner}/${packageName}/git/refs/tags/v${version}`,
+    {},
+    {body: {}, statusCode: 404, method: 'GET'}
   );
   createRefMock = await mockServer.mock(
     `/repos/${owner}/${packageName}/git/refs`,
@@ -288,6 +311,7 @@ test.serial('Release patch, minor and major versions', async t => {
   t.log(`+ released ${releasedVersion} with gitHead ${releasedGitHead}`);
 
   await mockServer.verify(verifyMock);
+  await mockServer.verify(getRefMock);
   await mockServer.verify(createRefMock);
   await mockServer.verify(createReleaseMock);
 });
@@ -319,6 +343,11 @@ test.serial('Release versions from a packed git repository, using tags to determ
     {body: {ref: `refs/tags/v${version}`}, headers: [{name: 'Authorization', values: [`token ${env.GH_TOKEN}`]}]},
     {body: {ref: `refs/tags/${version}`}}
   );
+  let getRefMock = await mockServer.mock(
+    `/repos/${owner}/${packageName}/git/refs/tags/v${version}`,
+    {},
+    {body: {}, statusCode: 404, method: 'GET'}
+  );
   let createReleaseMock = await mockServer.mock(
     `/repos/${owner}/${packageName}/releases`,
     {
@@ -343,6 +372,7 @@ test.serial('Release versions from a packed git repository, using tags to determ
   t.is(releasedVersion, version);
   t.log(`+ released ${releasedVersion}`);
   await mockServer.verify(verifyMock);
+  await mockServer.verify(getRefMock);
   await mockServer.verify(createRefMock);
   await mockServer.verify(createReleaseMock);
   // Create a tag version so the tag can be used later to determine the commit associated with the version
@@ -355,6 +385,11 @@ test.serial('Release versions from a packed git repository, using tags to determ
     `/repos/${owner}/${packageName}`,
     {headers: [{name: 'Authorization', values: [`token ${env.GH_TOKEN}`]}]},
     {body: {permissions: {push: true}}, method: 'GET'}
+  );
+  getRefMock = await mockServer.mock(
+    `/repos/${owner}/${packageName}/git/refs/tags/v${version}`,
+    {},
+    {body: {}, statusCode: 404, method: 'GET'}
   );
   createRefMock = await mockServer.mock(
     `/repos/${owner}/${packageName}/git/refs`,
@@ -384,6 +419,7 @@ test.serial('Release versions from a packed git repository, using tags to determ
   t.is(releasedVersion, version);
   t.log(`+ released ${releasedVersion}`);
   await mockServer.verify(verifyMock);
+  await mockServer.verify(getRefMock);
   await mockServer.verify(createRefMock);
   await mockServer.verify(createReleaseMock);
 });
@@ -467,6 +503,11 @@ test.serial('Create a tag as a recovery solution for "ENOTINHISTORY" error', asy
     {headers: [{name: 'Authorization', values: [`token ${env.GH_TOKEN}`]}]},
     {body: {permissions: {push: true}}, method: 'GET'}
   );
+  let getRefMock = await mockServer.mock(
+    `/repos/${owner}/${packageName}/git/refs/tags/v${version}`,
+    {},
+    {body: {}, statusCode: 404, method: 'GET'}
+  );
   let createRefMock = await mockServer.mock(
     `/repos/${owner}/${packageName}/git/refs`,
     {body: {ref: `refs/tags/v${version}`}, headers: [{name: 'Authorization', values: [`token ${env.GH_TOKEN}`]}]},
@@ -499,6 +540,7 @@ test.serial('Create a tag as a recovery solution for "ENOTINHISTORY" error', asy
   t.is(releasedVersion, version);
   t.log(`+ released ${releasedVersion}`);
   await mockServer.verify(verifyMock);
+  await mockServer.verify(getRefMock);
   await mockServer.verify(createRefMock);
   await mockServer.verify(createReleaseMock);
 
@@ -542,6 +584,11 @@ test.serial('Create a tag as a recovery solution for "ENOTINHISTORY" error', asy
     {headers: [{name: 'Authorization', values: [`token ${env.GH_TOKEN}`]}]},
     {body: {permissions: {push: true}}, method: 'GET'}
   );
+  getRefMock = await mockServer.mock(
+    `/repos/${owner}/${packageName}/git/refs/tags/v${version}`,
+    {},
+    {body: {}, statusCode: 404, method: 'GET'}
+  );
   createRefMock = await mockServer.mock(
     `/repos/${owner}/${packageName}/git/refs`,
     {body: {ref: `refs/tags/v${version}`}, headers: [{name: 'Authorization', values: [`token ${env.GH_TOKEN}`]}]},
@@ -569,6 +616,7 @@ test.serial('Create a tag as a recovery solution for "ENOTINHISTORY" error', asy
   t.is(releasedVersion, version);
   t.log(`+ released ${releasedVersion}`);
   await mockServer.verify(verifyMock);
+  await mockServer.verify(getRefMock);
   await mockServer.verify(createRefMock);
   await mockServer.verify(createReleaseMock);
 });
@@ -668,6 +716,11 @@ test.serial('Run via JS API', async t => {
     {headers: [{name: 'Authorization', values: [`token ${env.GH_TOKEN}`]}]},
     {body: {permissions: {push: true}}, method: 'GET'}
   );
+  const getRefMock = await mockServer.mock(
+    `/repos/${owner}/${packageName}/git/refs/tags/v${version}`,
+    {},
+    {body: {}, statusCode: 404, method: 'GET'}
+  );
   const createRefMock = await mockServer.mock(
     `/repos/${owner}/${packageName}/git/refs`,
     {
@@ -704,6 +757,7 @@ test.serial('Run via JS API', async t => {
   t.log(`+ released ${releasedVersion} with gitHead ${releasedGitHead}`);
 
   await mockServer.verify(verifyMock);
+  await mockServer.verify(getRefMock);
   await mockServer.verify(createRefMock);
   await mockServer.verify(createReleaseMock);
 });
