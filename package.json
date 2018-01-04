@@ -29,7 +29,7 @@
     "get-stream": "^3.0.0",
     "git-log-parser": "^1.2.0",
     "lodash": "^4.0.0",
-    "marked": "^0.3.6",
+    "marked": "^0.3.9",
     "marked-terminal": "^2.0.0",
     "p-reduce": "^1.0.0",
     "read-pkg-up": "^3.0.0",
