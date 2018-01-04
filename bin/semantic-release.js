@@ -16,7 +16,7 @@ the build leader and you can safely ignore this message.
 If you don't have node 8 in your build matrix you can use "npx" to restore
 compatibility with minimal overhead:
 
-$ npx -p node@8 npm run semantic-release
+$ npx -p node@8 -c "semantic-release"
 
 npx is bundled with npm >= 5.4, or available via npm. More info: npm.im/npx`
   );
