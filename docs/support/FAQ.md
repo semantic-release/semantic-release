@@ -20,11 +20,17 @@ Yes with the [dry-run options](../usage/configuration.md#dryrun) which prints to
 
 ## Can I use semantic-release with Yarn?
 
-If you are using a [local](../usage/installation.md#local-installation) **semantic-release** installation and run multiple CI jobs with different versions, the `yarn install` command will fail with Node < 8 as **semantic-release** require [Node >= 8](#why-does-semantic-release-require-node-version--8). See [yarnpkg/rfcs#69](https://github.com/yarnpkg/rfcs/pull/69).
+If you are using a [local](../usage/installation.md#local-installation) **semantic-release** installation and run multiple CI jobs with different versions, the `yarn install` command will fail on jobs running with Node < 8 as **semantic-release** requires [Node >= 8](#why-does-semantic-release-require-node-version--8) and specifies it in its `package.json`s [`engines`](https://docs.npmjs.com/files/package.json#engines) key.
 
-In order to run **semantic-release** with [Yarn](https://yarnpkg.com) you would need to:
-- Use a [global](../usage/installation.md#global-installation) **semantic-release** installation
-- Make sure to install and run the `semantic-release` command only in a CI jobs running with [Node >= 8](#why-does-semantic-release-require-node-version--8)
+The recommended solution is to use the [Yarn](https://yarnpkg.com) [--ignore-engines](https://yarnpkg.com/en/docs/cli/install#toc-yarn-install-ignore-engines) option to install the project dependencies on the CI environment, so Yarn will ignore the **semantic-release**'s `engines` key:
+
+```bash
+$ yarn install --ignore-engines
+```
+
+**Note**: Several CI services use Yarn by default if your repository contains a `yarn.lock` file. So you should override the install step to specify `yarn install --ignore-engines`.
+
+Alternatively you can use a [global](../usage/installation.md#global-installation) **semantic-release** installation and make sure to install and run the `semantic-release` command only in a CI jobs running with Node >= 8.
 
 If your CI environment provides [nvm](https://github.com/creationix/nvm) you can switch to Node 8 before installing and running the `semantic-release` command:
 
