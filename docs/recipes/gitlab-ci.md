@@ -51,7 +51,7 @@ publish:
     - npm run semantic-release
 
     # Only for a global semantic-release installation
-    - npm install semantic-release
+    - npm install -g semantic-release
     - semantic-release
 ```
 
