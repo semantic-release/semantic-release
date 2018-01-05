@@ -1,34 +1,31 @@
 # Troubleshooting
 
-### ENOTINHISTORY Commit not in history
+## ENOTINHISTORY Commit not in history
 
+This error happens when the commit associated with the last release cannot be found in the branch history.
+
+Multiple situation can cause this issue:
+- The package name configured in your `package.json` already exists and **semantic-release** obtains the last release of that package, which is unrelated to yours
+- The commit history has been rewritten since the last release (with `git rebase` and `git push -f`)
+
+If the package name configured in your `package.json` already exits, you should change it, and commit the `package.json`. Then **semantic-release** will proceed normally and make the initial release.
+
+If you can identify the commit in your branch history that should be associated with the release version mentioned in the error message you can recover by tagging this commit:
+
+```bash
+$ git tag -f v<version of the last release> <commit sha1 corresponding to last release>
+$ git push -f --tags origin <your release branch>
 ```
-semantic-release ERR! commits The commit the last release of this package was derived from is not in the direct history of the "master" branch.
-semantic-release ERR! commits This means semantic-release can not extract the commits between now and then.
-semantic-release ERR! commits This is usually caused by force pushing, releasing from an unrelated branch, or using an already existing package name.
-semantic-release ERR! commits You can recover from this error by publishing manually or restoring the commit "123".
-semantic-release ERR! pre Failed to determine new version.
-semantic-release ERR! pre ENOTINHISTORY Commit not in history
-```
 
-To restore semantic-release, follow these steps:
+## ENOGITHEAD There is no commit associated with last release
 
-```
-git pull
-git reset --hard origin/master
-npm version x.y.z # check your current version and set this based on semver rules manually
+This error happens when there is no commit associated with the last release that can be found in the package metadata on the npm registry.
 
-# if you have a PR workflow, create a new branch, otherwise commit to master
+This usually happen when the last release has been made without access to the git repository informations.
 
-git checkout -B chore/release
-git commit -am 'chore: release'
-git push
+You can recover from that issue by identifying the commit in your branch history that should have been associated with the release version mentioned in the error message and tagging this commit:
 
-# merge (not squash-merge) on github (this is important before running git push). This is only required when you work with branches
-git checkout master
-
-# definitely required
-git pull
-git push --tags
-npm publish
+```bash
+$ git tag -f v<version of the last release> <commit sha1 corresponding to last release>
+$ git push -f --tags origin <your release branch>
 ```
