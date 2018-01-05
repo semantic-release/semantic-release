@@ -38,7 +38,7 @@ See the [CI configuration recipes](../recipes/README.md#ci-configurations) for m
 
 Yes, **semantic-release** is a Node CLI application but it can be used to publish any type of packages.
 
-To publish a non-JavaScript package you would need to:
+To publish a non-Node package (without a `package.json`) you would need to:
 - Use a [global](../usage/installation.md#global-installation) **semantic-release** installation
 - Set **semantic-release** [options](../usage/configuration.md#options) via [CLI arguments or rc file](../usage/configuration.md#configuration)
 - Make sure your CI job executing the `semantic-release` command has access to [Node >= 8](#why-does-semantic-release-require-node-version--8) to execute the `semantic-release` command
