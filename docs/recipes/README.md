@@ -1,4 +1,4 @@
-# semantic-release recipes
+# Recipes
 
 ## CI configurations
 - [CircleCI 2.0 workflows](circleci-workflows.md)

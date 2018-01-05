@@ -125,7 +125,9 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-# End of https://www.gitignore.io/api/macos,windows,linux,node
-
+# Lockfiles
 package-lock.json
 yarn.lock
+
+# Gitbook
+_book
