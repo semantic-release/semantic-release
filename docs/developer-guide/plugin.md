@@ -1,1 +1,1 @@
-# semantic-release plugin development
+# Plugin developer guide

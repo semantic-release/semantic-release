@@ -1,4 +1,4 @@
-# Troubleshooting semantic-release
+# Troubleshooting
 
 ### ENOTINHISTORY Commit not in history
 

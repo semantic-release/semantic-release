@@ -1,1 +1,1 @@
-# semantic-release shareable config development
+# Shareable configuration developer guide
