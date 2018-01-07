@@ -3,7 +3,6 @@
 ✨ Thanks for contributing to **semantic-release**! ✨
 
 As a contributor, here are the guidelines we would like you to follow:
-
 - [Code of conduct](#code-of-conduct)
 - [How can I contribute?](#how-can-i-contribute)
 - [Using the issue tracker](#using-the-issue-tracker)
@@ -118,6 +117,15 @@ To ensure consistency and quality all documentation modification must:
   - sequence of command lines
 
 ### Commit message guidelines
+
+#### Atomic commits
+
+If possible, make [atomic commits](https://en.wikipedia.org/wiki/Atomic_commit), which means:
+- a commit should contain exactly one self-contained functional change
+- a functional change should be contained in exactly one commit
+- a commit should not create an inconsistent state (such as test errors, linting errors, partial fix, feature with documentation etc...)
+
+A complex feature can be broken down into multiple commits as long as each one keep a consistent state and consist of a self-contained change.
 
 #### Commit message format
 
