@@ -29,7 +29,7 @@
     "cosmiconfig": "^3.1.0",
     "debug": "^3.1.0",
     "env-ci": "^1.0.0",
-    "execa": "^0.8.0",
+    "execa": "^0.9.0",
     "get-stream": "^3.0.0",
     "git-log-parser": "^1.2.0",
     "lodash": "^4.0.0",
