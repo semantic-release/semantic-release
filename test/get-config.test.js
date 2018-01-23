@@ -13,6 +13,12 @@ const envBackup = Object.assign({}, process.env);
 const cwd = process.cwd();
 
 test.beforeEach(t => {
+  // Delete environment variables that could have been set on the machine running the tests
+  delete process.env.GIT_CREDENTIALS;
+  delete process.env.GH_TOKEN;
+  delete process.env.GITHUB_TOKEN;
+  delete process.env.GL_TOKEN;
+  delete process.env.GITLAB_TOKEN;
   t.context.plugins = stub().returns({});
   t.context.getConfig = proxyquire('../lib/get-config', {'./plugins': t.context.plugins});
 });
@@ -70,9 +76,8 @@ test.serial('Default values, reading repositoryUrl (http url) from package.json 
 
 test.serial('Read options from package.json', async t => {
   const release = {
-    analyzeCommits: 'analyzeCommits',
+    analyzeCommits: {path: 'analyzeCommits', param: 'analyzeCommits_param'},
     generateNotes: 'generateNotes',
-    getLastRelease: {path: 'getLastRelease', param: 'getLastRelease_param'},
     branch: 'test_branch',
     repositoryUrl: 'git+https://hostname.com/owner/module.git',
   };
@@ -92,7 +97,7 @@ test.serial('Read options from package.json', async t => {
 
 test.serial('Read options from .releaserc.yml', async t => {
   const release = {
-    getLastRelease: {path: 'getLastRelease', param: 'getLastRelease_param'},
+    analyzeCommits: {path: 'analyzeCommits', param: 'analyzeCommits_param'},
     branch: 'test_branch',
     repositoryUrl: 'git+https://hostname.com/owner/module.git',
   };
@@ -112,7 +117,7 @@ test.serial('Read options from .releaserc.yml', async t => {
 
 test.serial('Read options from .releaserc.json', async t => {
   const release = {
-    getLastRelease: {path: 'getLastRelease', param: 'getLastRelease_param'},
+    analyzeCommits: {path: 'analyzeCommits', param: 'analyzeCommits_param'},
     branch: 'test_branch',
     repositoryUrl: 'git+https://hostname.com/owner/module.git',
   };
@@ -132,7 +137,7 @@ test.serial('Read options from .releaserc.json', async t => {
 
 test.serial('Read options from .releaserc.js', async t => {
   const release = {
-    getLastRelease: {path: 'getLastRelease', param: 'getLastRelease_param'},
+    analyzeCommits: {path: 'analyzeCommits', param: 'analyzeCommits_param'},
     branch: 'test_branch',
     repositoryUrl: 'git+https://hostname.com/owner/module.git',
   };
@@ -152,7 +157,7 @@ test.serial('Read options from .releaserc.js', async t => {
 
 test.serial('Read options from release.config.js', async t => {
   const release = {
-    getLastRelease: {path: 'getLastRelease', param: 'getLastRelease_param'},
+    analyzeCommits: {path: 'analyzeCommits', param: 'analyzeCommits_param'},
     branch: 'test_branch',
     repositoryUrl: 'git+https://hostname.com/owner/module.git',
   };
@@ -172,11 +177,11 @@ test.serial('Read options from release.config.js', async t => {
 
 test.serial('Prioritise CLI/API parameters over file configuration and git repo', async t => {
   const release = {
-    getLastRelease: {path: 'getLastRelease', param: 'getLastRelease_pkg'},
+    analyzeCommits: {path: 'analyzeCommits', param: 'analyzeCommits_pkg'},
     branch: 'branch_pkg',
   };
   const options = {
-    getLastRelease: {path: 'getLastRelease', param: 'getLastRelease_cli'},
+    analyzeCommits: {path: 'analyzeCommits', param: 'analyzeCommits_cli'},
     branch: 'branch_cli',
     repositoryUrl: 'http://cli-url.com/owner/package',
   };
@@ -200,9 +205,8 @@ test.serial('Prioritise CLI/API parameters over file configuration and git repo'
 test.serial('Read configuration from file path in "extends"', async t => {
   const release = {extends: './shareable.json'};
   const shareable = {
-    analyzeCommits: 'analyzeCommits',
+    analyzeCommits: {path: 'analyzeCommits', param: 'analyzeCommits_param'},
     generateNotes: 'generateNotes',
-    getLastRelease: {path: 'getLastRelease', param: 'getLastRelease_param'},
     branch: 'test_branch',
     repositoryUrl: 'git+https://hostname.com/owner/module.git',
   };
@@ -222,16 +226,14 @@ test.serial('Read configuration from file path in "extends"', async t => {
   t.deepEqual(t.context.plugins.args[0][1], {
     analyzeCommits: './shareable.json',
     generateNotes: './shareable.json',
-    getLastRelease: './shareable.json',
   });
 });
 
 test.serial('Read configuration from module path in "extends"', async t => {
   const release = {extends: 'shareable'};
   const shareable = {
-    analyzeCommits: 'analyzeCommits',
+    analyzeCommits: {path: 'analyzeCommits', param: 'analyzeCommits_param'},
     generateNotes: 'generateNotes',
-    getLastRelease: {path: 'getLastRelease', param: 'getLastRelease_param'},
     branch: 'test_branch',
     repositoryUrl: 'git+https://hostname.com/owner/module.git',
   };
@@ -251,23 +253,22 @@ test.serial('Read configuration from module path in "extends"', async t => {
   t.deepEqual(t.context.plugins.args[0][1], {
     analyzeCommits: 'shareable',
     generateNotes: 'shareable',
-    getLastRelease: 'shareable',
   });
 });
 
 test.serial('Read configuration from an array of paths in "extends"', async t => {
   const release = {extends: ['./shareable1.json', './shareable2.json']};
   const shareable1 = {
-    analyzeCommits: 'analyzeCommits1',
-    getLastRelease: {path: 'getLastRelease1', param: 'getLastRelease_param1'},
+    verifyRelease: 'verifyRelease1',
+    analyzeCommits: {path: 'analyzeCommits1', param: 'analyzeCommits_param1'},
     branch: 'test_branch',
     repositoryUrl: 'git+https://hostname.com/owner/module.git',
   };
 
   const shareable2 = {
-    analyzeCommits: 'analyzeCommits2',
+    verifyRelease: 'verifyRelease2',
     generateNotes: 'generateNotes2',
-    getLastRelease: {path: 'getLastRelease2', param: 'getLastRelease_param2'},
+    analyzeCommits: {path: 'analyzeCommits2', param: 'analyzeCommits_param2'},
     branch: 'test_branch',
   };
 
@@ -285,11 +286,11 @@ test.serial('Read configuration from an array of paths in "extends"', async t =>
   // Verify the plugins module is called with the plugin options from shareable1.json and shareable2.json
   t.deepEqual(t.context.plugins.args[0][0], {...shareable1, ...shareable2});
   t.deepEqual(t.context.plugins.args[0][1], {
+    verifyRelease1: './shareable1.json',
+    verifyRelease2: './shareable2.json',
+    generateNotes2: './shareable2.json',
     analyzeCommits1: './shareable1.json',
     analyzeCommits2: './shareable2.json',
-    generateNotes2: './shareable2.json',
-    getLastRelease1: './shareable1.json',
-    getLastRelease2: './shareable2.json',
   });
 });
 
@@ -371,13 +372,13 @@ test.serial('Prioritize configuration from cli/API options over "extends"', asyn
 test.serial('Allow to unset properties defined in shareable config with "null"', async t => {
   const release = {
     extends: './shareable.json',
-    getLastRelease: null,
+    analyzeCommits: null,
     branch: 'test_branch',
     repositoryUrl: 'git+https://hostname.com/owner/module.git',
   };
   const shareable = {
     generateNotes: 'generateNotes',
-    getLastRelease: {path: 'getLastRelease', param: 'getLastRelease_param'},
+    analyzeCommits: {path: 'analyzeCommits', param: 'analyzeCommits_param'},
   };
 
   // Create a git repository, set the current working directory at the root of the repo
@@ -389,28 +390,28 @@ test.serial('Allow to unset properties defined in shareable config with "null"',
   const {options} = await t.context.getConfig();
 
   // Verify the options contains the plugin config from shareable.json
-  t.deepEqual(options, {...omit(shareable, 'getLastRelease'), ...omit(release, ['extends', 'getLastRelease'])});
+  t.deepEqual(options, {...omit(shareable, 'analyzeCommits'), ...omit(release, ['extends', 'analyzeCommits'])});
   // Verify the plugins module is called with the plugin options from shareable.json
   t.deepEqual(t.context.plugins.args[0][0], {
-    ...omit(shareable, 'getLastRelease'),
-    ...omit(release, ['extends', 'getLastRelease']),
+    ...omit(shareable, 'analyzeCommits'),
+    ...omit(release, ['extends', 'analyzeCommits']),
   });
   t.deepEqual(t.context.plugins.args[0][1], {
     generateNotes: './shareable.json',
-    getLastRelease: './shareable.json',
+    analyzeCommits: './shareable.json',
   });
 });
 
 test.serial('Allow to unset properties defined in shareable config with "undefined"', async t => {
   const release = {
     extends: './shareable.json',
-    getLastRelease: undefined,
+    analyzeCommits: undefined,
     branch: 'test_branch',
     repositoryUrl: 'git+https://hostname.com/owner/module.git',
   };
   const shareable = {
     generateNotes: 'generateNotes',
-    getLastRelease: {path: 'getLastRelease', param: 'getLastRelease_param'},
+    analyzeCommits: {path: 'analyzeCommits', param: 'analyzeCommits_param'},
   };
 
   // Create a git repository, set the current working directory at the root of the repo
@@ -423,15 +424,15 @@ test.serial('Allow to unset properties defined in shareable config with "undefin
   const {options} = await t.context.getConfig();
 
   // Verify the options contains the plugin config from shareable.json
-  t.deepEqual(options, {...omit(shareable, 'getLastRelease'), ...omit(release, ['extends', 'getLastRelease'])});
+  t.deepEqual(options, {...omit(shareable, 'analyzeCommits'), ...omit(release, ['extends', 'analyzeCommits'])});
   // Verify the plugins module is called with the plugin options from shareable.json
   t.deepEqual(t.context.plugins.args[0][0], {
-    ...omit(shareable, 'getLastRelease'),
-    ...omit(release, ['extends', 'getLastRelease']),
+    ...omit(shareable, 'analyzeCommits'),
+    ...omit(release, ['extends', 'analyzeCommits']),
   });
   t.deepEqual(t.context.plugins.args[0][1], {
     generateNotes: './shareable.json',
-    getLastRelease: './shareable.json',
+    analyzeCommits: './shareable.json',
   });
 });
 

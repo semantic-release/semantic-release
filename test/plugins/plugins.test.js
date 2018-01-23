@@ -24,7 +24,6 @@ test('Export default plugins', t => {
 
   // Verify the module returns a function for each plugin
   t.is(typeof plugins.verifyConditions, 'function');
-  t.is(typeof plugins.getLastRelease, 'function');
   t.is(typeof plugins.analyzeCommits, 'function');
   t.is(typeof plugins.verifyRelease, 'function');
   t.is(typeof plugins.generateNotes, 'function');
@@ -35,7 +34,7 @@ test('Export plugins based on config', t => {
   const plugins = getPlugins(
     {
       verifyConditions: ['./test/fixtures/plugin-noop', {path: './test/fixtures/plugin-noop'}],
-      getLastRelease: './test/fixtures/plugin-noop',
+      generateNotes: './test/fixtures/plugin-noop',
       analyzeCommits: {path: './test/fixtures/plugin-noop'},
       verifyRelease: () => {},
     },
@@ -45,7 +44,6 @@ test('Export plugins based on config', t => {
 
   // Verify the module returns a function for each plugin
   t.is(typeof plugins.verifyConditions, 'function');
-  t.is(typeof plugins.getLastRelease, 'function');
   t.is(typeof plugins.analyzeCommits, 'function');
   t.is(typeof plugins.verifyRelease, 'function');
   t.is(typeof plugins.generateNotes, 'function');
@@ -64,7 +62,7 @@ test.serial('Export plugins loaded from the dependency of a shareable config mod
   const plugins = getPlugins(
     {
       verifyConditions: ['custom-plugin', {path: 'custom-plugin'}],
-      getLastRelease: 'custom-plugin',
+      generateNotes: 'custom-plugin',
       analyzeCommits: {path: 'custom-plugin'},
       verifyRelease: () => {},
     },
@@ -74,7 +72,6 @@ test.serial('Export plugins loaded from the dependency of a shareable config mod
 
   // Verify the module returns a function for each plugin
   t.is(typeof plugins.verifyConditions, 'function');
-  t.is(typeof plugins.getLastRelease, 'function');
   t.is(typeof plugins.analyzeCommits, 'function');
   t.is(typeof plugins.verifyRelease, 'function');
   t.is(typeof plugins.generateNotes, 'function');
@@ -90,7 +87,7 @@ test.serial('Export plugins loaded from the dependency of a shareable config fil
   const plugins = getPlugins(
     {
       verifyConditions: ['./plugin/plugin-noop', {path: './plugin/plugin-noop'}],
-      getLastRelease: './plugin/plugin-noop',
+      generateNotes: './plugin/plugin-noop',
       analyzeCommits: {path: './plugin/plugin-noop'},
       verifyRelease: () => {},
     },
@@ -100,7 +97,6 @@ test.serial('Export plugins loaded from the dependency of a shareable config fil
 
   // Verify the module returns a function for each plugin
   t.is(typeof plugins.verifyConditions, 'function');
-  t.is(typeof plugins.getLastRelease, 'function');
   t.is(typeof plugins.analyzeCommits, 'function');
   t.is(typeof plugins.verifyRelease, 'function');
   t.is(typeof plugins.generateNotes, 'function');
@@ -108,10 +104,10 @@ test.serial('Export plugins loaded from the dependency of a shareable config fil
 });
 
 test('Use default when only options are passed for a single plugin', t => {
-  const plugins = getPlugins({getLastRelease: {}, analyzeCommits: {}}, {}, t.context.logger);
+  const plugins = getPlugins({generateNotes: {}, analyzeCommits: {}}, {}, t.context.logger);
 
   // Verify the module returns a function for each plugin
-  t.is(typeof plugins.getLastRelease, 'function');
+  t.is(typeof plugins.generateNotes, 'function');
   t.is(typeof plugins.analyzeCommits, 'function');
 });
 
@@ -120,13 +116,13 @@ test('Merge global options with plugin options', async t => {
     {
       globalOpt: 'global',
       otherOpt: 'globally-defined',
-      getLastRelease: {path: './test/fixtures/plugin-result-config', localOpt: 'local', otherOpt: 'locally-defined'},
+      verifyRelease: {path: './test/fixtures/plugin-result-config', localOpt: 'local', otherOpt: 'locally-defined'},
     },
     {},
     t.context.logger
   );
 
-  const result = await plugins.getLastRelease();
+  const result = await plugins.verifyRelease();
 
   t.deepEqual(result.pluginConfig, {localOpt: 'local', globalOpt: 'global', otherOpt: 'locally-defined'});
 });

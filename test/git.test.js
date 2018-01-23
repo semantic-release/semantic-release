@@ -1,14 +1,27 @@
 import test from 'ava';
-import fileUrl from 'file-url';
-import {gitTagHead, gitCommitTag, isCommitInHistory, unshallow, gitHead, repoUrl} from '../lib/git';
+import tempy from 'tempy';
+import {
+  gitTagHead,
+  isRefInHistory,
+  unshallow,
+  gitHead,
+  repoUrl,
+  tag,
+  push,
+  gitTags,
+  isGitRepo,
+  deleteTag,
+} from '../lib/git';
 import {
   gitRepo,
   gitCommits,
   gitCheckout,
   gitTagVersion,
   gitShallowClone,
-  gitLog,
+  gitGetCommits,
   gitAddConfig,
+  gitCommitTag,
+  gitRemoteTagHead,
 } from './helpers/git-utils';
 
 // Save the current working diretory
@@ -27,7 +40,7 @@ test.serial('Get the last commit sha', async t => {
 
   const result = await gitHead();
 
-  t.is(result.substring(0, 7), commits[0].hash);
+  t.is(result, commits[0].hash);
 });
 
 test.serial('Throw error if the last commit sha cannot be found', async t => {
@@ -46,12 +59,12 @@ test.serial('Unshallow repository', async t => {
   await gitShallowClone(repo);
 
   // Verify the shallow clone contains only one commit
-  t.is((await gitLog()).length, 1);
+  t.is((await gitGetCommits()).length, 1);
 
   await unshallow();
 
   // Verify the shallow clone contains all the commits
-  t.is((await gitLog()).length, 2);
+  t.is((await gitGetCommits()).length, 2);
 });
 
 test.serial('Do not throw error when unshallow a complete repository', async t => {
@@ -73,11 +86,11 @@ test.serial('Verify if the commit `sha` is in the direct history of the current 
   const otherCommits = await gitCommits(['Second']);
   await gitCheckout('master', false);
 
-  t.true(await isCommitInHistory(commits[0].hash));
-  t.false(await isCommitInHistory(otherCommits[0].hash));
+  t.true(await isRefInHistory(commits[0].hash));
+  t.false(await isRefInHistory(otherCommits[0].hash));
 });
 
-test.serial('Get the tag associated with a commit sha or "null" if the commit does not exists', async t => {
+test.serial('Get the commit sha for a given tag or falsy if the tag does not exists', async t => {
   // Create a git repository, set the current working directory at the root of the repo
   await gitRepo();
   // Add commits to the master branch
@@ -85,19 +98,7 @@ test.serial('Get the tag associated with a commit sha or "null" if the commit do
   // Create the tag corresponding to version 1.0.0
   await gitTagVersion('v1.0.0');
 
-  t.is(await gitCommitTag(commits[0].hash), 'v1.0.0');
-  t.falsy(await gitCommitTag('missing_sha'));
-});
-
-test.serial('Get the commit sha for a given tag or "null" if the tag does not exists', async t => {
-  // Create a git repository, set the current working directory at the root of the repo
-  await gitRepo();
-  // Add commits to the master branch
-  const commits = await gitCommits(['First']);
-  // Create the tag corresponding to version 1.0.0
-  await gitTagVersion('v1.0.0');
-
-  t.is((await gitTagHead('v1.0.0')).substring(0, 7), commits[0].hash);
+  t.is(await gitTagHead('v1.0.0'), commits[0].hash);
   t.falsy(await gitTagHead('missing_tag'));
 });
 
@@ -117,12 +118,66 @@ test.serial('Return git remote repository url set while cloning', async t => {
   // Create a clone
   await gitShallowClone(repo);
 
-  t.is(await repoUrl(), fileUrl(repo));
+  t.is(await repoUrl(), repo);
 });
 
-test.serial('Return "undefined" if git repository url is not set', async t => {
+test.serial('Return falsy if git repository url is not set', async t => {
   // Create a git repository, set the current working directory at the root of the repo
   await gitRepo();
 
-  t.is(await repoUrl(), undefined);
+  t.falsy(await repoUrl());
+});
+
+test.serial('Add tag on head commit', async t => {
+  // Create a git repository, set the current working directory at the root of the repo
+  await gitRepo();
+  const commits = await gitCommits(['Test commit']);
+
+  await tag('tag_name');
+
+  await t.is(await gitCommitTag(commits[0].hash), 'tag_name');
+});
+
+test.serial('Delete a tag', async t => {
+  // Create a git repository with a remote, set the current working directory at the root of the repo
+  const repo = await gitRepo(true);
+  await gitCommits(['Test commit']);
+  await tag('tag_name');
+  await push(repo, 'master');
+
+  await deleteTag(repo, 'tag_name');
+  t.falsy(await gitTagHead('tag_name'));
+  t.falsy(await gitRemoteTagHead(repo, 'tag_name'));
+});
+
+test.serial('Push tag and commit to remote repository', async t => {
+  // Create a git repository with a remote, set the current working directory at the root of the repo
+  const repo = await gitRepo(true);
+  const commits = await gitCommits(['Test commit']);
+
+  await tag('tag_name');
+  await push(repo, 'master');
+
+  t.is(await gitRemoteTagHead(repo, 'tag_name'), commits[0].hash);
+});
+
+test.serial('Return "true" if in a Git repository', async t => {
+  // Create a git repository with a remote, set the current working directory at the root of the repo
+  await gitRepo(true);
+
+  t.true(await isGitRepo());
+});
+
+test.serial('Return "false" if not in a Git repository', async t => {
+  const dir = tempy.directory();
+  process.chdir(dir);
+
+  t.false(await isGitRepo());
+});
+
+test.serial('Throws error if obtaining the tags fails', async t => {
+  const dir = tempy.directory();
+  process.chdir(dir);
+
+  await t.throws(gitTags());
 });

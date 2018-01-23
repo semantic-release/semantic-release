@@ -10,12 +10,6 @@ Plugin responsible for verifying all the conditions to proceed with the release:
 
 Default implementation: [npm](https://github.com/semantic-release/npm#verifyconditions) and [github](https://github.com/semantic-release/github#verifyconditions).
 
-### getLastRelease plugin
-
-Plugin responsible for determining the version of the package last release.
-
-Default implementation: [@semantic-release/npm](https://github.com/semantic-release/npm#getlastrelease).
-
 ### analyzeCommits plugin
 
 Plugin responsible for determining the type of the next release (`major`, `minor` or `patch`).

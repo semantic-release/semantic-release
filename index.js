@@ -4,10 +4,12 @@ const envCi = require('env-ci');
 const hookStd = require('hook-std');
 const hideSensitive = require('./lib/hide-sensitive');
 const getConfig = require('./lib/get-config');
+const verify = require('./lib/verify');
 const getNextVersion = require('./lib/get-next-version');
 const getCommits = require('./lib/get-commits');
+const getLastRelease = require('./lib/get-last-release');
 const logger = require('./lib/logger');
-const {gitHead: getGitHead, isGitRepo} = require('./lib/git');
+const {unshallow, gitHead: getGitHead, tag, push, deleteTag} = require('./lib/git');
 
 async function run(opts) {
   const {isCi, branch, isPr} = envCi();
@@ -24,17 +26,7 @@ async function run(opts) {
     return;
   }
 
-  if (!await isGitRepo()) {
-    logger.error('Semantic-release must run from a git repository.');
-    return;
-  }
-
-  if (branch !== options.branch) {
-    logger.log(
-      `This test run was triggered on the branch ${branch}, while semantic-release is configured to only publish from ${
-        options.branch
-      }, therefore a new version won’t be published.`
-    );
+  if (!await verify(options, branch, logger)) {
     return;
   }
 
@@ -43,12 +35,11 @@ async function run(opts) {
   logger.log('Call plugin %s', 'verify-conditions');
   await plugins.verifyConditions({options, logger}, true);
 
-  logger.log('Call plugin %s', 'get-last-release');
-  const {commits, lastRelease} = await getCommits(
-    await plugins.getLastRelease({options, logger}),
-    options.branch,
-    logger
-  );
+  // Unshallow the repo in order to get all the tags
+  await unshallow();
+
+  const lastRelease = await getLastRelease(logger);
+  const commits = await getCommits(lastRelease.gitHead, options.branch, logger);
 
   logger.log('Call plugin %s', 'analyze-commits');
   const type = await plugins.analyzeCommits({
@@ -79,11 +70,23 @@ async function run(opts) {
     logger.log('Call plugin %s', 'generateNotes');
     nextRelease.notes = await plugins.generateNotes(generateNotesParam);
 
+    // Create the tag before calling the publish plugins as some require the tag to exists
+    logger.log('Create tag %s', nextRelease.gitTag);
+    await tag(nextRelease.gitTag);
+    await push(options.repositoryUrl, branch);
+
     logger.log('Call plugin %s', 'publish');
     await plugins.publish({options, logger, lastRelease, commits, nextRelease}, false, async prevInput => {
       const newGitHead = await getGitHead();
       // If previous publish plugin has created a commit (gitHead changed)
       if (prevInput.nextRelease.gitHead !== newGitHead) {
+        // Delete the previously created tag
+        await deleteTag(options.repositoryUrl, nextRelease.gitTag);
+        // Recreate the tag, referencing the new gitHead
+        logger.log('Create tag %s', nextRelease.gitTag);
+        await tag(nextRelease.gitTag);
+        await push(options.repositoryUrl, branch);
+
         nextRelease.gitHead = newGitHead;
         // Regenerate the release notes
         logger.log('Call plugin %s', 'generateNotes');
