@@ -80,10 +80,11 @@ After running the tests the command `semantic-release` will execute the followin
 | Step              | Description                                                                                                                                                           |
 |-------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Verify Conditions | Verify all the conditions to proceed with the release with the [verify conditions plugins](docs/usage/plugins.md#verifyconditions-plugin).                            |
-| Get last release  | Obtain last release with the [get last release plugin](docs/usage/plugins.md#getlastrelease-plugin).                                                                  |
+| Get last release  | Obtain the commit corresponding to the last release by analyzing [Git tags](https://git-scm.com/book/en/v2/Git-Basics-Tagging).                                       |
 | Analyze commits   | Determine the type of release to do with the [analyze commits plugin](docs/usage/plugins.md#analyzecommits-plugin) based on the commits added since the last release. |
 | Verify release    | Verify the release conformity with the [verify release plugins](docs/usage/plugins.md#verifyrelease-plugin).                                                          |
 | Generate notes    | Generate release notes with the [generate notes plugin](docs/usage/plugins.md#generatenotes-plugin) for the commits added since the last release.                     |
+| Create Git tag    | Create a Git tag corresponding the new release version                                                                                                                |
 | Publish           | Publish the release with the [publish plugins](docs/usage/plugins.md#publish-plugin).                                                                                 |
 
 ## Documentation

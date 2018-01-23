@@ -107,18 +107,6 @@ Define the list of [verify conditions plugins](plugins.md#verifyconditions-plugi
 
 See [Plugins configuration](plugins.md#configuration) for more details.
 
-### getLastRelease
-
-Type: `String`, `Object`
-
-Default: `['@semantic-release/npm']`
-
-CLI argument: `--get-last-release`
-
-Define the [get last release plugin](plugins.md#getlastrelease-plugin).
-
-See [Plugins configuration](plugins.md#configuration) for more details.
-
 ### analyzeCommits
 
 Type: `String`, `Object`

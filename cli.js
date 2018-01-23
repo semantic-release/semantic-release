@@ -17,7 +17,6 @@ module.exports = async () => {
       'Comma separated list of paths or packages name for the verifyConditions plugin(s)',
       list
     )
-    .option('--get-last-release <path>', 'Path or package name for the getLastRelease plugin')
     .option('--analyze-commits <path>', 'Path or package name for the analyzeCommits plugin')
     .option(
       '--verify-release <paths>',

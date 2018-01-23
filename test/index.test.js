@@ -5,8 +5,16 @@ import tempy from 'tempy';
 import clearModule from 'clear-module';
 import SemanticReleaseError from '@semantic-release/error';
 import DEFINITIONS from '../lib/plugins/definitions';
-import {gitHead as getGitHead} from '../lib/git';
-import {gitRepo, gitCommits, gitTagVersion} from './helpers/git-utils';
+import {
+  gitHead as getGitHead,
+  gitTagHead,
+  gitRepo,
+  gitCommits,
+  gitTagVersion,
+  gitRemoteTagHead,
+  push,
+  gitShallowClone,
+} from './helpers/git-utils';
 
 // Save the current process.env
 const envBackup = Object.assign({}, process.env);
@@ -16,6 +24,12 @@ const cwd = process.cwd();
 test.beforeEach(t => {
   clearModule('../lib/hide-sensitive');
 
+  // Delete environment variables that could have been set on the machine running the tests
+  delete process.env.GIT_CREDENTIALS;
+  delete process.env.GH_TOKEN;
+  delete process.env.GITHUB_TOKEN;
+  delete process.env.GL_TOKEN;
+  delete process.env.GITLAB_TOKEN;
   // Stub the logger functions
   t.context.log = stub();
   t.context.error = stub();
@@ -36,7 +50,7 @@ test.afterEach.always(t => {
 
 test.serial('Plugins are called with expected values', async t => {
   // Create a git repository, set the current working directory at the root of the repo
-  await gitRepo();
+  const repositoryUrl = await gitRepo(true);
   // Add commits to the master branch
   let commits = await gitCommits(['First']);
   // Create the tag corresponding to version 1.0.0
@@ -49,17 +63,15 @@ test.serial('Plugins are called with expected values', async t => {
   const notes = 'Release notes';
   const verifyConditions1 = stub().resolves();
   const verifyConditions2 = stub().resolves();
-  const getLastRelease = stub().resolves(lastRelease);
   const analyzeCommits = stub().resolves(nextRelease.type);
   const verifyRelease = stub().resolves();
   const generateNotes = stub().resolves(notes);
   const publish = stub().resolves();
 
-  const config = {branch: 'master', repositoryUrl: 'git@hostname.com:owner/module.git', globalOpt: 'global'};
+  const config = {branch: 'master', repositoryUrl, globalOpt: 'global'};
   const options = {
     ...config,
     verifyConditions: [verifyConditions1, verifyConditions2],
-    getLastRelease,
     analyzeCommits,
     verifyRelease,
     generateNotes,
@@ -78,16 +90,12 @@ test.serial('Plugins are called with expected values', async t => {
   t.is(verifyConditions2.callCount, 1);
   t.deepEqual(verifyConditions2.args[0][1], {options, logger: t.context.logger});
 
-  t.is(getLastRelease.callCount, 1);
-  t.deepEqual(getLastRelease.args[0][0], config);
-  t.deepEqual(getLastRelease.args[0][1], {options, logger: t.context.logger});
-
   t.is(analyzeCommits.callCount, 1);
   t.deepEqual(analyzeCommits.args[0][0], config);
   t.deepEqual(analyzeCommits.args[0][1].options, options);
   t.deepEqual(analyzeCommits.args[0][1].logger, t.context.logger);
   t.deepEqual(analyzeCommits.args[0][1].lastRelease, lastRelease);
-  t.deepEqual(analyzeCommits.args[0][1].commits[0].hash.substring(0, 7), commits[0].hash);
+  t.deepEqual(analyzeCommits.args[0][1].commits[0].hash, commits[0].hash);
   t.deepEqual(analyzeCommits.args[0][1].commits[0].message, commits[0].message);
 
   t.is(verifyRelease.callCount, 1);
@@ -95,7 +103,7 @@ test.serial('Plugins are called with expected values', async t => {
   t.deepEqual(verifyRelease.args[0][1].options, options);
   t.deepEqual(verifyRelease.args[0][1].logger, t.context.logger);
   t.deepEqual(verifyRelease.args[0][1].lastRelease, lastRelease);
-  t.deepEqual(verifyRelease.args[0][1].commits[0].hash.substring(0, 7), commits[0].hash);
+  t.deepEqual(verifyRelease.args[0][1].commits[0].hash, commits[0].hash);
   t.deepEqual(verifyRelease.args[0][1].commits[0].message, commits[0].message);
   t.deepEqual(verifyRelease.args[0][1].nextRelease, nextRelease);
 
@@ -104,7 +112,7 @@ test.serial('Plugins are called with expected values', async t => {
   t.deepEqual(generateNotes.args[0][1].options, options);
   t.deepEqual(generateNotes.args[0][1].logger, t.context.logger);
   t.deepEqual(generateNotes.args[0][1].lastRelease, lastRelease);
-  t.deepEqual(generateNotes.args[0][1].commits[0].hash.substring(0, 7), commits[0].hash);
+  t.deepEqual(generateNotes.args[0][1].commits[0].hash, commits[0].hash);
   t.deepEqual(generateNotes.args[0][1].commits[0].message, commits[0].message);
   t.deepEqual(generateNotes.args[0][1].nextRelease, nextRelease);
 
@@ -113,14 +121,18 @@ test.serial('Plugins are called with expected values', async t => {
   t.deepEqual(publish.args[0][1].options, options);
   t.deepEqual(publish.args[0][1].logger, t.context.logger);
   t.deepEqual(publish.args[0][1].lastRelease, lastRelease);
-  t.deepEqual(publish.args[0][1].commits[0].hash.substring(0, 7), commits[0].hash);
+  t.deepEqual(publish.args[0][1].commits[0].hash, commits[0].hash);
   t.deepEqual(publish.args[0][1].commits[0].message, commits[0].message);
   t.deepEqual(publish.args[0][1].nextRelease, Object.assign({}, nextRelease, {notes}));
+
+  // Verify the tag has been created on the local and remote repo and reference the gitHead
+  t.is(await gitTagHead(nextRelease.gitTag), nextRelease.gitHead);
+  t.is(await gitRemoteTagHead(repositoryUrl, nextRelease.gitTag), nextRelease.gitHead);
 });
 
 test.serial('Use new gitHead, and recreate release notes if a publish plugin create a commit', async t => {
   // Create a git repository, set the current working directory at the root of the repo
-  await gitRepo();
+  const repositoryUrl = await gitRepo(true);
   // Add commits to the master branch
   let commits = await gitCommits(['First']);
   // Create the tag corresponding to version 1.0.0
@@ -128,21 +140,19 @@ test.serial('Use new gitHead, and recreate release notes if a publish plugin cre
   // Add new commits to the master branch
   commits = (await gitCommits(['Second'])).concat(commits);
 
-  const lastRelease = {version: '1.0.0', gitHead: commits[commits.length - 1].hash, gitTag: 'v1.0.0'};
   const nextRelease = {type: 'major', version: '2.0.0', gitHead: await getGitHead(), gitTag: 'v2.0.0'};
   const notes = 'Release notes';
 
   const generateNotes = stub().resolves(notes);
   const publish1 = stub().callsFake(async () => {
-    await gitCommits(['Third']);
+    commits = (await gitCommits(['Third'])).concat(commits);
   });
   const publish2 = stub().resolves();
 
   const options = {
     branch: 'master',
-    repositoryUrl: 'git@hostname.com:owner/module.git',
+    repositoryUrl,
     verifyConditions: stub().resolves(),
-    getLastRelease: stub().resolves(lastRelease),
     analyzeCommits: stub().resolves(nextRelease.type),
     verifyRelease: stub().resolves(),
     generateNotes,
@@ -153,6 +163,7 @@ test.serial('Use new gitHead, and recreate release notes if a publish plugin cre
     './lib/logger': t.context.logger,
     'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
   });
+
   t.truthy(await semanticRelease(options));
 
   t.is(generateNotes.callCount, 2);
@@ -165,11 +176,15 @@ test.serial('Use new gitHead, and recreate release notes if a publish plugin cre
   t.deepEqual(generateNotes.secondCall.args[1].nextRelease, Object.assign({}, nextRelease, {notes}));
   t.is(publish2.callCount, 1);
   t.deepEqual(publish2.args[0][1].nextRelease, Object.assign({}, nextRelease, {notes}));
+
+  // Verify the tag has been created on the local and remote repo and reference the last gitHead
+  t.is(await gitTagHead(nextRelease.gitTag), commits[0].hash);
+  t.is(await gitRemoteTagHead(repositoryUrl, nextRelease.gitTag), commits[0].hash);
 });
 
 test.serial('Log all "verifyConditions" errors', async t => {
   // Create a git repository, set the current working directory at the root of the repo
-  await gitRepo();
+  const repositoryUrl = await gitRepo(true);
   // Add commits to the master branch
   await gitCommits(['First']);
 
@@ -178,7 +193,7 @@ test.serial('Log all "verifyConditions" errors', async t => {
   const error3 = new SemanticReleaseError('error 3', 'ERR3');
   const options = {
     branch: 'master',
-    repositoryUrl: 'git@hostname.com:owner/module.git',
+    repositoryUrl,
     verifyConditions: [stub().rejects(error1), stub().rejects(error2), stub().rejects(error3)],
   };
 
@@ -200,22 +215,20 @@ test.serial('Log all "verifyConditions" errors', async t => {
 
 test.serial('Log all "verifyRelease" errors', async t => {
   // Create a git repository, set the current working directory at the root of the repo
-  await gitRepo();
+  const repositoryUrl = await gitRepo(true);
   // Add commits to the master branch
-  let commits = await gitCommits(['First']);
+  await gitCommits(['First']);
   // Create the tag corresponding to version 1.0.0
   await gitTagVersion('v1.0.0');
   // Add new commits to the master branch
-  commits = (await gitCommits(['Second'])).concat(commits);
+  await gitCommits(['Second']);
 
   const error1 = new SemanticReleaseError('error 1', 'ERR1');
   const error2 = new SemanticReleaseError('error 2', 'ERR2');
-  const lastRelease = {version: '1.0.0', gitHead: commits[commits.length - 1].hash, gitTag: 'v1.0.0'};
   const options = {
     branch: 'master',
-    repositoryUrl: 'git@hostname.com:owner/module.git',
+    repositoryUrl,
     verifyConditions: stub().resolves(),
-    getLastRelease: stub().resolves(lastRelease),
     analyzeCommits: stub().resolves('major'),
     verifyRelease: [stub().rejects(error1), stub().rejects(error2)],
   };
@@ -233,20 +246,18 @@ test.serial('Log all "verifyRelease" errors', async t => {
 
 test.serial('Dry-run skips publish', async t => {
   // Create a git repository, set the current working directory at the root of the repo
-  await gitRepo();
+  const repositoryUrl = await gitRepo(true);
   // Add commits to the master branch
-  let commits = await gitCommits(['First']);
+  await gitCommits(['First']);
   // Create the tag corresponding to version 1.0.0
   await gitTagVersion('v1.0.0');
   // Add new commits to the master branch
-  commits = (await gitCommits(['Second'])).concat(commits);
+  await gitCommits(['Second']);
 
-  const lastRelease = {version: '1.0.0', gitHead: commits[commits.length - 1].hash, gitTag: 'v1.0.0'};
   const nextRelease = {type: 'major', version: '2.0.0', gitHead: await getGitHead(), gitTag: 'v2.0.0'};
   const notes = 'Release notes';
 
   const verifyConditions = stub().resolves();
-  const getLastRelease = stub().resolves(lastRelease);
   const analyzeCommits = stub().resolves(nextRelease.type);
   const verifyRelease = stub().resolves();
   const generateNotes = stub().resolves(notes);
@@ -255,9 +266,8 @@ test.serial('Dry-run skips publish', async t => {
   const options = {
     dryRun: true,
     branch: 'master',
-    repositoryUrl: 'git@hostname.com:owner/module.git',
+    repositoryUrl,
     verifyConditions,
-    getLastRelease,
     analyzeCommits,
     verifyRelease,
     generateNotes,
@@ -272,7 +282,6 @@ test.serial('Dry-run skips publish', async t => {
 
   t.not(t.context.log.args[0][0], 'This run was not triggered in a known CI environment, running in dry-run mode.');
   t.is(verifyConditions.callCount, 1);
-  t.is(getLastRelease.callCount, 1);
   t.is(analyzeCommits.callCount, 1);
   t.is(verifyRelease.callCount, 1);
   t.is(generateNotes.callCount, 1);
@@ -281,20 +290,18 @@ test.serial('Dry-run skips publish', async t => {
 
 test.serial('Force a dry-run if not on a CI and "noCi" is not explicitly set', async t => {
   // Create a git repository, set the current working directory at the root of the repo
-  await gitRepo();
+  const repositoryUrl = await gitRepo(true);
   // Add commits to the master branch
-  let commits = await gitCommits(['First']);
+  await gitCommits(['First']);
   // Create the tag corresponding to version 1.0.0
   await gitTagVersion('v1.0.0');
   // Add new commits to the master branch
-  commits = (await gitCommits(['Second'])).concat(commits);
+  await gitCommits(['Second']);
 
-  const lastRelease = {version: '1.0.0', gitHead: commits[commits.length - 1].hash, gitTag: 'v1.0.0'};
   const nextRelease = {type: 'major', version: '2.0.0', gitHead: await getGitHead(), gitTag: 'v2.0.0'};
   const notes = 'Release notes';
 
   const verifyConditions = stub().resolves();
-  const getLastRelease = stub().resolves(lastRelease);
   const analyzeCommits = stub().resolves(nextRelease.type);
   const verifyRelease = stub().resolves();
   const generateNotes = stub().resolves(notes);
@@ -303,9 +310,8 @@ test.serial('Force a dry-run if not on a CI and "noCi" is not explicitly set', a
   const options = {
     dryRun: false,
     branch: 'master',
-    repositoryUrl: 'git@hostname.com:owner/module.git',
+    repositoryUrl,
     verifyConditions,
-    getLastRelease,
     analyzeCommits,
     verifyRelease,
     generateNotes,
@@ -320,7 +326,6 @@ test.serial('Force a dry-run if not on a CI and "noCi" is not explicitly set', a
 
   t.is(t.context.log.args[0][0], 'This run was not triggered in a known CI environment, running in dry-run mode.');
   t.is(verifyConditions.callCount, 1);
-  t.is(getLastRelease.callCount, 1);
   t.is(analyzeCommits.callCount, 1);
   t.is(verifyRelease.callCount, 1);
   t.is(generateNotes.callCount, 1);
@@ -329,20 +334,18 @@ test.serial('Force a dry-run if not on a CI and "noCi" is not explicitly set', a
 
 test.serial('Allow local releases with "noCi" option', async t => {
   // Create a git repository, set the current working directory at the root of the repo
-  await gitRepo();
+  const repositoryUrl = await gitRepo(true);
   // Add commits to the master branch
-  let commits = await gitCommits(['First']);
+  await gitCommits(['First']);
   // Create the tag corresponding to version 1.0.0
   await gitTagVersion('v1.0.0');
   // Add new commits to the master branch
-  commits = (await gitCommits(['Second'])).concat(commits);
+  await gitCommits(['Second']);
 
-  const lastRelease = {version: '1.0.0', gitHead: commits[commits.length - 1].hash, gitTag: 'v1.0.0'};
   const nextRelease = {type: 'major', version: '2.0.0', gitHead: await getGitHead(), gitTag: 'v2.0.0'};
   const notes = 'Release notes';
 
   const verifyConditions = stub().resolves();
-  const getLastRelease = stub().resolves(lastRelease);
   const analyzeCommits = stub().resolves(nextRelease.type);
   const verifyRelease = stub().resolves();
   const generateNotes = stub().resolves(notes);
@@ -351,9 +354,8 @@ test.serial('Allow local releases with "noCi" option', async t => {
   const options = {
     noCi: true,
     branch: 'master',
-    repositoryUrl: 'git@hostname.com:owner/module.git',
+    repositoryUrl,
     verifyConditions,
-    getLastRelease,
     analyzeCommits,
     verifyRelease,
     generateNotes,
@@ -372,27 +374,25 @@ test.serial('Allow local releases with "noCi" option', async t => {
     "This run was triggered by a pull request and therefore a new version won't be published."
   );
   t.is(verifyConditions.callCount, 1);
-  t.is(getLastRelease.callCount, 1);
   t.is(analyzeCommits.callCount, 1);
   t.is(verifyRelease.callCount, 1);
   t.is(generateNotes.callCount, 1);
   t.is(publish.callCount, 1);
 });
 
-test.serial('Accept "undefined" values for the "getLastRelease" and "generateNotes" plugins', async t => {
+test.serial('Accept "undefined" value returned by the "generateNotes" plugins', async t => {
   // Create a git repository, set the current working directory at the root of the repo
-  await gitRepo();
+  const repositoryUrl = await gitRepo(true);
   // Add commits to the master branch
-  await gitCommits(['First']);
+  let commits = await gitCommits(['First']);
   // Create the tag corresponding to version 1.0.0
   await gitTagVersion('v1.0.0');
   // Add new commits to the master branch
-  await gitCommits(['Second']);
+  commits = (await gitCommits(['Second'])).concat(commits);
 
-  const lastRelease = {gitHead: undefined, gitTag: undefined, version: undefined};
+  const lastRelease = {version: '1.0.0', gitHead: commits[commits.length - 1].hash, gitTag: 'v1.0.0'};
   const nextRelease = {type: 'major', version: '2.0.0', gitHead: await getGitHead(), gitTag: 'v2.0.0'};
   const verifyConditions = stub().resolves();
-  const getLastRelease = stub().resolves();
   const analyzeCommits = stub().resolves(nextRelease.type);
   const verifyRelease = stub().resolves();
   const generateNotes = stub().resolves();
@@ -400,9 +400,8 @@ test.serial('Accept "undefined" values for the "getLastRelease" and "generateNot
 
   const options = {
     branch: 'master',
-    repositoryUrl: 'git@hostname.com:owner/module.git',
+    repositoryUrl,
     verifyConditions: [verifyConditions],
-    getLastRelease,
     analyzeCommits,
     verifyRelease,
     generateNotes,
@@ -414,8 +413,6 @@ test.serial('Accept "undefined" values for the "getLastRelease" and "generateNot
     'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
   });
   t.truthy(await semanticRelease(options));
-
-  t.is(getLastRelease.callCount, 1);
 
   t.is(analyzeCommits.callCount, 1);
   t.deepEqual(analyzeCommits.args[0][1].lastRelease, lastRelease);
@@ -445,26 +442,25 @@ test.serial('Returns falsy value if not running from a git repository', async t 
 
 test.serial('Returns falsy value if triggered by a PR', async t => {
   // Create a git repository, set the current working directory at the root of the repo
-  await gitRepo();
+  const repositoryUrl = await gitRepo(true);
 
   const semanticRelease = proxyquire('..', {
     './lib/logger': t.context.logger,
     'env-ci': () => ({isCi: true, branch: 'master', isPr: true}),
   });
 
-  t.falsy(await semanticRelease({repositoryUrl: 'git@hostname.com:owner/module.git'}));
+  t.falsy(await semanticRelease({repositoryUrl}));
   t.is(
-    t.context.log.args[7][0],
+    t.context.log.args[6][0],
     "This run was triggered by a pull request and therefore a new version won't be published."
   );
 });
 
 test.serial('Returns falsy value if not running from the configured branch', async t => {
   // Create a git repository, set the current working directory at the root of the repo
-  await gitRepo();
+  const repositoryUrl = await gitRepo(true);
 
   const verifyConditions = stub().resolves();
-  const getLastRelease = stub().resolves();
   const analyzeCommits = stub().resolves();
   const verifyRelease = stub().resolves();
   const generateNotes = stub().resolves();
@@ -472,9 +468,8 @@ test.serial('Returns falsy value if not running from the configured branch', asy
 
   const options = {
     branch: 'master',
-    repositoryUrl: 'git@hostname.com:owner/module.git',
+    repositoryUrl,
     verifyConditions: [verifyConditions],
-    getLastRelease,
     analyzeCommits,
     verifyRelease,
     generateNotes,
@@ -495,12 +490,11 @@ test.serial('Returns falsy value if not running from the configured branch', asy
 
 test.serial('Returns falsy value if there is no relevant changes', async t => {
   // Create a git repository, set the current working directory at the root of the repo
-  await gitRepo();
+  const repositoryUrl = await gitRepo(true);
   // Add commits to the master branch
   await gitCommits(['First']);
 
   const verifyConditions = stub().resolves();
-  const getLastRelease = stub().resolves();
   const analyzeCommits = stub().resolves();
   const verifyRelease = stub().resolves();
   const generateNotes = stub().resolves();
@@ -508,9 +502,8 @@ test.serial('Returns falsy value if there is no relevant changes', async t => {
 
   const options = {
     branch: 'master',
-    repositoryUrl: 'git@hostname.com:owner/module.git',
+    repositoryUrl,
     verifyConditions: [verifyConditions],
-    getLastRelease,
     analyzeCommits,
     verifyRelease,
     generateNotes,
@@ -532,7 +525,7 @@ test.serial('Returns falsy value if there is no relevant changes', async t => {
 
 test.serial('Exclude commits with [skip release] or [release skip] from analysis', async t => {
   // Create a git repository, set the current working directory at the root of the repo
-  await gitRepo();
+  const repositoryUrl = await gitRepo(true);
   // Add commits to the master branch
   const commits = await gitCommits([
     'Test commit',
@@ -547,17 +540,15 @@ test.serial('Exclude commits with [skip release] or [release skip] from analysis
 
   const verifyConditions1 = stub().resolves();
   const verifyConditions2 = stub().resolves();
-  const getLastRelease = stub().resolves({});
   const analyzeCommits = stub().resolves();
   const verifyRelease = stub().resolves();
   const generateNotes = stub().resolves();
   const publish = stub().resolves();
 
-  const config = {branch: 'master', repositoryUrl: 'git@hostname.com:owner/module.git', globalOpt: 'global'};
+  const config = {branch: 'master', repositoryUrl, globalOpt: 'global'};
   const options = {
     ...config,
     verifyConditions: [verifyConditions1, verifyConditions2],
-    getLastRelease,
     analyzeCommits,
     verifyRelease,
     generateNotes,
@@ -571,18 +562,18 @@ test.serial('Exclude commits with [skip release] or [release skip] from analysis
   await semanticRelease(options);
 
   t.is(analyzeCommits.callCount, 1);
-  t.is(analyzeCommits.args[0][1].commits.length, 1);
-  t.deepEqual(analyzeCommits.args[0][1].commits[0].hash.substring(0, 7), commits[commits.length - 1].hash);
-  t.deepEqual(analyzeCommits.args[0][1].commits[0].message, commits[commits.length - 1].message);
+
+  t.is(analyzeCommits.args[0][1].commits.length, 2);
+  t.deepEqual(analyzeCommits.args[0][1].commits[0], commits[commits.length - 1]);
 });
 
 test.serial('Hide sensitive environment variable values from the logs', async t => {
   process.env.MY_TOKEN = 'secret token';
-  await gitRepo();
+  const repositoryUrl = await gitRepo(true);
 
   const options = {
     branch: 'master',
-    repositoryUrl: 'git@hostname.com:owner/module.git',
+    repositoryUrl,
     verifyConditions: async (pluginConfig, {logger}) => {
       console.log(`Console: The token ${process.env.MY_TOKEN} is invalid`);
       logger.log(`Log: The token ${process.env.MY_TOKEN} is invalid`);
@@ -595,8 +586,9 @@ test.serial('Hide sensitive environment variable values from the logs', async t 
   });
 
   await t.throws(semanticRelease(options));
-  t.regex(t.context.stdout.args[7][0], /Console: The token \[secure\] is invalid/);
-  t.regex(t.context.stdout.args[8][0], /Log: The token \[secure\] is invalid/);
+
+  t.regex(t.context.stdout.args[6][0], /Console: The token \[secure\] is invalid/);
+  t.regex(t.context.stdout.args[7][0], /Log: The token \[secure\] is invalid/);
   t.regex(t.context.stderr.args[0][0], /Error: The token \[secure\] is invalid/);
   t.regex(t.context.stderr.args[1][0], /Invalid token \[secure\]/);
 });
@@ -618,7 +610,7 @@ test.serial('Throw SemanticReleaseError if repositoryUrl is not set and cannot b
 
 test.serial('Throw an Error if plugin returns an unexpected value', async t => {
   // Create a git repository, set the current working directory at the root of the repo
-  await gitRepo();
+  const repositoryUrl = await gitRepo(true);
   // Add commits to the master branch
   await gitCommits(['First']);
   // Create the tag corresponding to version 1.0.0
@@ -627,13 +619,13 @@ test.serial('Throw an Error if plugin returns an unexpected value', async t => {
   await gitCommits(['Second']);
 
   const verifyConditions = stub().resolves();
-  const getLastRelease = stub().resolves('string');
+  const analyzeCommits = stub().resolves('string');
 
   const options = {
     branch: 'master',
-    repositoryUrl: 'git@hostname.com:owner/module.git',
+    repositoryUrl,
     verifyConditions: [verifyConditions],
-    getLastRelease,
+    analyzeCommits,
   };
 
   const semanticRelease = proxyquire('..', {
@@ -643,6 +635,41 @@ test.serial('Throw an Error if plugin returns an unexpected value', async t => {
   const error = await t.throws(semanticRelease(options), Error);
 
   // Verify error message
-  t.regex(error.message, new RegExp(DEFINITIONS.getLastRelease.output.message));
+  t.regex(error.message, new RegExp(DEFINITIONS.analyzeCommits.output.message));
   t.regex(error.message, /Received: 'string'/);
+});
+
+test.serial('Get all commits including the ones not in the shallow clone', async t => {
+  const repositoryUrl = await gitRepo(true);
+  await gitTagVersion('v1.0.0');
+  await gitCommits(['First', 'Second', 'Third']);
+  await push(repositoryUrl, 'master');
+
+  await gitShallowClone(repositoryUrl);
+
+  const nextRelease = {type: 'major', version: '2.0.0', gitHead: await getGitHead(), gitTag: 'v2.0.0'};
+  const notes = 'Release notes';
+  const verifyConditions = stub().resolves();
+  const analyzeCommits = stub().resolves(nextRelease.type);
+  const verifyRelease = stub().resolves();
+  const generateNotes = stub().resolves(notes);
+  const publish = stub().resolves();
+
+  const config = {branch: 'master', repositoryUrl, globalOpt: 'global'};
+  const options = {
+    ...config,
+    verifyConditions,
+    analyzeCommits,
+    verifyRelease,
+    generateNotes,
+    publish,
+  };
+
+  const semanticRelease = proxyquire('..', {
+    './lib/logger': t.context.logger,
+    'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
+  });
+  t.truthy(await semanticRelease(options));
+
+  t.is(analyzeCommits.args[0][1].commits.length, 3);
 });
