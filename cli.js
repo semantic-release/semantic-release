@@ -10,7 +10,7 @@ module.exports = async () => {
     .name('semantic-release')
     .description('Run automated package publishing')
     .option('-b, --branch <branch>', 'Branch to release from')
-    .option('-r, --repositoryUrl <repositoryUrl>', 'Git repository URL')
+    .option('-r, --repository-url <repositoryUrl>', 'Git repository URL')
     .option('-e, --extends <paths>', 'Comma separated list of shareable config paths or packages name', list)
     .option(
       '--verify-conditions <paths>',
