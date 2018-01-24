@@ -209,7 +209,7 @@ test.serial('Dry-run skips publish', async t => {
   t.is(publish.callCount, 0);
 });
 
-test.serial('Force a dry-run if not on a CI and ignore "noCi" is not explicitly set', async t => {
+test.serial('Force a dry-run if not on a CI and "noCi" is not explicitly set', async t => {
   // Create a git repository, set the current working directory at the root of the repo
   await gitRepo();
   // Add commits to the master branch
@@ -369,7 +369,7 @@ test.serial('Returns falsy value if not running from a git repository', async t 
     './lib/logger': t.context.logger,
     'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
   });
-  t.falsy(await semanticRelease());
+  t.falsy(await semanticRelease({repositoryUrl: 'git@hostname.com:owner/module.git'}));
   t.is(t.context.error.args[0][0], 'Semantic-release must run from a git repository.');
 });
 
@@ -384,7 +384,7 @@ test.serial('Returns falsy value if triggered by a PR', async t => {
 
   t.falsy(await semanticRelease({repositoryUrl: 'git@hostname.com:owner/module.git'}));
   t.is(
-    t.context.log.args[0][0],
+    t.context.log.args[7][0],
     "This run was triggered by a pull request and therefore a new version won't be published."
   );
 });
