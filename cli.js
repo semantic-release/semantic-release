@@ -48,8 +48,11 @@ module.exports = async () => {
       program.outputHelp();
       process.exitCode = 1;
     } else {
+      const opts = program.opts();
+      // Set the `noCi` options as commander.js sets the `ci` options instead (becasue args starts with `--no`)
+      opts.noCi = opts.ci === false ? true : undefined;
       // Remove option with undefined values, as commander.js sets non defined options as `undefined`
-      await require('.')(pickBy(program.opts(), value => !isUndefined(value)));
+      await require('.')(pickBy(opts, value => !isUndefined(value)));
     }
   } catch (err) {
     process.exitCode = 1;

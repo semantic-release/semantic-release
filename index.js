@@ -9,13 +9,15 @@ const {gitHead: getGitHead, isGitRepo} = require('./lib/git');
 
 module.exports = async opts => {
   const {isCi, branch, isPr} = envCi();
+  const config = await getConfig(opts, logger);
+  const {plugins, options} = config;
 
-  if (!isCi && !opts.dryRun && !opts.noCi) {
+  if (!isCi && !options.dryRun && !options.noCi) {
     logger.log('This run was not triggered in a known CI environment, running in dry-run mode.');
-    opts.dryRun = true;
+    options.dryRun = true;
   }
 
-  if (isCi && isPr && !opts.noCi) {
+  if (isCi && isPr && !options.noCi) {
     logger.log("This run was triggered by a pull request and therefore a new version won't be published.");
     return;
   }
@@ -24,9 +26,6 @@ module.exports = async opts => {
     logger.error('Semantic-release must run from a git repository.');
     return;
   }
-
-  const config = await getConfig(opts, logger);
-  const {plugins, options} = config;
 
   if (branch !== options.branch) {
     logger.log(

@@ -656,6 +656,77 @@ test.serial('Dry-run', async t => {
   await mockServer.verify(verifyMock);
 });
 
+test.serial('Allow local releases with "noCi" option', async t => {
+  delete process.env.TRAVIS;
+  delete process.env.CI;
+  const packageName = 'test-no-ci';
+  const owner = 'test-repo';
+  // Create a git repository, set the current working directory at the root of the repo
+  t.log('Create git repository and package.json');
+  await gitRepo();
+  // Create package.json in repository root
+  await writeJson('./package.json', {
+    name: packageName,
+    version: '0.0.0-dev',
+    repository: {url: `git+https://github.com/${owner}/${packageName}`},
+    publishConfig: {registry: npmRegistry.url},
+  });
+
+  /* Initial release */
+  const version = '1.0.0';
+  const verifyMock = await mockServer.mock(
+    `/repos/${owner}/${packageName}`,
+    {headers: [{name: 'Authorization', values: [`token ${env.GH_TOKEN}`]}]},
+    {body: {permissions: {push: true}}, method: 'GET'}
+  );
+  const getRefMock = await mockServer.mock(
+    `/repos/${owner}/${packageName}/git/refs/tags/v${version}`,
+    {},
+    {body: {}, statusCode: 404, method: 'GET'}
+  );
+  const createRefMock = await mockServer.mock(
+    `/repos/${owner}/${packageName}/git/refs`,
+    {
+      body: {ref: `refs/tags/v${version}`},
+      headers: [{name: 'Authorization', values: [`token ${env.GH_TOKEN}`]}],
+    },
+    {body: {ref: `refs/tags/${version}`}}
+  );
+  const createReleaseMock = await mockServer.mock(
+    `/repos/${owner}/${packageName}/releases`,
+    {
+      body: {tag_name: `v${version}`, target_commitish: 'master', name: `v${version}`},
+      headers: [{name: 'Authorization', values: [`token ${env.GH_TOKEN}`]}],
+    },
+    {body: {html_url: `release-url/${version}`}}
+  );
+
+  t.log('Commit a feature');
+  await gitCommits(['feat: Initial commit']);
+  t.log('$ semantic-release --no-ci');
+  const {stdout, code} = await execa(cli, ['--no-ci'], {env});
+  console.log(stdout);
+  t.regex(stdout, new RegExp(`Published GitHub release: release-url/${version}`));
+  t.regex(stdout, new RegExp(`Publishing version ${version} to npm registry`));
+  t.is(code, 0);
+
+  // Verify package.json and has been updated
+  t.is((await readJson('./package.json')).version, version);
+
+  // Retrieve the published package from the registry and check version and gitHead
+  const [, releasedVersion, releasedGitHead] = /^version = '(.+)'\s+gitHead = '(.+)'$/.exec(
+    (await execa('npm', ['show', packageName, 'version', 'gitHead'], {env: testEnv})).stdout
+  );
+  t.is(releasedVersion, version);
+  t.is(releasedGitHead, await gitHead());
+  t.log(`+ released ${releasedVersion} with gitHead ${releasedGitHead}`);
+
+  await mockServer.verify(verifyMock);
+  await mockServer.verify(getRefMock);
+  await mockServer.verify(createRefMock);
+  await mockServer.verify(createReleaseMock);
+});
+
 test.serial('Pass options via CLI arguments', async t => {
   const packageName = 'test-cli';
   const owner = 'test-repo';
