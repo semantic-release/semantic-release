@@ -1,6 +1,8 @@
 const marked = require('marked');
 const TerminalRenderer = require('marked-terminal');
 const envCi = require('env-ci');
+const hookStd = require('hook-std');
+const hideSensitive = require('./lib/hide-sensitive');
 const getConfig = require('./lib/get-config');
 const getNextVersion = require('./lib/get-next-version');
 const getCommits = require('./lib/get-commits');
@@ -96,8 +98,10 @@ async function run(opts) {
 }
 
 module.exports = async opts => {
+  const unhook = hookStd({silent: false}, hideSensitive);
   try {
     const result = await run(opts);
+    unhook();
     return result;
   } catch (err) {
     const errors = err.name === 'AggregateError' ? Array.from(err).sort(error => !error.semanticRelease) : [err];
@@ -108,6 +112,7 @@ module.exports = async opts => {
         logger.error('An error occurred while running semantic-release: %O', error);
       }
     }
+    unhook();
     throw err;
   }
 };
