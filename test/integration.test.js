@@ -61,7 +61,7 @@ test.beforeEach(() => {
 
   // Delete all `npm_config` environment variable set by CI as they take precedence over the `.npmrc` because the process that runs the tests is started before the `.npmrc` is created
   for (let i = 0, keys = Object.keys(process.env); i < keys.length; i++) {
-    if (keys[i].startsWith('npm_config')) {
+    if (keys[i].startsWith('npm_')) {
       delete process.env[keys[i]];
     }
   }

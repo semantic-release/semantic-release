@@ -2,6 +2,7 @@ import test from 'ava';
 import proxyquire from 'proxyquire';
 import {stub} from 'sinon';
 import tempy from 'tempy';
+import clearModule from 'clear-module';
 import SemanticReleaseError from '@semantic-release/error';
 import DEFINITIONS from '../lib/plugins/definitions';
 import {gitHead as getGitHead} from '../lib/git';
@@ -12,21 +13,25 @@ const envBackup = Object.assign({}, process.env);
 // Save the current working diretory
 const cwd = process.cwd();
 
-stub(process.stdout, 'write');
-stub(process.stderr, 'write');
-
 test.beforeEach(t => {
+  clearModule('../lib/hide-sensitive');
+
   // Stub the logger functions
   t.context.log = stub();
   t.context.error = stub();
   t.context.logger = {log: t.context.log, error: t.context.error};
+  t.context.stdout = stub(process.stdout, 'write');
+  t.context.stderr = stub(process.stderr, 'write');
 });
 
-test.afterEach.always(() => {
+test.afterEach.always(t => {
   // Restore process.env
   process.env = envBackup;
   // Restore the current working directory
   process.chdir(cwd);
+
+  t.context.stdout.restore();
+  t.context.stderr.restore();
 });
 
 test.serial('Plugins are called with expected values', async t => {
@@ -569,6 +574,31 @@ test.serial('Exclude commits with [skip release] or [release skip] from analysis
   t.is(analyzeCommits.args[0][1].commits.length, 1);
   t.deepEqual(analyzeCommits.args[0][1].commits[0].hash.substring(0, 7), commits[commits.length - 1].hash);
   t.deepEqual(analyzeCommits.args[0][1].commits[0].message, commits[commits.length - 1].message);
+});
+
+test.serial('Hide sensitive environment variable values from the logs', async t => {
+  process.env.MY_TOKEN = 'secret token';
+  await gitRepo();
+
+  const options = {
+    branch: 'master',
+    repositoryUrl: 'git@hostname.com:owner/module.git',
+    verifyConditions: async (pluginConfig, {logger}) => {
+      console.log(`Console: The token ${process.env.MY_TOKEN} is invalid`);
+      logger.log(`Log: The token ${process.env.MY_TOKEN} is invalid`);
+      logger.error(`Error: The token ${process.env.MY_TOKEN} is invalid`);
+      throw new Error(`Invalid token ${process.env.MY_TOKEN}`);
+    },
+  };
+  const semanticRelease = proxyquire('..', {
+    'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
+  });
+
+  await t.throws(semanticRelease(options));
+  t.regex(t.context.stdout.args[7][0], /Console: The token \[secure\] is invalid/);
+  t.regex(t.context.stdout.args[8][0], /Log: The token \[secure\] is invalid/);
+  t.regex(t.context.stderr.args[0][0], /Error: The token \[secure\] is invalid/);
+  t.regex(t.context.stderr.args[1][0], /Invalid token \[secure\]/);
 });
 
 test.serial('Throw SemanticReleaseError if repositoryUrl is not set and cannot be found from repo config', async t => {
