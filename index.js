@@ -7,7 +7,7 @@ const getCommits = require('./lib/get-commits');
 const logger = require('./lib/logger');
 const {gitHead: getGitHead, isGitRepo} = require('./lib/git');
 
-module.exports = async opts => {
+async function run(opts) {
   const {isCi, branch, isPr} = envCi();
   const config = await getConfig(opts, logger);
   const {plugins, options} = config;
@@ -39,7 +39,7 @@ module.exports = async opts => {
   logger.log('Run automated release from branch %s', options.branch);
 
   logger.log('Call plugin %s', 'verify-conditions');
-  await plugins.verifyConditions({options, logger});
+  await plugins.verifyConditions({options, logger}, true);
 
   logger.log('Call plugin %s', 'get-last-release');
   const {commits, lastRelease} = await getCommits(
@@ -63,7 +63,7 @@ module.exports = async opts => {
   const nextRelease = {type, version, gitHead: await getGitHead(), gitTag: `v${version}`};
 
   logger.log('Call plugin %s', 'verify-release');
-  await plugins.verifyRelease({options, logger, lastRelease, commits, nextRelease});
+  await plugins.verifyRelease({options, logger, lastRelease, commits, nextRelease}, true);
 
   const generateNotesParam = {options, logger, lastRelease, commits, nextRelease};
 
@@ -78,7 +78,7 @@ module.exports = async opts => {
     nextRelease.notes = await plugins.generateNotes(generateNotesParam);
 
     logger.log('Call plugin %s', 'publish');
-    await plugins.publish({options, logger, lastRelease, commits, nextRelease}, async prevInput => {
+    await plugins.publish({options, logger, lastRelease, commits, nextRelease}, false, async prevInput => {
       const newGitHead = await getGitHead();
       // If previous publish plugin has created a commit (gitHead changed)
       if (prevInput.nextRelease.gitHead !== newGitHead) {
@@ -93,4 +93,21 @@ module.exports = async opts => {
     logger.log('Published release: %s', nextRelease.version);
   }
   return true;
+}
+
+module.exports = async opts => {
+  try {
+    const result = await run(opts);
+    return result;
+  } catch (err) {
+    const errors = err.name === 'AggregateError' ? Array.from(err).sort(error => !error.semanticRelease) : [err];
+    for (const error of errors) {
+      if (error.semanticRelease) {
+        logger.log(`%s ${error.message}`, error.code);
+      } else {
+        logger.error('An error occurred while running semantic-release: %O', error);
+      }
+    }
+    throw err;
+  }
 };

@@ -24,6 +24,7 @@
     "@semantic-release/github": "^3.0.1",
     "@semantic-release/npm": "^2.0.0",
     "@semantic-release/release-notes-generator": "^6.0.0",
+    "aggregate-error": "^1.0.0",
     "chalk": "^2.3.0",
     "commander": "^2.11.0",
     "cosmiconfig": "^4.0.0",
@@ -36,6 +37,7 @@
     "marked": "^0.3.9",
     "marked-terminal": "^2.0.0",
     "p-reduce": "^1.0.0",
+    "p-reflect": "^1.0.0",
     "read-pkg-up": "^3.0.0",
     "resolve-from": "^4.0.0",
     "semver": "^5.4.1"

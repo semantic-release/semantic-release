@@ -2,6 +2,7 @@ import test from 'ava';
 import proxyquire from 'proxyquire';
 import {stub} from 'sinon';
 import tempy from 'tempy';
+import SemanticReleaseError from '@semantic-release/error';
 import DEFINITIONS from '../lib/plugins/definitions';
 import {gitHead as getGitHead} from '../lib/git';
 import {gitRepo, gitCommits, gitTagVersion} from './helpers/git-utils';
@@ -159,6 +160,70 @@ test.serial('Use new gitHead, and recreate release notes if a publish plugin cre
   t.deepEqual(generateNotes.secondCall.args[1].nextRelease, Object.assign({}, nextRelease, {notes}));
   t.is(publish2.callCount, 1);
   t.deepEqual(publish2.args[0][1].nextRelease, Object.assign({}, nextRelease, {notes}));
+});
+
+test.serial('Log all "verifyConditions" errors', async t => {
+  // Create a git repository, set the current working directory at the root of the repo
+  await gitRepo();
+  // Add commits to the master branch
+  await gitCommits(['First']);
+
+  const error1 = new Error('error 1');
+  const error2 = new SemanticReleaseError('error 2', 'ERR2');
+  const error3 = new SemanticReleaseError('error 3', 'ERR3');
+  const options = {
+    branch: 'master',
+    repositoryUrl: 'git@hostname.com:owner/module.git',
+    verifyConditions: [stub().rejects(error1), stub().rejects(error2), stub().rejects(error3)],
+  };
+
+  const semanticRelease = proxyquire('..', {
+    './lib/logger': t.context.logger,
+    'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
+  });
+  const errors = await t.throws(semanticRelease(options));
+
+  t.deepEqual(Array.from(errors), [error1, error2, error3]);
+  t.deepEqual(t.context.log.args[t.context.log.args.length - 2], ['%s error 2', 'ERR2']);
+  t.deepEqual(t.context.log.args[t.context.log.args.length - 1], ['%s error 3', 'ERR3']);
+  t.deepEqual(t.context.error.args[t.context.error.args.length - 1], [
+    'An error occurred while running semantic-release: %O',
+    error1,
+  ]);
+  t.true(t.context.error.calledAfter(t.context.log));
+});
+
+test.serial('Log all "verifyRelease" errors', async t => {
+  // Create a git repository, set the current working directory at the root of the repo
+  await gitRepo();
+  // Add commits to the master branch
+  let commits = await gitCommits(['First']);
+  // Create the tag corresponding to version 1.0.0
+  await gitTagVersion('v1.0.0');
+  // Add new commits to the master branch
+  commits = (await gitCommits(['Second'])).concat(commits);
+
+  const error1 = new SemanticReleaseError('error 1', 'ERR1');
+  const error2 = new SemanticReleaseError('error 2', 'ERR2');
+  const lastRelease = {version: '1.0.0', gitHead: commits[commits.length - 1].hash, gitTag: 'v1.0.0'};
+  const options = {
+    branch: 'master',
+    repositoryUrl: 'git@hostname.com:owner/module.git',
+    verifyConditions: stub().resolves(),
+    getLastRelease: stub().resolves(lastRelease),
+    analyzeCommits: stub().resolves('major'),
+    verifyRelease: [stub().rejects(error1), stub().rejects(error2)],
+  };
+
+  const semanticRelease = proxyquire('..', {
+    './lib/logger': t.context.logger,
+    'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
+  });
+  const errors = await t.throws(semanticRelease(options));
+
+  t.deepEqual(Array.from(errors), [error1, error2]);
+  t.deepEqual(t.context.log.args[t.context.log.args.length - 2], ['%s error 1', 'ERR1']);
+  t.deepEqual(t.context.log.args[t.context.log.args.length - 1], ['%s error 2', 'ERR2']);
 });
 
 test.serial('Dry-run skips publish', async t => {
