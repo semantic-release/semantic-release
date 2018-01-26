@@ -1,6 +1,5 @@
 const program = require('commander');
 const {pickBy, isUndefined} = require('lodash');
-const logger = require('./lib/logger');
 
 function list(values) {
   return values.split(',').map(value => value.trim());
@@ -56,10 +55,5 @@ module.exports = async () => {
     }
   } catch (err) {
     process.exitCode = 1;
-    if (err.semanticRelease) {
-      logger.log(`%s ${err.message}`, err.code);
-    } else {
-      logger.error('An error occurred while running semantic-release: %O', err);
-    }
   }
 };
