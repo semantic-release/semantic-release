@@ -64,7 +64,7 @@ See the [CI configuration recipes](../usage/ci-configuration.md) for more detail
 Yes, you can by explicitly setting the [`--no-ci` CLI option](../usage/configuration.md#options) option. You will also have to set the required [authentication](../usage/ci-configuration.md#authentication) via environment variables on your local machine, for example:
 
 ```bash
-$ NPM_TOKEN=<your_npm_token> GH_TOKEN=<your_github_token> npm run semantic-release --no-ci
+$ NPM_TOKEN=<your_npm_token> GH_TOKEN=<your_github_token> npx semantic-release --no-ci
 ```
 
 However this is not the recommended approach, as running unit and integration tests on an independent machine before publishing software is a crucial part of the release workflow.
@@ -156,3 +156,9 @@ In addition the [verify conditions step](../../README.md#release-steps) verifies
 **semantic-release** is written using the latest [ECMAScript 2017](https://www.ecma-international.org/publications/standards/Ecma-262.htm) features, without transpilation which **requires Node version 8.3 or higher**.
 
 See [Node version requirement](../support/node-version.md#node-version-requirement) for more details and solutions.
+
+# What is npx?
+
+[`npx`](https://www.npmjs.com/package/npx) – short for "npm exec" – is a CLI to find and execute npm binaries within the local `node_modules` folder or in the $PATH. If a binary can't be located npx will download the required package and execute it from its cache location.
+The tool is bundled with [npm](https://www.npmjs.com/package/npm) >= 5.2, or can be installed via `npm install -g npx`.
+For more details and motivation read the [introductory blog post](https://medium.com/@maybekatz/introducing-npx-an-npm-package-runner-55f7d4bd282b) by [@zkat](https://github.com/zkat).

@@ -18,35 +18,18 @@ See [CI configuration](../usage/ci-configuration.md) and [CI configuration recip
 
 ### Use `npx`
 
-[`npx`](https://github.com/zkat/npx) is a CLI to execute npm binaries. It is bundled with [npm](https://www.npmjs.com/package/npm) >= 5.4, or can be installed via `npm install -g npx`.
-
-`npx` can be used to download the latest [Node 8 package published on npm](https://www.npmjs.com/package/node) and use it to execute the `semantic-release` command.
-
-If you are using a [local](../usage/installation.md#local-installation) **semantic-release** installation:
+`npx` is included with npm >= 5.2 and can be used to download the latest [Node 8 package published on npm](https://www.npmjs.com/package/node). Use it to execute the `semantic-release` command.
 
 ```bash
-$ npm install -g npx && npx -p node@8 -c "npm run semantic-release"
+$ npx -p node@8 -c "npx semantic-release"
 ```
 
-If you are using a [global](../usage/installation.md#global-installation) **semantic-release** installation:
-
-```bash
-# For global semantic-release install
-$ npm install -g semantic-release npx && npx -p node@8 -c "semantic-release"
-```
+**Note:**: See [What is npx](./FAQ.md#what-is-npx) for more details.
 
 ### Use `nvm`
 
 If your CI environment provides [nvm](https://github.com/creationix/nvm) you can use it to switch to Node 8 before running the `semantic-release` command.
 
-If you are using a [local](../usage/installation.md#local-installation) **semantic-release** installation:
-
 ```bash
-$ nvm install 8 && npm run semantic-release
-```
-
-If you are using a [global](../usage/installation.md#global-installation) **semantic-release** installation:
-
-```bash
-$ nvm install 8 && npm install -g semantic-release && semantic-release
+$ nvm install 8 && npx semantic-release
 ```
