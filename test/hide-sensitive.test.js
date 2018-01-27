@@ -32,3 +32,11 @@ test.serial('Escape regexp special characters', t => {
     'https://user:[secure]@host.com'
   );
 });
+
+test.serial('Accept "undefined" input', t => {
+  t.is(require('../lib/hide-sensitive')(), undefined);
+});
+
+test.serial('Return same string if no environment variable has to be replaced', t => {
+  t.is(require('../lib/hide-sensitive')('test'), 'test');
+});
