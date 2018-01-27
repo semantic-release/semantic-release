@@ -47,12 +47,7 @@ publish:
   image: node:8
   stage: release
   script:
-    # Only for a local semantic-release installation
-    - npm run semantic-release
-
-    # Only for a global semantic-release installation
-    - npm install -g semantic-release
-    - semantic-release
+    - npx semantic-release
 ```
 
 ### `package.json` configuration
@@ -63,9 +58,6 @@ A `package.json` is required only for [local](../usage/installation.md#local-ins
 {
   "devDependencies": {
     "semantic-release": "^12.0.0"
-  },
-  "scripts": {
-    "semantic-release": "semantic-release"
   }
 }
 ```

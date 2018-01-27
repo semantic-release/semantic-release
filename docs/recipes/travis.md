@@ -20,8 +20,6 @@ It's recommended to run the `semantic-release` command in the [Travis `deploy` s
 
 **Note**: It's not recommended to run the `semantic-release` command in the Travis `script` step as each script in this step will be executed regardless of the outcome of the previous one. See [travis-ci/travis-ci#1066](https://github.com/travis-ci/travis-ci/issues/1066).
 
-**Note**: The`semantic-release` execution command varies depending if you are using a [local](../usage/installation.md#local-installation) or [global](../usage/installation.md#global-installation) semantic-release installation.
-
 ```yaml
 language: node_js
 
@@ -35,10 +33,7 @@ deploy:
   provider: script
   skip_cleanup: true
   script:
-    # Only for a local semantic-release installation
-    - npm run semantic-release
-    # Only for a global semantic-release installation
-    - npm install -g semantic-release && semantic-release
+    - npx semantic-release
 ```
 
 ### `package.json` configuration for single Node job
@@ -49,9 +44,6 @@ A `package.json` is required only for [local](../usage/installation.md#local-ins
 {
   "devDependencies": {
     "semantic-release": "^11.0.0"
-  },
-  "scripts": {
-    "semantic-release": "semantic-release"
   }
 }
 ```
@@ -71,8 +63,6 @@ This example uses [`travis-deploy-once`](https://github.com/semantic-release/tra
 It's recommended to run the `semantic-release` command in the [Travis `deploy` step](https://docs.travis-ci.com/user/customizing-the-build/#The-Build-Lifecycle) so if an error occurs the build will fail and Travis will send a notification.
 
 **Note**: It's not recommended to run the `semantic-release` command in the Travis `script` step as each script in this step will be executed regardless of the outcome of the previous one. See [travis-ci/travis-ci#1066](https://github.com/travis-ci/travis-ci/issues/1066).
-
-**Note**: The`semantic-release` execution command varies depending if you are using a [local](../usage/installation.md#local-installation) or [global](../usage/installation.md#global-installation) **semantic-release** installation.
 
 ```yaml
 language: node_js
@@ -94,10 +84,7 @@ deploy:
   provider: script
   skip_cleanup: true
   script:
-    # Only for a local semantic-release installation
-    - npm run travis-deploy-once "npm run semantic-release"
-    # Only for a global semantic-release installation
-    - npm install -g travis-deploy-once semantic-release && travis-deploy-once "semantic-release"
+    - npx travis-deploy-once "npx semantic-release"
 ```
 
 **Note**: See the `travis-deploy-once` [`pro`](https://github.com/semantic-release/travis-deploy-once#-p---pro) and [`travis-url`](https://github.com/semantic-release/travis-deploy-once#-u---travis-url) options for using with [Travis Pro](https://docs.travis-ci.com/user/travis-pro) and [Travis Enterprise](https://enterprise.travis-ci.com).
@@ -111,10 +98,6 @@ A `package.json` is required only for [local](../usage/installation.md#local-ins
   "devDependencies": {
     "semantic-release": "^12.0.0",
     "travis-deploy-once": "^4.0.0"
-  },
-  "scripts": {
-    "semantic-release": "semantic-release",
-    "travis-deploy-once": "travis-deploy-once"
   }
 }
 ```
@@ -156,10 +139,8 @@ deploy:
   script:
     # Use nvm to install and use the Node LTS version (nvm is installed on all Travis images)
     - nvm install lts/*
-    # Install travis-deploy-once and semantic-release
-    - npm install -g travis-deploy-once semantic-release
     # Run semantic-release only on job, after all other are successful
-    - travis-deploy-once "semantic-release"
+    - npx travis-deploy-once "npx semantic-release"
 ```
 
 **Note**: See the `travis-deploy-once` [`pro`](https://github.com/semantic-release/travis-deploy-once#-p---pro) and [`travis-url`](https://github.com/semantic-release/travis-deploy-once#-u---travis-url) options for using with [Travis Pro](https://docs.travis-ci.com/user/travis-pro) and [Travis Enterprise](https://enterprise.travis-ci.com).
