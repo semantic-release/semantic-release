@@ -44,6 +44,6 @@ cd your-module
 semantic-release-cli setup
 ```
 
-![dialogue](media/semantic-release-cli.png)
+![dialogue](../../media/semantic-release-cli.png)
 
 See the [semantic-release-cli](https://github.com/semantic-release/cli#what-it-does) documentation for more details.
