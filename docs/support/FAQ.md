@@ -35,10 +35,18 @@ Alternatively you can use a [global](../usage/installation.md#global-installatio
 If your CI environment provides [nvm](https://github.com/creationix/nvm) you can switch to Node 8 before installing and running the `semantic-release` command:
 
 ```bash
-$ nvm install 8 && yarn install -g semantic-release && semantic-release
+$ nvm install 8 && yarn global add semantic-release && semantic-release
 ```
 
 See the [CI configuration recipes](../recipes/README.md#ci-configurations) for more details on specific CI environments.
+
+As `semantic-release` is recommended to be executed with [`npx`](https://www.npmjs.com/package/npx) an alternative is required for usage with Yarn. Even though it is possible to install npx with Yarn, it's not recommended. Yarn and npx would be using different cache locations.
+
+For [local installation](../usage/installation.md#local-installation) replace
+`npx semantic-release` with `yarn run semantic-release`.
+
+For [global installation](../usage/installation.md#global-installation) replace
+`npx semantic-release` with `yarn global add semantic-release && semantic-release`.
 
 ## Can I use semantic-release to publish non-JavaScript packages?
 
