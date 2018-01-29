@@ -601,11 +601,11 @@ test.serial('Throw SemanticReleaseError if repositoryUrl is not set and cannot b
     './lib/logger': t.context.logger,
     'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
   });
-  const error = await t.throws(semanticRelease());
+  const errors = Array.from(await t.throws(semanticRelease()));
 
   // Verify error code and type
-  t.is(error.code, 'ENOREPOURL');
-  t.is(error.name, 'SemanticReleaseError');
+  t.is(errors[0].code, 'ENOREPOURL');
+  t.is(errors[0].name, 'SemanticReleaseError');
 });
 
 test.serial('Throw an Error if plugin returns an unexpected value', async t => {
