@@ -65,6 +65,18 @@ Any valid git url format is supported (See [Git protocols](https://git-scm.com/b
 
 **Note**: If the [Github plugin](https://github.com/semantic-release/github) is used the URL must be a valid Github URL that include the `owner`, the `repository` name and the `host`. **The Github shorthand URL is not supported.**
 
+### tagFormat
+
+Type: `String`
+
+Default: `v${version}`
+
+CLI arguments: `-t`, `--tag-format`
+
+The [Git tag](https://git-scm.com/book/en/v2/Git-Basics-Tagging) format used by **semantic-release** to identify releases. The tag name is generated with [Lodash template](https://lodash.com/docs#template) and will be compiled with the `version` variable.
+
+**Note**: The `tagFormat` must contain the `version` variable and compile to a [valid Git reference](https://git-scm.com/docs/git-check-ref-format#_description).
+
 ### dryRun
 
 Type: `Boolean`

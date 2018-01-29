@@ -1,3 +1,4 @@
+const {template} = require('lodash');
 const marked = require('marked');
 const TerminalRenderer = require('marked-terminal');
 const envCi = require('env-ci');
@@ -38,7 +39,7 @@ async function run(opts) {
   // Unshallow the repo in order to get all the tags
   await unshallow();
 
-  const lastRelease = await getLastRelease(logger);
+  const lastRelease = await getLastRelease(options.tagFormat, logger);
   const commits = await getCommits(lastRelease.gitHead, options.branch, logger);
 
   logger.log('Call plugin %s', 'analyze-commits');
@@ -53,7 +54,7 @@ async function run(opts) {
     return;
   }
   const version = getNextVersion(type, lastRelease, logger);
-  const nextRelease = {type, version, gitHead: await getGitHead(), gitTag: `v${version}`};
+  const nextRelease = {type, version, gitHead: await getGitHead(), gitTag: template(options.tagFormat)({version})};
 
   logger.log('Call plugin %s', 'verify-release');
   await plugins.verifyRelease({options, logger, lastRelease, commits, nextRelease}, true);

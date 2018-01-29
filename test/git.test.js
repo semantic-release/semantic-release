@@ -11,6 +11,7 @@ import {
   gitTags,
   isGitRepo,
   deleteTag,
+  verifyTagName,
 } from '../lib/git';
 import {
   gitRepo,
@@ -173,6 +174,20 @@ test.serial('Return "false" if not in a Git repository', async t => {
   process.chdir(dir);
 
   t.false(await isGitRepo());
+});
+
+test.serial('Return "true" for valid tag names', async t => {
+  t.true(await verifyTagName('1.0.0'));
+  t.true(await verifyTagName('v1.0.0'));
+  t.true(await verifyTagName('tag_name'));
+  t.true(await verifyTagName('tag/name'));
+});
+
+test.serial('Return "false" for invalid tag names', async t => {
+  t.false(await verifyTagName('?1.0.0'));
+  t.false(await verifyTagName('*1.0.0'));
+  t.false(await verifyTagName('[1.0.0]'));
+  t.false(await verifyTagName('1.0.0..'));
 });
 
 test.serial('Throws error if obtaining the tags fails', async t => {

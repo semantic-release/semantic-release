@@ -68,7 +68,7 @@ test.serial('Plugins are called with expected values', async t => {
   const generateNotes = stub().resolves(notes);
   const publish = stub().resolves();
 
-  const config = {branch: 'master', repositoryUrl, globalOpt: 'global'};
+  const config = {branch: 'master', repositoryUrl, globalOpt: 'global', tagFormat: `v\${version}`};
   const options = {
     ...config,
     verifyConditions: [verifyConditions1, verifyConditions2],
@@ -124,6 +124,41 @@ test.serial('Plugins are called with expected values', async t => {
   t.deepEqual(publish.args[0][1].commits[0].hash, commits[0].hash);
   t.deepEqual(publish.args[0][1].commits[0].message, commits[0].message);
   t.deepEqual(publish.args[0][1].nextRelease, Object.assign({}, nextRelease, {notes}));
+
+  // Verify the tag has been created on the local and remote repo and reference the gitHead
+  t.is(await gitTagHead(nextRelease.gitTag), nextRelease.gitHead);
+  t.is(await gitRemoteTagHead(repositoryUrl, nextRelease.gitTag), nextRelease.gitHead);
+});
+
+test.serial('Use custom tag format', async t => {
+  const repositoryUrl = await gitRepo(true);
+  await gitCommits(['First']);
+  await gitTagVersion('test-1.0.0');
+  await gitCommits(['Second']);
+
+  const nextRelease = {type: 'major', version: '2.0.0', gitHead: await getGitHead(), gitTag: 'test-2.0.0'};
+  const notes = 'Release notes';
+  const verifyConditions = stub().resolves();
+  const analyzeCommits = stub().resolves(nextRelease.type);
+  const verifyRelease = stub().resolves();
+  const generateNotes = stub().resolves(notes);
+  const publish = stub().resolves();
+
+  const config = {branch: 'master', repositoryUrl, globalOpt: 'global', tagFormat: `test-\${version}`};
+  const options = {
+    ...config,
+    verifyConditions,
+    analyzeCommits,
+    verifyRelease,
+    generateNotes,
+    publish,
+  };
+
+  const semanticRelease = proxyquire('..', {
+    './lib/logger': t.context.logger,
+    'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
+  });
+  t.truthy(await semanticRelease(options));
 
   // Verify the tag has been created on the local and remote repo and reference the gitHead
   t.is(await gitTagHead(nextRelease.gitTag), nextRelease.gitHead);
