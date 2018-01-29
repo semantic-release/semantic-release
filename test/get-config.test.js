@@ -13,12 +13,12 @@ const envBackup = Object.assign({}, process.env);
 const cwd = process.cwd();
 
 test.beforeEach(t => {
-  // Delete environment variables that could have been set on the machine running the tests
   delete process.env.GIT_CREDENTIALS;
   delete process.env.GH_TOKEN;
   delete process.env.GITHUB_TOKEN;
   delete process.env.GL_TOKEN;
   delete process.env.GITLAB_TOKEN;
+  // Delete environment variables that could have been set on the machine running the tests
   t.context.plugins = stub().returns({});
   t.context.getConfig = proxyquire('../lib/get-config', {'./plugins': t.context.plugins});
 });
