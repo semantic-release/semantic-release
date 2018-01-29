@@ -45,6 +45,7 @@ test.serial('Default values, reading repositoryUrl from package.json', async t =
   // Verify the default options are set
   t.is(options.branch, 'master');
   t.is(options.repositoryUrl, 'git@package.com:owner/module.git');
+  t.is(options.tagFormat, `v\${version}`);
 });
 
 test.serial('Default values, reading repositoryUrl from repo if not set in package.json', async t => {
@@ -58,6 +59,7 @@ test.serial('Default values, reading repositoryUrl from repo if not set in packa
   // Verify the default options are set
   t.is(options.branch, 'master');
   t.is(options.repositoryUrl, 'git@repo.com:owner/module.git');
+  t.is(options.tagFormat, `v\${version}`);
 });
 
 test.serial('Default values, reading repositoryUrl (http url) from package.json if not set in repo', async t => {
@@ -72,6 +74,7 @@ test.serial('Default values, reading repositoryUrl (http url) from package.json 
   // Verify the default options are set
   t.is(options.branch, 'master');
   t.is(options.repositoryUrl, pkg.repository);
+  t.is(options.tagFormat, `v\${version}`);
 });
 
 test.serial('Read options from package.json', async t => {
@@ -80,6 +83,7 @@ test.serial('Read options from package.json', async t => {
     generateNotes: 'generateNotes',
     branch: 'test_branch',
     repositoryUrl: 'git+https://hostname.com/owner/module.git',
+    tagFormat: `v\${version}`,
   };
 
   // Create a git repository, set the current working directory at the root of the repo
@@ -100,6 +104,7 @@ test.serial('Read options from .releaserc.yml', async t => {
     analyzeCommits: {path: 'analyzeCommits', param: 'analyzeCommits_param'},
     branch: 'test_branch',
     repositoryUrl: 'git+https://hostname.com/owner/module.git',
+    tagFormat: `v\${version}`,
   };
 
   // Create a git repository, set the current working directory at the root of the repo
@@ -120,6 +125,7 @@ test.serial('Read options from .releaserc.json', async t => {
     analyzeCommits: {path: 'analyzeCommits', param: 'analyzeCommits_param'},
     branch: 'test_branch',
     repositoryUrl: 'git+https://hostname.com/owner/module.git',
+    tagFormat: `v\${version}`,
   };
 
   // Create a git repository, set the current working directory at the root of the repo
@@ -140,6 +146,7 @@ test.serial('Read options from .releaserc.js', async t => {
     analyzeCommits: {path: 'analyzeCommits', param: 'analyzeCommits_param'},
     branch: 'test_branch',
     repositoryUrl: 'git+https://hostname.com/owner/module.git',
+    tagFormat: `v\${version}`,
   };
 
   // Create a git repository, set the current working directory at the root of the repo
@@ -160,6 +167,7 @@ test.serial('Read options from release.config.js', async t => {
     analyzeCommits: {path: 'analyzeCommits', param: 'analyzeCommits_param'},
     branch: 'test_branch',
     repositoryUrl: 'git+https://hostname.com/owner/module.git',
+    tagFormat: `v\${version}`,
   };
 
   // Create a git repository, set the current working directory at the root of the repo
@@ -184,6 +192,7 @@ test.serial('Prioritise CLI/API parameters over file configuration and git repo'
     analyzeCommits: {path: 'analyzeCommits', param: 'analyzeCommits_cli'},
     branch: 'branch_cli',
     repositoryUrl: 'http://cli-url.com/owner/package',
+    tagFormat: `cli\${version}`,
   };
   const pkg = {release, repository: 'git@hostname.com:owner/module.git'};
   // Create a git repository, set the current working directory at the root of the repo
@@ -209,6 +218,7 @@ test.serial('Read configuration from file path in "extends"', async t => {
     generateNotes: 'generateNotes',
     branch: 'test_branch',
     repositoryUrl: 'git+https://hostname.com/owner/module.git',
+    tagFormat: `v\${version}`,
   };
 
   // Create a git repository, set the current working directory at the root of the repo
@@ -236,6 +246,7 @@ test.serial('Read configuration from module path in "extends"', async t => {
     generateNotes: 'generateNotes',
     branch: 'test_branch',
     repositoryUrl: 'git+https://hostname.com/owner/module.git',
+    tagFormat: `v\${version}`,
   };
 
   // Create a git repository, set the current working directory at the root of the repo
@@ -270,6 +281,7 @@ test.serial('Read configuration from an array of paths in "extends"', async t =>
     generateNotes: 'generateNotes2',
     analyzeCommits: {path: 'analyzeCommits2', param: 'analyzeCommits_param2'},
     branch: 'test_branch',
+    tagFormat: `v\${version}`,
   };
 
   // Create a git repository, set the current working directory at the root of the repo
@@ -307,6 +319,7 @@ test.serial('Prioritize configuration from config file over "extends"', async t 
     publish: [{path: 'publishShareable', param: 'publishShareable_param'}],
     branch: 'test_branch',
     repositoryUrl: 'git+https://hostname.com/owner/module.git',
+    tagFormat: `v\${version}`,
   };
 
   // Create a git repository, set the current working directory at the root of the repo
@@ -352,6 +365,7 @@ test.serial('Prioritize configuration from cli/API options over "extends"', asyn
     analyzeCommits: 'analyzeCommits2',
     publish: [{path: 'publishShareable', param: 'publishShareable_param2'}],
     branch: 'test_branch2',
+    tagFormat: `v\${version}`,
   };
 
   // Create a git repository, set the current working directory at the root of the repo
@@ -379,6 +393,7 @@ test.serial('Allow to unset properties defined in shareable config with "null"',
   const shareable = {
     generateNotes: 'generateNotes',
     analyzeCommits: {path: 'analyzeCommits', param: 'analyzeCommits_param'},
+    tagFormat: `v\${version}`,
   };
 
   // Create a git repository, set the current working directory at the root of the repo
@@ -412,6 +427,7 @@ test.serial('Allow to unset properties defined in shareable config with "undefin
   const shareable = {
     generateNotes: 'generateNotes',
     analyzeCommits: {path: 'analyzeCommits', param: 'analyzeCommits_param'},
+    tagFormat: `v\${version}`,
   };
 
   // Create a git repository, set the current working directory at the root of the repo

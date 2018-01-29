@@ -11,6 +11,7 @@ module.exports = async () => {
     .description('Run automated package publishing')
     .option('-b, --branch <branch>', 'Branch to release from')
     .option('-r, --repository-url <repositoryUrl>', 'Git repository URL')
+    .option('-t, --tag-format <tagFormat>', `Git tag format`)
     .option('-e, --extends <paths>', 'Comma separated list of shareable config paths or packages name', list)
     .option(
       '--verify-conditions <paths>',
