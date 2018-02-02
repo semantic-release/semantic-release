@@ -63,7 +63,7 @@ test.serial('Default values, reading repositoryUrl from repo if not set in packa
 });
 
 test.serial('Default values, reading repositoryUrl (http url) from package.json if not set in repo', async t => {
-  const pkg = {repository: 'git+https://hostname.com/owner/module.git'};
+  const pkg = {repository: 'https://hostname.com/owner/module.git'};
   // Create a git repository, set the current working directory at the root of the repo
   await gitRepo();
   // Create package.json in repository root
@@ -82,7 +82,7 @@ test.serial('Read options from package.json', async t => {
     analyzeCommits: {path: 'analyzeCommits', param: 'analyzeCommits_param'},
     generateNotes: 'generateNotes',
     branch: 'test_branch',
-    repositoryUrl: 'git+https://hostname.com/owner/module.git',
+    repositoryUrl: 'https://hostname.com/owner/module.git',
     tagFormat: `v\${version}`,
   };
 
@@ -103,7 +103,7 @@ test.serial('Read options from .releaserc.yml', async t => {
   const release = {
     analyzeCommits: {path: 'analyzeCommits', param: 'analyzeCommits_param'},
     branch: 'test_branch',
-    repositoryUrl: 'git+https://hostname.com/owner/module.git',
+    repositoryUrl: 'https://hostname.com/owner/module.git',
     tagFormat: `v\${version}`,
   };
 
@@ -124,7 +124,7 @@ test.serial('Read options from .releaserc.json', async t => {
   const release = {
     analyzeCommits: {path: 'analyzeCommits', param: 'analyzeCommits_param'},
     branch: 'test_branch',
-    repositoryUrl: 'git+https://hostname.com/owner/module.git',
+    repositoryUrl: 'https://hostname.com/owner/module.git',
     tagFormat: `v\${version}`,
   };
 
@@ -145,7 +145,7 @@ test.serial('Read options from .releaserc.js', async t => {
   const release = {
     analyzeCommits: {path: 'analyzeCommits', param: 'analyzeCommits_param'},
     branch: 'test_branch',
-    repositoryUrl: 'git+https://hostname.com/owner/module.git',
+    repositoryUrl: 'https://hostname.com/owner/module.git',
     tagFormat: `v\${version}`,
   };
 
@@ -166,7 +166,7 @@ test.serial('Read options from release.config.js', async t => {
   const release = {
     analyzeCommits: {path: 'analyzeCommits', param: 'analyzeCommits_param'},
     branch: 'test_branch',
-    repositoryUrl: 'git+https://hostname.com/owner/module.git',
+    repositoryUrl: 'https://hostname.com/owner/module.git',
     tagFormat: `v\${version}`,
   };
 
@@ -217,7 +217,7 @@ test.serial('Read configuration from file path in "extends"', async t => {
     analyzeCommits: {path: 'analyzeCommits', param: 'analyzeCommits_param'},
     generateNotes: 'generateNotes',
     branch: 'test_branch',
-    repositoryUrl: 'git+https://hostname.com/owner/module.git',
+    repositoryUrl: 'https://hostname.com/owner/module.git',
     tagFormat: `v\${version}`,
   };
 
@@ -245,7 +245,7 @@ test.serial('Read configuration from module path in "extends"', async t => {
     analyzeCommits: {path: 'analyzeCommits', param: 'analyzeCommits_param'},
     generateNotes: 'generateNotes',
     branch: 'test_branch',
-    repositoryUrl: 'git+https://hostname.com/owner/module.git',
+    repositoryUrl: 'https://hostname.com/owner/module.git',
     tagFormat: `v\${version}`,
   };
 
@@ -273,7 +273,7 @@ test.serial('Read configuration from an array of paths in "extends"', async t =>
     verifyRelease: 'verifyRelease1',
     analyzeCommits: {path: 'analyzeCommits1', param: 'analyzeCommits_param1'},
     branch: 'test_branch',
-    repositoryUrl: 'git+https://hostname.com/owner/module.git',
+    repositoryUrl: 'https://hostname.com/owner/module.git',
   };
 
   const shareable2 = {
@@ -318,7 +318,7 @@ test.serial('Prioritize configuration from config file over "extends"', async t 
     generateNotes: 'generateNotesShareable',
     publish: [{path: 'publishShareable', param: 'publishShareable_param'}],
     branch: 'test_branch',
-    repositoryUrl: 'git+https://hostname.com/owner/module.git',
+    repositoryUrl: 'https://hostname.com/owner/module.git',
     tagFormat: `v\${version}`,
   };
 
@@ -346,7 +346,7 @@ test.serial('Prioritize configuration from cli/API options over "extends"', asyn
     extends: './shareable2.json',
     branch: 'branch_opts',
     publish: [{path: 'publishOpts', param: 'publishOpts_param'}],
-    repositoryUrl: 'git+https://hostname.com/owner/module.git',
+    repositoryUrl: 'https://hostname.com/owner/module.git',
   };
   const release = {
     extends: './shareable1.json',
@@ -359,7 +359,7 @@ test.serial('Prioritize configuration from cli/API options over "extends"', asyn
     generateNotes: 'generateNotesShareable1',
     publish: [{path: 'publishShareable', param: 'publishShareable_param1'}],
     branch: 'test_branch1',
-    repositoryUrl: 'git+https://hostname.com/owner/module.git',
+    repositoryUrl: 'https://hostname.com/owner/module.git',
   };
   const shareable2 = {
     analyzeCommits: 'analyzeCommits2',
@@ -388,7 +388,7 @@ test.serial('Allow to unset properties defined in shareable config with "null"',
     extends: './shareable.json',
     analyzeCommits: null,
     branch: 'test_branch',
-    repositoryUrl: 'git+https://hostname.com/owner/module.git',
+    repositoryUrl: 'https://hostname.com/owner/module.git',
   };
   const shareable = {
     generateNotes: 'generateNotes',
@@ -422,7 +422,7 @@ test.serial('Allow to unset properties defined in shareable config with "undefin
     extends: './shareable.json',
     analyzeCommits: undefined,
     branch: 'test_branch',
-    repositoryUrl: 'git+https://hostname.com/owner/module.git',
+    repositoryUrl: 'https://hostname.com/owner/module.git',
   };
   const shareable = {
     generateNotes: 'generateNotes',
