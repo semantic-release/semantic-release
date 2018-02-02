@@ -12,6 +12,7 @@ test.beforeEach(t => {
 test('Normalize and load plugin from string', t => {
   const plugin = normalize('verifyConditions', {}, {}, './test/fixtures/plugin-noop', t.context.logger);
 
+  t.is(plugin.pluginName, './test/fixtures/plugin-noop');
   t.is(typeof plugin, 'function');
   t.deepEqual(t.context.log.args[0], ['Load plugin %s from %s', 'verifyConditions', './test/fixtures/plugin-noop']);
 });
@@ -19,6 +20,7 @@ test('Normalize and load plugin from string', t => {
 test('Normalize and load plugin from object', t => {
   const plugin = normalize('publish', {}, {}, {path: './test/fixtures/plugin-noop'}, t.context.logger);
 
+  t.is(plugin.pluginName, './test/fixtures/plugin-noop');
   t.is(typeof plugin, 'function');
   t.deepEqual(t.context.log.args[0], ['Load plugin %s from %s', 'publish', './test/fixtures/plugin-noop']);
 });
@@ -32,6 +34,7 @@ test('Normalize and load plugin from a base file path', t => {
     t.context.logger
   );
 
+  t.is(plugin.pluginName, './plugin-noop');
   t.is(typeof plugin, 'function');
   t.deepEqual(t.context.log.args[0], [
     'Load plugin %s from %s in shareable config %s',
@@ -41,9 +44,40 @@ test('Normalize and load plugin from a base file path', t => {
   ]);
 });
 
-test('Normalize and load plugin from function', t => {
-  const plugin = normalize('', {}, {}, () => {}, t.context.logger);
+test('Wrap plugin in a function that add the "pluginName" to the error"', async t => {
+  const plugin = normalize(
+    'verifyConditions',
+    {'./plugin-error': './test/fixtures'},
+    {},
+    './plugin-error',
+    t.context.logger
+  );
 
+  const error = await t.throws(plugin());
+
+  t.is(error.pluginName, './plugin-error');
+});
+
+test('Wrap plugin in a function that add the "pluginName" to multiple errors"', async t => {
+  const plugin = normalize(
+    'verifyConditions',
+    {'./plugin-errors': './test/fixtures'},
+    {},
+    './plugin-errors',
+    t.context.logger
+  );
+
+  const errors = [...(await t.throws(plugin()))];
+  for (const error of errors) {
+    t.is(error.pluginName, './plugin-errors');
+  }
+});
+
+test('Normalize and load plugin from function', t => {
+  const pluginFunction = () => {};
+  const plugin = normalize('', {}, {}, pluginFunction, t.context.logger);
+
+  t.is(plugin.pluginName, '[Function: pluginFunction]');
   t.is(typeof plugin, 'function');
 });
 
@@ -54,18 +88,42 @@ test('Normalize and load plugin that retuns multiple functions', t => {
   t.deepEqual(t.context.log.args[0], ['Load plugin %s from %s', 'verifyConditions', './test/fixtures/multi-plugin']);
 });
 
-test('Wrap plugin in a function that validate the output of the plugin', async t => {
-  const pluginFunction = stub().resolves(1);
-  const plugin = normalize('', {}, {}, pluginFunction, t.context.logger, {
-    validator: output => output === 1,
-    message: 'The output must be 1.',
-  });
+test('Wrap "analyzeCommits" plugin in a function that validate the output of the plugin', async t => {
+  const analyzeCommits = stub().resolves(2);
+  const plugin = normalize('analyzeCommits', {}, {}, analyzeCommits, t.context.logger);
 
-  await t.notThrows(plugin());
+  const error = await t.throws(plugin());
 
-  pluginFunction.resolves(2);
-  const error = await t.throws(plugin(), Error);
-  t.is(error.message, 'The output must be 1. Received: 2');
+  t.is(error.code, 'EANALYZEOUTPUT');
+  t.is(error.name, 'SemanticReleaseError');
+  t.regex(error.details, /2/);
+});
+
+test('Wrap "generateNotes" plugin in a function that validate the output of the plugin', async t => {
+  const generateNotes = stub().resolves(2);
+  const plugin = normalize('generateNotes', {}, {}, generateNotes, t.context.logger);
+
+  const error = await t.throws(plugin());
+
+  t.is(error.code, 'ERELEASENOTESOUTPUT');
+  t.is(error.name, 'SemanticReleaseError');
+  t.regex(error.details, /2/);
+});
+
+test('Wrap "publish" plugin in a function that validate the output of the plugin', async t => {
+  const plugin = normalize(
+    'publish',
+    {'./plugin-identity': './test/fixtures'},
+    {},
+    './plugin-identity',
+    t.context.logger
+  );
+
+  const error = await t.throws(plugin(2));
+
+  t.is(error.code, 'EPUBLISHOUTPUT');
+  t.is(error.name, 'SemanticReleaseError');
+  t.regex(error.details, /2/);
 });
 
 test('Plugin is called with "pluginConfig" (omitting "path", adding global config) and input', async t => {
@@ -127,12 +185,8 @@ test('Always pass a defined "pluginConfig" for plugin defined with path', async 
 test('Throws an error if the plugin return an object without the expected plugin function', t => {
   const error = t.throws(() => normalize('inexistantPlugin', {}, {}, './test/fixtures/multi-plugin', t.context.logger));
 
-  t.is(error.code, 'EPLUGINCONF');
+  t.is(error.code, 'EPLUGIN');
   t.is(error.name, 'SemanticReleaseError');
-  t.is(
-    error.message,
-    'The inexistantPlugin plugin must be a function, or an object with a function in the property inexistantPlugin.'
-  );
 });
 
 test('Throws an error if the plugin is not found', t => {

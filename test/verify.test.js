@@ -29,27 +29,27 @@ test.afterEach.always(() => {
   process.chdir(cwd);
 });
 
-test.serial('Return "false" if does not run on a git repository', async t => {
-  const dir = tempy.directory();
-  process.chdir(dir);
-
-  t.false(await verify({}, 'master', t.context.logger));
-});
-
 test.serial('Throw a AggregateError', async t => {
   await gitRepo();
 
   const errors = Array.from(await t.throws(verify({}, 'master', t.context.logger)));
 
   t.is(errors[0].name, 'SemanticReleaseError');
-  t.is(errors[0].message, 'The repositoryUrl option is required');
   t.is(errors[0].code, 'ENOREPOURL');
   t.is(errors[1].name, 'SemanticReleaseError');
-  t.is(errors[1].message, 'The tagFormat template must compile to a valid Git tag format');
   t.is(errors[1].code, 'EINVALIDTAGFORMAT');
   t.is(errors[2].name, 'SemanticReleaseError');
-  t.is(errors[2].message, `The tagFormat template must contain the variable "\${version}" exactly once`);
   t.is(errors[2].code, 'ETAGNOVERSION');
+});
+
+test.serial('Throw a SemanticReleaseError if does not run on a git repository', async t => {
+  const dir = tempy.directory();
+  process.chdir(dir);
+
+  const errors = Array.from(await t.throws(verify({}, 'master', t.context.logger)));
+
+  t.is(errors[0].name, 'SemanticReleaseError');
+  t.is(errors[0].code, 'ENOGITREPO');
 });
 
 test.serial('Throw a SemanticReleaseError if the "tagFormat" is not valid', async t => {
@@ -59,7 +59,6 @@ test.serial('Throw a SemanticReleaseError if the "tagFormat" is not valid', asyn
   const errors = Array.from(await t.throws(verify(options, 'master', t.context.logger)));
 
   t.is(errors[0].name, 'SemanticReleaseError');
-  t.is(errors[0].message, 'The tagFormat template must compile to a valid Git tag format');
   t.is(errors[0].code, 'EINVALIDTAGFORMAT');
 });
 
@@ -70,7 +69,6 @@ test.serial('Throw a SemanticReleaseError if the "tagFormat" does not contains t
   const errors = Array.from(await t.throws(verify(options, 'master', t.context.logger)));
 
   t.is(errors[0].name, 'SemanticReleaseError');
-  t.is(errors[0].message, `The tagFormat template must contain the variable "\${version}" exactly once`);
   t.is(errors[0].code, 'ETAGNOVERSION');
 });
 
@@ -81,7 +79,6 @@ test.serial('Throw a SemanticReleaseError if the "tagFormat" contains multiple "
   const errors = Array.from(await t.throws(verify(options, 'master', t.context.logger)));
 
   t.is(errors[0].name, 'SemanticReleaseError');
-  t.is(errors[0].message, `The tagFormat template must contain the variable "\${version}" exactly once`);
   t.is(errors[0].code, 'ETAGNOVERSION');
 });
 

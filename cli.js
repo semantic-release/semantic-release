@@ -2,7 +2,10 @@ const program = require('commander');
 const {pickBy, isUndefined} = require('lodash');
 
 function list(values) {
-  return values.split(',').map(value => value.trim());
+  return values
+    .split(',')
+    .map(value => value.trim())
+    .filter(value => value && value !== 'false');
 }
 
 module.exports = async () => {
@@ -26,6 +29,8 @@ module.exports = async () => {
     )
     .option('--generate-notes <path>', 'Path or package name for the generateNotes plugin')
     .option('--publish <paths>', 'Comma separated list of paths or packages name for the publish plugin(s)', list)
+    .option('--success <paths>', 'Comma separated list of paths or packages name for the success plugin(s)', list)
+    .option('--fail <paths>', 'Comma separated list of paths or packages name for the fail plugin(s)', list)
     .option(
       '--no-ci',
       'Skip Continuous Integration environment verifications, allowing to make releases from a local machine'
@@ -48,7 +53,7 @@ module.exports = async () => {
       process.exitCode = 1;
     } else {
       const opts = program.opts();
-      // Set the `noCi` options as commander.js sets the `ci` options instead (becasue args starts with `--no`)
+      // Set the `noCi` options as commander.js sets the `ci` options instead (because args starts with `--no`)
       opts.noCi = opts.ci === false ? true : undefined;
       // Remove option with undefined values, as commander.js sets non defined options as `undefined`
       await require('.')(pickBy(opts, value => !isUndefined(value)));

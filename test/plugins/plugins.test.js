@@ -28,6 +28,8 @@ test('Export default plugins', t => {
   t.is(typeof plugins.verifyRelease, 'function');
   t.is(typeof plugins.generateNotes, 'function');
   t.is(typeof plugins.publish, 'function');
+  t.is(typeof plugins.success, 'function');
+  t.is(typeof plugins.fail, 'function');
 });
 
 test('Export plugins based on config', t => {
@@ -48,6 +50,8 @@ test('Export plugins based on config', t => {
   t.is(typeof plugins.verifyRelease, 'function');
   t.is(typeof plugins.generateNotes, 'function');
   t.is(typeof plugins.publish, 'function');
+  t.is(typeof plugins.success, 'function');
+  t.is(typeof plugins.fail, 'function');
 });
 
 test.serial('Export plugins loaded from the dependency of a shareable config module', async t => {
@@ -76,6 +80,8 @@ test.serial('Export plugins loaded from the dependency of a shareable config mod
   t.is(typeof plugins.verifyRelease, 'function');
   t.is(typeof plugins.generateNotes, 'function');
   t.is(typeof plugins.publish, 'function');
+  t.is(typeof plugins.success, 'function');
+  t.is(typeof plugins.fail, 'function');
 });
 
 test.serial('Export plugins loaded from the dependency of a shareable config file', async t => {
@@ -101,6 +107,8 @@ test.serial('Export plugins loaded from the dependency of a shareable config fil
   t.is(typeof plugins.verifyRelease, 'function');
   t.is(typeof plugins.generateNotes, 'function');
   t.is(typeof plugins.publish, 'function');
+  t.is(typeof plugins.success, 'function');
+  t.is(typeof plugins.fail, 'function');
 });
 
 test('Use default when only options are passed for a single plugin', t => {
@@ -128,22 +136,10 @@ test('Merge global options with plugin options', async t => {
 });
 
 test('Throw an error if plugins configuration are missing a path for plugin pipeline', t => {
-  const errors = Array.from(
-    t.throws(() => getPlugins({verifyConditions: {}, verifyRelease: {}}, {}, t.context.logger))
-  );
+  const errors = Array.from(t.throws(() => getPlugins({verifyConditions: {}}, {}, t.context.logger)));
 
   t.is(errors[0].name, 'SemanticReleaseError');
   t.is(errors[0].code, 'EPLUGINCONF');
-  t.is(
-    errors[0].message,
-    'The "verifyConditions" plugin, if defined, must be a single or an array of plugins definition. A plugin definition is either a string or an object with a path property.'
-  );
-  t.is(errors[1].name, 'SemanticReleaseError');
-  t.is(errors[1].code, 'EPLUGINCONF');
-  t.is(
-    errors[1].message,
-    'The "verifyRelease" plugin, if defined, must be a single or an array of plugins definition. A plugin definition is either a string or an object with a path property.'
-  );
 });
 
 test('Throw an error if an array of plugin configuration is missing a path for plugin pipeline', t => {
@@ -153,8 +149,4 @@ test('Throw an error if an array of plugin configuration is missing a path for p
 
   t.is(errors[0].name, 'SemanticReleaseError');
   t.is(errors[0].code, 'EPLUGINCONF');
-  t.is(
-    errors[0].message,
-    'The "verifyConditions" plugin, if defined, must be a single or an array of plugins definition. A plugin definition is either a string or an object with a path property.'
-  );
 });

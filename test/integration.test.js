@@ -101,6 +101,7 @@ test.serial('Release patch, minor and major versions', async t => {
     version: '0.0.0-dev',
     repository: {url: repositoryUrl},
     publishConfig: {registry: npmRegistry.url},
+    release: {success: false, fail: false},
   });
   // Create a npm-shrinkwrap.json file
   await execa('npm', ['shrinkwrap'], {env: testEnv});
@@ -298,7 +299,7 @@ test.serial('Exit with 1 if a plugin is not found', async t => {
     name: packageName,
     version: '0.0.0-dev',
     repository: {url: `git+https://github.com/${owner}/${packageName}`},
-    release: {analyzeCommits: 'non-existing-path'},
+    release: {analyzeCommits: 'non-existing-path', success: false, fail: false},
   });
 
   const {code, stderr} = await t.throws(execa(cli, [], {env}));
@@ -316,7 +317,7 @@ test.serial('Exit with 1 if a shareable config is not found', async t => {
     name: packageName,
     version: '0.0.0-dev',
     repository: {url: `git+https://github.com/${owner}/${packageName}`},
-    release: {extends: 'non-existing-path'},
+    release: {extends: 'non-existing-path', success: false, fail: false},
   });
 
   const {code, stderr} = await t.throws(execa(cli, [], {env}));
@@ -336,7 +337,7 @@ test.serial('Exit with 1 if a shareable config reference a not found plugin', as
     name: packageName,
     version: '0.0.0-dev',
     repository: {url: `git+https://github.com/${owner}/${packageName}`},
-    release: {extends: './shareable.json'},
+    release: {extends: './shareable.json', success: false, fail: false},
   });
   await writeJson('./shareable.json', shareable);
 
@@ -357,6 +358,7 @@ test.serial('Dry-run', async t => {
     version: '0.0.0-dev',
     repository: {url: repositoryUrl},
     publishConfig: {registry: npmRegistry.url},
+    release: {success: false, fail: false},
   });
 
   /* Initial release */
@@ -394,6 +396,7 @@ test.serial('Allow local releases with "noCi" option', async t => {
     version: '0.0.0-dev',
     repository: {url: repositoryUrl},
     publishConfig: {registry: npmRegistry.url},
+    release: {success: false, fail: false},
   });
 
   /* Initial release */
@@ -459,7 +462,17 @@ test.serial('Pass options via CLI arguments', async t => {
   t.log('$ semantic-release');
   const {stdout, code} = await execa(
     cli,
-    ['--verify-conditions', '@semantic-release/npm', '--publish', '@semantic-release/npm', '--debug'],
+    [
+      '--verify-conditions',
+      '@semantic-release/npm',
+      '--publish',
+      '@semantic-release/npm',
+      `--success`,
+      false,
+      `--fail`,
+      false,
+      '--debug',
+    ],
     {env}
   );
   t.regex(stdout, new RegExp(`Publishing version ${version} to npm registry`));
@@ -515,7 +528,7 @@ test.serial('Run via JS API', async t => {
   t.log('Commit a feature');
   await gitCommits(['feat: Initial commit']);
   t.log('$ Call semantic-release via API');
-  await semanticRelease();
+  await semanticRelease({fail: false, success: false});
 
   // Verify package.json and has been updated
   t.is((await readJson('./package.json')).version, version);
@@ -545,7 +558,7 @@ test.serial('Log unexpected errors from plugins and exit with 1', async t => {
     name: packageName,
     version: '0.0.0-dev',
     repository: {url: repositoryUrl},
-    release: {verifyConditions: pluginError},
+    release: {verifyConditions: pluginError, fail: false, success: false},
   });
 
   /* Initial release */
@@ -572,7 +585,7 @@ test.serial('Log errors inheriting SemanticReleaseError and exit with 1', async 
     name: packageName,
     version: '0.0.0-dev',
     repository: {url: repositoryUrl},
-    release: {verifyConditions: pluginInheritedError},
+    release: {verifyConditions: pluginInheritedError, fail: false, success: false},
   });
 
   /* Initial release */

@@ -34,6 +34,18 @@ Plugin responsible for publishing the release.
 
 Default implementation: [npm](https://github.com/semantic-release/npm#publish) and [github](https://github.com/semantic-release/github#publish).
 
+### success plugin
+
+Plugin responsible for notifying of a new release.
+
+Default implementation: [github](https://github.com/semantic-release/github#success).
+
+### fail plugin
+
+Plugin responsible for notifying of a failed release.
+
+Default implementation: [github](https://github.com/semantic-release/github#fail).
+
 ## Configuration
 
 Plugin can be configured by specifying the plugin's module name or file path directly as a `String` or within the `path` key of an `Object`.
