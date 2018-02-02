@@ -59,7 +59,7 @@ Default: `repository` property in `package.json` or [git origin url](https://git
 
 CLI arguments: `-r`, `--repository-url`
 
-The git repository URL
+The git repository URL.
 
 Any valid git url format is supported (See [Git protocols](https://git-scm.com/book/en/v2/Git-on-the-Server-The-Protocols)).
 
@@ -75,7 +75,7 @@ CLI arguments: `-t`, `--tag-format`
 
 The [Git tag](https://git-scm.com/book/en/v2/Git-Basics-Tagging) format used by **semantic-release** to identify releases. The tag name is generated with [Lodash template](https://lodash.com/docs#template) and will be compiled with the `version` variable.
 
-**Note**: The `tagFormat` must contain the `version` variable and compile to a [valid Git reference](https://git-scm.com/docs/git-check-ref-format#_description).
+**Note**: The `tagFormat` must contain the `version` variable exactly once and compile to a [valid Git reference](https://git-scm.com/docs/git-check-ref-format#_description).
 
 ### dryRun
 

@@ -37,10 +37,11 @@ This removes the immediate connection between human emotions and version numbers
 - Fully automated release
 - Enforce [Semantic Versioning](https://semver.org) specification
 - New features and fixes are immediately available to users
+- Notify maintainers and users of new releases
 - Use formalized commit message convention to document changes in the codebase
 - Integrate with your [continuous integration workflow](docs/recipes/README.md#ci-configurations)
 - Avoid potential errors associated with manual releases
-- Support any  [package managers and languages](docs/recipes/README.md#package-managers-and-languages) via [plugins](docs/usage/plugins.md)
+- Support any [package managers and languages](docs/recipes/README.md#package-managers-and-languages) via [plugins](docs/usage/plugins.md)
 - Simple and reusable configuration via [shareable configurations](docs/usage/shareable-configurations.md)
 
 ## How does it work?
@@ -86,6 +87,7 @@ After running the tests the command `semantic-release` will execute the followin
 | Generate notes    | Generate release notes with the [generate notes plugin](docs/usage/plugins.md#generatenotes-plugin) for the commits added since the last release.                     |
 | Create Git tag    | Create a Git tag corresponding the new release version                                                                                                                |
 | Publish           | Publish the release with the [publish plugins](docs/usage/plugins.md#publish-plugin).                                                                                 |
+| Notify            | Notify of new releases or errors with the [success](docs/usage/plugins.md#success-plugin) and [fail](docs/usage/plugins.md#fail-plugin) plugins.                      |
 
 ## Documentation
 
