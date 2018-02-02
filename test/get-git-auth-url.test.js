@@ -14,9 +14,20 @@ test.afterEach.always(() => {
   process.env = envBackup;
 });
 
-test.serial('Return the same "repositoryUrl" is no "gitCredentials" is defined', t => {
+test.serial('Return the same "git" formatted URL if "gitCredentials" is not defined', t => {
   t.is(getAuthUrl('git@host.com:owner/repo.git'), 'git@host.com:owner/repo.git');
 });
+
+test.serial('Return the same "https" formatted URL if "gitCredentials" is not defined', t => {
+  t.is(getAuthUrl('https://host.com/owner/repo.git'), 'https://host.com/owner/repo.git');
+});
+
+test.serial(
+  'Return the "https" formatted URL if "gitCredentials" is not defined and repositoryUrl is a "git+https" URL',
+  t => {
+    t.is(getAuthUrl('git+https://host.com/owner/repo.git'), 'https://host.com/owner/repo.git');
+  }
+);
 
 test.serial('Return the "https" formatted URL if "gitCredentials" is defined and repositoryUrl is a "git" URL', t => {
   process.env.GIT_CREDENTIALS = 'user:pass';
