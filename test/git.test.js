@@ -88,7 +88,7 @@ test.serial('Verify if the commit `sha` is in the direct history of the current 
   await gitCheckout('master', false);
 
   t.true(await isRefInHistory(commits[0].hash));
-  t.false(await isRefInHistory(otherCommits[0].hash));
+  t.falsy(await isRefInHistory(otherCommits[0].hash));
 });
 
 test.serial('Get the commit sha for a given tag or falsy if the tag does not exists', async t => {
@@ -169,11 +169,11 @@ test.serial('Return "true" if in a Git repository', async t => {
   t.true(await isGitRepo());
 });
 
-test.serial('Return "false" if not in a Git repository', async t => {
+test.serial('Return falsy if not in a Git repository', async t => {
   const dir = tempy.directory();
   process.chdir(dir);
 
-  t.false(await isGitRepo());
+  t.falsy(await isGitRepo());
 });
 
 test.serial('Return "true" for valid tag names', async t => {
@@ -183,11 +183,11 @@ test.serial('Return "true" for valid tag names', async t => {
   t.true(await verifyTagName('tag/name'));
 });
 
-test.serial('Return "false" for invalid tag names', async t => {
-  t.false(await verifyTagName('?1.0.0'));
-  t.false(await verifyTagName('*1.0.0'));
-  t.false(await verifyTagName('[1.0.0]'));
-  t.false(await verifyTagName('1.0.0..'));
+test.serial('Return falsy for invalid tag names', async t => {
+  t.falsy(await verifyTagName('?1.0.0'));
+  t.falsy(await verifyTagName('*1.0.0'));
+  t.falsy(await verifyTagName('[1.0.0]'));
+  t.falsy(await verifyTagName('1.0.0..'));
 });
 
 test.serial('Throws error if obtaining the tags fails', async t => {
