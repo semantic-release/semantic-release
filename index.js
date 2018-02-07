@@ -1,4 +1,4 @@
-const {template} = require('lodash');
+const {template, isFunction} = require('lodash');
 const marked = require('marked');
 const TerminalRenderer = require('marked-terminal');
 const envCi = require('env-ci');
@@ -108,7 +108,7 @@ module.exports = async opts => {
     unhook();
     return result;
   } catch (err) {
-    const errors = err.name === 'AggregateError' ? Array.from(err).sort(error => !error.semanticRelease) : [err];
+    const errors = err && isFunction(err[Symbol.iterator]) ? [...err].sort(error => !error.semanticRelease) : [err];
     for (const error of errors) {
       if (error.semanticRelease) {
         logger.log(`%s ${error.message}`, error.code);

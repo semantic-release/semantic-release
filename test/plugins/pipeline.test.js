@@ -1,5 +1,6 @@
 import test from 'ava';
 import {stub} from 'sinon';
+import AggregateError from 'aggregate-error';
 import pipeline from '../../lib/plugins/pipeline';
 
 test('Execute each function in series passing the same input', async t => {
@@ -65,6 +66,22 @@ test('Stop execution and throw error is a step rejects', async t => {
   t.true(step3.notCalled);
 });
 
+test('Throw all errors from the first step throwing an AggregateError', async t => {
+  const error1 = new Error('test error 1');
+  const error2 = new Error('test error 2');
+
+  const step1 = stub().resolves(1);
+  const step2 = stub().rejects(new AggregateError([error1, error2]));
+  const step3 = stub().resolves(3);
+
+  const errors = await t.throws(pipeline([step1, step2, step3])(0));
+
+  t.deepEqual(Array.from(errors), [error1, error2]);
+  t.true(step1.calledWith(0));
+  t.true(step2.calledWith(0));
+  t.true(step3.notCalled);
+});
+
 test('Execute all even if a Promise rejects', async t => {
   const error1 = new Error('test error 1');
   const error2 = new Error('test error 2');
@@ -80,7 +97,22 @@ test('Execute all even if a Promise rejects', async t => {
   t.true(step3.calledWith(0));
 });
 
-test('Execute each function in series passing a transformed input even if a Promise rejects', async t => {
+test('Throw all errors from all steps throwing an AggregateError', async t => {
+  const error1 = new Error('test error 1');
+  const error2 = new Error('test error 2');
+  const error3 = new Error('test error 3');
+  const error4 = new Error('test error 4');
+  const step1 = stub().rejects(new AggregateError([error1, error2]));
+  const step2 = stub().rejects(new AggregateError([error3, error4]));
+
+  const errors = await t.throws(pipeline([step1, step2])(0, true));
+
+  t.deepEqual(Array.from(errors), [error1, error2, error3, error4]);
+  t.true(step1.calledWith(0));
+  t.true(step2.calledWith(0));
+});
+
+test('Execute each function in series passing a transformed input even if a step rejects', async t => {
   const error2 = new Error('test error 2');
   const error3 = new Error('test error 3');
   const step1 = stub().resolves(1);
