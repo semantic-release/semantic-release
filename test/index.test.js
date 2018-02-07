@@ -3,6 +3,7 @@ import proxyquire from 'proxyquire';
 import {stub} from 'sinon';
 import tempy from 'tempy';
 import clearModule from 'clear-module';
+import AggregateError from 'aggregate-error';
 import SemanticReleaseError from '@semantic-release/error';
 import DEFINITIONS from '../lib/plugins/definitions';
 import {
@@ -229,7 +230,7 @@ test.serial('Log all "verifyConditions" errors', async t => {
   const options = {
     branch: 'master',
     repositoryUrl,
-    verifyConditions: [stub().rejects(error1), stub().rejects(error2), stub().rejects(error3)],
+    verifyConditions: [stub().rejects(new AggregateError([error1, error2])), stub().rejects(error3)],
   };
 
   const semanticRelease = proxyquire('..', {
