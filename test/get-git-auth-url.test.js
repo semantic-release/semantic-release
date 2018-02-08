@@ -29,6 +29,14 @@ test.serial(
   }
 );
 
+test.serial('Handle "https" URL with group and subgroup', t => {
+  t.is(getAuthUrl('https://host.com/group/subgroup/owner/repo.git'), 'https://host.com/group/subgroup/owner/repo.git');
+});
+
+test.serial('Handle "git" URL with group and subgroup', t => {
+  t.is(getAuthUrl('git@host.com:group/subgroup/owner/repo.git'), 'git@host.com:group/subgroup/owner/repo.git');
+});
+
 test.serial('Return the "https" formatted URL if "gitCredentials" is defined and repositoryUrl is a "git" URL', t => {
   process.env.GIT_CREDENTIALS = 'user:pass';
   t.is(getAuthUrl('git@host.com:owner/repo.git'), 'https://user:pass@host.com/owner/repo.git');
@@ -78,4 +86,20 @@ test.serial('Return the "https" formatted URL if "gitCredentials" is defined wit
 test.serial('Return the "https" formatted URL if "gitCredentials" is defined with "GITLAB_TOKEN"', t => {
   process.env.GITLAB_TOKEN = 'token';
   t.is(getAuthUrl('git@host.com:owner/repo.git'), 'https://gitlab-ci-token:token@host.com/owner/repo.git');
+});
+
+test.serial('Handle "https" URL with group and subgroup, with "GIT_CREDENTIALS"', t => {
+  process.env.GIT_CREDENTIALS = 'user:pass';
+  t.is(
+    getAuthUrl('https://host.com/group/subgroup/owner/repo.git'),
+    'https://user:pass@host.com/group/subgroup/owner/repo.git'
+  );
+});
+
+test.serial('Handle "git" URL with group and subgroup, with "GIT_CREDENTIALS', t => {
+  process.env.GIT_CREDENTIALS = 'user:pass';
+  t.is(
+    getAuthUrl('git@host.com:group/subgroup/owner/repo.git'),
+    'https://user:pass@host.com/group/subgroup/owner/repo.git'
+  );
 });
