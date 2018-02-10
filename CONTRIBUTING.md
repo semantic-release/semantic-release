@@ -10,7 +10,7 @@ As a contributor, here are the guidelines we would like you to follow:
 - [Coding rules](#coding-rules)
 - [Working with the code](#working-with-the-code)
 
-We also recommend to read [How to Contribute to Open Source](https://opensource.guide/how-to-contribute).
+We also recommend that you read [How to Contribute to Open Source](https://opensource.guide/how-to-contribute).
 
 ## Code of conduct
 
@@ -20,33 +20,33 @@ Help us keep **semantic-release** open and inclusive. Please read and follow our
 
 ### Improve documentation
 
-As a **semantic-release** user you are the perfect candidate to help us improve our documentation: typo corrections, clarifications, more examples, new [recipes](docs/recipes/README.md) etc. Take a look at the [documentation issues that need help](https://github.com/issues?utf8=%E2%9C%93&q=is%3Aopen+is%3Aissue+user%3Asemantic-release+archived%3Afalse+label%3A%22help+wanted%22+label%3Adocs+).
+As a **semantic-release** user, you are the perfect candidate to help us improve our documentation: typo corrections, clarifications, more examples, new [recipes](docs/recipes/README.md), etc. Take a look at the [documentation issues that need help](https://github.com/issues?utf8=%E2%9C%93&q=is%3Aopen+is%3Aissue+user%3Asemantic-release+archived%3Afalse+label%3A%22help+wanted%22+label%3Adocs+).
 
-Please follow the [Documentation guideline](#documentation).
+Please follow the [Documentation guidelines](#documentation).
 
 ### Give feedback on issues
 
-Some issues are created without information requested in the [Bug report guideline](#bug-report). Help making them easier to resolve by adding any relevant informations.
+Some issues are created without information requested in the [Bug report guideline](#bug-report). Help make them easier to resolve by adding any relevant information.
 
 Issues with the [design label](https://github.com/issues?q=is%3Aopen+is%3Aissue+user%3Asemantic-release+archived%3Afalse+label%3Adesign) are meant to discuss the implementation of new features. Participating in the discussion is a good opportunity to get involved and influence the future direction of **semantic-release**.
 
 ### Fix bugs and implement features
 
-Confirmed bug and ready to implement features are marked with the [help wanted label](https://github.com/issues?utf8=%E2%9C%93&q=is%3Aopen+is%3Aissue+user%3Asemantic-release+archived%3Afalse+label%3A%22help+wanted%22). Post a comment on an issue to indicate you would like to work on it and to request help from the [@semantic-release/maintainers](https://github.com/orgs/semantic-release/teams/contributors) and the community.
+Confirmed bugs and ready-to-implement features are marked with the [help wanted label](https://github.com/issues?utf8=%E2%9C%93&q=is%3Aopen+is%3Aissue+user%3Asemantic-release+archived%3Afalse+label%3A%22help+wanted%22). Post a comment on an issue to indicate you would like to work on it and to request help from the [@semantic-release/maintainers](https://github.com/orgs/semantic-release/teams/contributors) and the community.
 
 ## Using the issue tracker
 
 The issue tracker is the channel for [bug reports](#bug-report), [features requests](#feature-request) and [submitting pull requests](#submitting-a-pull-request) only. Please use the [Support](docs/support/README.md) and [Get help](README.md#get-help) sections for support, troubleshooting and questions.
 
-Before opening an Issue or a Pull Request, please use the [GitHub issue search](https://github.com/issues?utf8=%E2%9C%93&q=user%3Asemantic-release) to make the bug or feature request hasn't been already reported or fixed.
+Before opening an issue or a Pull Request, please use the [GitHub issue search](https://github.com/issues?utf8=%E2%9C%93&q=user%3Asemantic-release) to make sure the bug or feature request hasn't been already reported or fixed.
 
 ### Bug report
 
-A good bug report shouldn't leave others needing to chase you up for more information. Please try to be as detailed as possible in your report and fill the information requested in the [Bug report template](https://github.com/semantic-release/semantic-release/issues/new?template=bug-report.md).
+A good bug report shouldn't leave others needing to chase you for more information. Please try to be as detailed as possible in your report and fill the information requested in the [Bug report template](https://github.com/semantic-release/semantic-release/issues/new?template=bug-report.md).
 
 ### Feature request
 
-Feature requests are welcome. But take a moment to find out whether your idea fits with the scope and aims of the project. It's up to you to make a strong case to convince the project's developers of the merits of this feature. Please provide as much detail and context as possible and fill the information requested in the [Feature request template](https://github.com/semantic-release/semantic-release/issues/new?template=feature-request.md).
+Feature requests are welcome, but take a moment to find out whether your idea fits with the scope and aims of the project. It's up to you to make a strong case to convince the project's developers of the merits of this feature. Please provide as much detail and context as possible and fill the information requested in the [Feature request template](https://github.com/semantic-release/semantic-release/issues/new?template=feature-request.md).
 
 ### New plugin request
 
@@ -54,9 +54,9 @@ Feature requests are welcome. But take a moment to find out whether your idea fi
 
 ## Submitting a Pull Request
 
-Good pull requests whether patches, improvements or new features are a fantastic help. They should remain focused in scope and avoid containing unrelated commits.
+Good pull requests, whether patches, improvements, or new features, are a fantastic help. They should remain focused in scope and avoid containing unrelated commits.
 
-**Please ask first** before embarking on any significant pull request (e.g. implementing features, refactoring code), otherwise you risk spending a lot of time working on something that the project's developers might not want to merge into the project.
+**Please ask first** before embarking on any significant pull requests (e.g. implementing features, refactoring code), otherwise you risk spending a lot of time working on something that the project's developers might not want to merge into the project.
 
 If you never created a pull request before, welcome 🎉 😄. [Here is a great tutorial](https://opensource.guide/how-to-contribute/#opening-a-pull-request) on how to send one :)
 
@@ -82,14 +82,14 @@ $ git push origin <topic-branch-name>
 6. [Open a Pull Request](https://help.github.com/articles/creating-a-pull-request/#creating-the-pull-request) with a clear title and description.
 
 **Tips**:
-- For ambitious tasks, open a Pull Request as soon as possible with the `[WIP]` prefix i nthe title, in order to get feedback and help from the community.
-- [Allow semantic-release maintainers to make changes to you Pull Request branch](https://help.github.com/articles/allowing-changes-to-a-pull-request-branch-created-from-a-fork) this way we can rebase it and make some minor changes if necessary. All changes we make will be done in new commit and we'll ask for your approval before merging them.
+- For ambitious tasks, open a Pull Request as soon as possible with the `[WIP]` prefix in the title, in order to get feedback and help from the community.
+- [Allow semantic-release maintainers to make changes to you Pull Request branch](https://help.github.com/articles/allowing-changes-to-a-pull-request-branch-created-from-a-fork). This way, we can rebase it and make some minor changes if necessary. All changes we make will be done in new commit and we'll ask for your approval before merging them.
 
 ## Coding rules
 
 ### Source code
 
-To ensure consistency and quality throughout the source code, all code modification must have:
+To ensure consistency and quality throughout the source code, all code modifications must have:
 - No [linting](#lint) errors
 - A [test](#tests) for every possible cases introduced by your code change
 - **100%** test coverage
@@ -99,7 +99,7 @@ To ensure consistency and quality throughout the source code, all code modificat
 
 ### Documentation
 
-To ensure consistency and quality all documentation modification must:
+To ensure consistency and quality, all documentation modifications must:
 - Refer to brand in [bold](https://help.github.com/articles/basic-writing-and-formatting-syntax/#styling-text) with proper capitalization, i.e. **GitHub**, **semantic-release**, **npm**
 - Prefer [tables](https://help.github.com/articles/organizing-information-with-tables) over [lists](https://help.github.com/articles/basic-writing-and-formatting-syntax/#lists) when listing key values, i.e. List of options with their description
 - Use [links](https://help.github.com/articles/basic-writing-and-formatting-syntax/#links) when, the first you are referring to:
@@ -229,11 +229,11 @@ Before pushing your code changes make sure there is no linting errors with `npm 
 
 ### Tests
 
-Running the integration test require to install [Docker](https://docs.docker.com/engine/installation) on your machine.
+Running the integration test requires you to install [Docker](https://docs.docker.com/engine/installation) on your machine.
 
-All the [semantic-release](https://github.com/semantic-release) repository use [AVA](https://github.com/avajs/ava) for writing and running tests.
+All the [semantic-release](https://github.com/semantic-release) repositories use [AVA](https://github.com/avajs/ava) for writing and running tests.
 
-Before pushing your code changes make sure all **test pass** and the **coverage is 100%**:
+Before pushing your code changes make sure all **tests pass** and the **coverage is 100%**:
 
 ```bash
 $ npm run test
