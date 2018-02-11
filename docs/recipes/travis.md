@@ -10,7 +10,7 @@ Alternatively, the default `NPM_TOKEN` and `GH_TOKEN` can be easily [setup with 
 
 For projects that require to be tested only with a single [Node version](https://docs.travis-ci.com/user/getting-started/#Selecting-a-different-programming-language) on [one Operating System](https://docs.travis-ci.com/user/getting-started/#Selecting-infrastructure-(optional)).
 
-**Note**: [Node 8 is the minimal version required](../support/FAQ.md#why-does-semantic-release-require-node-version--8).
+**Note**: [Node 8 is the minimal version required](../support/FAQ.md#why-does-semantic-release-require-node-version--83).
 
 ### `.travis.yml` configuration for single Node job
 
@@ -58,7 +58,7 @@ For projects that require to be tested with multiple [Node versions](https://doc
 
 This example is a minimal configuration for **semantic-release** with a build running Node 4, 6 and 8 on Linux and OSX. See [Travis - Customizing the Build](https://docs.travis-ci.com/user/customizing-the-build) for additional configuration options.
 
-This example uses [`travis-deploy-once`](https://github.com/semantic-release/travis-deploy-once) in order to command [Run `semantic-release` only after all tests succeeded](../usage/ci-configuration.md#run-semantic-release-only-after-all-tests-succeeded). Alternatively you can use [Travis CI Build Stages recipe](travis-build-stages.md).
+This example uses [`travis-deploy-once`](https://github.com/semantic-release/travis-deploy-once) in order to [Run `semantic-release` only after all tests succeeded](../usage/ci-configuration.md#run-semantic-release-only-after-all-tests-succeeded). Alternatively you can use [Travis CI Build Stages recipe](travis-build-stages.md).
 
 It's recommended to run the `semantic-release` command in the [Travis `deploy` step](https://docs.travis-ci.com/user/customizing-the-build/#The-Build-Lifecycle) so if an error occurs the build will fail and Travis will send a notification.
 
@@ -110,7 +110,7 @@ This recipe cover the Travis specifics only. See [Non JavaScript projects recipe
 
 ### `.travis.yml` configuration for non-JavaScript projects
 
-This example is a minimal configuration for semantic-release with a build running [Go 1.6 and 1.7](https://docs.travis-ci.com/user/languages/go) on Linux and OSX. See [Travis - Customizing the Build](https://docs.travis-ci.com/user/customizing-the-build) for additional configuration options.
+This example is a minimal configuration for **semantic-release** with a build running [Go 1.6 and 1.7](https://docs.travis-ci.com/user/languages/go) on Linux and OSX. See [Travis - Customizing the Build](https://docs.travis-ci.com/user/customizing-the-build) for additional configuration options.
 
 This example uses [`travis-deploy-once`](https://github.com/semantic-release/travis-deploy-once) in order to [run `semantic-release` only after all tests succeeded](../usage/ci-configuration.md#run-semantic-release-only-after-all-tests-succeeded). Alternatively you can use [Travis CI Build Stages recipe](travis-build-stages.md).
 
@@ -139,7 +139,7 @@ deploy:
   script:
     # Use nvm to install and use the Node LTS version (nvm is installed on all Travis images)
     - nvm install lts/*
-    # Run semantic-release only on job, after all other are successful
+    # Run semantic-release only on one job, after all other are successful
     - npx travis-deploy-once "npx semantic-release"
 ```
 
