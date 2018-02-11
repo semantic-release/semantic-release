@@ -131,7 +131,7 @@ See [Artifactory - npm Registry](https://www.jfrog.com/confluence/display/RTF/Np
 
 You can trigger a release by pushing to your Git repository. You deliberately cannot trigger a *specific* version release, because this is the whole point of semantic-release.
 
-### Can I exclude commits from the analysis?
+## Can I exclude commits from the analysis?
 
 Yes, every commits that contains `[skip release]` or `[release skip]` in their message will be excluded from the commit analysis and won't participate in the release type determination.
 
