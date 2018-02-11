@@ -25,10 +25,6 @@ language: node_js
 
 node_js: 8
 
-script:
-  # Run tests
-  - npm run test
-
 deploy:
   provider: script
   skip_cleanup: true
@@ -75,10 +71,6 @@ node_js:
 os:
   - linux
   - osx
-
-script:
-  # Run tests
-  - npm run test
 
 deploy:
   provider: script
@@ -128,10 +120,6 @@ go:
 os:
   - linux
   - osx
-
-script:
-  # Run tests
-  - go test -v ./...
 
 deploy:
   provider: script
