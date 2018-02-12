@@ -4,7 +4,8 @@ import got from 'got';
 import pRetry from 'p-retry';
 import {mockServerClient} from 'mockserver-client';
 
-const IMAGE = 'jamesdbloom/mockserver:latest';
+// TODO temporarly use `mockserver-5.3.0` due to https://github.com/jamesdbloom/mockserver/issues/435
+const IMAGE = 'jamesdbloom/mockserver:mockserver-5.3.0';
 const MOCK_SERVER_PORT = 1080;
 const MOCK_SERVER_HOST = 'localhost';
 const docker = new Docker();
