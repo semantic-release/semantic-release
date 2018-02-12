@@ -28,6 +28,14 @@ Plugin responsible for generating release notes.
 
 Default implementation: [@semantic-release/release-notes-generator](https://github.com/semantic-release/release-notes-generator).
 
+### prepare plugin
+
+Plugin responsible for preparing the release, including:
+- Creating or updating files such as `package.json`, `CHANGELOG.md`, documentation or compiled assets.
+- Create and push commits
+
+Default implementation: [npm](https://github.com/semantic-release/npm#prepare).
+
 ### publish plugin
 
 Plugin responsible for publishing the release.

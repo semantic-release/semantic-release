@@ -67,6 +67,7 @@ test.serial('Plugins are called with expected values', async t => {
   const verifyRelease = stub().resolves();
   const generateNotes = stub().resolves(notes);
   const release1 = {name: 'Release 1', url: 'https://release1.com'};
+  const prepare = stub().resolves();
   const publish1 = stub().resolves(release1);
   const success = stub().resolves();
 
@@ -77,6 +78,7 @@ test.serial('Plugins are called with expected values', async t => {
     analyzeCommits,
     verifyRelease,
     generateNotes,
+    prepare,
     publish: [publish1, pluginNoop],
     success,
   };
@@ -118,6 +120,15 @@ test.serial('Plugins are called with expected values', async t => {
   t.deepEqual(generateNotes.args[0][1].commits[0].hash, commits[0].hash);
   t.deepEqual(generateNotes.args[0][1].commits[0].message, commits[0].message);
   t.deepEqual(generateNotes.args[0][1].nextRelease, nextRelease);
+
+  t.is(prepare.callCount, 1);
+  t.deepEqual(prepare.args[0][0], config);
+  t.deepEqual(prepare.args[0][1].options, options);
+  t.deepEqual(prepare.args[0][1].logger, t.context.logger);
+  t.deepEqual(prepare.args[0][1].lastRelease, lastRelease);
+  t.deepEqual(prepare.args[0][1].commits[0].hash, commits[0].hash);
+  t.deepEqual(prepare.args[0][1].commits[0].message, commits[0].message);
+  t.deepEqual(prepare.args[0][1].nextRelease, {...nextRelease, ...{notes}});
 
   t.is(publish1.callCount, 1);
   t.deepEqual(publish1.args[0][0], config);
@@ -161,6 +172,7 @@ test.serial('Use custom tag format', async t => {
     analyzeCommits: stub().resolves(nextRelease.type),
     verifyRelease: stub().resolves(),
     generateNotes: stub().resolves(notes),
+    prepare: stub().resolves(),
     publish: stub().resolves(),
     success: stub().resolves(),
     fail: stub().resolves(),
@@ -177,7 +189,7 @@ test.serial('Use custom tag format', async t => {
   t.is(await gitRemoteTagHead(repositoryUrl, nextRelease.gitTag), nextRelease.gitHead);
 });
 
-test.serial('Use new gitHead, and recreate release notes if a publish plugin create a commit', async t => {
+test.serial('Use new gitHead, and recreate release notes if a prepare plugin create a commit', async t => {
   // Create a git repository, set the current working directory at the root of the repo
   const repositoryUrl = await gitRepo(true);
   // Add commits to the master branch
@@ -191,10 +203,11 @@ test.serial('Use new gitHead, and recreate release notes if a publish plugin cre
   const notes = 'Release notes';
 
   const generateNotes = stub().resolves(notes);
-  const publish1 = stub().callsFake(async () => {
+  const prepare1 = stub().callsFake(async () => {
     commits = (await gitCommits(['Third'])).concat(commits);
   });
-  const publish2 = stub().resolves();
+  const prepare2 = stub().resolves();
+  const publish = stub().resolves();
 
   const options = {
     branch: 'master',
@@ -203,7 +216,8 @@ test.serial('Use new gitHead, and recreate release notes if a publish plugin cre
     analyzeCommits: stub().resolves(nextRelease.type),
     verifyRelease: stub().resolves(),
     generateNotes,
-    publish: [publish1, publish2],
+    prepare: [prepare1, prepare2],
+    publish,
     success: stub().resolves(),
     fail: stub().resolves(),
   };
@@ -217,14 +231,17 @@ test.serial('Use new gitHead, and recreate release notes if a publish plugin cre
 
   t.is(generateNotes.callCount, 2);
   t.deepEqual(generateNotes.args[0][1].nextRelease, nextRelease);
-  t.is(publish1.callCount, 1);
-  t.deepEqual(publish1.args[0][1].nextRelease, {...nextRelease, ...{notes}});
+  t.is(prepare1.callCount, 1);
+  t.deepEqual(prepare1.args[0][1].nextRelease, {...nextRelease, ...{notes}});
 
   nextRelease.gitHead = await getGitHead();
 
-  t.deepEqual(generateNotes.secondCall.args[1].nextRelease, {...nextRelease, ...{notes}});
-  t.is(publish2.callCount, 1);
-  t.deepEqual(publish2.args[0][1].nextRelease, {...nextRelease, ...{notes}});
+  t.deepEqual(generateNotes.args[1][1].nextRelease, {...nextRelease, ...{notes}});
+  t.is(prepare2.callCount, 1);
+  t.deepEqual(prepare2.args[0][1].nextRelease, {...nextRelease, ...{notes}});
+
+  t.is(publish.callCount, 1);
+  t.deepEqual(publish.args[0][1].nextRelease, {...nextRelease, ...{notes}});
 
   // Verify the tag has been created on the local and remote repo and reference the last gitHead
   t.is(await gitTagHead(nextRelease.gitTag), commits[0].hash);
@@ -258,6 +275,7 @@ test.serial('Call all "success" plugins even if one errors out', async t => {
     verifyConditions: [verifyConditions1, verifyConditions2],
     analyzeCommits,
     generateNotes,
+    prepare: stub().resolves(),
     publish,
     success: [success1, success2],
   };
@@ -383,6 +401,7 @@ test.serial('Dry-run skips publish and success', async t => {
     analyzeCommits,
     verifyRelease,
     generateNotes,
+    prepare: stub().resolves(),
     publish,
     success,
   };
@@ -464,6 +483,7 @@ test.serial('Force a dry-run if not on a CI and "noCi" is not explicitly set', a
     analyzeCommits,
     verifyRelease,
     generateNotes,
+    prepare: stub().resolves(),
     publish,
     success,
     fail: stub().resolves(),
@@ -512,6 +532,7 @@ test.serial('Allow local releases with "noCi" option', async t => {
     analyzeCommits,
     verifyRelease,
     generateNotes,
+    prepare: stub().resolves(),
     publish,
     success,
     fail: stub().resolves(),
@@ -560,6 +581,7 @@ test.serial('Accept "undefined" value returned by the "generateNotes" plugins', 
     analyzeCommits,
     verifyRelease,
     generateNotes,
+    prepare: stub().resolves(),
     publish,
     success: stub().resolves(),
     fail: stub().resolves(),
@@ -611,6 +633,7 @@ test.serial('Returns falsy value if not running from the configured branch', asy
     analyzeCommits: stub().resolves(),
     verifyRelease: stub().resolves(),
     generateNotes: stub().resolves(),
+    prepare: stub().resolves(),
     publish: stub().resolves(),
     success: stub().resolves(),
     fail: stub().resolves(),
@@ -646,6 +669,7 @@ test.serial('Returns falsy value if there is no relevant changes', async t => {
     analyzeCommits,
     verifyRelease,
     generateNotes,
+    prepare: stub().resolves(),
     publish,
     success: stub().resolves(),
     fail: stub().resolves(),
@@ -686,6 +710,7 @@ test.serial('Exclude commits with [skip release] or [release skip] from analysis
     analyzeCommits,
     verifyRelease: stub().resolves(),
     generateNotes: stub().resolves(),
+    prepare: stub().resolves(),
     publish: stub().resolves(),
     success: stub().resolves(),
     fail: stub().resolves(),
@@ -844,6 +869,7 @@ test.serial('Get all commits including the ones not in the shallow clone', async
     analyzeCommits,
     verifyRelease: stub().resolves(),
     generateNotes: stub().resolves(notes),
+    prepare: stub().resolves(),
     publish: stub().resolves(),
     success: stub().resolves(),
     fail: stub().resolves(),

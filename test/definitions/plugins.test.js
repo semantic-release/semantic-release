@@ -46,6 +46,17 @@ test('The "generateNotes" plugin, if defined, must be a single plugin definition
   t.true(plugins.generateNotes.config.validator(() => {}));
 });
 
+test('The "prepare" plugin, if defined, must be a single or an array of plugins definition', t => {
+  t.false(plugins.verifyRelease.config.validator({}));
+  t.false(plugins.verifyRelease.config.validator({path: null}));
+
+  t.true(plugins.verifyRelease.config.validator({path: 'plugin-path.js'}));
+  t.true(plugins.verifyRelease.config.validator());
+  t.true(plugins.verifyRelease.config.validator('plugin-path.js'));
+  t.true(plugins.verifyRelease.config.validator(() => {}));
+  t.true(plugins.verifyRelease.config.validator([{path: 'plugin-path.js'}, 'plugin-path.js', () => {}]));
+});
+
 test('The "publish" plugin is mandatory, and must be a single or an array of plugins definition', t => {
   t.false(plugins.publish.config.validator({}));
   t.false(plugins.publish.config.validator({path: null}));
