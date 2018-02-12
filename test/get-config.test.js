@@ -31,7 +31,8 @@ test.afterEach.always(() => {
 });
 
 test.serial('Default values, reading repositoryUrl from package.json', async t => {
-  const pkg = {repository: 'git@package.com:owner/module.git'};
+  process.env.GIT_CREDENTIALS = 'user:pass';
+  const pkg = {repository: 'https://package.com/owner/module.git'};
   // Create a git repository, set the current working directory at the root of the repo
   await gitRepo();
   await gitCommits(['First']);
@@ -44,25 +45,27 @@ test.serial('Default values, reading repositoryUrl from package.json', async t =
 
   // Verify the default options are set
   t.is(options.branch, 'master');
-  t.is(options.repositoryUrl, 'git@package.com:owner/module.git');
+  t.is(options.repositoryUrl, 'https://user:pass@package.com/owner/module.git');
   t.is(options.tagFormat, `v\${version}`);
 });
 
 test.serial('Default values, reading repositoryUrl from repo if not set in package.json', async t => {
+  process.env.GIT_CREDENTIALS = 'user:pass';
   // Create a git repository, set the current working directory at the root of the repo
   await gitRepo();
   // Add remote.origin.url config
-  await gitAddConfig('remote.origin.url', 'git@repo.com:owner/module.git');
+  await gitAddConfig('remote.origin.url', 'https://hostname.com/owner/module.git');
 
   const {options} = await t.context.getConfig();
 
   // Verify the default options are set
   t.is(options.branch, 'master');
-  t.is(options.repositoryUrl, 'git@repo.com:owner/module.git');
+  t.is(options.repositoryUrl, 'https://user:pass@hostname.com/owner/module.git');
   t.is(options.tagFormat, `v\${version}`);
 });
 
 test.serial('Default values, reading repositoryUrl (http url) from package.json if not set in repo', async t => {
+  process.env.GIT_CREDENTIALS = 'user:pass';
   const pkg = {repository: 'https://hostname.com/owner/module.git'};
   // Create a git repository, set the current working directory at the root of the repo
   await gitRepo();
@@ -73,7 +76,7 @@ test.serial('Default values, reading repositoryUrl (http url) from package.json 
 
   // Verify the default options are set
   t.is(options.branch, 'master');
-  t.is(options.repositoryUrl, pkg.repository);
+  t.is(options.repositoryUrl, 'https://user:pass@hostname.com/owner/module.git');
   t.is(options.tagFormat, `v\${version}`);
 });
 
