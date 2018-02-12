@@ -3,6 +3,7 @@ const marked = require('marked');
 const TerminalRenderer = require('marked-terminal');
 const envCi = require('env-ci');
 const hookStd = require('hook-std');
+const pkg = require('./package.json');
 const hideSensitive = require('./lib/hide-sensitive');
 const getConfig = require('./lib/get-config');
 const verify = require('./lib/verify');
@@ -140,6 +141,7 @@ async function callFail(plugins, options, error) {
 }
 
 module.exports = async opts => {
+  logger.log(`Running %s version %s`, pkg.name, pkg.version);
   const unhook = hookStd({silent: false}, hideSensitive);
   try {
     const config = await getConfig(opts, logger);

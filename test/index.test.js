@@ -475,7 +475,7 @@ test.serial('Force a dry-run if not on a CI and "noCi" is not explicitly set', a
   });
   t.truthy(await semanticRelease(options));
 
-  t.is(t.context.log.args[0][0], 'This run was not triggered in a known CI environment, running in dry-run mode.');
+  t.is(t.context.log.args[1][0], 'This run was not triggered in a known CI environment, running in dry-run mode.');
   t.is(verifyConditions.callCount, 1);
   t.is(analyzeCommits.callCount, 1);
   t.is(verifyRelease.callCount, 1);
@@ -596,7 +596,7 @@ test.serial('Returns falsy value if triggered by a PR', async t => {
 
   t.falsy(await semanticRelease({repositoryUrl}));
   t.is(
-    t.context.log.args[8][0],
+    t.context.log.args[9][0],
     "This run was triggered by a pull request and therefore a new version won't be published."
   );
 });
@@ -623,7 +623,7 @@ test.serial('Returns falsy value if not running from the configured branch', asy
 
   t.falsy(await semanticRelease(options));
   t.is(
-    t.context.log.args[0][0],
+    t.context.log.args[1][0],
     'This test run was triggered on the branch other-branch, while semantic-release is configured to only publish from master, therefore a new version won’t be published.'
   );
 });
@@ -661,7 +661,7 @@ test.serial('Returns falsy value if there is no relevant changes', async t => {
   t.is(verifyRelease.callCount, 0);
   t.is(generateNotes.callCount, 0);
   t.is(publish.callCount, 0);
-  t.is(t.context.log.args[6][0], 'There are no relevant changes, so no new version is released.');
+  t.is(t.context.log.args[7][0], 'There are no relevant changes, so no new version is released.');
 });
 
 test.serial('Exclude commits with [skip release] or [release skip] from analysis', async t => {
@@ -723,8 +723,8 @@ test.serial('Hide sensitive environment variable values from the logs', async t 
 
   await t.throws(semanticRelease(options));
 
-  t.regex(t.context.stdout.args[8][0], /Console: The token \[secure\] is invalid/);
-  t.regex(t.context.stdout.args[9][0], /Log: The token \[secure\] is invalid/);
+  t.regex(t.context.stdout.args[9][0], /Console: The token \[secure\] is invalid/);
+  t.regex(t.context.stdout.args[10][0], /Log: The token \[secure\] is invalid/);
   t.regex(t.context.stderr.args[0][0], /Error: The token \[secure\] is invalid/);
   t.regex(t.context.stderr.args[1][0], /Invalid token \[secure\]/);
 });
