@@ -52,7 +52,7 @@ For projects that require to be tested with multiple [Node versions](https://doc
 
 ### `.travis.yml` configuration for multiple Node jobs
 
-This example is a minimal configuration for **semantic-release** with a build running Node 4, 6 and 8 on Linux and OSX. See [Travis - Customizing the Build](https://docs.travis-ci.com/user/customizing-the-build) for additional configuration options.
+This example is a minimal configuration for **semantic-release** with a build running Node 6 and 8. See [Travis - Customizing the Build](https://docs.travis-ci.com/user/customizing-the-build) for additional configuration options.
 
 This example uses [`travis-deploy-once`](https://github.com/semantic-release/travis-deploy-once) in order to [Run `semantic-release` only after all tests succeeded](../usage/ci-configuration.md#run-semantic-release-only-after-all-tests-succeeded). Alternatively you can use [Travis CI Build Stages recipe](travis-build-stages.md).
 
@@ -66,11 +66,6 @@ language: node_js
 node_js:
   - 8
   - 6
-  - 4
-
-os:
-  - linux
-  - osx
 
 deploy:
   provider: script
