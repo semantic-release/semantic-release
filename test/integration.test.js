@@ -619,24 +619,3 @@ test.serial('Exit with 1 if missing permission to push to the remote repository'
   t.regex(stdout, /EGITNOPERMISSION/);
   t.is(code, 1);
 });
-
-test.serial('CLI returns error code and prints help if called with a command', async t => {
-  t.log('$ semantic-release pre');
-  const {stdout, code} = await execa(cli, ['pre'], {env, reject: false});
-  t.regex(stdout, /Usage: semantic-release/);
-  t.is(code, 1);
-});
-
-test.serial('CLI prints help if called with --help', async t => {
-  t.log('$ semantic-release --help');
-  const {stdout, code} = await execa(cli, ['--help'], {env});
-  t.regex(stdout, /Usage: semantic-release/);
-  t.is(code, 0);
-});
-
-test.serial('CLI returns error code with invalid option', async t => {
-  t.log('$ semantic-release --unknown-option');
-  const {stderr, code} = await execa(cli, ['--unknown-option'], {env, reject: false});
-  t.regex(stderr, /unknown option/);
-  t.is(code, 1);
-});
