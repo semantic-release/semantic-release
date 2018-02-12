@@ -12,7 +12,7 @@ const getCommits = require('./lib/get-commits');
 const getLastRelease = require('./lib/get-last-release');
 const {extractErrors} = require('./lib/utils');
 const logger = require('./lib/logger');
-const {unshallow, gitHead: getGitHead, tag, push, deleteTag} = require('./lib/git');
+const {unshallow, gitHead: getGitHead, tag, push} = require('./lib/git');
 
 marked.setOptions({renderer: new TerminalRenderer()});
 
@@ -41,7 +41,7 @@ async function run(options, plugins) {
   await verify(options);
 
   logger.log('Run automated release from branch %s', options.branch);
-
+  console.log(options);
   logger.log('Call plugin %s', 'verify-conditions');
   await plugins.verifyConditions({options, logger}, {settleAll: true});
 
@@ -79,26 +79,14 @@ async function run(options, plugins) {
     logger.log('Call plugin %s', 'generateNotes');
     nextRelease.notes = await plugins.generateNotes(generateNotesParam);
 
-    // Create the tag before calling the publish plugins as some require the tag to exists
-    logger.log('Create tag %s', nextRelease.gitTag);
-    await tag(nextRelease.gitTag);
-    await push(options.repositoryUrl, branch);
-
-    logger.log('Call plugin %s', 'publish');
-    const releases = await plugins.publish(
+    logger.log('Call plugin %s', 'prepare');
+    await plugins.prepare(
       {options, logger, lastRelease, commits, nextRelease},
       {
         getNextInput: async lastResult => {
           const newGitHead = await getGitHead();
-          // If previous publish plugin has created a commit (gitHead changed)
+          // If previous prepare plugin has created a commit (gitHead changed)
           if (lastResult.nextRelease.gitHead !== newGitHead) {
-            // Delete the previously created tag
-            await deleteTag(options.repositoryUrl, nextRelease.gitTag);
-            // Recreate the tag, referencing the new gitHead
-            logger.log('Create tag %s', nextRelease.gitTag);
-            await tag(nextRelease.gitTag);
-            await push(options.repositoryUrl, branch);
-
             nextRelease.gitHead = newGitHead;
             // Regenerate the release notes
             logger.log('Call plugin %s', 'generateNotes');
@@ -107,9 +95,19 @@ async function run(options, plugins) {
           // Call the next publish plugin with the updated `nextRelease`
           return {options, logger, lastRelease, commits, nextRelease};
         },
-        // Add nextRelease and plugin properties to published release
-        transform: (release, step) => ({...(isPlainObject(release) ? release : {}), ...nextRelease, ...step}),
       }
+    );
+
+    // Create the tag before calling the publish plugins as some require the tag to exists
+    logger.log('Create tag %s', nextRelease.gitTag);
+    await tag(nextRelease.gitTag);
+    await push(options.repositoryUrl, branch);
+
+    logger.log('Call plugin %s', 'publish');
+    const releases = await plugins.publish(
+      {options, logger, lastRelease, commits, nextRelease},
+      // Add nextRelease and plugin properties to published release
+      {transform: (release, step) => ({...(isPlainObject(release) ? release : {}), ...nextRelease, ...step})}
     );
 
     await plugins.success(

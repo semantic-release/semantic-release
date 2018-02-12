@@ -155,6 +155,18 @@ Define the [generate notes plugin](plugins.md#generatenotes-plugin).
 
 See [Plugins configuration](plugins.md#configuration) for more details.
 
+### prepare
+
+Type: `Array`, `String`, `Object`
+
+Default: `['@semantic-release/npm']`
+
+CLI argument: `--prepare`
+
+Define the list of [prepare plugins](plugins.md#prepare-plugin). Plugins will run in series, in the order defined in the `Array`.
+
+See [Plugins configuration](plugins.md#configuration) for more details.
+
 ### publish
 
 Type: `Array`, `String`, `Object`

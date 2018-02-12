@@ -27,6 +27,7 @@ test('Export default plugins', t => {
   t.is(typeof plugins.analyzeCommits, 'function');
   t.is(typeof plugins.verifyRelease, 'function');
   t.is(typeof plugins.generateNotes, 'function');
+  t.is(typeof plugins.prepare, 'function');
   t.is(typeof plugins.publish, 'function');
   t.is(typeof plugins.success, 'function');
   t.is(typeof plugins.fail, 'function');
@@ -49,6 +50,7 @@ test('Export plugins based on config', t => {
   t.is(typeof plugins.analyzeCommits, 'function');
   t.is(typeof plugins.verifyRelease, 'function');
   t.is(typeof plugins.generateNotes, 'function');
+  t.is(typeof plugins.prepare, 'function');
   t.is(typeof plugins.publish, 'function');
   t.is(typeof plugins.success, 'function');
   t.is(typeof plugins.fail, 'function');
@@ -79,6 +81,7 @@ test.serial('Export plugins loaded from the dependency of a shareable config mod
   t.is(typeof plugins.analyzeCommits, 'function');
   t.is(typeof plugins.verifyRelease, 'function');
   t.is(typeof plugins.generateNotes, 'function');
+  t.is(typeof plugins.prepare, 'function');
   t.is(typeof plugins.publish, 'function');
   t.is(typeof plugins.success, 'function');
   t.is(typeof plugins.fail, 'function');
@@ -106,6 +109,7 @@ test.serial('Export plugins loaded from the dependency of a shareable config fil
   t.is(typeof plugins.analyzeCommits, 'function');
   t.is(typeof plugins.verifyRelease, 'function');
   t.is(typeof plugins.generateNotes, 'function');
+  t.is(typeof plugins.prepare, 'function');
   t.is(typeof plugins.publish, 'function');
   t.is(typeof plugins.success, 'function');
   t.is(typeof plugins.fail, 'function');

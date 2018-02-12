@@ -53,6 +53,9 @@ test.serial('Pass options to semantic-release API', async t => {
     'verify2',
     '--generate-notes',
     'notes',
+    '--prepare',
+    'prepare1',
+    'prepare2',
     '--publish',
     'publish1',
     'publish2',
@@ -76,6 +79,7 @@ test.serial('Pass options to semantic-release API', async t => {
   t.is(run.args[0][0].analyzeCommits, 'analyze');
   t.deepEqual(run.args[0][0].verifyRelease, ['verify1', 'verify2']);
   t.is(run.args[0][0].generateNotes, 'notes');
+  t.deepEqual(run.args[0][0].prepare, ['prepare1', 'prepare2']);
   t.deepEqual(run.args[0][0].publish, ['publish1', 'publish2']);
   t.deepEqual(run.args[0][0].success, ['success1', 'success2']);
   t.deepEqual(run.args[0][0].fail, ['fail1', 'fail2']);

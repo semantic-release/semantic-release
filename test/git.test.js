@@ -10,7 +10,6 @@ import {
   push,
   gitTags,
   isGitRepo,
-  deleteTag,
   verifyTagName,
 } from '../lib/git';
 import {
@@ -137,18 +136,6 @@ test.serial('Add tag on head commit', async t => {
   await tag('tag_name');
 
   await t.is(await gitCommitTag(commits[0].hash), 'tag_name');
-});
-
-test.serial('Delete a tag', async t => {
-  // Create a git repository with a remote, set the current working directory at the root of the repo
-  const repo = await gitRepo(true);
-  await gitCommits(['Test commit']);
-  await tag('tag_name');
-  await push(repo, 'master');
-
-  await deleteTag(repo, 'tag_name');
-  t.falsy(await gitTagHead('tag_name'));
-  t.falsy(await gitRemoteTagHead(repo, 'tag_name'));
 });
 
 test.serial('Push tag and commit to remote repository', async t => {
