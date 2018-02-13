@@ -80,6 +80,19 @@ test.serial('Default values, reading repositoryUrl (http url) from package.json 
   t.is(options.tagFormat, `v\${version}`);
 });
 
+test.serial('Do not add git credential to repositoryUrl if push is allowed', async t => {
+  process.env.GIT_CREDENTIALS = 'user:pass';
+  // Create a git repository, set the current working directory at the root of the repo
+  const repositoryUrl = await gitRepo(true);
+  const pkg = {repository: repositoryUrl};
+  // Create package.json in repository root
+  await outputJson('./package.json', pkg);
+
+  const {options} = await t.context.getConfig();
+
+  t.is(options.repositoryUrl, repositoryUrl);
+});
+
 test.serial('Read options from package.json', async t => {
   const release = {
     analyzeCommits: {path: 'analyzeCommits', param: 'analyzeCommits_param'},
