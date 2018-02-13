@@ -171,7 +171,7 @@ See [Plugins configuration](plugins.md#configuration) for more details.
 
 Type: `Array`, `String`, `Object`
 
-Default: `[]`
+Default: `['@semantic-release/github']`
 
 CLI argument: `--success`
 
@@ -183,7 +183,7 @@ See [Plugins configuration](plugins.md#configuration) for more details.
 
 Type: `Array`, `String`, `Object`
 
-Default: `[]`
+Default: `['@semantic-release/github']`
 
 CLI argument: `--fail`
 
