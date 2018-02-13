@@ -603,11 +603,11 @@ test.serial('Exit with 1 if missing permission to push to the remote repository'
 
   // Create a git repository, set the current working directory at the root of the repo
   t.log('Create git repository');
-  const {repositoryUrl} = await gitbox.createRepo(packageName);
+  await gitbox.createRepo(packageName);
   await writeJson('./package.json', {
     name: packageName,
     version: '0.0.0-dev',
-    repository: {url: repositoryUrl},
+    repository: {url: 'http://user:wrong_pass@localhost:2080/git/unauthorized.git'},
   });
 
   /* Initial release */
