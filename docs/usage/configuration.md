@@ -166,3 +166,27 @@ CLI argument: `--publish`
 Define the list of [publish plugins](plugins.md#publish-plugin). Plugins will run in series, in the order defined in the `Array`.
 
 See [Plugins configuration](plugins.md#configuration) for more details.
+
+### success
+
+Type: `Array`, `String`, `Object`
+
+Default: `[]`
+
+CLI argument: `--success`
+
+Define the list of [success plugins](plugins.md#success-plugin). Plugins will run in series, in the order defined in the `Array`.
+
+See [Plugins configuration](plugins.md#configuration) for more details.
+
+### fail
+
+Type: `Array`, `String`, `Object`
+
+Default: `[]`
+
+CLI argument: `--fail`
+
+Define the list of [fail plugins](plugins.md#fail-plugin). Plugins will run in series, in the order defined in the `Array`.
+
+See [Plugins configuration](plugins.md#configuration) for more details.
