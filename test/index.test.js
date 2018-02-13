@@ -596,7 +596,7 @@ test.serial('Returns falsy value if triggered by a PR', async t => {
 
   t.falsy(await semanticRelease({repositoryUrl}));
   t.is(
-    t.context.log.args[9][0],
+    t.context.log.args[t.context.log.args.length - 1][0],
     "This run was triggered by a pull request and therefore a new version won't be published."
   );
 });
@@ -723,8 +723,8 @@ test.serial('Hide sensitive environment variable values from the logs', async t 
 
   await t.throws(semanticRelease(options));
 
-  t.regex(t.context.stdout.args[9][0], /Console: The token \[secure\] is invalid/);
-  t.regex(t.context.stdout.args[10][0], /Log: The token \[secure\] is invalid/);
+  t.regex(t.context.stdout.args[t.context.stdout.args.length - 2][0], /Console: The token \[secure\] is invalid/);
+  t.regex(t.context.stdout.args[t.context.stdout.args.length - 1][0], /Log: The token \[secure\] is invalid/);
   t.regex(t.context.stderr.args[0][0], /Error: The token \[secure\] is invalid/);
   t.regex(t.context.stderr.args[1][0], /Invalid token \[secure\]/);
 });
