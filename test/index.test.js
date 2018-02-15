@@ -302,9 +302,9 @@ test.serial('Log all "verifyConditions" errors', async t => {
     './lib/logger': t.context.logger,
     'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
   });
-  const errors = await t.throws(semanticRelease(options));
+  const errors = [...(await t.throws(semanticRelease(options)))];
 
-  t.deepEqual(Array.from(errors), [error1, error2, error3]);
+  t.deepEqual(errors, [error1, error2, error3]);
   t.deepEqual(t.context.log.args[t.context.log.args.length - 2], ['%s error 2', 'ERR2']);
   t.deepEqual(t.context.log.args[t.context.log.args.length - 1], ['%s error 3', 'ERR3']);
   t.deepEqual(t.context.error.args[t.context.error.args.length - 1], [
@@ -345,9 +345,9 @@ test.serial('Log all "verifyRelease" errors', async t => {
     './lib/logger': t.context.logger,
     'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
   });
-  const errors = await t.throws(semanticRelease(options));
+  const errors = [...(await t.throws(semanticRelease(options)))];
 
-  t.deepEqual(Array.from(errors), [error1, error2]);
+  t.deepEqual(errors, [error1, error2]);
   t.deepEqual(t.context.log.args[t.context.log.args.length - 2], ['%s error 1', 'ERR1']);
   t.deepEqual(t.context.log.args[t.context.log.args.length - 1], ['%s error 2', 'ERR2']);
   t.is(fail.callCount, 1);
@@ -428,9 +428,9 @@ test.serial('Dry-run skips fail', async t => {
     './lib/logger': t.context.logger,
     'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
   });
-  const errors = await t.throws(semanticRelease(options));
+  const errors = [...(await t.throws(semanticRelease(options)))];
 
-  t.deepEqual(Array.from(errors), [error1, error2]);
+  t.deepEqual(errors, [error1, error2]);
   t.deepEqual(t.context.log.args[t.context.log.args.length - 2], ['%s error 1', 'ERR1']);
   t.deepEqual(t.context.log.args[t.context.log.args.length - 1], ['%s error 2', 'ERR2']);
   t.is(fail.callCount, 0);
@@ -785,7 +785,7 @@ test.serial('Throw SemanticReleaseError if repositoryUrl is not set and cannot b
     './lib/logger': t.context.logger,
     'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
   });
-  const errors = Array.from(await t.throws(semanticRelease()));
+  const errors = [...(await t.throws(semanticRelease()))];
 
   // Verify error code and type
   t.is(errors[0].code, 'ENOREPOURL');
