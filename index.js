@@ -29,9 +29,16 @@ async function run(options, plugins) {
     return;
   }
 
-  if (!await verify(options, branch, logger)) {
-    return;
+  if (branch !== options.branch) {
+    logger.log(
+      `This test run was triggered on the branch ${branch}, while semantic-release is configured to only publish from ${
+        options.branch
+      }, therefore a new version won’t be published.`
+    );
+    return false;
   }
+
+  await verify(options);
 
   logger.log('Run automated release from branch %s', options.branch);
 
