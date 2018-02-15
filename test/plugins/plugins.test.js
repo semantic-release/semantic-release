@@ -136,16 +136,16 @@ test('Merge global options with plugin options', async t => {
 });
 
 test('Throw an error if plugins configuration are missing a path for plugin pipeline', t => {
-  const errors = Array.from(t.throws(() => getPlugins({verifyConditions: {}}, {}, t.context.logger)));
+  const errors = [...t.throws(() => getPlugins({verifyConditions: {}}, {}, t.context.logger))];
 
   t.is(errors[0].name, 'SemanticReleaseError');
   t.is(errors[0].code, 'EPLUGINCONF');
 });
 
 test('Throw an error if an array of plugin configuration is missing a path for plugin pipeline', t => {
-  const errors = Array.from(
-    t.throws(() => getPlugins({verifyConditions: [{path: '@semantic-release/npm'}, {}]}, {}, t.context.logger))
-  );
+  const errors = [
+    ...t.throws(() => getPlugins({verifyConditions: [{path: '@semantic-release/npm'}, {}]}, {}, t.context.logger)),
+  ];
 
   t.is(errors[0].name, 'SemanticReleaseError');
   t.is(errors[0].code, 'EPLUGINCONF');
