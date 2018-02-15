@@ -53,8 +53,6 @@
     "cz-conventional-changelog": "^2.0.0",
     "delay": "^2.0.0",
     "dockerode": "^2.5.2",
-    "eslint-config-prettier": "^2.5.0",
-    "eslint-plugin-prettier": "^2.3.0",
     "file-url": "^2.0.2",
     "fs-extra": "^5.0.0",
     "got": "^8.0.0",
@@ -63,7 +61,6 @@
     "nock": "^9.0.2",
     "nyc": "^11.2.1",
     "p-retry": "^1.0.0",
-    "prettier": "~1.10.0",
     "proxyquire": "^1.8.0",
     "sinon": "^4.0.0",
     "tempy": "^0.2.1",
@@ -107,10 +104,7 @@
     "all": true
   },
   "prettier": {
-    "printWidth": 120,
-    "singleQuote": true,
-    "bracketSpacing": false,
-    "trailingComma": "es5"
+    "printWidth": 120
   },
   "publishConfig": {
     "tag": "next"
@@ -131,14 +125,7 @@
     "test": "nyc ava -v"
   },
   "xo": {
-    "extends": [
-      "prettier"
-    ],
-    "plugins": [
-      "prettier"
-    ],
-    "rules": {
-      "prettier/prettier": 2
-    }
+    "prettier": true,
+    "space": true
   }
 }
