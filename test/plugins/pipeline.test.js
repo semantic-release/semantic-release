@@ -118,7 +118,7 @@ test('Throw all errors from the first step throwing an AggregateError', async t 
 
   const errors = await t.throws(pipeline([step1, step2, step3])(0));
 
-  t.deepEqual(Array.from(errors), [error1, error2]);
+  t.deepEqual([...errors], [error1, error2]);
   t.true(step1.calledWith(0));
   t.true(step2.calledWith(0));
   t.true(step3.notCalled);
@@ -133,7 +133,7 @@ test('Execute all even if a Promise rejects', async t => {
 
   const errors = await t.throws(pipeline([step1, step2, step3])(0, {settleAll: true}));
 
-  t.deepEqual(Array.from(errors), [error1, error2]);
+  t.deepEqual([...errors], [error1, error2]);
   t.true(step1.calledWith(0));
   t.true(step2.calledWith(0));
   t.true(step3.calledWith(0));
@@ -149,7 +149,7 @@ test('Throw all errors from all steps throwing an AggregateError', async t => {
 
   const errors = await t.throws(pipeline([step1, step2])(0, {settleAll: true}));
 
-  t.deepEqual(Array.from(errors), [error1, error2, error3, error4]);
+  t.deepEqual([...errors], [error1, error2, error3, error4]);
   t.true(step1.calledWith(0));
   t.true(step2.calledWith(0));
 });
@@ -165,7 +165,7 @@ test('Execute each function in series passing a transformed input even if a step
 
   const errors = await t.throws(pipeline([step1, step2, step3, step4])(0, {settleAll: true, getNextInput}));
 
-  t.deepEqual(Array.from(errors), [error2, error3]);
+  t.deepEqual([...errors], [error2, error3]);
   t.true(step1.calledWith(0));
   t.true(step2.calledWith(0 + 1));
   t.true(step3.calledWith(0 + 1 + error2));
