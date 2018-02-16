@@ -153,6 +153,22 @@ test.serial('Pass empty Array to semantic-release API for list option set to "fa
   t.is(process.exitCode, 0);
 });
 
+test.serial('Do not set properties in option for which arg is not in command line', async t => {
+  const run = stub().resolves(true);
+  const cli = proxyquire('../cli', {'.': run});
+
+  process.argv = ['', '', '-b', 'master'];
+
+  await cli();
+
+  t.false(Object.prototype.hasOwnProperty.call(run.args[0][0], 'ci'));
+  t.false(Object.prototype.hasOwnProperty.call(run.args[0][0], 'd'));
+  t.false(Object.prototype.hasOwnProperty.call(run.args[0][0], 'dry-run'));
+  t.false(Object.prototype.hasOwnProperty.call(run.args[0][0], 'debug'));
+  t.false(Object.prototype.hasOwnProperty.call(run.args[0][0], 'r'));
+  t.false(Object.prototype.hasOwnProperty.call(run.args[0][0], 't'));
+});
+
 test.serial('Set "noCi" options to "true" with "--no-ci"', async t => {
   const run = stub().resolves(true);
   const cli = proxyquire('../cli', {'.': run});
