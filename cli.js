@@ -20,7 +20,7 @@ Usage:
     .option('r', {alias: 'repository-url', describe: 'Git repository URL', type: 'string', group: 'Options'})
     .option('t', {alias: 'tag-format', describe: 'Git tag format', type: 'string', group: 'Options'})
     .option('e', {alias: 'extends', describe: 'Shareable configurations', ...stringList, group: 'Options'})
-    .option('ci', {describe: 'Toggle CI verifications', default: true, type: 'boolean', group: 'Options'})
+    .option('ci', {describe: 'Toggle CI verifications', default: undefined, type: 'boolean', group: 'Options'})
     .option('verify-conditions', {...stringList, group: 'Plugins'})
     .option('analyze-commits', {type: 'string', group: 'Plugins'})
     .option('verify-release', {...stringList, group: 'Plugins'})
@@ -28,15 +28,17 @@ Usage:
     .option('publish', {...stringList, group: 'Plugins'})
     .option('success', {...stringList, group: 'Plugins'})
     .option('fail', {...stringList, group: 'Plugins'})
-    .option('debug', {describe: 'Output debugging information', default: false, type: 'boolean', group: 'Options'})
-    .option('d', {alias: 'dry-run', describe: 'Skip publishing', default: false, type: 'boolean', group: 'Options'})
-    .option('h', {alias: 'help', group: 'Options'})
-    .option('v', {alias: 'version', group: 'Options'})
+    .option('debug', {describe: 'Output debugging information', default: undefined, type: 'boolean', group: 'Options'})
+    .option('d', {alias: 'dry-run', describe: 'Skip publishing', default: undefined, type: 'boolean', group: 'Options'})
+    .option('h', {alias: 'help', default: undefined, group: 'Options'})
+    .option('v', {alias: 'version', default: undefined, group: 'Options'})
     .strict(false)
     .exitProcess(false);
 
   try {
-    const {help, version, ...opts} = cli.argv;
+    // Remove option with undefined values, as yargs sets non defined options as `undefined`
+    const {help, version, ...opts} = pickBy(cli.argv, value => !isUndefined(value));
+
     if (Boolean(help) || Boolean(version)) {
       process.exitCode = 0;
       return;
@@ -52,8 +54,7 @@ Usage:
       require('debug').enable('semantic-release:*');
     }
 
-    // Remove option with undefined values, as yargs sets non defined options as `undefined`
-    await require('.')(pickBy(opts, value => !isUndefined(value)));
+    await require('.')(opts);
     process.exitCode = 0;
   } catch (err) {
     if (err.name !== 'YError') {
