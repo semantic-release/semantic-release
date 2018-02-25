@@ -48,11 +48,11 @@ This removes the immediate connection between human emotions and version numbers
 
 ### Commit message format
 
-**semantic-release** uses the commit messages to determine the type of changes in the codebase. Following formalized conventions for commit messages, **semantic-release** automatically determines the next [semantic version](https://semver.org) number, generates a changelog and publish the release.
+**semantic-release** uses the commit messages to determine the type of changes in the codebase. Following formalized conventions for commit messages, **semantic-release** automatically determines the next [semantic version](https://semver.org) number, generates a changelog and publishes the release.
 
 By default **semantic-release** uses [Angular Commit Message Conventions](https://github.com/angular/angular.js/blob/master/DEVELOPERS.md#-git-commit-guidelines). The commit message format can be changed with the [`preset` or `config` options](docs/usage/configuration.md#options) of the [@semantic-release/commit-analyzer](https://github.com/semantic-release/commit-analyzer#options) and [@semantic-release/release-notes-generator](https://github.com/semantic-release/release-notes-generator#options) plugins.
 
-Tools such as [commitizen](https://github.com/commitizen/cz-cli), [commitlint](https://github.com/marionebl/commitlint) or [semantic-git-commit-cli](https://github.com/JPeer264/node-semantic-git-commit-cli) can be used to help contributor and enforce valid commits message.
+Tools such as [commitizen](https://github.com/commitizen/cz-cli), [commitlint](https://github.com/marionebl/commitlint) or [semantic-git-commit-cli](https://github.com/JPeer264/node-semantic-git-commit-cli) can be used to help contributor and enforce valid commit messages.
 
 Here is an example of the release type that will be done based on a commit messages:
 
@@ -82,12 +82,12 @@ After running the tests the command `semantic-release` will execute the followin
 |-------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Verify Conditions | Verify all the conditions to proceed with the release with the [verify conditions plugins](docs/usage/plugins.md#verifyconditions-plugin).                            |
 | Get last release  | Obtain the commit corresponding to the last release by analyzing [Git tags](https://git-scm.com/book/en/v2/Git-Basics-Tagging).                                       |
-| Analyze commits   | Determine the type of release to do with the [analyze commits plugin](docs/usage/plugins.md#analyzecommits-plugin) based on the commits added since the last release. |
-| Verify release    | Verify the release conformity with the [verify release plugins](docs/usage/plugins.md#verifyrelease-plugin).                                                          |
+| Analyze commits   | Determine the type of release with the [analyze commits plugin](docs/usage/plugins.md#analyzecommits-plugin) based on the commits added since the last release.       |
+| Verify release    | Verify the release conformity with the [verify release plugins](docs/usage/plugins.md#verifyrelease-plugin).                                                           |
 | Generate notes    | Generate release notes with the [generate notes plugin](docs/usage/plugins.md#generatenotes-plugin) for the commits added since the last release.                     |
-| Create Git tag    | Create a Git tag corresponding the new release version                                                                                                                |
-| Prepare           | Prepare the release with the [prepare plugins](docs/usage/plugins.md#prepare-plugin).                                                                                 |
-| Publish           | Publish the release with the [publish plugins](docs/usage/plugins.md#publish-plugin).                                                                                 |
+| Create Git tag    | Create a Git tag corresponding to the new release version                                                                                                             |
+| Prepare           | Prepare the release with the [prepare plugins](docs/usage/plugins.md#prepare-plugin).                                                                                  |
+| Publish           | Publish the release with the [publish plugins](docs/usage/plugins.md#publish-plugin).                                                                                  |
 | Notify            | Notify of new releases or errors with the [success](docs/usage/plugins.md#success-plugin) and [fail](docs/usage/plugins.md#fail-plugin) plugins.                      |
 
 ## Documentation

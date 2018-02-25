@@ -1,36 +1,36 @@
 # Plugins
 
-Each [release steps](../../README.md#release-steps) is implemented within a plugin or a list of plugins that can be configured, allowing to support different [commit message format](../../README.md#commit-message-format), release not generator and publishing platforms.
+Each [release step](../../README.md#release-steps) is implemented within a plugin or a list of plugins that can be configured. This allows for support of different [commit message formats](../../README.md#commit-message-format), release note generators and publishing platforms.
 
 ## Plugin types
 
 ### verifyConditions plugin
 
-Plugin responsible for verifying all the conditions to proceed with the release: configuration is correct, authentication token are valid, etc...
+Responsible for verifying conditions necessary to proceed with the release: configuration is correct, authentication token are valid, etc...
 
 Default implementation: [npm](https://github.com/semantic-release/npm#verifyconditions) and [github](https://github.com/semantic-release/github#verifyconditions).
 
 ### analyzeCommits plugin
 
-Plugin responsible for determining the type of the next release (`major`, `minor` or `patch`).
+Responsible for determining the type of the next release (`major`, `minor` or `patch`).
 
 Default implementation: [@semantic-release/commit-analyzer](https://github.com/semantic-release/commit-analyzer).
 
 ### verifyRelease plugin
 
-Plugin responsible for verifying the parameters (version, type, dist-tag etc...) of the release that is about to be published match certain expectations. For example the [cracks plugin](https://github.com/semantic-release/cracks) allows to verify that if a release contains breaking changes, its type must be `major`.
+Responsible for verifying the parameters (version, type, dist-tag etc...) of the release that is about to be published match certain expectations. For example the [cracks plugin](https://github.com/semantic-release/cracks) is able to verify that if a release contains breaking changes, its type must be `major`.
 
 Default implementation: none.
 
 ### generateNotes plugin
 
-Plugin responsible for generating release notes.
+Responsible for generating release notes.
 
 Default implementation: [@semantic-release/release-notes-generator](https://github.com/semantic-release/release-notes-generator).
 
 ### prepare plugin
 
-Plugin responsible for preparing the release, including:
+Responsible for preparing the release, including:
 - Creating or updating files such as `package.json`, `CHANGELOG.md`, documentation or compiled assets.
 - Create and push commits
 
@@ -38,19 +38,19 @@ Default implementation: [npm](https://github.com/semantic-release/npm#prepare).
 
 ### publish plugin
 
-Plugin responsible for publishing the release.
+Responsible for publishing the release.
 
 Default implementation: [npm](https://github.com/semantic-release/npm#publish) and [github](https://github.com/semantic-release/github#publish).
 
 ### success plugin
 
-Plugin responsible for notifying of a new release.
+Responsible for notifying of a new release.
 
 Default implementation: [github](https://github.com/semantic-release/github#success).
 
 ### fail plugin
 
-Plugin responsible for notifying of a failed release.
+Responsible for notifying of a failed release.
 
 Default implementation: [github](https://github.com/semantic-release/github#fail).
 
@@ -58,7 +58,7 @@ Default implementation: [github](https://github.com/semantic-release/github#fail
 
 Plugin can be configured by specifying the plugin's module name or file path directly as a `String` or within the `path` key of an `Object`.
 
-Plugins specific options can be set similarly to the other **semantic-release** [options](configuration.md#options) or within the plugin `Object`. Plugins options defined along the other **semantic-release** [options](configuration.md#options) will apply to all plugins, while the one defined within the plugin `Object` will apply only to this specific plugin.
+Plugins specific options can be set similarly to the other **semantic-release** [options](configuration.md#options) or within the plugin `Object`. Plugins options defined along with the other **semantic-release** [options](configuration.md#options) will apply to all plugins. Options defined within the plugin `Object` will apply to that specific plugin.
 
 For example:
 ```json
