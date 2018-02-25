@@ -58,7 +58,7 @@ Good pull requests, whether patches, improvements, or new features, are a fantas
 
 **Please ask first** before embarking on any significant pull requests (e.g. implementing features, refactoring code), otherwise you risk spending a lot of time working on something that the project's developers might not want to merge into the project.
 
-If you never created a pull request before, welcome 🎉 😄. [Here is a great tutorial](https://opensource.guide/how-to-contribute/#opening-a-pull-request) on how to send one :)
+If you have never created a pull request before, welcome 🎉 😄. [Here is a great tutorial](https://opensource.guide/how-to-contribute/#opening-a-pull-request) on how to send one :)
 
 Here is a summary of the steps to follow:
 
@@ -83,7 +83,7 @@ $ git push origin <topic-branch-name>
 
 **Tips**:
 - For ambitious tasks, open a Pull Request as soon as possible with the `[WIP]` prefix in the title, in order to get feedback and help from the community.
-- [Allow semantic-release maintainers to make changes to you Pull Request branch](https://help.github.com/articles/allowing-changes-to-a-pull-request-branch-created-from-a-fork). This way, we can rebase it and make some minor changes if necessary. All changes we make will be done in new commit and we'll ask for your approval before merging them.
+- [Allow semantic-release maintainers to make changes to your Pull Request branch](https://help.github.com/articles/allowing-changes-to-a-pull-request-branch-created-from-a-fork). This way, we can rebase it and make some minor changes if necessary. All changes we make will be done in new commit and we'll ask for your approval before merging them.
 
 ## Coding rules
 
@@ -91,7 +91,7 @@ $ git push origin <topic-branch-name>
 
 To ensure consistency and quality throughout the source code, all code modifications must have:
 - No [linting](#lint) errors
-- A [test](#tests) for every possible cases introduced by your code change
+- A [test](#tests) for every possible case introduced by your code change
 - **100%** test coverage
 - [Valid commit message(s)](#commit-message-guidelines)
 - Documentation for new features
@@ -102,7 +102,7 @@ To ensure consistency and quality throughout the source code, all code modificat
 To ensure consistency and quality, all documentation modifications must:
 - Refer to brand in [bold](https://help.github.com/articles/basic-writing-and-formatting-syntax/#styling-text) with proper capitalization, i.e. **GitHub**, **semantic-release**, **npm**
 - Prefer [tables](https://help.github.com/articles/organizing-information-with-tables) over [lists](https://help.github.com/articles/basic-writing-and-formatting-syntax/#lists) when listing key values, i.e. List of options with their description
-- Use [links](https://help.github.com/articles/basic-writing-and-formatting-syntax/#links) when, the first you are referring to:
+- Use [links](https://help.github.com/articles/basic-writing-and-formatting-syntax/#links) when you are referring to:
   - a **semantic-release** concept described somewhere else in the documentation, i.e. How to [contribute](CONTRIBUTING.md)
   - a third-party product/brand/service, i.e. Integrate with [GitHub](https://github.com)
   - an external concept or feature, i.e. Create a [GitHub release](https://help.github.com/articles/creating-releases)
@@ -125,7 +125,7 @@ If possible, make [atomic commits](https://en.wikipedia.org/wiki/Atomic_commit),
 - a functional change should be contained in exactly one commit
 - a commit should not create an inconsistent state (such as test errors, linting errors, partial fix, feature with documentation etc...)
 
-A complex feature can be broken down into multiple commits as long as each one keep a consistent state and consist of a self-contained change.
+A complex feature can be broken down into multiple commits as long as each one maintains a consistent state and consists of a self-contained change.
 
 #### Commit message format
 
@@ -219,13 +219,13 @@ $ npm install
 
 ### Lint
 
-All the [semantic-release](https://github.com/semantic-release) repository use [XO](https://github.com/sindresorhus/xo) for linting and [Prettier](https://prettier.io) for formatting. Prettier formatting will be automatically verified and fixed by XO.
+All the [semantic-release](https://github.com/semantic-release) repositories use [XO](https://github.com/sindresorhus/xo) for linting and [Prettier](https://prettier.io) for formatting. Prettier formatting will be automatically verified and fixed by XO.
 
-Before pushing your code changes make sure there is no linting errors with `npm run lint`.
+Before pushing your code changes make sure there are no linting errors with `npm run lint`.
 
 **Tips**:
 - Most linting errors can be automatically fixed with `npm run lint --fix`.
-- Install the [XO plugin](https://github.com/sindresorhus/xo#editor-plugins) for your editor to see linting error directly in your editor and automatically fix them on save.
+- Install the [XO plugin](https://github.com/sindresorhus/xo#editor-plugins) for your editor to see linting errors directly in your editor and automatically fix them on save.
 
 ### Tests
 
@@ -246,6 +246,6 @@ $ npm run test
 
 ### Commits
 
-All the [semantic-release](https://github.com/semantic-release) repository use [Commitizen](https://github.com/commitizen/cz-cli) to help you create [valid commit messages](#commit-message-guidelines).
+All the [semantic-release](https://github.com/semantic-release) repositories use [Commitizen](https://github.com/commitizen/cz-cli) to help you create [valid commit messages](#commit-message-guidelines).
 
 After staging your changes with `git add`, run `npm run cm` to start the interactive commit message CLI.
