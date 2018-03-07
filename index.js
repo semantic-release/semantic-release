@@ -41,7 +41,7 @@ async function run(options, plugins) {
   await verify(options);
 
   logger.log('Run automated release from branch %s', options.branch);
-  console.log(options);
+
   logger.log('Call plugin %s', 'verify-conditions');
   await plugins.verifyConditions({options, logger}, {settleAll: true});
 
