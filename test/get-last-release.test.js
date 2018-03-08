@@ -17,7 +17,7 @@ test.afterEach.always(() => {
   process.chdir(cwd);
 });
 
-test.serial('Get the highest valid tag', async t => {
+test.serial('Get the highest non-prerelease valid tag', async t => {
   // Create a git repository, set the current working directory at the root of the repo
   await gitRepo();
   // Create some commits and tags
@@ -29,6 +29,8 @@ test.serial('Get the highest valid tag', async t => {
   await gitTagVersion('v1.0.0');
   await gitCommits(['Fourth']);
   await gitTagVersion('v3.0');
+  await gitCommits(['Fifth']);
+  await gitTagVersion('v3.0.0-beta.1');
 
   const result = await getLastRelease(`v\${version}`, t.context.logger);
 
@@ -116,5 +118,12 @@ test.serial('Get the highest valid tag corresponding to the "tagFormat"', async 
     gitHead,
     gitTag: '2.0.0-1.0.0-bar.1',
     version: '1.0.0',
+  });
+
+  await gitTagVersion('3.0.0-bar.1');
+  t.deepEqual(await getLastRelease(`\${version}-bar.1`, t.context.logger), {
+    gitHead,
+    gitTag: '3.0.0-bar.1',
+    version: '3.0.0',
   });
 });
