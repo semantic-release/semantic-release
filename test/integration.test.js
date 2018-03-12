@@ -604,17 +604,17 @@ test.serial('Exit with 1 if missing permission to push to the remote repository'
   // Create a git repository, set the current working directory at the root of the repo
   t.log('Create git repository');
   await gitbox.createRepo(packageName);
-  await writeJson('./package.json', {
-    name: packageName,
-    version: '0.0.0-dev',
-    repository: {url: 'http://user:wrong_pass@localhost:2080/git/unauthorized.git'},
-  });
+  await writeJson('./package.json', {name: packageName, version: '0.0.0-dev'});
 
   /* Initial release */
   t.log('Commit a feature');
   await gitCommits(['feat: Initial commit']);
   t.log('$ semantic-release');
-  const {stdout, code} = await execa(cli, [], {env: {...env, ...{GH_TOKEN: 'user:wrong_pass'}}, reject: false});
+  const {stdout, code} = await execa(
+    cli,
+    ['--repository-url', 'http://user:wrong_pass@localhost:2080/git/unauthorized.git'],
+    {env: {...env, ...{GH_TOKEN: 'user:wrong_pass'}}, reject: false}
+  );
   // Verify the type and message are logged
   t.regex(stdout, /EGITNOPERMISSION/);
   t.is(code, 1);
