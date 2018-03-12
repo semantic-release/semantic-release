@@ -105,7 +105,7 @@ Default: `false`
 
 CLI argument: `--debug`
 
-Output debugging information. It can also be enabled by set the `DEBUG` environment variable to `semantic-release`.
+Output debugging information. It can also be enabled by set the `DEBUG` environment variable to `semantic-release:*`.
 
 ### verifyConditions
 
