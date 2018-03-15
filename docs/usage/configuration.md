@@ -63,8 +63,6 @@ The git repository URL.
 
 Any valid git url format is supported (See [Git protocols](https://git-scm.com/book/en/v2/Git-on-the-Server-The-Protocols)).
 
-**Note**: If the [Github plugin](https://github.com/semantic-release/github) is used the URL must be a valid Github URL that include the `owner`, the `repository` name and the `host`. **The Github shorthand URL is not supported.**
-
 ### tagFormat
 
 Type: `String`

@@ -32,12 +32,12 @@ test.afterEach.always(() => {
 
 test.serial('Default values, reading repositoryUrl from package.json', async t => {
   process.env.GIT_CREDENTIALS = 'user:pass';
-  const pkg = {repository: 'https://package.com/owner/module.git'};
+  const pkg = {repository: 'https://host.null/owner/package.git'};
   // Create a git repository, set the current working directory at the root of the repo
   await gitRepo();
   await gitCommits(['First']);
   // Add remote.origin.url config
-  await gitAddConfig('remote.origin.url', 'git@repo.com:owner/module.git');
+  await gitAddConfig('remote.origin.url', 'git@host.null:owner/repo.git');
   // Create package.json in repository root
   await outputJson('./package.json', pkg);
 
@@ -45,7 +45,7 @@ test.serial('Default values, reading repositoryUrl from package.json', async t =
 
   // Verify the default options are set
   t.is(options.branch, 'master');
-  t.is(options.repositoryUrl, 'https://user:pass@package.com/owner/module.git');
+  t.is(options.repositoryUrl, 'https://user:pass@host.null/owner/package.git');
   t.is(options.tagFormat, `v\${version}`);
 });
 
@@ -54,19 +54,19 @@ test.serial('Default values, reading repositoryUrl from repo if not set in packa
   // Create a git repository, set the current working directory at the root of the repo
   await gitRepo();
   // Add remote.origin.url config
-  await gitAddConfig('remote.origin.url', 'https://hostname.com/owner/module.git');
+  await gitAddConfig('remote.origin.url', 'https://host.null/owner/module.git');
 
   const {options} = await t.context.getConfig();
 
   // Verify the default options are set
   t.is(options.branch, 'master');
-  t.is(options.repositoryUrl, 'https://user:pass@hostname.com/owner/module.git');
+  t.is(options.repositoryUrl, 'https://user:pass@host.null/owner/module.git');
   t.is(options.tagFormat, `v\${version}`);
 });
 
 test.serial('Default values, reading repositoryUrl (http url) from package.json if not set in repo', async t => {
   process.env.GIT_CREDENTIALS = 'user:pass';
-  const pkg = {repository: 'https://hostname.com/owner/module.git'};
+  const pkg = {repository: 'https://host.null/owner/module.git'};
   // Create a git repository, set the current working directory at the root of the repo
   await gitRepo();
   // Create package.json in repository root
@@ -76,9 +76,44 @@ test.serial('Default values, reading repositoryUrl (http url) from package.json 
 
   // Verify the default options are set
   t.is(options.branch, 'master');
-  t.is(options.repositoryUrl, 'https://user:pass@hostname.com/owner/module.git');
+  t.is(options.repositoryUrl, 'https://user:pass@host.null/owner/module.git');
   t.is(options.tagFormat, `v\${version}`);
 });
+
+test.serial('Default values, reading repositoryUrl (shorthand url) from package.json if not set in repo', async t => {
+  process.env.GIT_CREDENTIALS = 'user:pass';
+  const pkg = {repository: 'owner/module'};
+  // Create a git repository, set the current working directory at the root of the repo
+  await gitRepo();
+  // Create package.json in repository root
+  await outputJson('./package.json', pkg);
+
+  const {options} = await t.context.getConfig();
+
+  // Verify the default options are set
+  t.is(options.branch, 'master');
+  t.is(options.repositoryUrl, 'https://user:pass@github.com/owner/module.git');
+  t.is(options.tagFormat, `v\${version}`);
+});
+
+test.serial(
+  'Default values, reading repositoryUrl (gitlab shorthand url) from package.json if not set in repo',
+  async t => {
+    process.env.GIT_CREDENTIALS = 'user:pass';
+    const pkg = {repository: 'gitlab:owner/module'};
+    // Create a git repository, set the current working directory at the root of the repo
+    await gitRepo();
+    // Create package.json in repository root
+    await outputJson('./package.json', pkg);
+
+    const {options} = await t.context.getConfig();
+
+    // Verify the default options are set
+    t.is(options.branch, 'master');
+    t.is(options.repositoryUrl, 'https://user:pass@gitlab.com/owner/module.git');
+    t.is(options.tagFormat, `v\${version}`);
+  }
+);
 
 test.serial('Do not add git credential to repositoryUrl if push is allowed', async t => {
   process.env.GIT_CREDENTIALS = 'user:pass';
@@ -98,7 +133,7 @@ test.serial('Read options from package.json', async t => {
     analyzeCommits: {path: 'analyzeCommits', param: 'analyzeCommits_param'},
     generateNotes: 'generateNotes',
     branch: 'test_branch',
-    repositoryUrl: 'https://hostname.com/owner/module.git',
+    repositoryUrl: 'https://host.null/owner/module.git',
     tagFormat: `v\${version}`,
   };
 
@@ -119,7 +154,7 @@ test.serial('Read options from .releaserc.yml', async t => {
   const release = {
     analyzeCommits: {path: 'analyzeCommits', param: 'analyzeCommits_param'},
     branch: 'test_branch',
-    repositoryUrl: 'https://hostname.com/owner/module.git',
+    repositoryUrl: 'https://host.null/owner/module.git',
     tagFormat: `v\${version}`,
   };
 
@@ -140,7 +175,7 @@ test.serial('Read options from .releaserc.json', async t => {
   const release = {
     analyzeCommits: {path: 'analyzeCommits', param: 'analyzeCommits_param'},
     branch: 'test_branch',
-    repositoryUrl: 'https://hostname.com/owner/module.git',
+    repositoryUrl: 'https://host.null/owner/module.git',
     tagFormat: `v\${version}`,
   };
 
@@ -161,7 +196,7 @@ test.serial('Read options from .releaserc.js', async t => {
   const release = {
     analyzeCommits: {path: 'analyzeCommits', param: 'analyzeCommits_param'},
     branch: 'test_branch',
-    repositoryUrl: 'https://hostname.com/owner/module.git',
+    repositoryUrl: 'https://host.null/owner/module.git',
     tagFormat: `v\${version}`,
   };
 
@@ -182,7 +217,7 @@ test.serial('Read options from release.config.js', async t => {
   const release = {
     analyzeCommits: {path: 'analyzeCommits', param: 'analyzeCommits_param'},
     branch: 'test_branch',
-    repositoryUrl: 'https://hostname.com/owner/module.git',
+    repositoryUrl: 'https://host.null/owner/module.git',
     tagFormat: `v\${version}`,
   };
 
@@ -210,7 +245,7 @@ test.serial('Prioritise CLI/API parameters over file configuration and git repo'
     repositoryUrl: 'http://cli-url.com/owner/package',
     tagFormat: `cli\${version}`,
   };
-  const pkg = {release, repository: 'git@hostname.com:owner/module.git'};
+  const pkg = {release, repository: 'git@host.null:owner/module.git'};
   // Create a git repository, set the current working directory at the root of the repo
   const repo = await gitRepo();
   await gitCommits(['First']);
@@ -233,7 +268,7 @@ test.serial('Read configuration from file path in "extends"', async t => {
     analyzeCommits: {path: 'analyzeCommits', param: 'analyzeCommits_param'},
     generateNotes: 'generateNotes',
     branch: 'test_branch',
-    repositoryUrl: 'https://hostname.com/owner/module.git',
+    repositoryUrl: 'https://host.null/owner/module.git',
     tagFormat: `v\${version}`,
   };
 
@@ -261,7 +296,7 @@ test.serial('Read configuration from module path in "extends"', async t => {
     analyzeCommits: {path: 'analyzeCommits', param: 'analyzeCommits_param'},
     generateNotes: 'generateNotes',
     branch: 'test_branch',
-    repositoryUrl: 'https://hostname.com/owner/module.git',
+    repositoryUrl: 'https://host.null/owner/module.git',
     tagFormat: `v\${version}`,
   };
 
@@ -289,7 +324,7 @@ test.serial('Read configuration from an array of paths in "extends"', async t =>
     verifyRelease: 'verifyRelease1',
     analyzeCommits: {path: 'analyzeCommits1', param: 'analyzeCommits_param1'},
     branch: 'test_branch',
-    repositoryUrl: 'https://hostname.com/owner/module.git',
+    repositoryUrl: 'https://host.null/owner/module.git',
   };
 
   const shareable2 = {
@@ -334,7 +369,7 @@ test.serial('Prioritize configuration from config file over "extends"', async t 
     generateNotes: 'generateNotesShareable',
     publish: [{path: 'publishShareable', param: 'publishShareable_param'}],
     branch: 'test_branch',
-    repositoryUrl: 'https://hostname.com/owner/module.git',
+    repositoryUrl: 'https://host.null/owner/module.git',
     tagFormat: `v\${version}`,
   };
 
@@ -362,7 +397,7 @@ test.serial('Prioritize configuration from cli/API options over "extends"', asyn
     extends: './shareable2.json',
     branch: 'branch_opts',
     publish: [{path: 'publishOpts', param: 'publishOpts_param'}],
-    repositoryUrl: 'https://hostname.com/owner/module.git',
+    repositoryUrl: 'https://host.null/owner/module.git',
   };
   const release = {
     extends: './shareable1.json',
@@ -375,7 +410,7 @@ test.serial('Prioritize configuration from cli/API options over "extends"', asyn
     generateNotes: 'generateNotesShareable1',
     publish: [{path: 'publishShareable', param: 'publishShareable_param1'}],
     branch: 'test_branch1',
-    repositoryUrl: 'https://hostname.com/owner/module.git',
+    repositoryUrl: 'https://host.null/owner/module.git',
   };
   const shareable2 = {
     analyzeCommits: 'analyzeCommits2',
@@ -404,7 +439,7 @@ test.serial('Allow to unset properties defined in shareable config with "null"',
     extends: './shareable.json',
     analyzeCommits: null,
     branch: 'test_branch',
-    repositoryUrl: 'https://hostname.com/owner/module.git',
+    repositoryUrl: 'https://host.null/owner/module.git',
   };
   const shareable = {
     generateNotes: 'generateNotes',
@@ -438,7 +473,7 @@ test.serial('Allow to unset properties defined in shareable config with "undefin
     extends: './shareable.json',
     analyzeCommits: undefined,
     branch: 'test_branch',
-    repositoryUrl: 'https://hostname.com/owner/module.git',
+    repositoryUrl: 'https://host.null/owner/module.git',
   };
   const shareable = {
     generateNotes: 'generateNotes',
