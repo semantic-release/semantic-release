@@ -13,6 +13,7 @@
 ## Articles
 
 - [“Introduction to SemVer” - Irina Gebauer](https://blog.greenkeeper.io/introduction-to-semver-d272990c44f2)
+- ["Introduction to Semantic Release" - liv](https://blog.greenkeeper.io/introduction-to-semantic-release-33f73b117c8)
 
 ## Tutorials
 
