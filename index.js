@@ -22,6 +22,10 @@ async function run(options, plugins) {
   if (!isCi && !options.dryRun && !options.noCi) {
     logger.log('This run was not triggered in a known CI environment, running in dry-run mode.');
     options.dryRun = true;
+  } else {
+    // When running on CI, prevent the `git` CLI to prompt for username/password. See #703.
+    process.env.GIT_ASKPASS = 'echo';
+    process.env.GIT_TERMINAL_PROMPT = 0;
   }
 
   if (isCi && isPr && !options.noCi) {
