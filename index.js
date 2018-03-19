@@ -11,8 +11,10 @@ const getNextVersion = require('./lib/get-next-version');
 const getCommits = require('./lib/get-commits');
 const getLastRelease = require('./lib/get-last-release');
 const {extractErrors} = require('./lib/utils');
+const getGitAuthUrl = require('./lib/get-git-auth-url');
 const logger = require('./lib/logger');
-const {unshallow, gitHead: getGitHead, tag, push} = require('./lib/git');
+const {unshallow, verifyAuth, gitHead: getGitHead, tag, push} = require('./lib/git');
+const getError = require('./lib/get-error');
 
 marked.setOptions({renderer: new TerminalRenderer()});
 
@@ -43,6 +45,11 @@ async function run(options, plugins) {
   }
 
   await verify(options);
+
+  options.repositoryUrl = await getGitAuthUrl(options);
+  if (!await verifyAuth(options.repositoryUrl, options.branch)) {
+    throw getError('EGITNOPERMISSION', {options});
+  }
 
   logger.log('Run automated release from branch %s', options.branch);
 
