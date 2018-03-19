@@ -31,7 +31,6 @@ test.afterEach.always(() => {
 });
 
 test.serial('Default values, reading repositoryUrl from package.json', async t => {
-  process.env.GIT_CREDENTIALS = 'user:pass';
   const pkg = {repository: 'https://host.null/owner/package.git'};
   // Create a git repository, set the current working directory at the root of the repo
   await gitRepo();
@@ -45,12 +44,11 @@ test.serial('Default values, reading repositoryUrl from package.json', async t =
 
   // Verify the default options are set
   t.is(options.branch, 'master');
-  t.is(options.repositoryUrl, 'https://user:pass@host.null/owner/package.git');
+  t.is(options.repositoryUrl, 'https://host.null/owner/package.git');
   t.is(options.tagFormat, `v\${version}`);
 });
 
 test.serial('Default values, reading repositoryUrl from repo if not set in package.json', async t => {
-  process.env.GIT_CREDENTIALS = 'user:pass';
   // Create a git repository, set the current working directory at the root of the repo
   await gitRepo();
   // Add remote.origin.url config
@@ -60,12 +58,11 @@ test.serial('Default values, reading repositoryUrl from repo if not set in packa
 
   // Verify the default options are set
   t.is(options.branch, 'master');
-  t.is(options.repositoryUrl, 'https://user:pass@host.null/owner/module.git');
+  t.is(options.repositoryUrl, 'https://host.null/owner/module.git');
   t.is(options.tagFormat, `v\${version}`);
 });
 
 test.serial('Default values, reading repositoryUrl (http url) from package.json if not set in repo', async t => {
-  process.env.GIT_CREDENTIALS = 'user:pass';
   const pkg = {repository: 'https://host.null/owner/module.git'};
   // Create a git repository, set the current working directory at the root of the repo
   await gitRepo();
@@ -76,56 +73,8 @@ test.serial('Default values, reading repositoryUrl (http url) from package.json 
 
   // Verify the default options are set
   t.is(options.branch, 'master');
-  t.is(options.repositoryUrl, 'https://user:pass@host.null/owner/module.git');
+  t.is(options.repositoryUrl, 'https://host.null/owner/module.git');
   t.is(options.tagFormat, `v\${version}`);
-});
-
-test.serial('Default values, reading repositoryUrl (shorthand url) from package.json if not set in repo', async t => {
-  process.env.GIT_CREDENTIALS = 'user:pass';
-  const pkg = {repository: 'owner/module'};
-  // Create a git repository, set the current working directory at the root of the repo
-  await gitRepo();
-  // Create package.json in repository root
-  await outputJson('./package.json', pkg);
-
-  const {options} = await t.context.getConfig();
-
-  // Verify the default options are set
-  t.is(options.branch, 'master');
-  t.is(options.repositoryUrl, 'https://user:pass@github.com/owner/module.git');
-  t.is(options.tagFormat, `v\${version}`);
-});
-
-test.serial(
-  'Default values, reading repositoryUrl (gitlab shorthand url) from package.json if not set in repo',
-  async t => {
-    process.env.GIT_CREDENTIALS = 'user:pass';
-    const pkg = {repository: 'gitlab:owner/module'};
-    // Create a git repository, set the current working directory at the root of the repo
-    await gitRepo();
-    // Create package.json in repository root
-    await outputJson('./package.json', pkg);
-
-    const {options} = await t.context.getConfig();
-
-    // Verify the default options are set
-    t.is(options.branch, 'master');
-    t.is(options.repositoryUrl, 'https://user:pass@gitlab.com/owner/module.git');
-    t.is(options.tagFormat, `v\${version}`);
-  }
-);
-
-test.serial('Do not add git credential to repositoryUrl if push is allowed', async t => {
-  process.env.GIT_CREDENTIALS = 'user:pass';
-  // Create a git repository, set the current working directory at the root of the repo
-  const repositoryUrl = await gitRepo(true);
-  const pkg = {repository: repositoryUrl};
-  // Create package.json in repository root
-  await outputJson('./package.json', pkg);
-
-  const {options} = await t.context.getConfig();
-
-  t.is(options.repositoryUrl, repositoryUrl);
 });
 
 test.serial('Read options from package.json', async t => {

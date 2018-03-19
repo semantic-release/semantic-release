@@ -51,6 +51,20 @@ test.serial('Handle "git" URL with group and subgroup', async t => {
   );
 });
 
+test.serial('Convert shorthand URL', async t => {
+  t.is(
+    await getAuthUrl({repositoryUrl: 'semanitc-release/semanitc-release'}),
+    'https://github.com/semanitc-release/semanitc-release.git'
+  );
+});
+
+test.serial('Convert GitLab shorthand URL', async t => {
+  t.is(
+    await getAuthUrl({repositoryUrl: 'gitlab:semanitc-release/semanitc-release'}),
+    'https://gitlab.com/semanitc-release/semanitc-release.git'
+  );
+});
+
 test.serial(
   'Return the "https" formatted URL if "gitCredentials" is defined and repositoryUrl is a "git" URL',
   async t => {
