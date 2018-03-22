@@ -27,7 +27,7 @@ $ semantic-release
 
 **Note**: CLI arguments take precedence over options configured in the configuration file.
 
-**Note**: Plugins options cannot be defined via CLI arguments and must be defined in the configuration file.
+**Note**: Plugin options cannot be defined via CLI arguments and must be defined in the configuration file.
 
 ## Options
 
@@ -37,7 +37,7 @@ Type: `Array`, `String`
 
 CLI arguments: `-e`, `--extends`
 
-List of modules or file paths containing a [shareable configuration](shareable-configurations.md). If multiple shareable configuration are set, they will be imported in the order defined with each configuration option taking precedence over the options defined in a previous shareable configuration.
+List of modules or file paths containing a [shareable configuration](shareable-configurations.md). If multiple shareable configurations are set, they will be imported in the order defined with each configuration option taking precedence over the options defined in a previous shareable configuration.
 
 **Note**: Options defined via CLI arguments or in the configuration file will take precedence over the ones defined in any shareable configuration.
 
@@ -79,7 +79,7 @@ The [Git tag](https://git-scm.com/book/en/v2/Git-Basics-Tagging) format used by 
 
 Type: `Boolean`
 
-Default: `false` if running in a CI environment, `false` otherwise
+Default: `false` if running in a CI environment, `true` otherwise
 
 CLI arguments: `-d`, `--dry-run`
 
@@ -93,7 +93,7 @@ Default: `false`
 
 CLI arguments: `--no-ci`
 
-Skip Continuous Integration environment verifications, allowing to make releases from a local machine.
+Skip Continuous Integration environment verifications. This allows for making releases from a local machine.
 
 ### debug
 
@@ -103,7 +103,7 @@ Default: `false`
 
 CLI argument: `--debug`
 
-Output debugging information. It can also be enabled by set the `DEBUG` environment variable to `semantic-release:*`.
+Output debugging information. It can also be enabled by setting the `DEBUG` environment variable to `semantic-release:*`.
 
 ### verifyConditions
 
