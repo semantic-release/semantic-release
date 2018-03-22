@@ -20,7 +20,7 @@ See [CI configuration recipes](../recipes/README.md#ci-configurations) for more 
 
 Alternatively the Git authentication can be set up via [SSH keys](../recipes/git-auth-ssh-keys.md).
 
-Most **semantic-release** [plugins](plugins.md) require to set up authentication in order to publish to a package manager registry. The default [npm](https://github.com/semantic-release/npm#environment-variables) and [github](https://github.com/semantic-release/github#environment-variables) plugins require the following environment variables:
+Most **semantic-release** [plugins](plugins.md) require setting up authentication in order to publish to a package manager registry. The default [npm](https://github.com/semantic-release/npm#environment-variables) and [github](https://github.com/semantic-release/github#environment-variables) plugins require the following environment variables:
 
 | Variable    | Description                                                                                                                                                                                                                                                                                                               |
 |-------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -35,7 +35,7 @@ See [CI configuration recipes](../recipes/README.md#ci-configurations) for more 
 
 ## Automatic setup with `semantic-release-cli`
 
-[`semantic-release-cli`](https://github.com/semantic-release/cli) allow to easily [install](installation.md) **semantic-release** in your Node project and set up the CI configuration:
+[`semantic-release-cli`](https://github.com/semantic-release/cli) allows for easy [installation](installation.md) of **semantic-release** in your Node project as well as setting up the CI configuration:
 
 ```bash
 npm install -g semantic-release-cli
