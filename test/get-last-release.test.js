@@ -79,6 +79,23 @@ test.serial('Return empty object if no valid tag is found', async t => {
   t.is(t.context.log.args[0][0], 'No git tag version found');
 });
 
+test.serial('Return empty object if no valid tag is found in history', async t => {
+  // Create a git repository, set the current working directory at the root of the repo
+  await gitRepo();
+  await gitCommits(['First']);
+  await gitCheckout('other-branch');
+  await gitCommits(['Second']);
+  await gitTagVersion('v1.0.0');
+  await gitTagVersion('v2.0.0');
+  await gitTagVersion('v3.0.0');
+  await gitCheckout('master', false);
+
+  const result = await getLastRelease(`v\${version}`, t.context.logger);
+
+  t.deepEqual(result, {});
+  t.is(t.context.log.args[0][0], 'No git tag version found');
+});
+
 test.serial('Get the highest valid tag corresponding to the "tagFormat"', async t => {
   // Create a git repository, set the current working directory at the root of the repo
   await gitRepo();
