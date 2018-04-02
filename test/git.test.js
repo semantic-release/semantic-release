@@ -91,6 +91,7 @@ test.serial('Verify if the commit `sha` is in the direct history of the current 
 
   t.true(await isRefInHistory(commits[0].hash));
   t.falsy(await isRefInHistory(otherCommits[0].hash));
+  await t.throws(isRefInHistory('non-existant-sha'));
 });
 
 test.serial('Get the commit sha for a given tag or falsy if the tag does not exists', async t => {
