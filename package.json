@@ -32,7 +32,7 @@
     "execa": "^0.10.0",
     "get-stream": "^3.0.0",
     "git-log-parser": "^1.2.0",
-    "git-url-parse": "^8.1.0",
+    "git-url-parse": "^8.3.1",
     "hook-std": "^0.4.0",
     "hosted-git-info": "^2.6.0",
     "lodash": "^4.17.4",
