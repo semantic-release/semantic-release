@@ -14,7 +14,7 @@ Default implementation: [npm](https://github.com/semantic-release/npm#verifycond
 
 Responsible for determining the type of the next release (`major`, `minor` or `patch`).
 
-Default implementation: [@semantic-release/commit-analyzer](https://github.com/semantic-release/commit-analyzer).
+Default implementation: [commit-analyzer](https://github.com/semantic-release/commit-analyzer).
 
 ### verifyRelease plugin
 
@@ -26,7 +26,7 @@ Default implementation: none.
 
 Responsible for generating release notes.
 
-Default implementation: [@semantic-release/release-notes-generator](https://github.com/semantic-release/release-notes-generator).
+Default implementation: [release-notes-generator](https://github.com/semantic-release/release-notes-generator).
 
 ### prepare plugin
 
