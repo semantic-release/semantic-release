@@ -2,6 +2,8 @@
 
 Each [release step](../../README.md#release-steps) is implemented within a plugin or a list of plugins that can be configured. This allows for support of different [commit message formats](../../README.md#commit-message-format), release note generators and publishing platforms.
 
+See [plugins list](../extending/plugins-list.md).
+
 ## Plugin types
 
 ### verifyConditions plugin
