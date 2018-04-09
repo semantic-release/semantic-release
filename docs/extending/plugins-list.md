@@ -34,3 +34,11 @@
   - [fail](https://github.com/semantic-release/exec#fail): Execute a shell command to notify of a failed release
 
 ## Community plugins
+
+**[Add your plugin to the list](https://github.com/semantic-release/semantic-release/edit/caribou/docs/extending/plugins-list.md)**
+
+ - [semantic-release-docker](https://github.com/felixfbecker/semantic-release-docker) - Set of semantic-release plugins for publishing a docker image to Docker Hub.
+ - [condition-run-script](https://www.npmjs.com/package/condition-run-script) Run arbitrary scripts before publishing a new version
+ - [cracks](https://github.com/semantic-release/cracks) This module can automatically detect breaking changes by running the test suite of your last-release against the current codebase. That shouldn't fail.
+ - [dont-crack](https://github.com/bahmutov/dont-crack) semantic-release plugin checking if the new semantic release is breaking dependent projects
+ - [semantic-release-verify-deps](https://github.com/piercus/semantic-release-verify-deps) Check the dependencies format against a regexp before a release
