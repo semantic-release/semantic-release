@@ -57,7 +57,36 @@ To publish a non-Node package (without a `package.json`) you would need to:
 - Set **semantic-release** [options](../usage/configuration.md#options) via [CLI arguments or rc file](../usage/configuration.md#configuration)
 - Make sure your CI job executing the `semantic-release` command has access to [Node >= 8](#why-does-semantic-release-require-node-version--83) to execute the `semantic-release` command
 
-See the [CI configuration recipes](../usage/ci-configuration.md) for more details on specific CI environments.
+See the [CI configuration recipes](../recipes/README.md#ci-configurations) for more details on specific CI environments.
+
+In addition you will need to configure the **semantic-release** [plugins](../usage/plugins.md#plugins) to:
+- Disable the [`@semantic-release/npm`](https://github.com/semantic-release/npm) plugin
+- Define plugins for the [verifyConditions](../usage/plugins.md#verifyconditions-plugin), [prepare](../usage/plugins.md#prepare-plugin) and [publish](../usage/plugins.md#publish-plugin) steps to release on your package registry. The [`@semantic-release/exec`](https://github.com/semantic-release/exec) plugin is recommended for situation where a release can be done with a shell command.
+
+Here is a basic example to create [GitHub releases](https://help.github.com/articles/about-releases) and use shell command to publish:
+
+```json
+{
+  "verifyConditions": ["@semantic-release/github"],
+  "prepare": [
+    {
+      "path": "@semantic-release/exec",
+      "cmd": "set-version ${nextRelease.version}"
+    }
+  ],
+  "publish": [
+    "@semantic-release/github",
+    {
+      "path": "@semantic-release/exec",
+      "cmd": "publish-package"
+    }
+  ],
+}
+```
+
+**Note**: This is a theoretical example where the command `set-version` update the project version with the value passed as its first argument and `publish-package` publishes the package to a registry.
+
+See the [package managers and languages recipes](../recipes/README.md#package-managers-and-languages) for more details on specific project types.
 
 ## Can I use semantic-release with any CI service?
 
@@ -65,7 +94,7 @@ Yes, **semantic-release** can be used with any CI service, as long as it provide
 - A way to set [authentication](../usage/ci-configuration.md#authentication) via environment variables
 - A way to guarantee that the `semantic-release` command is [executed only after all the tests of all the jobs in the CI build pass](../usage/ci-configuration.md#run-semantic-release-only-after-all-tests-succeeded)
 
-See the [CI configuration recipes](../usage/ci-configuration.md) for more details on specific CI environments.
+See the [CI configuration recipes](../recipes/README.md#ci-configurations) for more details on specific CI environments.
 
 ## Can I run semantic-release on my local machine rather than on a CI server?
 
