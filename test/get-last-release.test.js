@@ -62,6 +62,19 @@ test.serial('Get the highest tag in the history of the current branch', async t 
   t.deepEqual(result, {gitHead: commits[0].hash, gitTag: 'v2.0.0', version: '2.0.0'});
 });
 
+test.serial('Match the tag name from the begining of the string', async t => {
+  // Create a git repository, set the current working directory at the root of the repo
+  await gitRepo();
+  const commits = await gitCommits(['First']);
+  await gitTagVersion('prefix/v1.0.0');
+  await gitTagVersion('prefix/v2.0.0');
+  await gitTagVersion('other-prefix/v3.0.0');
+
+  const result = await getLastRelease(`prefix/v\${version}`, t.context.logger);
+
+  t.deepEqual(result, {gitHead: commits[0].hash, gitTag: 'prefix/v2.0.0', version: '2.0.0'});
+});
+
 test.serial('Return empty object if no valid tag is found', async t => {
   // Create a git repository, set the current working directory at the root of the repo
   await gitRepo();
