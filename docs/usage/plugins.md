@@ -8,7 +8,7 @@ Each [release step](../../README.md#release-steps) is implemented within a plugi
 
 Responsible for verifying conditions necessary to proceed with the release: configuration is correct, authentication token are valid, etc...
 
-Default implementation: [npm](https://github.com/semantic-release/npm#verifyconditions) and [github](https://github.com/semantic-release/github#verifyconditions).
+Default implementation: [@semantic-release/npm](https://github.com/semantic-release/npm#verifyconditions) and [@semantic-release/github](https://github.com/semantic-release/github#verifyconditions).
 
 ### analyzeCommits plugin
 
@@ -34,25 +34,25 @@ Responsible for preparing the release, including:
 - Creating or updating files such as `package.json`, `CHANGELOG.md`, documentation or compiled assets.
 - Create and push commits
 
-Default implementation: [npm](https://github.com/semantic-release/npm#prepare).
+Default implementation: [@semantic-release/npm](https://github.com/semantic-release/npm#prepare).
 
 ### publish plugin
 
 Responsible for publishing the release.
 
-Default implementation: [npm](https://github.com/semantic-release/npm#publish) and [github](https://github.com/semantic-release/github#publish).
+Default implementation: [@semantic-release/npm](https://github.com/semantic-release/npm#publish) and [@semantic-release/github](https://github.com/semantic-release/github#publish).
 
 ### success plugin
 
 Responsible for notifying of a new release.
 
-Default implementation: [github](https://github.com/semantic-release/github#success).
+Default implementation: [@semantic-release/github](https://github.com/semantic-release/github#success).
 
 ### fail plugin
 
 Responsible for notifying of a failed release.
 
-Default implementation: [github](https://github.com/semantic-release/github#fail).
+Default implementation: [@semantic-release/github](https://github.com/semantic-release/github#fail).
 
 ## Configuration
 
