@@ -37,6 +37,10 @@ test.serial(
   }
 );
 
+test.serial('Do not add trailing ".git" if not present in the origian URL', async t => {
+  t.is(await getAuthUrl({repositoryUrl: 'git@host.null:owner/repo'}), 'git@host.null:owner/repo');
+});
+
 test.serial('Handle "https" URL with group and subgroup', async t => {
   t.is(
     await getAuthUrl({repositoryUrl: 'https://host.null/group/subgroup/owner/repo.git'}),
