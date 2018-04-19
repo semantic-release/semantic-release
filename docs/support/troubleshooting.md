@@ -29,3 +29,18 @@ You can recover from that issue by identifying the commit in your branch history
 $ git tag -f v<version of the last release> <commit sha1 corresponding to last release>
 $ git push -f --tags origin <your release branch>
 ```
+
+## You do not have permission to publish 'package-name'
+
+When running semantic-release you may encounter the following error:
+
+```
+An error occurred while running semantic-release: { Error: Command failed: npm publish ./. --registry https://registry.npmjs.org/
+npm ERR! publish Failed PUT 403
+npm ERR! code E403
+npm ERR! You do not have permission to publish "<package-name>". Are you logged in as the correct user? : <package-name>
+```
+
+This message is a little unclear, and might not have anything to with your `NPM_TOKEN` or authentication method. It might instead be related to the package name itself. If there is already a package with the same name as yours or, there is a very close match, it could trigger this error.
+
+Best way to be sure, is to search [npmjs.org](https://www.npmjs.com/)) using your package name. If there is a name conflict, rename your package in your `package.json`
