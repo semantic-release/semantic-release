@@ -60,7 +60,7 @@
     "mockserver-client": "^5.1.1",
     "nock": "^9.0.2",
     "nyc": "^11.2.1",
-    "p-retry": "^1.0.0",
+    "p-retry": "^2.0.0",
     "proxyquire": "^2.0.0",
     "sinon": "^4.0.0",
     "tempy": "^0.2.1",
