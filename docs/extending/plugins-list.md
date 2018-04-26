@@ -42,3 +42,7 @@
   - [publish](https://github.com/felixfbecker/semantic-release-docker#publish) Tag the image specified by `name` with the new version, push it to Docker Hub and update the latest tag.
 - [semantic-release-verify-deps](https://github.com/piercus/semantic-release-verify-deps) 
   - [verifyConditions](https://github.com/piercus/semantic-release-verify-deps) Check the dependencies format against a regexp before a release
+- [semantic-release-chrome](https://github.com/GabrielDuarteM/semantic-release-chrome) Set of semantic-release plugins for publishing a Chrome extension release.
+  - [verifyConditions](https://github.com/GabrielDuarteM/semantic-release-chrome#verifyconditions) Verify the presence of the authentication (set via environment variables).
+  - [prepare](https://github.com/GabrielDuarteM/semantic-release-chrome#prepare) Write the correct version to the manifest.json and creates a zip file of the whole dist folder.
+  - [publish](https://github.com/GabrielDuarteM/semantic-release-chrome#publish) Uploads the generated zip file to the webstore, and publish the item.
