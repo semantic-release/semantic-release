@@ -98,7 +98,6 @@ export async function gitGetCommits(from) {
  * Checkout a branch on the current git repository.
  *
  * @param {String} branch Branch name.
- * @param {boolean} create `true` to create the branche ans switch, `false` to only switch.
  */
 export async function gitCheckout(branch, create = true) {
   await execa('git', create ? ['checkout', '-b', branch] : ['checkout', branch]);
@@ -126,6 +125,7 @@ export async function gitTagVersion(tagName, sha) {
  * The shallow will contain a limited number of commit and no tags.
  *
  * @param {String} origin The path of the repository to clone.
+ * @param {String} [branch='master'] the branch to clone.
  * @param {Number} [depth=1] The number of commit to clone.
  * @return {String} The path of the cloned repository.
  */
