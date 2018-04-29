@@ -121,10 +121,6 @@ export async function gitTagVersion(tagName, sha) {
   await execa('git', sha ? ['tag', '-f', tagName, sha] : ['tag', tagName]);
 }
 
-export async function gitRemoteTagVersion(origin, tagName, sha = 'HEAD') {
-  await execa('git', ['push', origin, `${sha}:refs/tags/${tagName}`]);
-}
-
 /**
  * Create a shallow clone of a git repository and change the current working directory to the cloned repository root.
  * The shallow will contain a limited number of commit and no tags.
