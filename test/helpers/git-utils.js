@@ -98,6 +98,7 @@ export async function gitGetCommits(from) {
  * Checkout a branch on the current git repository.
  *
  * @param {String} branch Branch name.
+ * @param {Boolean} create `true` to create the branche ans switch, `false` to only switch.
  */
 export async function gitCheckout(branch, create = true) {
   await execa('git', create ? ['checkout', '-b', branch] : ['checkout', branch]);
@@ -208,6 +209,15 @@ export async function gitCommitTag(gitHead) {
  * @param {String} branch The branch to push.
  * @throws {Error} if the push failed.
  */
-export async function push(origin, branch) {
+export async function push(origin = 'origin', branch = 'master') {
   await execa('git', ['push', '--tags', origin, `HEAD:${branch}`]);
+}
+
+/**
+ * Reset repository to a commit.
+ *
+ * @param {String} [commit='HEAD~1'] Commit reference to reset the repo to.
+ */
+export async function reset(commit = 'HEAD~1') {
+  await execa('git', ['reset', commit]);
 }

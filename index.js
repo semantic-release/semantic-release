@@ -13,7 +13,7 @@ const getLastRelease = require('./lib/get-last-release');
 const {extractErrors} = require('./lib/utils');
 const getGitAuthUrl = require('./lib/get-git-auth-url');
 const logger = require('./lib/logger');
-const {unshallow, verifyAuth, gitHead: getGitHead, tag, push} = require('./lib/git');
+const {unshallow, verifyAuth, isBranchUpToDate, gitHead: getGitHead, tag, push} = require('./lib/git');
 const getError = require('./lib/get-error');
 
 marked.setOptions({renderer: new TerminalRenderer()});
@@ -47,6 +47,15 @@ async function run(options, plugins) {
   await verify(options);
 
   options.repositoryUrl = await getGitAuthUrl(options);
+
+  if (!await isBranchUpToDate(options.branch)) {
+    logger.log(
+      "The local branch %s is behind the remote one, therefore a new version won't be published.",
+      options.branch
+    );
+    return false;
+  }
+
   if (!await verifyAuth(options.repositoryUrl, options.branch)) {
     throw getError('EGITNOPERMISSION', {options});
   }

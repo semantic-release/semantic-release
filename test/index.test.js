@@ -14,6 +14,7 @@ import {
   gitRemoteTagHead,
   push,
   gitShallowClone,
+  reset,
 } from './helpers/git-utils';
 
 // Save the current process.env
@@ -57,6 +58,7 @@ test.serial('Plugins are called with expected values', async t => {
   await gitTagVersion('v1.0.0');
   // Add new commits to the master branch
   commits = (await gitCommits(['Second'])).concat(commits);
+  await push();
 
   const lastRelease = {version: '1.0.0', gitHead: commits[commits.length - 1].hash, gitTag: 'v1.0.0'};
   const nextRelease = {type: 'major', version: '2.0.0', gitHead: await getGitHead(), gitTag: 'v2.0.0'};
@@ -162,6 +164,7 @@ test.serial('Use custom tag format', async t => {
   await gitCommits(['First']);
   await gitTagVersion('test-1.0.0');
   await gitCommits(['Second']);
+  await push();
 
   const nextRelease = {type: 'major', version: '2.0.0', gitHead: await getGitHead(), gitTag: 'test-2.0.0'};
   const notes = 'Release notes';
@@ -198,6 +201,7 @@ test.serial('Use new gitHead, and recreate release notes if a prepare plugin cre
   await gitTagVersion('v1.0.0');
   // Add new commits to the master branch
   commits = (await gitCommits(['Second'])).concat(commits);
+  await push();
 
   const nextRelease = {type: 'major', version: '2.0.0', gitHead: await getGitHead(), gitTag: 'v2.0.0'};
   const notes = 'Release notes';
@@ -257,6 +261,7 @@ test.serial('Call all "success" plugins even if one errors out', async t => {
   await gitTagVersion('v1.0.0');
   // Add new commits to the master branch
   await gitCommits(['Second']);
+  await push();
 
   const nextRelease = {type: 'major', version: '2.0.0', gitHead: await getGitHead(), gitTag: 'v2.0.0'};
   const notes = 'Release notes';
@@ -304,6 +309,7 @@ test.serial('Log all "verifyConditions" errors', async t => {
   const repositoryUrl = await gitRepo(true);
   // Add commits to the master branch
   await gitCommits(['First']);
+  await push();
 
   const error1 = new Error('error 1');
   const error2 = new SemanticReleaseError('error 2', 'ERR2');
@@ -346,6 +352,7 @@ test.serial('Log all "verifyRelease" errors', async t => {
   await gitTagVersion('v1.0.0');
   // Add new commits to the master branch
   await gitCommits(['Second']);
+  await push();
 
   const error1 = new SemanticReleaseError('error 1', 'ERR1');
   const error2 = new SemanticReleaseError('error 2', 'ERR2');
@@ -382,6 +389,7 @@ test.serial('Dry-run skips publish and success', async t => {
   await gitTagVersion('v1.0.0');
   // Add new commits to the master branch
   await gitCommits(['Second']);
+  await push();
 
   const nextRelease = {type: 'major', version: '2.0.0', gitHead: await getGitHead(), gitTag: 'v2.0.0'};
   const notes = 'Release notes';
@@ -430,6 +438,7 @@ test.serial('Dry-run skips fail', async t => {
   await gitTagVersion('v1.0.0');
   // Add new commits to the master branch
   await gitCommits(['Second']);
+  await push();
 
   const error1 = new SemanticReleaseError('error 1', 'ERR1');
   const error2 = new SemanticReleaseError('error 2', 'ERR2');
@@ -464,6 +473,7 @@ test.serial('Force a dry-run if not on a CI and "noCi" is not explicitly set', a
   await gitTagVersion('v1.0.0');
   // Add new commits to the master branch
   await gitCommits(['Second']);
+  await push();
 
   const nextRelease = {type: 'major', version: '2.0.0', gitHead: await getGitHead(), gitTag: 'v2.0.0'};
   const notes = 'Release notes';
@@ -513,6 +523,7 @@ test.serial('Allow local releases with "noCi" option', async t => {
   await gitTagVersion('v1.0.0');
   // Add new commits to the master branch
   await gitCommits(['Second']);
+  await push();
 
   const nextRelease = {type: 'major', version: '2.0.0', gitHead: await getGitHead(), gitTag: 'v2.0.0'};
   const notes = 'Release notes';
@@ -566,6 +577,7 @@ test.serial('Accept "undefined" value returned by the "generateNotes" plugins', 
   await gitTagVersion('v1.0.0');
   // Add new commits to the master branch
   commits = (await gitCommits(['Second'])).concat(commits);
+  await push();
 
   const lastRelease = {version: '1.0.0', gitHead: commits[commits.length - 1].hash, gitTag: 'v1.0.0'};
   const nextRelease = {type: 'major', version: '2.0.0', gitHead: await getGitHead(), gitTag: 'v2.0.0'};
@@ -623,6 +635,27 @@ test.serial('Returns falsy value if triggered by a PR', async t => {
   );
 });
 
+test.serial('Returns falsy value if triggered on an outdated clone', async t => {
+  // Create a git repository, set the current working directory at the root of the repo
+  const repositoryUrl = await gitRepo(true);
+  // Add commits to the master branch
+  await gitCommits(['First']);
+  await gitCommits(['Second']);
+  await push();
+  await reset();
+
+  const semanticRelease = proxyquire('..', {
+    './lib/logger': t.context.logger,
+    'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
+  });
+
+  t.falsy(await semanticRelease({repositoryUrl}));
+  t.deepEqual(t.context.log.args[t.context.log.args.length - 1], [
+    "The local branch %s is behind the remote one, therefore a new version won't be published.",
+    'master',
+  ]);
+});
+
 test.serial('Returns falsy value if not running from the configured branch', async t => {
   // Create a git repository, set the current working directory at the root of the repo
   const repositoryUrl = await gitRepo(true);
@@ -656,6 +689,7 @@ test.serial('Returns falsy value if there is no relevant changes', async t => {
   const repositoryUrl = await gitRepo(true);
   // Add commits to the master branch
   await gitCommits(['First']);
+  await push();
 
   const analyzeCommits = stub().resolves();
   const verifyRelease = stub().resolves();
@@ -685,7 +719,10 @@ test.serial('Returns falsy value if there is no relevant changes', async t => {
   t.is(verifyRelease.callCount, 0);
   t.is(generateNotes.callCount, 0);
   t.is(publish.callCount, 0);
-  t.is(t.context.log.args[7][0], 'There are no relevant changes, so no new version is released.');
+  t.is(
+    t.context.log.args[t.context.log.args.length - 1][0],
+    'There are no relevant changes, so no new version is released.'
+  );
 });
 
 test.serial('Exclude commits with [skip release] or [release skip] from analysis', async t => {
@@ -702,6 +739,7 @@ test.serial('Exclude commits with [skip release] or [release skip] from analysis
     'Test commit\n\n commit body\n[skip release]',
     'Test commit\n\n commit body\n[release skip]',
   ]);
+  await push();
   const analyzeCommits = stub().resolves();
   const config = {branch: 'master', repositoryUrl, globalOpt: 'global'};
   const options = {
@@ -826,6 +864,7 @@ test.serial('Throw an Error if plugin returns an unexpected value', async t => {
   await gitTagVersion('v1.0.0');
   // Add new commits to the master branch
   await gitCommits(['Second']);
+  await push();
 
   const verifyConditions = stub().resolves();
   const analyzeCommits = stub().resolves('string');
