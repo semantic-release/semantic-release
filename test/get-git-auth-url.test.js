@@ -13,6 +13,8 @@ test.beforeEach(() => {
   delete process.env.GITHUB_TOKEN;
   delete process.env.GL_TOKEN;
   delete process.env.GITLAB_TOKEN;
+  process.env.GIT_ASKPASS = 'echo';
+  process.env.GIT_TERMINAL_PROMPT = 0;
 });
 
 test.afterEach.always(() => {
