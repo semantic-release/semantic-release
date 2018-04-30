@@ -46,16 +46,16 @@ export async function gitRepo(withRemote, branch = 'master') {
  * - Create an initial commits
  * - Push to origin
  *
- * @param {String} origin The URL of the bare repository.
+ * @param {String} repositoryUrl The URL of the bare repository.
  * @param {String} [branch='master'] the branch to initialize.
  */
-export async function initBareRepo(origin, branch = 'master') {
+export async function initBareRepo(repositoryUrl, branch = 'master') {
   const clone = tempy.directory();
-  await execa('git', ['clone', '--no-hardlinks', origin, clone]);
+  await execa('git', ['clone', '--no-hardlinks', repositoryUrl, clone]);
   process.chdir(clone);
   await gitCheckout(branch);
   await gitCommits(['Initial commit']);
-  await execa('git', ['push', origin, branch]);
+  await execa('git', ['push', repositoryUrl, branch]);
 }
 
 /**
@@ -125,32 +125,32 @@ export async function gitTagVersion(tagName, sha) {
  * Create a shallow clone of a git repository and change the current working directory to the cloned repository root.
  * The shallow will contain a limited number of commit and no tags.
  *
- * @param {String} origin The path of the repository to clone.
+ * @param {String} repositoryUrl The path of the repository to clone.
  * @param {String} [branch='master'] the branch to clone.
  * @param {Number} [depth=1] The number of commit to clone.
  * @return {String} The path of the cloned repository.
  */
-export async function gitShallowClone(origin, branch = 'master', depth = 1) {
+export async function gitShallowClone(repositoryUrl, branch = 'master', depth = 1) {
   const dir = tempy.directory();
 
   process.chdir(dir);
-  await execa('git', ['clone', '--no-hardlinks', '--no-tags', '-b', branch, '--depth', depth, origin, dir]);
+  await execa('git', ['clone', '--no-hardlinks', '--no-tags', '-b', branch, '--depth', depth, repositoryUrl, dir]);
   return dir;
 }
 
 /**
  * Create a git repo with a detached head from another git repository and change the current working directory to the new repository root.
  *
- * @param {String} origin The path of the repository to clone.
- * @param {Number} head A commit sha of the origin repo that will become the detached head of the new one.
+ * @param {String} repositoryUrl The path of the repository to clone.
+ * @param {Number} head A commit sha of the remote repo that will become the detached head of the new one.
  * @return {String} The path of the new repository.
  */
-export async function gitDetachedHead(origin, head) {
+export async function gitDetachedHead(repositoryUrl, head) {
   const dir = tempy.directory();
 
   process.chdir(dir);
   await execa('git', ['init']);
-  await execa('git', ['remote', 'add', 'origin', origin]);
+  await execa('git', ['remote', 'add', 'origin', repositoryUrl]);
   await execa('git', ['fetch']);
   await execa('git', ['checkout', head]);
   return dir;
@@ -180,12 +180,12 @@ export async function gitTagHead(tagName) {
 /**
  * Get the first commit sha referenced by the tag `tagName` in the remote repository.
  *
- * @param {String} origin The repository remote URL.
+ * @param {String} repositoryUrl The repository remote URL.
  * @param {String} tagName The tag name to seach for.
  * @return {String} The sha of the commit associated with `tagName` on the remote repository.
  */
-export async function gitRemoteTagHead(origin, tagName) {
-  return (await execa.stdout('git', ['ls-remote', '--tags', origin, tagName]))
+export async function gitRemoteTagHead(repositoryUrl, tagName) {
+  return (await execa.stdout('git', ['ls-remote', '--tags', repositoryUrl, tagName]))
     .split('\n')
     .filter(tag => Boolean(tag))
     .map(tag => tag.match(/^(\S+)/)[1])[0];
@@ -205,12 +205,12 @@ export async function gitCommitTag(gitHead) {
 /**
  * Push to the remote repository.
  *
- * @param {String} origin The remote repository URL.
+ * @param {String} repositoryUrl The remote repository URL.
  * @param {String} branch The branch to push.
  * @throws {Error} if the push failed.
  */
-export async function push(origin = 'origin', branch = 'master') {
-  await execa('git', ['push', '--tags', origin, `HEAD:${branch}`]);
+export async function push(repositoryUrl = 'origin', branch = 'master') {
+  await execa('git', ['push', '--tags', repositoryUrl, `HEAD:${branch}`]);
 }
 
 /**
