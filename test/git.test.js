@@ -61,7 +61,7 @@ test.serial('Unshallow repository', async t => {
   // Verify the shallow clone contains only one commit
   t.is((await gitGetCommits()).length, 1);
 
-  await unshallow();
+  await unshallow(repo);
 
   // Verify the shallow clone contains all the commits
   t.is((await gitGetCommits()).length, 2);
@@ -69,10 +69,10 @@ test.serial('Unshallow repository', async t => {
 
 test.serial('Do not throw error when unshallow a complete repository', async t => {
   // Create a git repository, set the current working directory at the root of the repo
-  await gitRepo();
+  const repo = await gitRepo();
   // Add commits to the master branch
   await gitCommits(['First']);
-  await t.notThrows(unshallow());
+  await t.notThrows(unshallow(repo));
 });
 
 test.serial('Verify if the commit `sha` is in the direct history of the current branch', async t => {

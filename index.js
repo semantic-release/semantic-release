@@ -57,7 +57,7 @@ async function run(options, plugins) {
   await plugins.verifyConditions({options, logger}, {settleAll: true});
 
   // Unshallow the repo in order to get all the tags
-  await unshallow();
+  await unshallow(options.repositoryUrl);
 
   const lastRelease = await getLastRelease(options.tagFormat, logger);
   const commits = await getCommits(lastRelease.gitHead, options.branch, logger);
