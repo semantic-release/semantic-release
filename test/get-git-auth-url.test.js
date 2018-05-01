@@ -13,6 +13,8 @@ test.beforeEach(() => {
   delete process.env.GITHUB_TOKEN;
   delete process.env.GL_TOKEN;
   delete process.env.GITLAB_TOKEN;
+  delete process.env.BB_TOKEN;
+  delete process.env.BITBUCKET_TOKEN;
   process.env.GIT_ASKPASS = 'echo';
   process.env.GIT_TERMINAL_PROMPT = 0;
 });
@@ -149,6 +151,22 @@ test.serial('Return the "https" formatted URL if "gitCredentials" is defined wit
   t.is(
     await getAuthUrl({repositoryUrl: 'git@host.null:owner/repo.git'}),
     'https://gitlab-ci-token:token@host.null/owner/repo.git'
+  );
+});
+
+test.serial('Return the "https" formatted URL if "gitCredentials" is defined with "BB_TOKEN"', async t => {
+  process.env.BB_TOKEN = 'token';
+  t.is(
+    await getAuthUrl({repositoryUrl: 'git@host.null:owner/repo.git'}),
+    'https://x-token-auth:token@host.null/owner/repo.git'
+  );
+});
+
+test.serial('Return the "https" formatted URL if "gitCredentials" is defined with "BITBUCKET_TOKEN"', async t => {
+  process.env.BITBUCKET_TOKEN = 'token';
+  t.is(
+    await getAuthUrl({repositoryUrl: 'git@host.null:owner/repo.git'}),
+    'https://x-token-auth:token@host.null/owner/repo.git'
   );
 });
 
