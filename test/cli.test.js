@@ -165,12 +165,12 @@ test.serial('Do not set properties in option for which arg is not in command lin
 
   await cli();
 
-  t.false(Object.prototype.hasOwnProperty.call(run.args[0][0], 'ci'));
-  t.false(Object.prototype.hasOwnProperty.call(run.args[0][0], 'd'));
-  t.false(Object.prototype.hasOwnProperty.call(run.args[0][0], 'dry-run'));
-  t.false(Object.prototype.hasOwnProperty.call(run.args[0][0], 'debug'));
-  t.false(Object.prototype.hasOwnProperty.call(run.args[0][0], 'r'));
-  t.false(Object.prototype.hasOwnProperty.call(run.args[0][0], 't'));
+  t.false(Reflect.apply(Object.prototype.hasOwnProperty, run.args[0][0], ['ci']));
+  t.false(Reflect.apply(Object.prototype.hasOwnProperty, run.args[0][0], ['d']));
+  t.false(Reflect.apply(Object.prototype.hasOwnProperty, run.args[0][0], ['dry-run']));
+  t.false(Reflect.apply(Object.prototype.hasOwnProperty, run.args[0][0], ['debug']));
+  t.false(Reflect.apply(Object.prototype.hasOwnProperty, run.args[0][0], ['r']));
+  t.false(Reflect.apply(Object.prototype.hasOwnProperty, run.args[0][0], ['t']));
 });
 
 test.serial('Set "noCi" options to "true" with "--no-ci"', async t => {

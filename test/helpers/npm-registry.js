@@ -16,8 +16,6 @@ let container;
 
 /**
  * Download the `npm-docker-couchdb` Docker image, create a new container and start it.
- *
- * @return {Promise} Promise that resolves when the container is started.
  */
 async function start() {
   await getStream(await docker.pull(IMAGE));
@@ -69,8 +67,6 @@ const authEnv = {
 
 /**
  * Stop and remote the `npm-docker-couchdb` Docker container.
- *
- * @return {Promise} Promise that resolves when the container is stopped.
  */
 async function stop() {
   await container.stop();
