@@ -20,7 +20,7 @@ import getStream from 'get-stream';
  * If `withRemote` is `false`, creates a regular repository and initialize it. Change the current working directory to the repository root.
  *
  * @param {Boolean} withRemote `true` to create a shallow clone of a bare repository.
- * @param {String} [branc='master'] The branch to initialize.
+ * @param {String} [branch='master'] The branch to initialize.
  * @return {String} The path of the clone if `withRemote` is `true`, the path of the repository otherwise.
  */
 export async function gitRepo(withRemote, branch = 'master') {

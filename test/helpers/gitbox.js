@@ -16,8 +16,6 @@ const gitCredential = `${GIT_USERNAME}:${GIT_PASSWORD}`;
 
 /**
  * Download the `gitbox` Docker image, create a new container and start it.
- *
- * @return {Promise} Promise that resolves when the container is started.
  */
 async function start() {
   await getStream(await docker.pull(IMAGE));
@@ -39,8 +37,6 @@ async function start() {
 
 /**
  * Stop and remote the `mockserver` Docker container.
- *
- * @return {Promise} Promise that resolves when the container is stopped.
  */
 async function stop() {
   await container.stop();

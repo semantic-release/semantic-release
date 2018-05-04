@@ -48,7 +48,7 @@ async function run(options, plugins) {
 
   options.repositoryUrl = await getGitAuthUrl(options);
 
-  if (!await isBranchUpToDate(options.branch)) {
+  if (!(await isBranchUpToDate(options.branch))) {
     logger.log(
       "The local branch %s is behind the remote one, therefore a new version won't be published.",
       options.branch
