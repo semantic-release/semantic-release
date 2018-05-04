@@ -56,7 +56,10 @@ async function run(options, plugins) {
     return false;
   }
 
-  if (!await verifyAuth(options.repositoryUrl, options.branch)) {
+  try {
+    await verifyAuth(options.repositoryUrl, options.branch);
+  } catch (err) {
+    logger.error(`The command "${err.cmd}" failed with the error message %s.`, err.stderr);
     throw getError('EGITNOPERMISSION', {options});
   }
 
