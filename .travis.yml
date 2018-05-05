@@ -4,7 +4,7 @@ services:
   - docker
 
 node_js:
-  - 9
+  - 10
   - 8
 
 # Trigger a push build on caribou and greenkeeper branches + PRs build on every branches
