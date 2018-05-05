@@ -26,7 +26,7 @@
     "@semantic-release/release-notes-generator": "^6.0.0",
     "aggregate-error": "^1.0.0",
     "chalk": "^2.3.0",
-    "cosmiconfig": "^4.0.0",
+    "cosmiconfig": "^5.0.1",
     "debug": "^3.1.0",
     "env-ci": "^2.0.0",
     "execa": "^0.10.0",
