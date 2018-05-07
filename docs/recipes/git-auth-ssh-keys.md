@@ -4,6 +4,8 @@ When using [environment variables](../usage/ci-configuration.md#authentication) 
 
 Alternatively the Git repository can be accessed via [SSH](https://git-scm.com/book/en/v2/Git-on-the-Server-The-Protocols#_the_ssh_protocol) by creating SSH keys, adding the public one to your Git hosted account and making the private one available on the CI environment.
 
+**Note:** SSH keys allow to push the [Git release tag](https://git-scm.com/book/en/v2/Git-Basics-Tagging) associated to the released version. Some plugins might also require an API token. See each plugin documentation for additional information.
+
 ## Generating the SSH keys
 
 In your local repository root:
