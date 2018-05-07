@@ -10,6 +10,19 @@ GitLab CI supports [Pipelines](https://docs.gitlab.com/ee/ci/pipelines.html) all
 
 **Note**: The publish pipeline must run a [Node >= 8 version](../support/FAQ.md#why-does-semantic-release-require-node-version--83).
 
+### `semantic-release` configuration
+
+You must configure the release process to use GitLab, over the default of GitHub.  Here are two suggestions for performing said configuration:
+
+- [configure semantic-release](https://github.com/semantic-release/semantic-release/blob/caribou/docs/usage/configuration.md#configuration) as to use the [gitlab plugin](https://github.com/semantic-release/gitlab), or
+- for simple projects, simply install `@semantic-release/gitlab-config`, and inject the following into your `package.json`
+
+```json
+"release": {
+  "extends": "@semantic-release/gitlab-config"
+}
+```
+
 ### `.gitlab-ci.yml` configuration for Node projects
 
 This example is a minimal configuration for **semantic-release** with a build running Node 6 and 8. See [GitLab CI - Configuration of your jobs with .gitlab-ci.yml](https://docs.gitlab.com/ee/ci/yaml/README.html) for additional configuration options.
