@@ -15,6 +15,7 @@ const getGitAuthUrl = require('./lib/get-git-auth-url');
 const logger = require('./lib/logger');
 const {unshallow, verifyAuth, isBranchUpToDate, gitHead: getGitHead, tag, push} = require('./lib/git');
 const getError = require('./lib/get-error');
+const {COMMIT_NAME, COMMIT_EMAIL} = require('./lib/definitions/constants');
 
 marked.setOptions({renderer: new TerminalRenderer()});
 
@@ -25,9 +26,16 @@ async function run(options, plugins) {
     logger.log('This run was not triggered in a known CI environment, running in dry-run mode.');
     options.dryRun = true;
   } else {
-    // When running on CI, prevent the `git` CLI to prompt for username/password. See #703.
-    process.env.GIT_ASKPASS = 'echo';
-    process.env.GIT_TERMINAL_PROMPT = 0;
+    // When running on CI, set the commits author and commiter info and prevent the `git` CLI to prompt for username/password. See #703.
+    process.env = {
+      GIT_AUTHOR_NAME: COMMIT_NAME,
+      GIT_AUTHOR_EMAIL: COMMIT_EMAIL,
+      GIT_COMMITTER_NAME: COMMIT_NAME,
+      GIT_COMMITTER_EMAIL: COMMIT_EMAIL,
+      ...process.env,
+      GIT_ASKPASS: 'echo',
+      GIT_TERMINAL_PROMPT: 0,
+    };
   }
 
   if (isCi && isPr && !options.noCi) {
