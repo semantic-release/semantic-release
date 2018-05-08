@@ -5,6 +5,7 @@ import clearModule from 'clear-module';
 import AggregateError from 'aggregate-error';
 import SemanticReleaseError from '@semantic-release/error';
 import DEFINITIONS from '../lib/definitions/plugins';
+import {COMMIT_NAME, COMMIT_EMAIL} from '../lib/definitions/constants';
 import {
   gitHead as getGitHead,
   gitTagHead,
@@ -157,6 +158,12 @@ test.serial('Plugins are called with expected values', async t => {
   // Verify the tag has been created on the local and remote repo and reference the gitHead
   t.is(await gitTagHead(nextRelease.gitTag), nextRelease.gitHead);
   t.is(await gitRemoteTagHead(repositoryUrl, nextRelease.gitTag), nextRelease.gitHead);
+
+  // Verify the author/commiter name and email hve been set
+  t.is(process.env.GIT_AUTHOR_NAME, COMMIT_NAME);
+  t.is(process.env.GIT_AUTHOR_EMAIL, COMMIT_EMAIL);
+  t.is(process.env.GIT_COMMITTER_NAME, COMMIT_NAME);
+  t.is(process.env.GIT_COMMITTER_EMAIL, COMMIT_EMAIL);
 });
 
 test.serial('Use custom tag format', async t => {
