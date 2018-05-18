@@ -1,5 +1,25 @@
 # Frequently Asked Questions
 
+## How does semantic-release handle merges?
+
+First, a primer on git commits.  Every commit in git has a "parent".  If you create a new git repo and make a commit `A`, since this is the first commit it will not have a parent.  If you make a second commit `B`, this commit will have `A` as the parent.  When you run `git log`, it starts at the commit you're currently on, and walks up the parents to show you the history of your branch.
+
+A "merge commit" is a special kind of commit with two parents.  To continue our example, if you create a new branch and commit `C` and `D`, then merge it into the master, master will now have five commits - `A` and `B` from master, `C` and `D` from the branch, and the merge commit itself.
+
+When you run semantic-release, it finds all the commits that were not part of the previous release.  So, if you had releases `A` and `B`, semantic-release would now find `C`, `D`, and the merge commit, analyze each of them, and decide what to do.
+
+This means if you merge in `C` and `D` and both of them are "fix: ...", but you'd like this to be a minor release, you can set the message in your merge commit to be "feat: ..." and it will "override" `C` and `D`.  You can't do it the other way around, however; if `C` was a "feat: ...", then setting the merge commit message to be "fix: ..." won't "de-escalate" the release to a patch release.  Semantic-release will see three commits, the highest is "feat", so it will be a minor release.
+
+If you're trying to merge commits, and you want to change the version that semantic-release will generate, you can use a squash merge.
+
+## How does semantic-release handle squash merges?
+
+If you merge a commit with `git merge --squash`, this does not result in a "merge commit" with two parents, like in the above case.  Instead, git combines all your merges into a single commit, and commits that.
+
+If you're merging in commits from a contributor who has incorrectly categorized a "fix" as a "feat", or added a "BREAKING CHANGE" that they later reverted, you can use a sqash merge to fix this.
+
+Note that the default commit analyzer plugin relies on `convential-changelog` to parse your commit message; if you leave the default 'Squashed commit of the following:' as the header, then conventional-changelog does not categorize the commit as a feature or a bugfix, but instead adds it to the changelog off by itself in its own section.  Using default configuration, `semantic-release` handles this as "no release".  If "BREAKING CHANGE" appears anywhere within the body of your squash-merge, `conventional-changelog` does extract the breaking change into the changelog, so in this case `semantic-release` will do a major release.  "fix" and "feat" in individual commits within the squash merge, however, are ignored.
+
 ## Why is the `package.json`’s version not updated in my repository?
 
 **semantic-release** takes care of updating the `package.json`’s version before publishing to [npm](https://www.npmjs.com).
