@@ -194,7 +194,7 @@ In addition the [verify conditions step](../../README.md#release-steps) verifies
 
 See [Node version requirement](../support/node-version.md#node-version-requirement) for more details and solutions.
 
-# What is npx?
+## What is npx?
 
 [`npx`](https://www.npmjs.com/package/npx) – short for "npm exec" – is a CLI to find and execute npm binaries within the local `node_modules` folder or in the $PATH. If a binary can't be located npx will download the required package and execute it from its cache location.
 The tool is bundled with [npm](https://www.npmjs.com/package/npm) >= 5.2, or can be installed via `npm install -g npx`.
