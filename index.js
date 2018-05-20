@@ -54,6 +54,7 @@ async function run(options, plugins) {
 
   await verify(options);
 
+  const {repositoryUrl} = options;
   options.repositoryUrl = await getGitAuthUrl(options);
 
   if (!(await isBranchUpToDate(options.branch))) {
@@ -68,7 +69,7 @@ async function run(options, plugins) {
     await verifyAuth(options.repositoryUrl, options.branch);
   } catch (err) {
     logger.error(`The command "${err.cmd}" failed with the error message %s.`, err.stderr);
-    throw getError('EGITNOPERMISSION', {options});
+    throw getError('EGITNOPERMISSION', {options, repositoryUrl});
   }
 
   logger.log('Run automated release from branch %s', options.branch);
