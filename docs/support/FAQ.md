@@ -164,6 +164,21 @@ You can trigger a release by pushing to your Git repository. You deliberately ca
 
 Yes, every commits that contains `[skip release]` or `[release skip]` in their message will be excluded from the commit analysis and won't participate in the release type determination.
 
+## How can I change the type of commits that trigger a release?
+
+By default **semantic-release** uses the [Angular Commit Message Conventions](https://github.com/angular/angular.js/blob/master/DEVELOPERS.md#-git-commit-guidelines) and triggers releases based on the following rules:
+
+| Commit                      | Release type               |
+|-----------------------------|----------------------------|
+| Commit with breaking change | ~~Major~~ Breaking release |
+| Commit with type `feat`     | ~~Minor~~ Feature release  |
+| Commit with type `fix`      | Patch release              |
+| Commit with type `perf`     | Patch release              |
+
+See the [`@semantic-release/npm`](https://github.com/semantic-release/npm#npm-configuration) plugin documentation for more details.
+
+This is fully customizable with the [`@semantic-release/commit-analyzer`](https://github.com/semantic-release/commit-analyzer) plugin's [`release-rules` option](https://github.com/semantic-release/commit-analyzer#release-rules).
+
 ## Is it *really* a good idea to release on every push?
 
 It is indeed a great idea because it *forces* you to follow best practices. If you don’t feel comfortable releasing every feature or fix on your `master` you might not treat your `master` branch as intended.
@@ -173,6 +188,8 @@ From [Understanding the GitHub Flow](https://guides.github.com/introduction/flow
 > Branching is a core concept in Git, and the entire GitHub Flow is based upon it. There's only one rule: anything in the master branch is always deployable.
 
 If you need more control over the timing of releases, see [Triggering a release](../../README.md#triggering-a-release) for different options.
+
+**Note**: Only the codebase changes altering the published package will trigger a release (for example new features, bug fixes or performance improvements would trigger a release while refactoring or changing code style would not). See [How can I change the type of commits that trigger a release?](#how-can-i-change-the-type-of-commits-that-trigger-a-release) for more details.
 
 ## Can I set the initial release version of my package to `0.0.1`?
 
