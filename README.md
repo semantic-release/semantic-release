@@ -68,7 +68,7 @@ Here is an example of the release type that will be done based on a commit messa
 
 ### Triggering a release
 
-For each new commits added to the release branch (i.e. `master`) with `git push` or by merging a pull request or merging from another branch, a CI build is triggered and runs the `semantic-release` command to make a release if there are codebase changes since the last release that that affect the package functionalities.
+For each new commits added to the release branch (i.e. `master`) with `git push` or by merging a pull request or merging from another branch, a CI build is triggered and runs the `semantic-release` command to make a release if there are codebase changes since the last release that affect the package functionalities.
 
 If you need more control over the timing of releases you have a couple of options:
 - Publish releases on a distribution channel (for example npm’s [dist-tags](https://docs.npmjs.com/cli/dist-tag)). This way you can keep control over what your users end up using by default, and you can decide when to make an automatically released version available to the stable channel, and promote it.
