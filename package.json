@@ -37,7 +37,7 @@
     "hosted-git-info": "^2.6.0",
     "lodash": "^4.17.4",
     "marked": "^0.4.0",
-    "marked-terminal": "^2.0.0",
+    "marked-terminal": "^3.0.0",
     "p-locate": "^2.0.0",
     "p-reduce": "^1.0.0",
     "read-pkg-up": "^3.0.0",
