@@ -37,7 +37,7 @@
 
 [Open a Pull Request](https://github.com/semantic-release/semantic-release/blob/caribou/CONTRIBUTING.md#submitting-a-pull-request) to add your plugin to the list.
 
-- [semantic-release-docker](https://github.com/felixfbecker/semantic-release-docker) Set of semantic-release plugins for publishing a docker image to Docker Hub (tested on semantic-release **^11.0.0**)
+- [semantic-release-docker](https://github.com/felixfbecker/semantic-release-docker) Set of semantic-release plugins for publishing a docker image to Docker Hub
   - [verifyConditions](https://github.com/felixfbecker/semantic-release-docker#verifyconditions) Verify that all needed configuration is present and login to the Docker registry.
   - [publish](https://github.com/felixfbecker/semantic-release-docker#publish) Tag the image specified by `name` with the new version, push it to Docker Hub and update the latest tag.
 - [semantic-release-verify-deps](https://github.com/piercus/semantic-release-verify-deps) 
