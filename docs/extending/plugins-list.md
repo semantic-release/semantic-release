@@ -40,6 +40,10 @@
 - [semantic-release-docker](https://github.com/felixfbecker/semantic-release-docker) Set of semantic-release plugins for publishing a docker image to Docker Hub
   - [verifyConditions](https://github.com/felixfbecker/semantic-release-docker#verifyconditions) Verify that all needed configuration is present and login to the Docker registry.
   - [publish](https://github.com/felixfbecker/semantic-release-docker#publish) Tag the image specified by `name` with the new version, push it to Docker Hub and update the latest tag.
+- [semantic-release-vsce](https://github.com/raix/semantic-release-vsce) Set of semantic-release plugins for publishing Visual Studio Code extensions to the marketplace
+  - **verifyConditions** Verify the presence and the validity of the vsce authentication and release configuration
+  - **prepare** Create a `.vsix` for distribution
+  - **publish** Publish the package to the Visual Studio Code marketplace
 - [semantic-release-verify-deps](https://github.com/piercus/semantic-release-verify-deps) 
   - [verifyConditions](https://github.com/piercus/semantic-release-verify-deps) Check the dependencies format against a regexp before a release
 - [semantic-release-chrome](https://github.com/GabrielDuarteM/semantic-release-chrome) Set of semantic-release plugins for publishing a Chrome extension release.
