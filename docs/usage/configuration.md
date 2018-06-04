@@ -6,7 +6,7 @@ In order to customize **semantic-release**’s behavior, [options](#options) and
 - A `release` key in the project's `package.json` file
 - CLI arguments
 
-The following two examples are the same.
+The following three examples are the same.
 
 Via CLI argument:
 
@@ -17,7 +17,20 @@ $ semantic-release --branch next
 Via `release` key in the project's `package.json` file:
 
 ```json
-"release": {
+{
+  "release": {
+    "branch": "next"
+  }
+}
+```
+```bash
+$ semantic-release
+```
+
+Via `.releaserc` file:
+
+```json
+{
   "branch": "next"
 }
 ```
@@ -28,6 +41,8 @@ $ semantic-release
 **Note**: CLI arguments take precedence over options configured in the configuration file.
 
 **Note**: Plugin options cannot be defined via CLI arguments and must be defined in the configuration file.
+
+**Note**: When configuring via `package.json`, the configuration must be under the `release` property. However, when using a `.releaserc` or a `release.config.js` file, the configuration must be set without a `release` property.
 
 ## Environment variables
 
