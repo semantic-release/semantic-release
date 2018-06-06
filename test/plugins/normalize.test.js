@@ -14,7 +14,7 @@ test('Normalize and load plugin from string', t => {
 
   t.is(plugin.pluginName, './test/fixtures/plugin-noop');
   t.is(typeof plugin, 'function');
-  t.deepEqual(t.context.log.args[0], ['Load plugin %s from %s', 'verifyConditions', './test/fixtures/plugin-noop']);
+  t.deepEqual(t.context.log.args[0], ['Load plugin "%s" from %s', 'verifyConditions', './test/fixtures/plugin-noop']);
 });
 
 test('Normalize and load plugin from object', t => {
@@ -22,7 +22,7 @@ test('Normalize and load plugin from object', t => {
 
   t.is(plugin.pluginName, './test/fixtures/plugin-noop');
   t.is(typeof plugin, 'function');
-  t.deepEqual(t.context.log.args[0], ['Load plugin %s from %s', 'publish', './test/fixtures/plugin-noop']);
+  t.deepEqual(t.context.log.args[0], ['Load plugin "%s" from %s', 'publish', './test/fixtures/plugin-noop']);
 });
 
 test('Normalize and load plugin from a base file path', t => {
@@ -37,7 +37,7 @@ test('Normalize and load plugin from a base file path', t => {
   t.is(plugin.pluginName, './plugin-noop');
   t.is(typeof plugin, 'function');
   t.deepEqual(t.context.log.args[0], [
-    'Load plugin %s from %s in shareable config %s',
+    'Load plugin "%s" from %s in shareable config %s',
     'verifyConditions',
     './plugin-noop',
     './test/fixtures',
@@ -85,7 +85,7 @@ test('Normalize and load plugin that retuns multiple functions', t => {
   const plugin = normalize('verifyConditions', {}, {}, './test/fixtures/multi-plugin', t.context.logger);
 
   t.is(typeof plugin, 'function');
-  t.deepEqual(t.context.log.args[0], ['Load plugin %s from %s', 'verifyConditions', './test/fixtures/multi-plugin']);
+  t.deepEqual(t.context.log.args[0], ['Load plugin "%s" from %s', 'verifyConditions', './test/fixtures/multi-plugin']);
 });
 
 test('Wrap "analyzeCommits" plugin in a function that validate the output of the plugin', async t => {
