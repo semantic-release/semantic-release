@@ -179,7 +179,7 @@ async function callFail(plugins, options, error) {
 
 module.exports = async opts => {
   logger.log(`Running %s version %s`, pkg.name, pkg.version);
-  const unhook = hookStd({silent: false}, hideSensitive);
+  const {unhook} = hookStd({silent: false}, hideSensitive);
   try {
     const config = await getConfig(opts, logger);
     const {plugins, options} = config;
