@@ -212,12 +212,3 @@ export async function gitCommitTag(gitHead) {
 export async function push(repositoryUrl = 'origin', branch = 'master') {
   await execa('git', ['push', '--tags', repositoryUrl, `HEAD:${branch}`]);
 }
-
-/**
- * Reset repository to a commit.
- *
- * @param {String} [commit='HEAD~1'] Commit reference to reset the repo to.
- */
-export async function reset(commit = 'HEAD~1') {
-  await execa('git', ['reset', commit]);
-}

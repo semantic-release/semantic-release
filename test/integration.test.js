@@ -2,7 +2,7 @@ import test from 'ava';
 import {writeJson, readJson} from 'fs-extra';
 import {stub} from 'sinon';
 import execa from 'execa';
-import {gitHead as getGitHead, gitTagHead, gitRepo, gitCommits, gitRemoteTagHead} from './helpers/git-utils';
+import {gitHead as getGitHead, gitTagHead, gitRepo, gitCommits, gitRemoteTagHead, push} from './helpers/git-utils';
 import gitbox from './helpers/gitbox';
 import mockServer from './helpers/mockserver';
 import npmRegistry from './helpers/npm-registry';
@@ -609,6 +609,7 @@ test.serial('Exit with 1 if missing permission to push to the remote repository'
   /* Initial release */
   t.log('Commit a feature');
   await gitCommits(['feat: Initial commit']);
+  await push();
   t.log('$ semantic-release');
   const {stdout, code} = await execa(
     cli,

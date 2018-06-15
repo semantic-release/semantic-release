@@ -15,7 +15,6 @@ import {
   gitRemoteTagHead,
   push,
   gitShallowClone,
-  reset,
 } from './helpers/git-utils';
 
 // Save the current process.env
@@ -645,11 +644,15 @@ test.serial('Returns falsy value if triggered by a PR', async t => {
 test.serial('Returns falsy value if triggered on an outdated clone', async t => {
   // Create a git repository, set the current working directory at the root of the repo
   const repositoryUrl = await gitRepo(true);
+  const repoDir = process.cwd();
   // Add commits to the master branch
   await gitCommits(['First']);
   await gitCommits(['Second']);
   await push();
-  await reset();
+  await gitShallowClone(repositoryUrl);
+  await gitCommits(['Third']);
+  await push();
+  process.chdir(repoDir);
 
   const semanticRelease = proxyquire('..', {
     './lib/logger': t.context.logger,
