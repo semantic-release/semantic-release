@@ -56,17 +56,16 @@ async function run(options, plugins) {
 
   options.repositoryUrl = await getGitAuthUrl(options);
 
-  if (!(await isBranchUpToDate(options.branch))) {
-    logger.log(
-      "The local branch %s is behind the remote one, therefore a new version won't be published.",
-      options.branch
-    );
-    return false;
-  }
-
   try {
     await verifyAuth(options.repositoryUrl, options.branch);
   } catch (err) {
+    if (!(await isBranchUpToDate(options.repositoryUrl, options.branch))) {
+      logger.log(
+        "The local branch %s is behind the remote one, therefore a new version won't be published.",
+        options.branch
+      );
+      return false;
+    }
     logger.error(`The command "${err.cmd}" failed with the error message %s.`, err.stderr);
     throw getError('EGITNOPERMISSION', {options});
   }

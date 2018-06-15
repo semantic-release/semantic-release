@@ -24,7 +24,6 @@ import {
   gitCommitTag,
   gitRemoteTagHead,
   push as pushUtil,
-  reset,
 } from './helpers/git-utils';
 
 // Save the current working diretory
@@ -189,31 +188,35 @@ test.serial('Throws error if obtaining the tags fails', async t => {
 });
 
 test.serial('Return "true" if repository is up to date', async t => {
-  await gitRepo(true);
+  const repositoryUrl = await gitRepo(true);
   await gitCommits(['First']);
   await pushUtil();
 
-  t.true(await isBranchUpToDate('master'));
+  t.true(await isBranchUpToDate(repositoryUrl, 'master'));
 });
 
 test.serial('Return falsy if repository is not up to date', async t => {
-  await gitRepo(true);
+  const repositoryUrl = await gitRepo(true);
+  const repoDir = process.cwd();
   await gitCommits(['First']);
   await gitCommits(['Second']);
   await pushUtil();
 
-  t.true(await isBranchUpToDate('master'));
+  t.true(await isBranchUpToDate(repositoryUrl, 'master'));
 
-  await reset();
+  await gitShallowClone(repositoryUrl);
+  await gitCommits(['Third']);
+  await pushUtil();
+  process.chdir(repoDir);
 
-  t.falsy(await isBranchUpToDate('master'));
+  t.falsy(await isBranchUpToDate(repositoryUrl, 'master'));
 });
 
 test.serial('Return "true" if local repository is ahead', async t => {
-  await gitRepo(true);
+  const repositoryUrl = await gitRepo(true);
   await gitCommits(['First']);
   await pushUtil();
   await gitCommits(['Second']);
 
-  t.true(await isBranchUpToDate('master'));
+  t.true(await isBranchUpToDate(repositoryUrl, 'master'));
 });
