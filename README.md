@@ -13,6 +13,9 @@
   <a href="https://greenkeeper.io">
     <img alt="Greenkeeper" src="https://badges.greenkeeper.io/semantic-release/semantic-release.svg">
   </a>
+  <a href="https://dependabot.com/compatibility-score.html?dependency-name=semantic-release&package-manager=npm_and_yarn&version-scheme=semver">
+    <img alt="semver-compatibility" src="https://api.dependabot.com/badges/compatibility_score?dependency-name=semantic-release&package-manager=npm_and_yarn&version-scheme=semver">
+  </a>
   <a href="#badge">
     <img alt="semantic-release" src="https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg">
   </a>
