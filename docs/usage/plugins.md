@@ -91,7 +91,7 @@ For example:
 With this configuration:
 - the `custom-plugin` npm module will be used to [analyze commits](#analyzecommits-plugin)
 - the `./build/my-plugin.js` script will be used to [generate release notes](#generatenotes-plugin)
-- the [`@semantic-release/exec`](https://github.com/semantic-release/exec),  [`@semantic-release/npm`](https://github.com/semantic-release/npm) and [`@semantic-release/exec`](https://github.com/semantic-release/exec) plugins will be used to [verify conditions](#verifyconditions-plugin)
+- the [`@semantic-release/exec`](https://github.com/semantic-release/exec),  [`@semantic-release/npm`](https://github.com/semantic-release/npm) and [`@semantic-release/github`](https://github.com/semantic-release/github) plugins will be used to [verify conditions](#verifyconditions-plugin)
 - the [`@semantic-release/exec`](https://github.com/semantic-release/exec) plugin will be used to [verify the release](#verifyrelease-plugin)
 - the `cmd` option will be set to `verify-conditions.sh` only for the [`@semantic-release/exec`](https://github.com/semantic-release/exec) plugin used to [verify conditions](#verifyconditions-plugin)
 - the `cmd` option will be set to `verify-release.sh` only for the [`@semantic-release/exec`](https://github.com/semantic-release/exec) plugin used to [verify the release](#verifyrelease-plugin)
