@@ -60,9 +60,9 @@ test('The "prepare" plugin, if defined, must be a single or an array of plugins 
 test('The "publish" plugin is mandatory, and must be a single or an array of plugins definition', t => {
   t.false(plugins.publish.config.validator({}));
   t.false(plugins.publish.config.validator({path: null}));
-  t.false(plugins.publish.config.validator());
 
   t.true(plugins.publish.config.validator({path: 'plugin-path.js'}));
+  t.true(plugins.publish.config.validator());
   t.true(plugins.publish.config.validator('plugin-path.js'));
   t.true(plugins.publish.config.validator(() => {}));
   t.true(plugins.publish.config.validator([{path: 'plugin-path.js'}, 'plugin-path.js', () => {}]));
