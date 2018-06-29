@@ -206,11 +206,11 @@ test.serial('Throws error if obtaining the tags fails', async t => {
 });
 
 test.serial('Return "true" if repository is up to date', async t => {
-  const repositoryUrl = await gitRepo(true);
+  await gitRepo(true);
   await gitCommits(['First']);
   await gitPush();
 
-  t.true(await isBranchUpToDate(repositoryUrl, 'master'));
+  t.true(await isBranchUpToDate('master'));
 });
 
 test.serial('Return falsy if repository is not up to date', async t => {
@@ -220,21 +220,21 @@ test.serial('Return falsy if repository is not up to date', async t => {
   await gitCommits(['Second']);
   await gitPush();
 
-  t.true(await isBranchUpToDate(repositoryUrl, 'master'));
+  t.true(await isBranchUpToDate('master'));
 
   await gitShallowClone(repositoryUrl);
   await gitCommits(['Third']);
   await gitPush();
   process.chdir(repoDir);
 
-  t.falsy(await isBranchUpToDate(repositoryUrl, 'master'));
+  t.falsy(await isBranchUpToDate('master'));
 });
 
 test.serial('Return "true" if local repository is ahead', async t => {
-  const repositoryUrl = await gitRepo(true);
+  await gitRepo(true);
   await gitCommits(['First']);
   await gitPush();
   await gitCommits(['Second']);
 
-  t.true(await isBranchUpToDate(repositoryUrl, 'master'));
+  t.true(await isBranchUpToDate('master'));
 });
