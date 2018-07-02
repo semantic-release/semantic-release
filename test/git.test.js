@@ -3,7 +3,7 @@ import tempy from 'tempy';
 import {
   gitTagHead,
   isRefInHistory,
-  unshallow,
+  fetch,
   gitHead,
   repoUrl,
   tag,
@@ -24,6 +24,7 @@ import {
   gitCommitTag,
   gitRemoteTagHead,
   gitPush,
+  gitDetachedHead,
 } from './helpers/git-utils';
 
 // Save the current working diretory
@@ -52,7 +53,7 @@ test.serial('Throw error if the last commit sha cannot be found', async t => {
   await t.throws(gitHead(), Error);
 });
 
-test.serial('Unshallow repository', async t => {
+test.serial('Unshallow and fetch repository', async t => {
   // Create a git repository, set the current working directory at the root of the repo
   const repo = await gitRepo();
   // Add commits to the master branch
@@ -63,7 +64,7 @@ test.serial('Unshallow repository', async t => {
   // Verify the shallow clone contains only one commit
   t.is((await gitGetCommits()).length, 1);
 
-  await unshallow(repo);
+  await fetch(repo);
 
   // Verify the shallow clone contains all the commits
   t.is((await gitGetCommits()).length, 2);
@@ -74,7 +75,24 @@ test.serial('Do not throw error when unshallow a complete repository', async t =
   const repo = await gitRepo();
   // Add commits to the master branch
   await gitCommits(['First']);
-  await t.notThrows(unshallow(repo));
+  await t.notThrows(fetch(repo));
+});
+
+test.serial('Fetch all tags on a detached head repository', async t => {
+  const repo = await gitRepo(true);
+
+  await gitCommits(['First']);
+  await gitTagVersion('v1.0.0');
+  await gitCommits(['Second']);
+  await gitTagVersion('v1.0.1');
+  const [commit] = await gitCommits(['Third']);
+  await gitTagVersion('v1.1.0');
+  await gitPush();
+  await gitDetachedHead(repo, commit.hash);
+
+  await fetch(repo);
+
+  t.deepEqual((await gitTags()).sort(), ['v1.0.0', 'v1.0.1', 'v1.1.0'].sort());
 });
 
 test.serial('Verify if the commit `sha` is in the direct history of the current branch', async t => {
