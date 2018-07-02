@@ -151,7 +151,7 @@ export async function gitDetachedHead(repositoryUrl, head) {
   process.chdir(dir);
   await execa('git', ['init']);
   await execa('git', ['remote', 'add', 'origin', repositoryUrl]);
-  await execa('git', ['fetch']);
+  await execa('git', ['fetch', repositoryUrl]);
   await execa('git', ['checkout', head]);
   return dir;
 }

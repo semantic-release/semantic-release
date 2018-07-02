@@ -13,7 +13,7 @@ const getLastRelease = require('./lib/get-last-release');
 const {extractErrors} = require('./lib/utils');
 const getGitAuthUrl = require('./lib/get-git-auth-url');
 const logger = require('./lib/logger');
-const {unshallow, verifyAuth, isBranchUpToDate, gitHead: getGitHead, tag, push} = require('./lib/git');
+const {fetch, verifyAuth, isBranchUpToDate, gitHead: getGitHead, tag, push} = require('./lib/git');
 const getError = require('./lib/get-error');
 const {COMMIT_NAME, COMMIT_EMAIL} = require('./lib/definitions/constants');
 
@@ -75,8 +75,7 @@ async function run(options, plugins) {
   logger.log('Call plugin %s', 'verify-conditions');
   await plugins.verifyConditions({options, logger}, {settleAll: true});
 
-  // Unshallow the repo in order to get all the tags
-  await unshallow(options.repositoryUrl);
+  await fetch(options.repositoryUrl);
 
   const lastRelease = await getLastRelease(options.tagFormat, logger);
   const commits = await getCommits(lastRelease.gitHead, options.branch, logger);
