@@ -209,6 +209,6 @@ export async function gitCommitTag(gitHead) {
  * @param {String} branch The branch to push.
  * @throws {Error} if the push failed.
  */
-export async function push(repositoryUrl = 'origin', branch = 'master') {
+export async function gitPush(repositoryUrl = 'origin', branch = 'master') {
   await execa('git', ['push', '--tags', repositoryUrl, `HEAD:${branch}`]);
 }
