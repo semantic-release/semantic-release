@@ -116,11 +116,20 @@ test.serial('Export plugins loaded from the dependency of a shareable config fil
 });
 
 test('Use default when only options are passed for a single plugin', t => {
-  const plugins = getPlugins({generateNotes: {}, analyzeCommits: {}}, {}, t.context.logger);
+  const analyzeCommits = {};
+  const success = () => {};
+  const fail = [() => {}];
+
+  const plugins = getPlugins({analyzeCommits, success, fail}, {}, t.context.logger);
 
   // Verify the module returns a function for each plugin
-  t.is(typeof plugins.generateNotes, 'function');
   t.is(typeof plugins.analyzeCommits, 'function');
+  t.is(typeof plugins.success, 'function');
+  t.is(typeof plugins.fail, 'function');
+
+  // Verify only the plugins defined as an object with no `path` are set to the default value
+  t.falsy(success.path);
+  t.falsy(fail.path);
 });
 
 test('Merge global options with plugin options', async t => {
