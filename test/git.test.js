@@ -3,12 +3,14 @@ import tempy from 'tempy';
 import {
   getTagHead,
   isRefInHistory,
+  isRefExists,
   fetch,
   getGitHead,
   repoUrl,
   tag,
   push,
   getTags,
+  getBranches,
   isGitRepo,
   verifyTagName,
   isBranchUpToDate,
@@ -56,7 +58,7 @@ test('Unshallow and fetch repository', async t => {
   // Verify the shallow clone contains only one commit
   t.is((await gitGetCommits(undefined, {cwd})).length, 1);
 
-  await fetch(repositoryUrl, {cwd});
+  await fetch({cwd});
 
   // Verify the shallow clone contains all the commits
   t.is((await gitGetCommits(undefined, {cwd})).length, 2);
@@ -64,10 +66,10 @@ test('Unshallow and fetch repository', async t => {
 
 test('Do not throw error when unshallow a complete repository', async t => {
   // Create a git repository, set the current working directory at the root of the repo
-  const {cwd, repositoryUrl} = await gitRepo();
+  const {cwd} = await gitRepo(true);
   // Add commits to the master branch
   await gitCommits(['First'], {cwd});
-  await t.notThrows(fetch(repositoryUrl, {cwd}));
+  await t.notThrows(fetch({cwd}));
 });
 
 test('Fetch all tags on a detached head repository', async t => {
@@ -82,7 +84,7 @@ test('Fetch all tags on a detached head repository', async t => {
   await gitPush(repositoryUrl, 'master', {cwd});
   cwd = await gitDetachedHead(repositoryUrl, commit.hash);
 
-  await fetch(repositoryUrl, {cwd});
+  await fetch({cwd});
 
   t.deepEqual((await getTags({cwd})).sort(), ['v1.0.0', 'v1.0.1', 'v1.1.0'].sort());
 });
@@ -98,9 +100,36 @@ test('Verify if the commit `sha` is in the direct history of the current branch'
   const otherCommits = await gitCommits(['Second'], {cwd});
   await gitCheckout('master', false, {cwd});
 
-  t.true(await isRefInHistory(commits[0].hash, {cwd}));
-  t.falsy(await isRefInHistory(otherCommits[0].hash, {cwd}));
-  await t.throws(isRefInHistory('non-existant-sha', {cwd}));
+  t.true(await isRefInHistory(commits[0].hash, 'master', false, {cwd}));
+  t.falsy(await isRefInHistory(otherCommits[0].hash, 'master', false, {cwd}));
+  t.falsy(await isRefInHistory(otherCommits[0].hash, 'missing-branch', false, {cwd}));
+  await t.throws(isRefInHistory('non-existant-sha', 'master', false, {cwd}));
+});
+
+test('Verify if a branch exists', async t => {
+  // Create a git repository, set the current working directory at the root of the repo
+  const {cwd} = await gitRepo();
+  // Add commits to the master branch
+  await gitCommits(['First'], {cwd});
+  // Create the new branch 'other-branch' from master
+  await gitCheckout('other-branch', true, {cwd});
+  // Add commits to the 'other-branch' branch
+  await gitCommits(['Second'], {cwd});
+
+  t.true(await isRefExists('master', {cwd}));
+  t.true(await isRefExists('other-branch', {cwd}));
+  t.falsy(await isRefExists('next', {cwd}));
+});
+
+test('Get all branches', async t => {
+  const {cwd} = await gitRepo();
+  await gitCommits(['First'], {cwd});
+  await gitCheckout('second-branch', true, {cwd});
+  await gitCommits(['Second'], {cwd});
+  await gitCheckout('third-branch', true, {cwd});
+  await gitCommits(['Third'], {cwd});
+
+  t.deepEqual((await getBranches({cwd})).sort(), ['master', 'second-branch', 'third-branch'].sort());
 });
 
 test('Get the commit sha for a given tag or falsy if the tag does not exists', async t => {
@@ -146,7 +175,7 @@ test('Add tag on head commit', async t => {
   const {cwd} = await gitRepo();
   const commits = await gitCommits(['Test commit'], {cwd});
 
-  await tag('tag_name', {cwd});
+  await tag('tag_name', 'HEAD', {cwd});
 
   await t.is(await gitCommitTag(commits[0].hash, {cwd}), 'tag_name');
 });
@@ -156,13 +185,13 @@ test('Push tag to remote repository', async t => {
   const {cwd, repositoryUrl} = await gitRepo(true);
   const commits = await gitCommits(['Test commit'], {cwd});
 
-  await tag('tag_name', {cwd});
+  await tag('tag_name', 'HEAD', {cwd});
   await push(repositoryUrl, 'master', {cwd});
 
   t.is(await gitRemoteTagHead(repositoryUrl, 'tag_name', {cwd}), commits[0].hash);
 });
 
-test('Push tag to remote repository with remote branch ahaed', async t => {
+test('Push tag to remote repository with remote branch ahead', async t => {
   const {cwd, repositoryUrl} = await gitRepo(true);
   const commits = await gitCommits(['First'], {cwd});
   await gitPush(repositoryUrl, 'master', {cwd});
@@ -170,7 +199,7 @@ test('Push tag to remote repository with remote branch ahaed', async t => {
   await gitCommits(['Second'], {cwd: tmpRepo});
   await gitPush('origin', 'master', {cwd: tmpRepo});
 
-  await tag('tag_name', {cwd});
+  await tag('tag_name', 'HEAD', {cwd});
   await push(repositoryUrl, 'master', {cwd});
 
   t.is(await gitRemoteTagHead(repositoryUrl, 'tag_name', {cwd}), commits[0].hash);

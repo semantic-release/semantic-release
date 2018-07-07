@@ -123,11 +123,12 @@ Type: `Object`
 
 Information related to the last release found:
 
-| Name    | Type     | Description                                                                                        |
-|---------|----------|----------------------------------------------------------------------------------------------------|
-| version | `String` | The version of the last release.                                                                   |
-| gitHead | `String` | The sha of the last commit being part of the last release.                                         |
-| gitTag  | `String` | The [Git tag](https://git-scm.com/book/en/v2/Git-Basics-Tagging) associated with the last release. |
+| Name    | Type     | Description                                                                                                                         |
+|---------|----------|-------------------------------------------------------------------------------------------------------------------------------------|
+| version | `String` | The version of the last release.                                                                                                    |
+| gitHead | `String` | The sha of the last commit being part of the last release.                                                                          |
+| gitTag  | `String` | The [Git tag](https://git-scm.com/book/en/v2/Git-Basics-Tagging) associated with the last release.                                  |
+| channel | `String` | The distribution channel on which the last release was initially made available (`undefined` for the default distribution channel). |
 
 **Notes**: If no previous release is found, `lastRelease` will be an empty `Object`.
 
@@ -137,6 +138,7 @@ Example:
   gitHead: 'da39a3ee5e6b4b0d3255bfef95601890afd80709',
   version: '1.0.0',
   gitTag: 'v1.0.0',
+  channel: 'next'
 }
 ```
 
@@ -206,13 +208,14 @@ Type: `Object`
 
 Information related to the newly published release:
 
-| Name    | Type     | Description                                                                                       |
-|---------|----------|---------------------------------------------------------------------------------------------------|
-| type    | `String` | The [semver](https://semver.org) type of the release (`patch`, `minor` or `major`).               |
-| version | `String` | The version of the new release.                                                                   |
-| gitHead | `String` | The sha of the last commit being part of the new release.                                         |
-| gitTag  | `String` | The [Git tag](https://git-scm.com/book/en/v2/Git-Basics-Tagging) associated with the new release. |
-| notes   | `String` | The release notes for the new release.                                                            |
+| Name    | Type     | Description                                                                                                                   |
+|---------|----------|-------------------------------------------------------------------------------------------------------------------------------|
+| type    | `String` | The [semver](https://semver.org) type of the release (`patch`, `minor` or `major`).                                           |
+| version | `String` | The version of the new release.                                                                                               |
+| gitHead | `String` | The sha of the last commit being part of the new release.                                                                     |
+| gitTag  | `String` | The [Git tag](https://git-scm.com/book/en/v2/Git-Basics-Tagging) associated with the new release.                             |
+| notes   | `String` | The release notes for the new release.                                                                                        |
+| channel | `String` | The distribution channel on which the next release will be made available (`undefined` for the default distribution channel). |
 
 Example:
 ```js
@@ -222,6 +225,7 @@ Example:
   version: '1.1.0',
   gitTag: 'v1.1.0',
   notes: 'Release notes for version 1.1.0...',
+  channel : 'next'
 }
 ```
 
@@ -229,19 +233,20 @@ Example:
 
 Type: `Array<Object>`
 
-The list of releases published, one release per [publish plugin](../usage/plugins.md#publish-plugin).<br>
+The list of releases published or made available to a distribution channel.<br>
 Each release object has the following properties:
 
-| Name       | Type     | Description                                                                                   |
-|------------|----------|-----------------------------------------------------------------------------------------------|
-| name       | `String` | **Optional.** The release name, only if set by the corresponding `publish` plugin.            |
-| url        | `String` | **Optional.** The release URL, only if set by the corresponding `publish` plugin.             |
-| type       | `String` | The [semver](https://semver.org) type of the release (`patch`, `minor` or `major`).           |
-| version    | `String` | The version of the release.                                                                   |
-| gitHead    | `String` | The sha of the last commit being part of the release.                                         |
-| gitTag     | `String` | The [Git tag](https://git-scm.com/book/en/v2/Git-Basics-Tagging) associated with the release. |
-| notes      | `String` | The release notes for the release.                                                            |
-| pluginName | `String` | The name of the plugin that published the release.                                            |
+| Name       | Type     | Description                                                                                                    |
+|------------|----------|----------------------------------------------------------------------------------------------------------------|
+| name       | `String` | **Optional.** The release name, only if set by the corresponding `publish` plugin.                             |
+| url        | `String` | **Optional.** The release URL, only if set by the corresponding `publish` plugin.                              |
+| type       | `String` | The [semver](https://semver.org) type of the release (`patch`, `minor` or `major`).                            |
+| version    | `String` | The version of the release.                                                                                    |
+| gitHead    | `String` | The sha of the last commit being part of the release.                                                          |
+| gitTag     | `String` | The [Git tag](https://git-scm.com/book/en/v2/Git-Basics-Tagging) associated with the release.                  |
+| notes      | `String` | The release notes for the release.                                                                             |
+| pluginName | `String` | The name of the plugin that published the release.                                                             |
+| channel    | `String` | The distribution channel on which the release is available (`undefined` for the default distribution channel). |
 
 Example:
 ```js
@@ -255,6 +260,7 @@ Example:
     gitTag: 'v1.1.0',
     notes: 'Release notes for version 1.1.0...',
     pluginName: '@semantic-release/github'
+    channel: 'next'
   },
   {
     name: 'npm package (@latest dist-tag)',
@@ -265,6 +271,7 @@ Example:
     gitTag: 'v1.1.0',
     notes: 'Release notes for version 1.1.0...',
     pluginName: '@semantic-release/npm'
+    channel: 'next'
    }
  ]
 ```
