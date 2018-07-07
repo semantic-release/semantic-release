@@ -114,17 +114,17 @@ async function run(options, plugins) {
     await plugins.prepare(
       {options, logger, lastRelease, commits, nextRelease},
       {
-        getNextInput: async lastResult => {
+        getNextInput: async ({nextRelease, ...prepareParam}) => {
           const newGitHead = await getGitHead();
           // If previous prepare plugin has created a commit (gitHead changed)
-          if (lastResult.nextRelease.gitHead !== newGitHead) {
+          if (nextRelease.gitHead !== newGitHead) {
             nextRelease.gitHead = newGitHead;
             // Regenerate the release notes
             logger.log('Call plugin %s', 'generateNotes');
-            [nextRelease.notes] = await plugins.generateNotes(generateNotesParam);
+            [nextRelease.notes] = await plugins.generateNotes({nextRelease, ...prepareParam});
           }
           // Call the next publish plugin with the updated `nextRelease`
-          return {options, logger, lastRelease, commits, nextRelease};
+          return {...prepareParam, nextRelease};
         },
       }
     );
