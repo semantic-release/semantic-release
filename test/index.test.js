@@ -520,6 +520,43 @@ test.serial('Force a dry-run if not on a CI and "noCi" is not explicitly set', a
   t.is(success.callCount, 0);
 });
 
+test.serial('Dry-run does not print changelog if "generateNotes" return "undefined"', async t => {
+  // Create a git repository, set the current working directory at the root of the repo
+  const repositoryUrl = await gitRepo(true);
+  // Add commits to the master branch
+  await gitCommits(['First']);
+  // Create the tag corresponding to version 1.0.0
+  await gitTagVersion('v1.0.0');
+  // Add new commits to the master branch
+  await gitCommits(['Second']);
+  await gitPush();
+
+  const nextRelease = {type: 'major', version: '2.0.0', gitHead: await getGitHead(), gitTag: 'v2.0.0'};
+  const analyzeCommits = stub().resolves(nextRelease.type);
+  const generateNotes = stub().resolves();
+
+  const options = {
+    dryRun: true,
+    branch: 'master',
+    repositoryUrl,
+    verifyConditions: false,
+    analyzeCommits,
+    verifyRelease: false,
+    generateNotes,
+    prepare: false,
+    publish: false,
+    success: false,
+  };
+
+  const semanticRelease = proxyquire('..', {
+    './lib/logger': t.context.logger,
+    'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
+  });
+  t.truthy(await semanticRelease(options));
+
+  t.deepEqual(t.context.log.args[t.context.log.args.length - 1], ['Release note for version %s:\n', '2.0.0']);
+});
+
 test.serial('Allow local releases with "noCi" option', async t => {
   // Create a git repository, set the current working directory at the root of the repo
   const repositoryUrl = await gitRepo(true);
