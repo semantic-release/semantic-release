@@ -1,5 +1,6 @@
 import test from 'ava';
 import plugins from '../../lib/definitions/plugins';
+import {RELEASE_NOTES_SEPARATOR} from '../../lib/definitions/constants';
 
 test('The "verifyConditions" plugin, if defined, must be a single or an array of plugins definition', t => {
   t.false(plugins.verifyConditions.configValidator({}));
@@ -117,4 +118,12 @@ test('The "publish" plugin output, if defined, must be an object', t => {
   t.true(plugins.publish.outputValidator());
   t.true(plugins.publish.outputValidator(null));
   t.true(plugins.publish.outputValidator(''));
+});
+
+test('The "generateNotes" plugins output are concatenated with separator', t => {
+  t.is(plugins.generateNotes.postprocess(['note 1', 'note 2']), `note 1${RELEASE_NOTES_SEPARATOR}note 2`);
+  t.is(plugins.generateNotes.postprocess(['', 'note']), 'note');
+  t.is(plugins.generateNotes.postprocess([undefined, 'note']), 'note');
+  t.is(plugins.generateNotes.postprocess(['note 1', '', 'note 2']), `note 1${RELEASE_NOTES_SEPARATOR}note 2`);
+  t.is(plugins.generateNotes.postprocess(['note 1', undefined, 'note 2']), `note 1${RELEASE_NOTES_SEPARATOR}note 2`);
 });
