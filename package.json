@@ -35,7 +35,7 @@
     "git-log-parser": "^1.2.0",
     "git-url-parse": "^9.0.0",
     "hook-std": "^1.0.1",
-    "hosted-git-info": "^2.6.0",
+    "hosted-git-info": "^2.7.1",
     "lodash": "^4.17.4",
     "marked": "^0.4.0",
     "marked-terminal": "^3.0.0",
