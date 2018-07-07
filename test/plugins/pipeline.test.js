@@ -18,24 +18,6 @@ test('Execute each function in series passing the same input', async t => {
   t.true(step2.calledBefore(step3));
 });
 
-test('With one step, returns the step values rather than an Array ', async t => {
-  const step1 = stub().resolves(1);
-
-  const result = await pipeline([step1])(0);
-
-  t.deepEqual(result, 1);
-  t.true(step1.calledWith(0));
-});
-
-test('With one step, throws the error rather than an AggregateError ', async t => {
-  const error = new Error('test error 1');
-  const step1 = stub().rejects(error);
-
-  const thrown = await t.throws(pipeline([step1])(0));
-
-  t.is(error, thrown);
-});
-
 test('Execute each function in series passing a transformed input from "getNextInput"', async t => {
   const step1 = stub().resolves(1);
   const step2 = stub().resolves(2);
@@ -96,7 +78,7 @@ test('Execute each function in series calling "transform" to modify the results 
   t.deepEqual(getNextInput.args, [[5, 1 + 1], [5, 2 + 1], [5, 3 + 1], [5, 4 + 1]]);
 });
 
-test('Stop execution and throw error is a step rejects', async t => {
+test('Stop execution and throw error if a step rejects', async t => {
   const step1 = stub().resolves(1);
   const step2 = stub().rejects(new Error('test error'));
   const step3 = stub().resolves(3);

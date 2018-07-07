@@ -143,7 +143,7 @@ test('Merge global options with plugin options', async t => {
     t.context.logger
   );
 
-  const result = await plugins.verifyRelease();
+  const [result] = await plugins.verifyRelease();
 
   t.deepEqual(result.pluginConfig, {localOpt: 'local', globalOpt: 'global', otherOpt: 'locally-defined'});
 });
