@@ -4,7 +4,6 @@ import {spy, stub} from 'sinon';
 import clearModule from 'clear-module';
 import AggregateError from 'aggregate-error';
 import SemanticReleaseError from '@semantic-release/error';
-import DEFINITIONS from '../lib/definitions/plugins';
 import {COMMIT_NAME, COMMIT_EMAIL} from '../lib/definitions/constants';
 import {
   gitHead as getGitHead,
@@ -931,8 +930,6 @@ test.serial('Throw an Error if plugin returns an unexpected value', async t => {
   });
   const error = await t.throws(semanticRelease(options), Error);
 
-  // Verify error message
-  t.regex(error.message, new RegExp(DEFINITIONS.analyzeCommits.output.message));
   t.regex(error.details, /string/);
 });
 

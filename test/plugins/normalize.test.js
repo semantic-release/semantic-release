@@ -94,8 +94,10 @@ test('Wrap "analyzeCommits" plugin in a function that validate the output of the
 
   const error = await t.throws(plugin());
 
-  t.is(error.code, 'EANALYZEOUTPUT');
+  t.is(error.code, 'EANALYZECOMMITSOUTPUT');
   t.is(error.name, 'SemanticReleaseError');
+  t.truthy(error.message);
+  t.truthy(error.details);
   t.regex(error.details, /2/);
 });
 
@@ -105,8 +107,10 @@ test('Wrap "generateNotes" plugin in a function that validate the output of the 
 
   const error = await t.throws(plugin());
 
-  t.is(error.code, 'ERELEASENOTESOUTPUT');
+  t.is(error.code, 'EGENERATENOTESOUTPUT');
   t.is(error.name, 'SemanticReleaseError');
+  t.truthy(error.message);
+  t.truthy(error.details);
   t.regex(error.details, /2/);
 });
 
@@ -123,6 +127,8 @@ test('Wrap "publish" plugin in a function that validate the output of the plugin
 
   t.is(error.code, 'EPUBLISHOUTPUT');
   t.is(error.name, 'SemanticReleaseError');
+  t.truthy(error.message);
+  t.truthy(error.details);
   t.regex(error.details, /2/);
 });
 
@@ -187,6 +193,8 @@ test('Throws an error if the plugin return an object without the expected plugin
 
   t.is(error.code, 'EPLUGIN');
   t.is(error.name, 'SemanticReleaseError');
+  t.truthy(error.message);
+  t.truthy(error.details);
 });
 
 test('Throws an error if the plugin is not found', t => {
