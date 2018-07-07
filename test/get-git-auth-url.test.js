@@ -8,7 +8,7 @@ test('Return the same "git" formatted URL if "gitCredentials" is not defined', a
   const {cwd} = await gitRepo();
 
   t.is(
-    await getAuthUrl({cwd, env, options: {branch: 'master', repositoryUrl: 'git@host.null:owner/repo.git'}}),
+    await getAuthUrl({cwd, env, branch: {name: 'master'}, options: {repositoryUrl: 'git@host.null:owner/repo.git'}}),
     'git@host.null:owner/repo.git'
   );
 });
@@ -17,7 +17,12 @@ test('Return the same "https" formatted URL if "gitCredentials" is not defined',
   const {cwd} = await gitRepo();
 
   t.is(
-    await getAuthUrl({cwd, env, options: {branch: 'master', repositoryUrl: 'https://host.null/owner/repo.git'}}),
+    await getAuthUrl({
+      cwd,
+      env,
+      branch: {name: 'master'},
+      options: {repositoryUrl: 'https://host.null/owner/repo.git'},
+    }),
     'https://host.null/owner/repo.git'
   );
 });
@@ -26,7 +31,12 @@ test('Return the "https" formatted URL if "gitCredentials" is not defined and re
   const {cwd} = await gitRepo();
 
   t.is(
-    await getAuthUrl({cwd, env, options: {branch: 'master', repositoryUrl: 'git+https://host.null/owner/repo.git'}}),
+    await getAuthUrl({
+      cwd,
+      env,
+      branch: {name: 'master'},
+      options: {repositoryUrl: 'git+https://host.null/owner/repo.git'},
+    }),
     'https://host.null/owner/repo.git'
   );
 });
@@ -35,7 +45,7 @@ test('Do not add trailing ".git" if not present in the origian URL', async t => 
   const {cwd} = await gitRepo();
 
   t.is(
-    await getAuthUrl({cwd, env, options: {branch: 'master', repositoryUrl: 'git@host.null:owner/repo'}}),
+    await getAuthUrl({cwd, env, vranch: {name: 'master'}, options: {repositoryUrl: 'git@host.null:owner/repo'}}),
     'git@host.null:owner/repo'
   );
 });
@@ -47,7 +57,8 @@ test('Handle "https" URL with group and subgroup', async t => {
     await getAuthUrl({
       cwd,
       env,
-      options: {branch: 'master', repositoryUrl: 'https://host.null/group/subgroup/owner/repo.git'},
+      branch: {name: 'master'},
+      options: {repositoryUrl: 'https://host.null/group/subgroup/owner/repo.git'},
     }),
     'https://host.null/group/subgroup/owner/repo.git'
   );
@@ -60,7 +71,8 @@ test('Handle "git" URL with group and subgroup', async t => {
     await getAuthUrl({
       cwd,
       env,
-      options: {branch: 'master', repositoryUrl: 'git@host.null:group/subgroup/owner/repo.git'},
+      branch: {name: 'master'},
+      options: {repositoryUrl: 'git@host.null:group/subgroup/owner/repo.git'},
     }),
     'git@host.null:group/subgroup/owner/repo.git'
   );
@@ -70,7 +82,12 @@ test('Convert shorthand URL', async t => {
   const {cwd} = await gitRepo();
 
   t.is(
-    await getAuthUrl({cwd, env, options: {repositoryUrl: 'semanitc-release/semanitc-release'}}),
+    await getAuthUrl({
+      cwd,
+      env,
+      branch: {name: 'master'},
+      options: {repositoryUrl: 'semanitc-release/semanitc-release'},
+    }),
     'https://github.com/semanitc-release/semanitc-release.git'
   );
 });
@@ -82,7 +99,8 @@ test('Convert GitLab shorthand URL', async t => {
     await getAuthUrl({
       cwd,
       env,
-      options: {branch: 'master', repositoryUrl: 'gitlab:semanitc-release/semanitc-release'},
+      branch: {name: 'master'},
+      options: {repositoryUrl: 'gitlab:semanitc-release/semanitc-release'},
     }),
     'https://gitlab.com/semanitc-release/semanitc-release.git'
   );
@@ -95,7 +113,8 @@ test('Return the "https" formatted URL if "gitCredentials" is defined and reposi
     await getAuthUrl({
       cwd,
       env: {...env, GIT_CREDENTIALS: 'user:pass'},
-      options: {branch: 'master', repositoryUrl: 'git@host.null:owner/repo.git'},
+      branch: {name: 'master'},
+      options: {repositoryUrl: 'git@host.null:owner/repo.git'},
     }),
     'https://user:pass@host.null/owner/repo.git'
   );
@@ -121,7 +140,8 @@ test('Return the "https" formatted URL if "gitCredentials" is defined and reposi
     await getAuthUrl({
       cwd,
       env: {...env, GIT_CREDENTIALS: 'user:pass'},
-      options: {branch: 'master', repositoryUrl: 'https://host.null/owner/repo.git'},
+      branch: {name: 'master'},
+      options: {repositoryUrl: 'https://host.null/owner/repo.git'},
     }),
     'https://user:pass@host.null/owner/repo.git'
   );
@@ -134,7 +154,8 @@ test('Return the "http" formatted URL if "gitCredentials" is defined and reposit
     await getAuthUrl({
       cwd,
       env: {...env, GIT_CREDENTIALS: 'user:pass'},
-      options: {branch: 'master', repositoryUrl: 'http://host.null/owner/repo.git'},
+      branch: {name: 'master'},
+      options: {repositoryUrl: 'http://host.null/owner/repo.git'},
     }),
     'http://user:pass@host.null/owner/repo.git'
   );
@@ -147,7 +168,8 @@ test('Return the "https" formatted URL if "gitCredentials" is defined and reposi
     await getAuthUrl({
       cwd,
       env: {...env, GIT_CREDENTIALS: 'user:pass'},
-      options: {branch: 'master', repositoryUrl: 'git+https://host.null/owner/repo.git'},
+      branch: {name: 'master'},
+      options: {repositoryUrl: 'git+https://host.null/owner/repo.git'},
     }),
     'https://user:pass@host.null/owner/repo.git'
   );
@@ -160,7 +182,8 @@ test('Return the "http" formatted URL if "gitCredentials" is defined and reposit
     await getAuthUrl({
       cwd,
       env: {...env, GIT_CREDENTIALS: 'user:pass'},
-      options: {branch: 'master', repositoryUrl: 'git+http://host.null/owner/repo.git'},
+      branch: {name: 'master'},
+      options: {repositoryUrl: 'git+http://host.null/owner/repo.git'},
     }),
     'http://user:pass@host.null/owner/repo.git'
   );
@@ -173,7 +196,8 @@ test('Return the "https" formatted URL if "gitCredentials" is defined with "GH_T
     await getAuthUrl({
       cwd,
       env: {...env, GH_TOKEN: 'token'},
-      options: {branch: 'master', repositoryUrl: 'git@host.null:owner/repo.git'},
+      branch: {name: 'master'},
+      options: {repositoryUrl: 'git@host.null:owner/repo.git'},
     }),
     'https://token@host.null/owner/repo.git'
   );
@@ -186,7 +210,8 @@ test('Return the "https" formatted URL if "gitCredentials" is defined with "GITH
     await getAuthUrl({
       cwd,
       env: {...env, GITHUB_TOKEN: 'token'},
-      options: {branch: 'master', repositoryUrl: 'git@host.null:owner/repo.git'},
+      branch: {name: 'master'},
+      options: {repositoryUrl: 'git@host.null:owner/repo.git'},
     }),
     'https://token@host.null/owner/repo.git'
   );
@@ -199,7 +224,8 @@ test('Return the "https" formatted URL if "gitCredentials" is defined with "GL_T
     await getAuthUrl({
       cwd,
       env: {...env, GL_TOKEN: 'token'},
-      options: {branch: 'master', repositoryUrl: 'git@host.null:owner/repo.git'},
+      branch: {name: 'master'},
+      options: {repositoryUrl: 'git@host.null:owner/repo.git'},
     }),
     'https://gitlab-ci-token:token@host.null/owner/repo.git'
   );
@@ -212,7 +238,8 @@ test('Return the "https" formatted URL if "gitCredentials" is defined with "GITL
     await getAuthUrl({
       cwd,
       env: {...env, GITLAB_TOKEN: 'token'},
-      options: {branch: 'master', repositoryUrl: 'git@host.null:owner/repo.git'},
+      branch: {name: 'master'},
+      options: {repositoryUrl: 'git@host.null:owner/repo.git'},
     }),
     'https://gitlab-ci-token:token@host.null/owner/repo.git'
   );
@@ -225,7 +252,8 @@ test('Return the "https" formatted URL if "gitCredentials" is defined with "BB_T
     await getAuthUrl({
       cwd,
       env: {...env, BB_TOKEN: 'token'},
-      options: {branch: 'master', repositoryUrl: 'git@host.null:owner/repo.git'},
+      branch: {name: 'master'},
+      options: {repositoryUrl: 'git@host.null:owner/repo.git'},
     }),
     'https://x-token-auth:token@host.null/owner/repo.git'
   );
@@ -238,7 +266,8 @@ test('Return the "https" formatted URL if "gitCredentials" is defined with "BITB
     await getAuthUrl({
       cwd,
       env: {...env, BITBUCKET_TOKEN: 'token'},
-      options: {branch: 'master', repositoryUrl: 'git@host.null:owner/repo.git'},
+      branch: {name: 'master'},
+      options: {repositoryUrl: 'git@host.null:owner/repo.git'},
     }),
     'https://x-token-auth:token@host.null/owner/repo.git'
   );
@@ -251,7 +280,8 @@ test('Handle "https" URL with group and subgroup, with "GIT_CREDENTIALS"', async
     await getAuthUrl({
       cwd,
       env: {...env, GIT_CREDENTIALS: 'user:pass'},
-      options: {branch: 'master', repositoryUrl: 'https://host.null/group/subgroup/owner/repo.git'},
+      branch: {name: 'master'},
+      options: {repositoryUrl: 'https://host.null/group/subgroup/owner/repo.git'},
     }),
     'https://user:pass@host.null/group/subgroup/owner/repo.git'
   );
@@ -264,7 +294,8 @@ test('Handle "git" URL with group and subgroup, with "GIT_CREDENTIALS', async t 
     await getAuthUrl({
       cwd,
       env: {...env, GIT_CREDENTIALS: 'user:pass'},
-      options: {branch: 'master', repositoryUrl: 'git@host.null:group/subgroup/owner/repo.git'},
+      branch: {name: 'master'},
+      options: {repositoryUrl: 'git@host.null:group/subgroup/owner/repo.git'},
     }),
     'https://user:pass@host.null/group/subgroup/owner/repo.git'
   );
@@ -274,7 +305,12 @@ test('Do not add git credential to repositoryUrl if push is allowed', async t =>
   const {cwd, repositoryUrl} = await gitRepo(true);
 
   t.is(
-    await getAuthUrl({cwd, env: {...env, GIT_CREDENTIALS: 'user:pass'}, options: {branch: 'master', repositoryUrl}}),
+    await getAuthUrl({
+      cwd,
+      env: {...env, GIT_CREDENTIALS: 'user:pass'},
+      branch: {name: 'master'},
+      options: {repositoryUrl},
+    }),
     repositoryUrl
   );
 });

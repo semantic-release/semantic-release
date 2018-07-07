@@ -1,7 +1,7 @@
 import tempy from 'tempy';
 import execa from 'execa';
 import fileUrl from 'file-url';
-import pReduce from 'p-reduce';
+import pEachSeries from 'p-each-series';
 import gitLogParser from 'git-log-parser';
 import getStream from 'get-stream';
 
@@ -69,7 +69,7 @@ export async function initBareRepo(repositoryUrl, branch = 'master') {
  * @returns {Array<Commit>} The created commits, in reverse order (to match `git log` order).
  */
 export async function gitCommits(messages, execaOpts) {
-  await pReduce(messages, (_, message) =>
+  await pEachSeries(messages, message =>
     execa.stdout('git', ['commit', '-m', message, '--allow-empty', '--no-gpg-sign'], execaOpts)
   );
   return (await gitGetCommits(undefined, execaOpts)).slice(0, messages.length);
@@ -224,4 +224,47 @@ export function gitCommitTag(gitHead, execaOpts) {
  */
 export async function gitPush(repositoryUrl = 'origin', branch = 'master', execaOpts) {
   await execa('git', ['push', '--tags', repositoryUrl, `HEAD:${branch}`], execaOpts);
+}
+
+/**
+ * Merge a branch into the current one with `git merge`.
+ *
+ * @param {String} ref The ref to merge.
+ * @param {Object} [execaOpts] Options to pass to `execa`.
+ */
+export async function merge(ref, execaOpts) {
+  await execa('git', ['merge', '--no-ff', ref], execaOpts);
+}
+
+/**
+ * Merge a branch into the current one with `git merge --ff`.
+ *
+ * @param {String} ref The ref to merge.
+ * @param {Object} [execaOpts] Options to pass to `execa`.
+ */
+export async function mergeFf(ref, execaOpts) {
+  await execa('git', ['merge', '--ff', ref], execaOpts);
+}
+
+/**
+ * Merge a branch into the current one with `git rebase`.
+ *
+ * @param {String} ref The ref to merge.
+ * @param {Object} [execaOpts] Options to pass to `execa`.
+ */
+export async function rebase(ref, execaOpts) {
+  await execa('git', ['rebase', ref], execaOpts);
+}
+
+export async function changeAuthor(sha, execaOpts) {
+  await execa(
+    'git',
+    [
+      'filter-branch',
+      '-f',
+      '--env-filter',
+      `if [[ "$GIT_COMMIT" = "${sha}" ]]; then export GIT_COMMITTER_NAME="New Author" GIT_COMMITTER_EMAIL="author@test.com"; fi`,
+    ],
+    execaOpts
+  );
 }

@@ -29,6 +29,7 @@ test.serial('Pass options to semantic-release API', async t => {
     '',
     '-b',
     'master',
+    'next',
     '-r',
     'https://github/com/owner/repo.git',
     '-t',
@@ -68,7 +69,7 @@ test.serial('Pass options to semantic-release API', async t => {
 
   const exitCode = await cli();
 
-  t.is(run.args[0][0].branch, 'master');
+  t.deepEqual(run.args[0][0].branches, ['master', 'next']);
   t.is(run.args[0][0].repositoryUrl, 'https://github/com/owner/repo.git');
   t.is(run.args[0][0].tagFormat, `v\${version}`);
   t.deepEqual(run.args[0][0].plugins, ['plugin1', 'plugin2']);
@@ -92,7 +93,7 @@ test.serial('Pass options to semantic-release API with alias arguments', async t
   const argv = [
     '',
     '',
-    '--branch',
+    '--branches',
     'master',
     '--repository-url',
     'https://github/com/owner/repo.git',
@@ -110,7 +111,7 @@ test.serial('Pass options to semantic-release API with alias arguments', async t
 
   const exitCode = await cli();
 
-  t.is(run.args[0][0].branch, 'master');
+  t.deepEqual(run.args[0][0].branches, ['master']);
   t.is(run.args[0][0].repositoryUrl, 'https://github/com/owner/repo.git');
   t.is(run.args[0][0].tagFormat, `v\${version}`);
   t.deepEqual(run.args[0][0].plugins, ['plugin1', 'plugin2']);

@@ -29,6 +29,9 @@
   <a href="https://www.npmjs.com/package/semantic-release">
     <img alt="npm next version" src="https://img.shields.io/npm/v/semantic-release/next.svg">
   </a>
+  <a href="https://www.npmjs.com/package/semantic-release">
+    <img alt="npm beta version" src="https://img.shields.io/npm/v/semantic-release/beta.svg">
+  </a>
 </p>
 
 **semantic-release** automates the whole package release workflow including: determining the next version number, generating the release notes and publishing the package.
@@ -44,6 +47,7 @@ This removes the immediate connection between human emotions and version numbers
 - New features and fixes are immediately available to users
 - Notify maintainers and users of new releases
 - Use formalized commit message convention to document changes in the codebase
+- Publish on different distribution channels (such as [npm dist-tags](https://docs.npmjs.com/cli/dist-tag)) based on git merges
 - Integrate with your [continuous integration workflow](docs/recipes/README.md#ci-configurations)
 - Avoid potential errors associated with manual releases
 - Support any [package managers and languages](docs/recipes/README.md#package-managers-and-languages) via [plugins](docs/usage/plugins.md)

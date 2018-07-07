@@ -1,8 +1,11 @@
-const {template, pick} = require('lodash');
+const {pick} = require('lodash');
 const marked = require('marked');
 const TerminalRenderer = require('marked-terminal');
 const envCi = require('env-ci');
 const hookStd = require('hook-std');
+const pEachSeries = require('p-each-series');
+const semver = require('semver');
+const AggregateError = require('aggregate-error');
 const pkg = require('./package.json');
 const hideSensitive = require('./lib/hide-sensitive');
 const getConfig = require('./lib/get-config');
@@ -10,8 +13,10 @@ const verify = require('./lib/verify');
 const getNextVersion = require('./lib/get-next-version');
 const getCommits = require('./lib/get-commits');
 const getLastRelease = require('./lib/get-last-release');
-const {extractErrors} = require('./lib/utils');
+const getReleasesToAdd = require('./lib/get-releases-to-add');
+const {extractErrors, makeTag} = require('./lib/utils');
 const getGitAuthUrl = require('./lib/get-git-auth-url');
+const getBranches = require('./lib/branches');
 const getLogger = require('./lib/get-logger');
 const {fetch, verifyAuth, isBranchUpToDate, getGitHead, tag, push} = require('./lib/git');
 const getError = require('./lib/get-error');
@@ -19,6 +24,7 @@ const {COMMIT_NAME, COMMIT_EMAIL} = require('./lib/definitions/constants');
 
 marked.setOptions({renderer: new TerminalRenderer()});
 
+/* eslint complexity: ["warn", 25] */
 async function run(context, plugins) {
   const {cwd, env, options, logger} = context;
   const {isCi, branch: ciBranch, isPr} = envCi({env, cwd});
@@ -44,11 +50,19 @@ async function run(context, plugins) {
     return false;
   }
 
-  if (ciBranch !== options.branch) {
+  // Verify config
+  await verify(context);
+
+  await fetch({cwd, env});
+
+  context.branches = await getBranches(context);
+  context.branch = context.branches.find(({name}) => name === ciBranch);
+
+  if (!context.branch) {
     logger.log(
-      `This test run was triggered on the branch ${ciBranch}, while semantic-release is configured to only publish from ${
-        options.branch
-      }, therefore a new version won’t be published.`
+      `This test run was triggered on the branch ${ciBranch}, while semantic-release is configured to only publish from ${context.branches
+        .map(({name}) => name)
+        .join(', ')}, therefore a new version won’t be published.`
     );
     return false;
   }
@@ -56,17 +70,17 @@ async function run(context, plugins) {
     `Run automated release from branch ${ciBranch}${options.dryRun ? ' in dry-run mode' : ''}`
   );
 
-  await verify(context);
-
   options.repositoryUrl = await getGitAuthUrl(context);
 
   try {
     try {
-      await verifyAuth(options.repositoryUrl, options.branch, {cwd, env});
+      await verifyAuth(options.repositoryUrl, context.branch.name, {cwd, env});
     } catch (error) {
-      if (!(await isBranchUpToDate(options.branch, {cwd, env}))) {
+      if (!(await isBranchUpToDate(context.branch.name, {cwd, env}))) {
         logger.log(
-          `The local branch ${options.branch} is behind the remote one, therefore a new version won't be published.`
+          `The local branch ${
+            context.branch.name
+          } is behind the remote one, therefore a new version won't be published.`
         );
         return false;
       }
@@ -81,20 +95,65 @@ async function run(context, plugins) {
 
   await plugins.verifyConditions(context);
 
-  await fetch(options.repositoryUrl, {cwd, env});
+  const releasesToAdd = getReleasesToAdd(context);
+  const errors = [];
+  context.releases = [];
+
+  await pEachSeries(releasesToAdd, async ({lastRelease, currentRelease, nextRelease}) => {
+    if (context.branch['merge-range'] && !semver.satisfies(nextRelease.version, context.branch['merge-range'])) {
+      errors.push(getError('EINVALIDMAINTENANCEMERGE', {nextRelease, branch: context.branch}));
+      return;
+    }
+
+    const commits = await getCommits({...context, lastRelease, nextRelease});
+    nextRelease.notes = await plugins.generateNotes({...context, commits, lastRelease, nextRelease});
+
+    logger.log('Create tag %s', nextRelease.gitTag);
+    await tag(nextRelease.gitTag, nextRelease.gitHead, {cwd, env});
+    await push(options.repositoryUrl, context.branch.name, {cwd, env});
+    context.branch.tags.push({
+      version: nextRelease.version,
+      channel: nextRelease.channel,
+      gitTag: nextRelease.gitTag,
+      gitHead: nextRelease.gitHead,
+    });
+
+    const releases = await plugins.addChannel({...context, commits, lastRelease, currentRelease, nextRelease});
+    context.releases.push(...releases);
+    await plugins.success({...context, lastRelease, commits, nextRelease, releases});
+  });
+
+  if (errors.length > 0) {
+    throw new AggregateError(errors);
+  }
 
   context.lastRelease = await getLastRelease(context);
+
   context.commits = await getCommits(context);
 
-  const nextRelease = {type: await plugins.analyzeCommits(context), gitHead: await getGitHead({cwd, env})};
-
+  const nextRelease = {
+    type: await plugins.analyzeCommits(context),
+    channel: context.branch.channel,
+    gitHead: await getGitHead({cwd, env}),
+  };
   if (!nextRelease.type) {
     logger.log('There are no relevant changes, so no new version is released.');
-    return false;
+    return context.releases.length > 0 ? {releases: context.releases} : false;
   }
+
   context.nextRelease = nextRelease;
   nextRelease.version = getNextVersion(context);
-  nextRelease.gitTag = template(options.tagFormat)({version: nextRelease.version});
+  nextRelease.gitTag = makeTag(options.tagFormat, nextRelease.version, nextRelease.channel);
+  nextRelease.name = makeTag(options.tagFormat, nextRelease.version);
+
+  if (context.branch.type !== 'prerelease' && !semver.satisfies(nextRelease.version, context.branch.range)) {
+    throw getError('EINVALIDNEXTVERSION', {
+      ...context,
+      validBranches: context.branches.filter(
+        ({type, accept}) => type !== 'prerelease' && accept.includes(nextRelease.type)
+      ),
+    });
+  }
 
   await plugins.verifyRelease(context);
 
@@ -106,12 +165,12 @@ async function run(context, plugins) {
     logger.warn(`Skip ${nextRelease.gitTag} tag creation in dry-run mode`);
   } else {
     // Create the tag before calling the publish plugins as some require the tag to exists
-    await tag(nextRelease.gitTag, {cwd, env});
-    await push(options.repositoryUrl, options.branch, {cwd, env});
+    await tag(nextRelease.gitTag, nextRelease.gitHead, {cwd, env});
+    await push(options.repositoryUrl, context.branch.name, {cwd, env});
     logger.success(`Created tag ${nextRelease.gitTag}`);
   }
 
-  context.releases = await plugins.publish(context);
+  context.releases.push(...(await plugins.publish(context)));
 
   await plugins.success(context);
 

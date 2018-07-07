@@ -9,33 +9,127 @@ test.beforeEach(t => {
 });
 
 test('Increase version for patch release', t => {
-  const version = getNextVersion({
-    nextRelease: {type: 'patch'},
-    lastRelease: {version: '1.0.0'},
-    logger: t.context.logger,
-  });
-  t.is(version, '1.0.1');
+  t.is(
+    getNextVersion({
+      branch: {name: 'master', type: 'release'},
+      nextRelease: {type: 'patch'},
+      lastRelease: {version: '1.0.0'},
+      logger: t.context.logger,
+    }),
+    '1.0.1'
+  );
 });
 
 test('Increase version for minor release', t => {
-  const version = getNextVersion({
-    nextRelease: {type: 'minor'},
-    lastRelease: {version: '1.0.0'},
-    logger: t.context.logger,
-  });
-  t.is(version, '1.1.0');
+  t.is(
+    getNextVersion({
+      branch: {name: 'master', type: 'release'},
+      nextRelease: {type: 'minor'},
+      lastRelease: {version: '1.0.0'},
+      logger: t.context.logger,
+    }),
+    '1.1.0'
+  );
 });
 
 test('Increase version for major release', t => {
-  const version = getNextVersion({
-    nextRelease: {type: 'major'},
-    lastRelease: {version: '1.0.0'},
-    logger: t.context.logger,
-  });
-  t.is(version, '2.0.0');
+  t.is(
+    getNextVersion({
+      branch: {name: 'master', type: 'release'},
+      nextRelease: {type: 'major'},
+      lastRelease: {version: '1.0.0'},
+      logger: t.context.logger,
+    }),
+    '2.0.0'
+  );
 });
 
 test('Return 1.0.0 if there is no previous release', t => {
-  const version = getNextVersion({nextRelease: {type: 'minor'}, lastRelease: {}, logger: t.context.logger});
-  t.is(version, '1.0.0');
+  t.is(
+    getNextVersion({
+      branch: {name: 'master', type: 'release'},
+      nextRelease: {type: 'minor'},
+      lastRelease: {},
+      logger: t.context.logger,
+    }),
+    '1.0.0'
+  );
+});
+
+test('Increase version for patch release on prerelease branch', t => {
+  t.is(
+    getNextVersion({
+      branch: {name: 'beta', type: 'prerelease', prerelease: 'beta'},
+      nextRelease: {type: 'patch'},
+      lastRelease: {version: '1.0.0'},
+      logger: t.context.logger,
+    }),
+    '1.0.1-beta.1'
+  );
+
+  t.is(
+    getNextVersion({
+      branch: {name: 'beta', type: 'prerelease', prerelease: 'beta'},
+      nextRelease: {type: 'patch'},
+      lastRelease: {version: '1.0.0-beta.1'},
+      logger: t.context.logger,
+    }),
+    '1.0.0-beta.2'
+  );
+});
+
+test('Increase version for minor release on prerelease branch', t => {
+  t.is(
+    getNextVersion({
+      branch: {name: 'beta', type: 'prerelease', prerelease: 'beta'},
+      nextRelease: {type: 'minor'},
+      lastRelease: {version: '1.0.0'},
+      logger: t.context.logger,
+    }),
+    '1.1.0-beta.1'
+  );
+
+  t.is(
+    getNextVersion({
+      branch: {name: 'beta', type: 'prerelease', prerelease: 'beta'},
+      nextRelease: {type: 'minor'},
+      lastRelease: {version: '1.0.0-beta.1'},
+      logger: t.context.logger,
+    }),
+    '1.0.0-beta.2'
+  );
+});
+
+test('Increase version for major release on prerelease branch', t => {
+  t.is(
+    getNextVersion({
+      branch: {name: 'beta', type: 'prerelease', prerelease: 'beta'},
+      nextRelease: {type: 'major'},
+      lastRelease: {version: '1.0.0'},
+      logger: t.context.logger,
+    }),
+    '2.0.0-beta.1'
+  );
+
+  t.is(
+    getNextVersion({
+      branch: {name: 'beta', type: 'prerelease', prerelease: 'beta'},
+      nextRelease: {type: 'major'},
+      lastRelease: {version: '1.0.0-beta.1'},
+      logger: t.context.logger,
+    }),
+    '1.0.0-beta.2'
+  );
+});
+
+test('Return 1.0.0 if there is no previous release on prerelease branch', t => {
+  t.is(
+    getNextVersion({
+      branch: {name: 'beta', type: 'prerelease', prerelease: 'beta'},
+      nextRelease: {type: 'minor'},
+      lastRelease: {},
+      logger: t.context.logger,
+    }),
+    '1.0.0-beta.1'
+  );
 });
