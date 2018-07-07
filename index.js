@@ -15,7 +15,7 @@ const getGitAuthUrl = require('./lib/get-git-auth-url');
 const logger = require('./lib/logger');
 const {fetch, verifyAuth, isBranchUpToDate, gitHead: getGitHead, tag, push} = require('./lib/git');
 const getError = require('./lib/get-error');
-const {COMMIT_NAME, COMMIT_EMAIL} = require('./lib/definitions/constants');
+const {COMMIT_NAME, COMMIT_EMAIL, RELEASE_NOTES_SEPARATOR} = require('./lib/definitions/constants');
 
 marked.setOptions({renderer: new TerminalRenderer()});
 
@@ -101,14 +101,34 @@ async function run(options, plugins) {
 
   if (options.dryRun) {
     logger.log('Call plugin %s', 'generate-notes');
-    const [notes] = await plugins.generateNotes(generateNotesParam);
+    const notes = (await plugins.generateNotes(generateNotesParam, {
+      getNextInput: ({nextRelease, ...generateNotesParam}, notes) => ({
+        ...generateNotesParam,
+        nextRelease: {
+          ...nextRelease,
+          notes: `${nextRelease.notes ? `${nextRelease.notes}${RELEASE_NOTES_SEPARATOR}` : ''}${notes}`,
+        },
+      }),
+    }))
+      .filter(Boolean)
+      .join(RELEASE_NOTES_SEPARATOR);
     logger.log('Release note for version %s:\n', nextRelease.version);
     if (notes) {
       process.stdout.write(`${marked(notes)}\n`);
     }
   } else {
     logger.log('Call plugin %s', 'generateNotes');
-    [nextRelease.notes] = await plugins.generateNotes(generateNotesParam);
+    nextRelease.notes = (await plugins.generateNotes(generateNotesParam, {
+      getNextInput: ({nextRelease, ...generateNotesParam}, notes) => ({
+        ...generateNotesParam,
+        nextRelease: {
+          ...nextRelease,
+          notes: `${nextRelease.notes ? `${nextRelease.notes}${RELEASE_NOTES_SEPARATOR}` : ''}${notes}`,
+        },
+      }),
+    }))
+      .filter(Boolean)
+      .join(RELEASE_NOTES_SEPARATOR);
 
     logger.log('Call plugin %s', 'prepare');
     await plugins.prepare(
@@ -121,7 +141,20 @@ async function run(options, plugins) {
             nextRelease.gitHead = newGitHead;
             // Regenerate the release notes
             logger.log('Call plugin %s', 'generateNotes');
-            [nextRelease.notes] = await plugins.generateNotes({nextRelease, ...prepareParam});
+            nextRelease.notes = (await plugins.generateNotes(
+              {nextRelease, ...prepareParam},
+              {
+                getNextInput: ({nextRelease, ...generateNotesParam}, notes) => ({
+                  ...generateNotesParam,
+                  nextRelease: {
+                    ...nextRelease,
+                    notes: `${nextRelease.notes ? `${nextRelease.notes}${RELEASE_NOTES_SEPARATOR}` : ''}${notes}`,
+                  },
+                }),
+              }
+            ))
+              .filter(Boolean)
+              .join(RELEASE_NOTES_SEPARATOR);
           }
           // Call the next publish plugin with the updated `nextRelease`
           return {...prepareParam, nextRelease};

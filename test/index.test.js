@@ -61,12 +61,16 @@ test.serial('Plugins are called with expected values', async t => {
 
   const lastRelease = {version: '1.0.0', gitHead: commits[commits.length - 1].hash, gitTag: 'v1.0.0'};
   const nextRelease = {type: 'major', version: '2.0.0', gitHead: await getGitHead(), gitTag: 'v2.0.0'};
-  const notes = 'Release notes';
+  const notes1 = 'Release notes 1';
+  const notes2 = 'Release notes 2';
+  const notes3 = 'Release notes 3';
   const verifyConditions1 = stub().resolves();
   const verifyConditions2 = stub().resolves();
   const analyzeCommits = stub().resolves(nextRelease.type);
   const verifyRelease = stub().resolves();
-  const generateNotes = stub().resolves(notes);
+  const generateNotes1 = stub().resolves(notes1);
+  const generateNotes2 = stub().resolves(notes2);
+  const generateNotes3 = stub().resolves(notes3);
   const release1 = {name: 'Release 1', url: 'https://release1.com'};
   const prepare = stub().resolves();
   const publish1 = stub().resolves(release1);
@@ -78,7 +82,7 @@ test.serial('Plugins are called with expected values', async t => {
     verifyConditions: [verifyConditions1, verifyConditions2],
     analyzeCommits,
     verifyRelease,
-    generateNotes,
+    generateNotes: [generateNotes1, generateNotes2, generateNotes3],
     prepare,
     publish: [publish1, pluginNoop],
     success,
@@ -113,14 +117,32 @@ test.serial('Plugins are called with expected values', async t => {
   t.deepEqual(verifyRelease.args[0][1].commits[0].message, commits[0].message);
   t.deepEqual(verifyRelease.args[0][1].nextRelease, nextRelease);
 
-  t.is(generateNotes.callCount, 1);
-  t.deepEqual(generateNotes.args[0][0], config);
-  t.deepEqual(generateNotes.args[0][1].options, options);
-  t.deepEqual(generateNotes.args[0][1].logger, t.context.logger);
-  t.deepEqual(generateNotes.args[0][1].lastRelease, lastRelease);
-  t.deepEqual(generateNotes.args[0][1].commits[0].hash, commits[0].hash);
-  t.deepEqual(generateNotes.args[0][1].commits[0].message, commits[0].message);
-  t.deepEqual(generateNotes.args[0][1].nextRelease, nextRelease);
+  t.is(generateNotes1.callCount, 1);
+  t.deepEqual(generateNotes1.args[0][0], config);
+  t.deepEqual(generateNotes1.args[0][1].options, options);
+  t.deepEqual(generateNotes1.args[0][1].logger, t.context.logger);
+  t.deepEqual(generateNotes1.args[0][1].lastRelease, lastRelease);
+  t.deepEqual(generateNotes1.args[0][1].commits[0].hash, commits[0].hash);
+  t.deepEqual(generateNotes1.args[0][1].commits[0].message, commits[0].message);
+  t.deepEqual(generateNotes1.args[0][1].nextRelease, nextRelease);
+
+  t.is(generateNotes2.callCount, 1);
+  t.deepEqual(generateNotes2.args[0][0], config);
+  t.deepEqual(generateNotes2.args[0][1].options, options);
+  t.deepEqual(generateNotes2.args[0][1].logger, t.context.logger);
+  t.deepEqual(generateNotes2.args[0][1].lastRelease, lastRelease);
+  t.deepEqual(generateNotes2.args[0][1].commits[0].hash, commits[0].hash);
+  t.deepEqual(generateNotes2.args[0][1].commits[0].message, commits[0].message);
+  t.deepEqual(generateNotes2.args[0][1].nextRelease, {...nextRelease, notes: notes1});
+
+  t.is(generateNotes3.callCount, 1);
+  t.deepEqual(generateNotes3.args[0][0], config);
+  t.deepEqual(generateNotes3.args[0][1].options, options);
+  t.deepEqual(generateNotes3.args[0][1].logger, t.context.logger);
+  t.deepEqual(generateNotes3.args[0][1].lastRelease, lastRelease);
+  t.deepEqual(generateNotes3.args[0][1].commits[0].hash, commits[0].hash);
+  t.deepEqual(generateNotes3.args[0][1].commits[0].message, commits[0].message);
+  t.deepEqual(generateNotes3.args[0][1].nextRelease, {...nextRelease, notes: `${notes1}\n\n${notes2}`});
 
   t.is(prepare.callCount, 1);
   t.deepEqual(prepare.args[0][0], config);
@@ -129,7 +151,7 @@ test.serial('Plugins are called with expected values', async t => {
   t.deepEqual(prepare.args[0][1].lastRelease, lastRelease);
   t.deepEqual(prepare.args[0][1].commits[0].hash, commits[0].hash);
   t.deepEqual(prepare.args[0][1].commits[0].message, commits[0].message);
-  t.deepEqual(prepare.args[0][1].nextRelease, {...nextRelease, ...{notes}});
+  t.deepEqual(prepare.args[0][1].nextRelease, {...nextRelease, notes: `${notes1}\n\n${notes2}\n\n${notes3}`});
 
   t.is(publish1.callCount, 1);
   t.deepEqual(publish1.args[0][0], config);
@@ -138,7 +160,7 @@ test.serial('Plugins are called with expected values', async t => {
   t.deepEqual(publish1.args[0][1].lastRelease, lastRelease);
   t.deepEqual(publish1.args[0][1].commits[0].hash, commits[0].hash);
   t.deepEqual(publish1.args[0][1].commits[0].message, commits[0].message);
-  t.deepEqual(publish1.args[0][1].nextRelease, {...nextRelease, ...{notes}});
+  t.deepEqual(publish1.args[0][1].nextRelease, {...nextRelease, notes: `${notes1}\n\n${notes2}\n\n${notes3}`});
 
   t.is(success.callCount, 1);
   t.deepEqual(success.args[0][0], config);
@@ -147,10 +169,10 @@ test.serial('Plugins are called with expected values', async t => {
   t.deepEqual(success.args[0][1].lastRelease, lastRelease);
   t.deepEqual(success.args[0][1].commits[0].hash, commits[0].hash);
   t.deepEqual(success.args[0][1].commits[0].message, commits[0].message);
-  t.deepEqual(success.args[0][1].nextRelease, {...nextRelease, ...{notes}});
+  t.deepEqual(success.args[0][1].nextRelease, {...nextRelease, notes: `${notes1}\n\n${notes2}\n\n${notes3}`});
   t.deepEqual(success.args[0][1].releases, [
-    {...release1, ...nextRelease, ...{notes}, ...{pluginName: '[Function: proxy]'}},
-    {...nextRelease, ...{notes}, ...{pluginName: pluginNoop}},
+    {...release1, ...nextRelease, notes: `${notes1}\n\n${notes2}\n\n${notes3}`, pluginName: '[Function: proxy]'},
+    {...nextRelease, notes: `${notes1}\n\n${notes2}\n\n${notes3}`, pluginName: pluginNoop},
   ]);
 
   // Verify the tag has been created on the local and remote repo and reference the gitHead
@@ -625,7 +647,9 @@ test.serial('Accept "undefined" value returned by the "generateNotes" plugins', 
   const nextRelease = {type: 'major', version: '2.0.0', gitHead: await getGitHead(), gitTag: 'v2.0.0'};
   const analyzeCommits = stub().resolves(nextRelease.type);
   const verifyRelease = stub().resolves();
-  const generateNotes = stub().resolves();
+  const generateNotes1 = stub().resolves();
+  const notes2 = 'Release notes 2';
+  const generateNotes2 = stub().resolves(notes2);
   const publish = stub().resolves();
 
   const options = {
@@ -634,7 +658,7 @@ test.serial('Accept "undefined" value returned by the "generateNotes" plugins', 
     verifyConditions: stub().resolves(),
     analyzeCommits,
     verifyRelease,
-    generateNotes,
+    generateNotes: [generateNotes1, generateNotes2],
     prepare: stub().resolves(),
     publish,
     success: stub().resolves(),
@@ -653,12 +677,15 @@ test.serial('Accept "undefined" value returned by the "generateNotes" plugins', 
   t.is(verifyRelease.callCount, 1);
   t.deepEqual(verifyRelease.args[0][1].lastRelease, lastRelease);
 
-  t.is(generateNotes.callCount, 1);
-  t.deepEqual(generateNotes.args[0][1].lastRelease, lastRelease);
+  t.is(generateNotes1.callCount, 1);
+  t.deepEqual(generateNotes1.args[0][1].lastRelease, lastRelease);
+
+  t.is(generateNotes2.callCount, 1);
+  t.deepEqual(generateNotes2.args[0][1].lastRelease, lastRelease);
 
   t.is(publish.callCount, 1);
   t.deepEqual(publish.args[0][1].lastRelease, lastRelease);
-  t.falsy(publish.args[0][1].nextRelease.notes);
+  t.is(publish.args[0][1].nextRelease.notes, notes2);
 });
 
 test.serial('Returns falsy value if triggered by a PR', async t => {

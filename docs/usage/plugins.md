@@ -26,7 +26,7 @@ Default implementation: none.
 
 ### generateNotes plugin
 
-Responsible for generating release notes.
+Responsible for generating release notes. If multiple `generateNotes` plugins are defined, the release notes will be the result of the concatenation of plugin output.
 
 Default implementation: [@semantic-release/release-notes-generator](https://github.com/semantic-release/release-notes-generator).
 

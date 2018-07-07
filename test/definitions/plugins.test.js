@@ -34,15 +34,15 @@ test('The "verifyRelease" plugin, if defined, must be a single or an array of pl
   t.true(plugins.verifyRelease.configValidator([{path: 'plugin-path.js'}, 'plugin-path.js', () => {}]));
 });
 
-test('The "generateNotes" plugin, if defined, must be a single plugin definition', t => {
+test('The "generateNotes" plugin, if defined, must be a single or an array of plugins definition', t => {
   t.false(plugins.generateNotes.configValidator({}));
   t.false(plugins.generateNotes.configValidator({path: null}));
-  t.false(plugins.generateNotes.configValidator([]));
 
-  t.true(plugins.generateNotes.configValidator());
   t.true(plugins.generateNotes.configValidator({path: 'plugin-path.js'}));
+  t.true(plugins.generateNotes.configValidator());
   t.true(plugins.generateNotes.configValidator('plugin-path.js'));
   t.true(plugins.generateNotes.configValidator(() => {}));
+  t.true(plugins.generateNotes.configValidator([{path: 'plugin-path.js'}, 'plugin-path.js', () => {}]));
 });
 
 test('The "prepare" plugin, if defined, must be a single or an array of plugins definition', t => {

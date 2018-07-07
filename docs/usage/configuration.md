@@ -167,13 +167,13 @@ See [Plugins configuration](plugins.md#configuration) for more details.
 
 ### generateNotes
 
-Type: `String`, `Object`
+Type: `Array`, `String`, `Object`
 
 Default: `['@semantic-release/release-notes-generator']`
 
 CLI argument: `--generate-notes`
 
-Define the [generate notes plugin](plugins.md#generatenotes-plugin).
+Define the [generate notes plugins](plugins.md#generatenotes-plugin).
 
 See [Plugins configuration](plugins.md#configuration) for more details.
 
