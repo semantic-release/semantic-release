@@ -263,16 +263,16 @@ test.serial('Use new gitHead, and recreate release notes if a prepare plugin cre
   t.is(generateNotes.callCount, 2);
   t.deepEqual(generateNotes.args[0][1].nextRelease, nextRelease);
   t.is(prepare1.callCount, 1);
-  t.deepEqual(prepare1.args[0][1].nextRelease, {...nextRelease, ...{notes}});
+  t.deepEqual(prepare1.args[0][1].nextRelease, {...nextRelease, notes});
 
   nextRelease.gitHead = await getGitHead();
 
-  t.deepEqual(generateNotes.args[1][1].nextRelease, {...nextRelease, ...{notes}});
+  t.deepEqual(generateNotes.args[1][1].nextRelease, {...nextRelease, notes});
   t.is(prepare2.callCount, 1);
-  t.deepEqual(prepare2.args[0][1].nextRelease, {...nextRelease, ...{notes}});
+  t.deepEqual(prepare2.args[0][1].nextRelease, {...nextRelease, notes});
 
   t.is(publish.callCount, 1);
-  t.deepEqual(publish.args[0][1].nextRelease, {...nextRelease, ...{notes}});
+  t.deepEqual(publish.args[0][1].nextRelease, {...nextRelease, notes});
 
   // Verify the tag has been created on the local and remote repo and reference the last gitHead
   t.is(await gitTagHead(nextRelease.gitTag), commits[0].hash);
@@ -321,14 +321,10 @@ test.serial('Call all "success" plugins even if one errors out', async t => {
 
   t.is(success1.callCount, 1);
   t.deepEqual(success1.args[0][0], config);
-  t.deepEqual(success1.args[0][1].releases, [
-    {...release, ...nextRelease, ...{notes}, ...{pluginName: '[Function: proxy]'}},
-  ]);
+  t.deepEqual(success1.args[0][1].releases, [{...release, ...nextRelease, notes, pluginName: '[Function: proxy]'}]);
 
   t.is(success2.callCount, 1);
-  t.deepEqual(success2.args[0][1].releases, [
-    {...release, ...nextRelease, ...{notes}, ...{pluginName: '[Function: proxy]'}},
-  ]);
+  t.deepEqual(success2.args[0][1].releases, [{...release, ...nextRelease, notes, pluginName: '[Function: proxy]'}]);
 });
 
 test.serial('Log all "verifyConditions" errors', async t => {

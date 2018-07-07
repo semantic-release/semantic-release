@@ -614,7 +614,7 @@ test.serial('Exit with 1 if missing permission to push to the remote repository'
   const {stdout, code} = await execa(
     cli,
     ['--repository-url', 'http://user:wrong_pass@localhost:2080/git/unauthorized.git'],
-    {env: {...env, ...{GH_TOKEN: 'user:wrong_pass'}}, reject: false}
+    {env: {...env, GH_TOKEN: 'user:wrong_pass'}, reject: false}
   );
   // Verify the type and message are logged
   t.regex(stdout, /EGITNOPERMISSION/);
