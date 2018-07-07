@@ -145,7 +145,7 @@ See [Plugins configuration](plugins.md#configuration) for more details.
 
 Type: `String`, `Object`
 
-Default: `['@semantic-release/commit-analyzer']`
+Default: `'@semantic-release/commit-analyzer'`
 
 CLI argument: `--analyze-commits`
 
