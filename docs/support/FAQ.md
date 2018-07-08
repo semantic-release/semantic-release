@@ -124,6 +124,20 @@ Yes, the publishing to the npm registry can be disabled with the [`npmPublish`](
 
 See the [`@semantic-release/npm`](https://github.com/semantic-release/npm#semantic-releasenpm) plugin documentation for more details.
 
+## How can I revert a release?
+
+If you have introduced a breaking bug in a release you have 2 options:
+- If you have a fix immediately ready, commit and push it (or merge it via a pull request) to the release branch
+- Otherwise [revert the commit](https://git-scm.com/docs/git-revert) that introduced the bug and push the revert commit (or merge it via a pull request) to the release branch
+
+In both cases **semantic-release** will publish a new release, so your package users' will get the fixed/reverted version.
+
+Depending on the package manager you are using, you might be able to un-publish or deprecate a release, in order to prevent users to download it by accident. For example npm allows you to [un-publish](https://docs.npmjs.com/cli/unpublish) in [next 72 hours](https://www.npmjs.com/policies/unpublish) after releasing or to [deprecate](https://docs.npmjs.com/cli/deprecate) a release.
+
+In any case **do not remove the Git tag associated with the buggy version**, otherwise **semantic-release** will later try to republish that version. Publishing a version after un-publishing is not supported by most package managers.
+
+**Note**: If you are using the default [Angular Commit Message Conventions](https://github.com/angular/angular.js/blob/master/DEVELOPERS.md#-git-commit-guidelines) be aware that it uses a different revert commit format than the standard one created by [git revert](https://git-scm.com/docs/git-revert), contrary to what is [claimed in the  convention](https://github.com/angular/angular.js/blob/master/DEVELOPERS.md#revert). Therefore, if you revert a commit with [`git revert`](https://git-scm.com/docs/git-revert), use the [`--edit` option](https://git-scm.com/docs/git-revert#git-revert---edit) to format the message according to the [Angular revert commit message format](https://github.com/angular/angular.js/blob/master/DEVELOPERS.md#revert). See [conventional-changelog/conventional-changelog#348](https://github.com/conventional-changelog/conventional-changelog/issues/348) for more details.
+
 ## Can I use `.npmrc` options?
 
 Yes, all the [npm configuration options](https://docs.npmjs.com/misc/config) are supported via the [`.npmrc`](https://docs.npmjs.com/files/npmrc) file at the root of your repository.
