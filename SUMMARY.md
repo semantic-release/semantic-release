@@ -21,6 +21,8 @@
 	- [Travis CI](docs/recipes/travis.md)
 	- [Travis CI with build stages](docs/recipes/travis-build-stages.md)
 	- [GitLab CI](docs/recipes/gitlab-ci.md)
+- [Git hosted services](docs/recipes/README.md)
+	- [Git authentication with SSH keys](docs/recipes/git-auth-ssh-keys.md)
 - [Package managers and languages](docs/recipes/README.md)
 
 ## Developer guide
