@@ -102,8 +102,11 @@ async function run(options, plugins) {
   if (options.dryRun) {
     logger.log('Call plugin %s', 'generate-notes');
     const notes = await plugins.generateNotes(generateNotesParam);
-    logger.log('Release note for version %s:\n', nextRelease.version);
-    process.stdout.write(`${marked(notes)}\n`);
+
+    if (notes) {
+      logger.log('Release note for version %s:\n', nextRelease.version);
+      process.stdout.write(`${marked(notes)}\n`);
+    }
   } else {
     logger.log('Call plugin %s', 'generateNotes');
     nextRelease.notes = await plugins.generateNotes(generateNotesParam);
