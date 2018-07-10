@@ -117,13 +117,15 @@ test.serial('Export plugins loaded from the dependency of a shareable config fil
 
 test('Use default when only options are passed for a single plugin', t => {
   const analyzeCommits = {};
+  const generateNotes = {};
   const success = () => {};
   const fail = [() => {}];
 
-  const plugins = getPlugins({analyzeCommits, success, fail}, {}, t.context.logger);
+  const plugins = getPlugins({analyzeCommits, generateNotes, success, fail}, {}, t.context.logger);
 
   // Verify the module returns a function for each plugin
   t.is(typeof plugins.analyzeCommits, 'function');
+  t.is(typeof plugins.generateNotes, 'function');
   t.is(typeof plugins.success, 'function');
   t.is(typeof plugins.fail, 'function');
 
