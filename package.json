@@ -48,7 +48,7 @@
   },
   "devDependencies": {
     "ava": "^0.25.0",
-    "clear-module": "^2.1.0",
+    "clear-module": "^3.0.0",
     "codecov": "^3.0.0",
     "commitizen": "^2.9.6",
     "cz-conventional-changelog": "^2.0.0",
