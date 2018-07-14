@@ -1,8 +1,0 @@
-{
-    "plugins" : ["github", "anchors"],
-    "pluginsConfig": {
-      "github": {
-          "url": "https://github.com/semantic-release/semantic-release"
-      }
-    }
-}

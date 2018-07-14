@@ -1,9 +1,5 @@
 # Summary
 
-## About
-- [Highlights](README.md#highlights)
-- [How does it work?](README.md#how-does-it-work)
-
 ## Usage
 - [Installation](docs/usage/installation.md#installation)
 - [CI Configuration](docs/usage/ci-configuration.md#ci-configuration)
@@ -29,12 +25,8 @@
 - [Plugin](docs/developer-guide/plugin.md)
 - [Shareable configuration](docs/developer-guide/shareable-configuration.md)
 
-## Resources
-- [Videos](docs/resources.md#videos)
-- [Articles](docs/resources.md#articles)
-- [Tutorials](docs/resources.md#tutorials)
-
 ## Support
+- [Resources](docs/support/resources.md)
 - [Frequently Asked Questions](docs/support/FAQ.md)
 - [Troubleshooting](docs/support/troubleshooting.md)
 - [Node version requirement](docs/support/node-version.md)
