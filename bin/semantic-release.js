@@ -37,6 +37,10 @@ execa
   });
 
 // Node 8+ from this point on
-require('../cli')().catch(() => {
-  process.exitCode = 1;
-});
+require('../cli')()
+  .then(exitCode => {
+    process.exitCode = exitCode;
+  })
+  .catch(() => {
+    process.exitCode = 1;
+  });
