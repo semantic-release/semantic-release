@@ -40,6 +40,9 @@
 - [semantic-release-docker](https://github.com/felixfbecker/semantic-release-docker) Set of semantic-release plugins for publishing a docker image to Docker Hub
   - [verifyConditions](https://github.com/felixfbecker/semantic-release-docker#verifyconditions) Verify that all needed configuration is present and login to the Docker registry.
   - [publish](https://github.com/felixfbecker/semantic-release-docker#publish) Tag the image specified by `name` with the new version, push it to Docker Hub and update the latest tag.
+- [semantic-release-gcr](https://github.com/carlos-cubas/semantic-release-gcr) Set of semantic-release plugins for publishing a docker image to Google Container Registry
+  - [verifyConditions](https://github.com/carlos-cubas/semantic-release-gcr#verifyconditions) Verify that all needed configuration is present and login to the Docker registry.
+  - [publish](https://github.com/carlos-cubas/semantic-release-gcr#publish) Tag the image specified by `name` with the new version, push it to Docker Hub and update the latest tag.
 - [semantic-release-vsce](https://github.com/raix/semantic-release-vsce) Set of semantic-release plugins for publishing Visual Studio Code extensions to the marketplace
   - **verifyConditions** Verify the presence and the validity of the vsce authentication and release configuration
   - **prepare** Create a `.vsix` for distribution
