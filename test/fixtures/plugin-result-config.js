@@ -1,1 +1,1 @@
-module.exports = (pluginConfig, options) => ({pluginConfig, options});
+module.exports = (pluginConfig, context) => ({pluginConfig, context});
