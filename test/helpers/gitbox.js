@@ -64,8 +64,9 @@ async function createRepo(name, branch = 'master', description = `Repository ${n
 
   // Retry as the server might take a few ms to make the repo available push
   await pRetry(() => initBareRepo(authUrl, branch), {retries: 3, minTimeout: 500, factor: 2});
-  await gitShallowClone(authUrl);
-  return {repositoryUrl, authUrl};
+  const cwd = await gitShallowClone(authUrl);
+
+  return {cwd, repositoryUrl, authUrl};
 }
 
 export default {start, stop, gitCredential, createRepo};
