@@ -34,6 +34,7 @@ async function run(context, plugins) {
       GIT_AUTHOR_EMAIL: COMMIT_EMAIL,
       GIT_COMMITTER_NAME: COMMIT_NAME,
       GIT_COMMITTER_EMAIL: COMMIT_EMAIL,
+      ...env,
       GIT_ASKPASS: 'echo',
       GIT_TERMINAL_PROMPT: 0,
     });
