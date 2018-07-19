@@ -1,3 +1,5 @@
+const {argv} = require('process');
+
 const stringList = {
   type: 'string',
   array: true,
@@ -36,11 +38,10 @@ Usage:
     .exitProcess(false);
 
   try {
-    const {help, version, ...opts} = cli.argv;
+    const {help, version, ...opts} = cli.parse(argv.slice(2));
 
     if (Boolean(help) || Boolean(version)) {
-      process.exitCode = 0;
-      return;
+      return 0;
     }
 
     // Set the `noCi` options as yargs sets the `ci` options instead (because arg starts with `--no`)
@@ -52,13 +53,12 @@ Usage:
       // Debug must be enabled before other requires in order to work
       require('debug').enable('semantic-release:*');
     }
-
     await require('.')(opts);
-    process.exitCode = 0;
+    return 0;
   } catch (err) {
     if (err.name !== 'YError') {
       console.error(err);
     }
-    process.exitCode = 1;
+    return 1;
   }
 };
