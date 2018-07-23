@@ -22,6 +22,7 @@
 - [Package managers and languages](docs/recipes/README.md)
 
 ## Developer guide
+- [JavaScript API](docs/developer-guide/js-api.md)
 - [Plugin](docs/developer-guide/plugin.md)
 - [Shareable configuration](docs/developer-guide/shareable-configuration.md)
 
