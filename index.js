@@ -1,5 +1,5 @@
 const process = require('process');
-const {template} = require('lodash');
+const {template, pick} = require('lodash');
 const marked = require('marked');
 const TerminalRenderer = require('marked-terminal');
 const envCi = require('env-ci');
@@ -42,7 +42,7 @@ async function run(context, plugins) {
 
   if (isCi && isPr && !options.noCi) {
     logger.log("This run was triggered by a pull request and therefore a new version won't be published.");
-    return;
+    return false;
   }
 
   if (ciBranch !== options.branch) {
@@ -85,7 +85,7 @@ async function run(context, plugins) {
 
   if (!nextRelease.type) {
     logger.log('There are no relevant changes, so no new version is released.');
-    return;
+    return false;
   }
   context.nextRelease = nextRelease;
   nextRelease.version = getNextVersion(context);
@@ -114,7 +114,8 @@ async function run(context, plugins) {
 
     logger.success(`Published release ${nextRelease.version}`);
   }
-  return true;
+
+  return pick(context, ['lastRelease', 'commits', 'nextRelease', 'releases']);
 }
 
 function logErrors({logger, stderr}, err) {

@@ -75,7 +75,12 @@ test('Plugins are called with expected values', async t => {
     './lib/get-logger': () => t.context.logger,
     'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
   });
-  t.truthy(await semanticRelease(options, {cwd, env: {}, stdout: {write: () => {}}, stderr: {write: () => {}}}));
+  const result = await semanticRelease(options, {
+    cwd,
+    env,
+    stdout: {write: () => {}},
+    stderr: {write: () => {}},
+  });
 
   t.is(verifyConditions1.callCount, 1);
   t.deepEqual(verifyConditions1.args[0][0], config);
@@ -162,6 +167,16 @@ test('Plugins are called with expected values', async t => {
     {...release1, ...nextRelease, notes: `${notes1}\n\n${notes2}\n\n${notes3}`, pluginName: '[Function: proxy]'},
     {...nextRelease, notes: `${notes1}\n\n${notes2}\n\n${notes3}`, pluginName: pluginNoop},
   ]);
+
+  t.deepEqual(result, {
+    lastRelease,
+    commits: [commits[0]],
+    nextRelease: {...nextRelease, notes: `${notes1}\n\n${notes2}\n\n${notes3}`},
+    releases: [
+      {...release1, ...nextRelease, notes: `${notes1}\n\n${notes2}\n\n${notes3}`, pluginName: '[Function: proxy]'},
+      {...nextRelease, notes: `${notes1}\n\n${notes2}\n\n${notes3}`, pluginName: pluginNoop},
+    ],
+  });
 
   // Verify the tag has been created on the local and remote repo and reference the gitHead
   t.is(await gitTagHead(nextRelease.gitTag, {cwd}), nextRelease.gitHead);
@@ -675,7 +690,7 @@ test('Accept "undefined" value returned by the "generateNotes" plugins', async t
   t.is(publish.args[0][1].nextRelease.notes, notes2);
 });
 
-test('Returns falsy value if triggered by a PR', async t => {
+test('Returns false if triggered by a PR', async t => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd, repositoryUrl} = await gitRepo(true);
 
@@ -684,7 +699,7 @@ test('Returns falsy value if triggered by a PR', async t => {
     'env-ci': () => ({isCi: true, branch: 'master', isPr: true}),
   });
 
-  t.falsy(
+  t.false(
     await semanticRelease({cwd, repositoryUrl}, {cwd, env: {}, stdout: {write: () => {}}, stderr: {write: () => {}}})
   );
   t.is(
@@ -693,7 +708,7 @@ test('Returns falsy value if triggered by a PR', async t => {
   );
 });
 
-test('Returns falsy value if triggered on an outdated clone', async t => {
+test('Returns false if triggered on an outdated clone', async t => {
   // Create a git repository, set the current working directory at the root of the repo
   let {cwd, repositoryUrl} = await gitRepo(true);
   const repoDir = cwd;
@@ -710,7 +725,7 @@ test('Returns falsy value if triggered on an outdated clone', async t => {
     'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
   });
 
-  t.falsy(
+  t.false(
     await semanticRelease(
       {repositoryUrl},
       {cwd: repoDir, env: {}, stdout: {write: () => {}}, stderr: {write: () => {}}}
@@ -742,14 +757,14 @@ test('Returns false if not running from the configured branch', async t => {
     'env-ci': () => ({isCi: true, branch: 'other-branch', isPr: false}),
   });
 
-  t.falsy(await semanticRelease(options, {cwd, env: {}, stdout: {write: () => {}}, stderr: {write: () => {}}}));
+  t.false(await semanticRelease(options, {cwd, env: {}, stdout: {write: () => {}}, stderr: {write: () => {}}}));
   t.is(
     t.context.log.args[1][0],
     'This test run was triggered on the branch other-branch, while semantic-release is configured to only publish from master, therefore a new version won’t be published.'
   );
 });
 
-test('Returns falsy value if there is no relevant changes', async t => {
+test('Returns false if there is no relevant changes', async t => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd, repositoryUrl} = await gitRepo(true);
   // Add commits to the master branch
@@ -779,7 +794,7 @@ test('Returns falsy value if there is no relevant changes', async t => {
     'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
   });
 
-  t.falsy(await semanticRelease(options, {cwd, env: {}, stdout: {write: () => {}}, stderr: {write: () => {}}}));
+  t.false(await semanticRelease(options, {cwd, env: {}, stdout: {write: () => {}}, stderr: {write: () => {}}}));
   t.is(analyzeCommits.callCount, 1);
   t.is(verifyRelease.callCount, 0);
   t.is(generateNotes.callCount, 0);
