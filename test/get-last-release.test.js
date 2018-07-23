@@ -27,7 +27,7 @@ test('Get the highest non-prerelease valid tag', async t => {
   const result = await getLastRelease({cwd, options: {tagFormat: `v\${version}`}, logger: t.context.logger});
 
   t.deepEqual(result, {gitHead: commits[0].hash, gitTag: 'v2.0.0', version: '2.0.0'});
-  t.deepEqual(t.context.log.args[0], ['Found git tag %s associated with version %s', 'v2.0.0', '2.0.0']);
+  t.deepEqual(t.context.log.args[0], ['Found git tag v2.0.0 associated with version 2.0.0']);
 });
 
 test('Get the highest tag in the history of the current branch', async t => {

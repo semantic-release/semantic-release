@@ -22,9 +22,13 @@ test.beforeEach(t => {
   // Stub the logger functions
   t.context.log = spy();
   t.context.error = spy();
-  t.context.stdout = spy();
-  t.context.stderr = spy();
-  t.context.logger = {log: t.context.log, error: t.context.error, stdout: t.context.stdout, stderr: t.context.stderr};
+  t.context.success = spy();
+  t.context.logger = {
+    log: t.context.log,
+    error: t.context.error,
+    success: t.context.success,
+    scope: () => t.context.logger,
+  };
 });
 
 test('Plugins are called with expected values', async t => {
@@ -68,10 +72,10 @@ test('Plugins are called with expected values', async t => {
   };
 
   const semanticRelease = requireNoCache('..', {
-    './lib/logger': t.context.logger,
+    './lib/get-logger': () => t.context.logger,
     'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
   });
-  t.truthy(await semanticRelease(options, {cwd, extendEnv: false, env}));
+  t.truthy(await semanticRelease(options, {cwd, env: {}, stdout: {write: () => {}}, stderr: {write: () => {}}}));
 
   t.is(verifyConditions1.callCount, 1);
   t.deepEqual(verifyConditions1.args[0][0], config);
@@ -193,10 +197,10 @@ test('Use custom tag format', async t => {
   };
 
   const semanticRelease = requireNoCache('..', {
-    './lib/logger': t.context.logger,
+    './lib/get-logger': () => t.context.logger,
     'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
   });
-  t.truthy(await semanticRelease(options, {cwd, env: {}}));
+  t.truthy(await semanticRelease(options, {cwd, env: {}, stdout: {write: () => {}}, stderr: {write: () => {}}}));
 
   // Verify the tag has been created on the local and remote repo and reference the gitHead
   t.is(await gitTagHead(nextRelease.gitTag, {cwd}), nextRelease.gitHead);
@@ -237,11 +241,11 @@ test('Use new gitHead, and recreate release notes if a prepare plugin create a c
   };
 
   const semanticRelease = requireNoCache('..', {
-    './lib/logger': t.context.logger,
+    './lib/get-logger': () => t.context.logger,
     'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
   });
 
-  t.truthy(await semanticRelease(options, {cwd, env: {}}));
+  t.truthy(await semanticRelease(options, {cwd, env: {}, stdout: {write: () => {}}, stderr: {write: () => {}}}));
 
   t.is(generateNotes.callCount, 2);
   t.deepEqual(generateNotes.args[0][1].nextRelease, nextRelease);
@@ -295,11 +299,11 @@ test('Call all "success" plugins even if one errors out', async t => {
   };
 
   const semanticRelease = requireNoCache('..', {
-    './lib/logger': t.context.logger,
+    './lib/get-logger': () => t.context.logger,
     'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
   });
 
-  await t.throws(semanticRelease(options, {cwd, env: {}}));
+  await t.throws(semanticRelease(options, {cwd, env: {}, stdout: {write: () => {}}, stderr: {write: () => {}}}));
 
   t.is(success1.callCount, 1);
   t.deepEqual(success1.args[0][1].releases, [{...release, ...nextRelease, notes, pluginName: '[Function: proxy]'}]);
@@ -327,15 +331,17 @@ test('Log all "verifyConditions" errors', async t => {
   };
 
   const semanticRelease = requireNoCache('..', {
-    './lib/logger': t.context.logger,
+    './lib/get-logger': () => t.context.logger,
     'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
   });
-  const errors = [...(await t.throws(semanticRelease(options, {cwd, env: {}})))];
+  const errors = [
+    ...(await t.throws(semanticRelease(options, {cwd, env: {}, stdout: {write: () => {}}, stderr: {write: () => {}}}))),
+  ];
 
   t.deepEqual(errors, [error1, error2, error3]);
-  t.deepEqual(t.context.log.args[t.context.log.args.length - 2], ['%s error 2', 'ERR2']);
-  t.deepEqual(t.context.log.args[t.context.log.args.length - 1], ['%s error 3', 'ERR3']);
-  t.deepEqual(t.context.error.args[t.context.error.args.length - 1], [
+  t.deepEqual(t.context.error.args[t.context.error.args.length - 2], ['ERR2 error 2']);
+  t.deepEqual(t.context.error.args[t.context.error.args.length - 1], ['ERR3 error 3']);
+  t.deepEqual(t.context.error.args[t.context.error.args.length - 3], [
     'An error occurred while running semantic-release: %O',
     error1,
   ]);
@@ -371,14 +377,16 @@ test('Log all "verifyRelease" errors', async t => {
   };
 
   const semanticRelease = requireNoCache('..', {
-    './lib/logger': t.context.logger,
+    './lib/get-logger': () => t.context.logger,
     'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
   });
-  const errors = [...(await t.throws(semanticRelease(options, {cwd, env: {}})))];
+  const errors = [
+    ...(await t.throws(semanticRelease(options, {cwd, env: {}, stdout: {write: () => {}}, stderr: {write: () => {}}}))),
+  ];
 
   t.deepEqual(errors, [error1, error2]);
-  t.deepEqual(t.context.log.args[t.context.log.args.length - 2], ['%s error 1', 'ERR1']);
-  t.deepEqual(t.context.log.args[t.context.log.args.length - 1], ['%s error 2', 'ERR2']);
+  t.deepEqual(t.context.error.args[t.context.error.args.length - 2], ['ERR1 error 1']);
+  t.deepEqual(t.context.error.args[t.context.error.args.length - 1], ['ERR2 error 2']);
   t.is(fail.callCount, 1);
   t.deepEqual(fail.args[0][0], config);
   t.deepEqual(fail.args[0][1].errors, [error1, error2]);
@@ -419,10 +427,10 @@ test('Dry-run skips publish and success', async t => {
   };
 
   const semanticRelease = requireNoCache('..', {
-    './lib/logger': t.context.logger,
+    './lib/get-logger': () => t.context.logger,
     'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
   });
-  t.truthy(await semanticRelease(options, {cwd, env: {}}));
+  t.truthy(await semanticRelease(options, {cwd, env: {}, stdout: {write: () => {}}, stderr: {write: () => {}}}));
 
   t.not(t.context.log.args[0][0], 'This run was not triggered in a known CI environment, running in dry-run mode.');
   t.is(verifyConditions.callCount, 1);
@@ -457,14 +465,16 @@ test('Dry-run skips fail', async t => {
   };
 
   const semanticRelease = requireNoCache('..', {
-    './lib/logger': t.context.logger,
+    './lib/get-logger': () => t.context.logger,
     'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
   });
-  const errors = [...(await t.throws(semanticRelease(options, {cwd, env: {}})))];
+  const errors = [
+    ...(await t.throws(semanticRelease(options, {cwd, env: {}, stdout: {write: () => {}}, stderr: {write: () => {}}}))),
+  ];
 
   t.deepEqual(errors, [error1, error2]);
-  t.deepEqual(t.context.log.args[t.context.log.args.length - 2], ['%s error 1', 'ERR1']);
-  t.deepEqual(t.context.log.args[t.context.log.args.length - 1], ['%s error 2', 'ERR2']);
+  t.deepEqual(t.context.error.args[t.context.error.args.length - 2], ['ERR1 error 1']);
+  t.deepEqual(t.context.error.args[t.context.error.args.length - 1], ['ERR2 error 2']);
   t.is(fail.callCount, 0);
 });
 
@@ -504,10 +514,10 @@ test('Force a dry-run if not on a CI and "noCi" is not explicitly set', async t 
   };
 
   const semanticRelease = requireNoCache('..', {
-    './lib/logger': t.context.logger,
+    './lib/get-logger': () => t.context.logger,
     'env-ci': () => ({isCi: false, branch: 'master'}),
   });
-  t.truthy(await semanticRelease(options, {cwd, env: {}}));
+  t.truthy(await semanticRelease(options, {cwd, env: {}, stdout: {write: () => {}}, stderr: {write: () => {}}}));
 
   t.is(t.context.log.args[1][0], 'This run was not triggered in a known CI environment, running in dry-run mode.');
   t.is(verifyConditions.callCount, 1);
@@ -518,7 +528,7 @@ test('Force a dry-run if not on a CI and "noCi" is not explicitly set', async t 
   t.is(success.callCount, 0);
 });
 
-test.serial('Dry-run does not print changelog if "generateNotes" return "undefined"', async t => {
+test('Dry-run does not print changelog if "generateNotes" return "undefined"', async t => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd, repositoryUrl} = await gitRepo(true);
   // Add commits to the master branch
@@ -547,12 +557,12 @@ test.serial('Dry-run does not print changelog if "generateNotes" return "undefin
   };
 
   const semanticRelease = requireNoCache('..', {
-    './lib/logger': t.context.logger,
+    './lib/get-logger': () => t.context.logger,
     'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
   });
-  t.truthy(await semanticRelease(options, {cwd, env: {}}));
+  t.truthy(await semanticRelease(options, {cwd, env: {}, stdout: {write: () => {}}, stderr: {write: () => {}}}));
 
-  t.deepEqual(t.context.log.args[t.context.log.args.length - 1], ['Release note for version %s:\n', '2.0.0']);
+  t.deepEqual(t.context.log.args[t.context.log.args.length - 1], ['Release note for version 2.0.0:']);
 });
 
 test('Allow local releases with "noCi" option', async t => {
@@ -591,10 +601,10 @@ test('Allow local releases with "noCi" option', async t => {
   };
 
   const semanticRelease = requireNoCache('..', {
-    './lib/logger': t.context.logger,
+    './lib/get-logger': () => t.context.logger,
     'env-ci': () => ({isCi: false, branch: 'master', isPr: true}),
   });
-  t.truthy(await semanticRelease(options, {cwd, env: {}}));
+  t.truthy(await semanticRelease(options, {cwd, env: {}, stdout: {write: () => {}}, stderr: {write: () => {}}}));
 
   t.not(t.context.log.args[0][0], 'This run was not triggered in a known CI environment, running in dry-run mode.');
   t.not(
@@ -643,10 +653,10 @@ test('Accept "undefined" value returned by the "generateNotes" plugins', async t
   };
 
   const semanticRelease = requireNoCache('..', {
-    './lib/logger': t.context.logger,
+    './lib/get-logger': () => t.context.logger,
     'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
   });
-  t.truthy(await semanticRelease(options, {cwd, env: {}}));
+  t.truthy(await semanticRelease(options, {cwd, env: {}, stdout: {write: () => {}}, stderr: {write: () => {}}}));
 
   t.is(analyzeCommits.callCount, 1);
   t.deepEqual(analyzeCommits.args[0][1].lastRelease, lastRelease);
@@ -670,11 +680,13 @@ test('Returns falsy value if triggered by a PR', async t => {
   const {cwd, repositoryUrl} = await gitRepo(true);
 
   const semanticRelease = requireNoCache('..', {
-    './lib/logger': t.context.logger,
+    './lib/get-logger': () => t.context.logger,
     'env-ci': () => ({isCi: true, branch: 'master', isPr: true}),
   });
 
-  t.falsy(await semanticRelease({cwd, repositoryUrl}, {cwd, env: {}}));
+  t.falsy(
+    await semanticRelease({cwd, repositoryUrl}, {cwd, env: {}, stdout: {write: () => {}}, stderr: {write: () => {}}})
+  );
   t.is(
     t.context.log.args[t.context.log.args.length - 1][0],
     "This run was triggered by a pull request and therefore a new version won't be published."
@@ -694,18 +706,22 @@ test('Returns falsy value if triggered on an outdated clone', async t => {
   await gitPush(repositoryUrl, 'master', {cwd});
 
   const semanticRelease = requireNoCache('..', {
-    './lib/logger': t.context.logger,
+    './lib/get-logger': () => t.context.logger,
     'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
   });
 
-  t.falsy(await semanticRelease({repositoryUrl}, {cwd: repoDir, env: {}}));
+  t.falsy(
+    await semanticRelease(
+      {repositoryUrl},
+      {cwd: repoDir, env: {}, stdout: {write: () => {}}, stderr: {write: () => {}}}
+    )
+  );
   t.deepEqual(t.context.log.args[t.context.log.args.length - 1], [
-    "The local branch %s is behind the remote one, therefore a new version won't be published.",
-    'master',
+    "The local branch master is behind the remote one, therefore a new version won't be published.",
   ]);
 });
 
-test('Returns falsy value if not running from the configured branch', async t => {
+test('Returns false if not running from the configured branch', async t => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd, repositoryUrl} = await gitRepo(true);
   const options = {
@@ -722,11 +738,11 @@ test('Returns falsy value if not running from the configured branch', async t =>
   };
 
   const semanticRelease = requireNoCache('..', {
-    './lib/logger': t.context.logger,
+    './lib/get-logger': () => t.context.logger,
     'env-ci': () => ({isCi: true, branch: 'other-branch', isPr: false}),
   });
 
-  t.falsy(await semanticRelease(options, {cwd, env: {}}));
+  t.falsy(await semanticRelease(options, {cwd, env: {}, stdout: {write: () => {}}, stderr: {write: () => {}}}));
   t.is(
     t.context.log.args[1][0],
     'This test run was triggered on the branch other-branch, while semantic-release is configured to only publish from master, therefore a new version won’t be published.'
@@ -759,11 +775,11 @@ test('Returns falsy value if there is no relevant changes', async t => {
   };
 
   const semanticRelease = requireNoCache('..', {
-    './lib/logger': t.context.logger,
+    './lib/get-logger': () => t.context.logger,
     'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
   });
 
-  t.falsy(await semanticRelease(options, {cwd, env: {}}));
+  t.falsy(await semanticRelease(options, {cwd, env: {}, stdout: {write: () => {}}, stderr: {write: () => {}}}));
   t.is(analyzeCommits.callCount, 1);
   t.is(verifyRelease.callCount, 0);
   t.is(generateNotes.callCount, 0);
@@ -807,10 +823,10 @@ test('Exclude commits with [skip release] or [release skip] from analysis', asyn
   };
 
   const semanticRelease = requireNoCache('..', {
-    './lib/logger': t.context.logger,
+    './lib/get-logger': () => t.context.logger,
     'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
   });
-  await semanticRelease(options, {cwd, env: {}});
+  await semanticRelease(options, {cwd, env: {}, stdout: {write: () => {}}, stderr: {write: () => {}}});
 
   t.is(analyzeCommits.callCount, 1);
   t.is(analyzeCommits.args[0][1].commits.length, 2);
@@ -830,15 +846,15 @@ test('Log both plugins errors and errors thrown by "fail" plugin', async t => {
     fail: [stub().rejects(failError1), stub().rejects(failError2)],
   };
   const semanticRelease = requireNoCache('..', {
-    './lib/logger': t.context.logger,
+    './lib/get-logger': () => t.context.logger,
     'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
   });
 
-  await t.throws(semanticRelease(options, {cwd, env: {}}));
+  await t.throws(semanticRelease(options, {cwd, env: {}, stdout: {write: () => {}}, stderr: {write: () => {}}}));
 
-  t.is(t.context.error.args[t.context.error.args.length - 2][1], failError1);
-  t.is(t.context.error.args[t.context.error.args.length - 1][1], failError2);
-  t.deepEqual(t.context.log.args[t.context.log.args.length - 1], ['%s Plugin error', 'ERR']);
+  t.is(t.context.error.args[t.context.error.args.length - 1][0], 'ERR Plugin error');
+  t.is(t.context.error.args[t.context.error.args.length - 3][1], failError1);
+  t.is(t.context.error.args[t.context.error.args.length - 2][1], failError2);
 });
 
 test('Call "fail" only if a plugin returns a SemanticReleaseError', async t => {
@@ -853,11 +869,11 @@ test('Call "fail" only if a plugin returns a SemanticReleaseError', async t => {
     fail,
   };
   const semanticRelease = requireNoCache('..', {
-    './lib/logger': t.context.logger,
+    './lib/get-logger': () => t.context.logger,
     'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
   });
 
-  await t.throws(semanticRelease(options, {cwd, env: {}}));
+  await t.throws(semanticRelease(options, {cwd, env: {}, stdout: {write: () => {}}, stderr: {write: () => {}}}));
 
   t.true(fail.notCalled);
   t.is(t.context.error.args[t.context.error.args.length - 1][1], pluginError);
@@ -868,10 +884,12 @@ test('Throw SemanticReleaseError if repositoryUrl is not set and cannot be found
   const {cwd} = await gitRepo();
 
   const semanticRelease = requireNoCache('..', {
-    './lib/logger': t.context.logger,
+    './lib/get-logger': () => t.context.logger,
     'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
   });
-  const errors = [...(await t.throws(semanticRelease({}, {cwd, env: {}})))];
+  const errors = [
+    ...(await t.throws(semanticRelease({}, {cwd, env: {}, stdout: {write: () => {}}, stderr: {write: () => {}}}))),
+  ];
 
   // Verify error code and type
   t.is(errors[0].code, 'ENOREPOURL');
@@ -902,10 +920,13 @@ test('Throw an Error if plugin returns an unexpected value', async t => {
   };
 
   const semanticRelease = requireNoCache('..', {
-    './lib/logger': t.context.logger,
+    './lib/get-logger': () => t.context.logger,
     'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
   });
-  const error = await t.throws(semanticRelease(options, {cwd, env: {}}), Error);
+  const error = await t.throws(
+    semanticRelease(options, {cwd, env: {}, stdout: {write: () => {}}, stderr: {write: () => {}}}),
+    Error
+  );
   t.regex(error.details, /string/);
 });
 
@@ -935,10 +956,10 @@ test('Get all commits including the ones not in the shallow clone', async t => {
   };
 
   const semanticRelease = requireNoCache('..', {
-    './lib/logger': t.context.logger,
+    './lib/get-logger': () => t.context.logger,
     'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
   });
-  t.truthy(await semanticRelease(options, {cwd, env: {}}));
+  t.truthy(await semanticRelease(options, {cwd, env: {}, stdout: {write: () => {}}, stderr: {write: () => {}}}));
 
   t.is(analyzeCommits.args[0][1].commits.length, 3);
 });
