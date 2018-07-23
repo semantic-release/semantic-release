@@ -11,7 +11,8 @@ const cwd = process.cwd();
 test.beforeEach(t => {
   // Stub the logger functions
   t.context.log = stub();
-  t.context.logger = {log: t.context.log};
+  t.context.success = stub();
+  t.context.logger = {log: t.context.log, success: t.context.success, scope: () => t.context.logger};
 });
 
 test('Export default plugins', t => {
