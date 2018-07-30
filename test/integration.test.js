@@ -16,11 +16,9 @@ const requireNoCache = proxyquire.noPreserveCache();
 
 // Environment variables used with semantic-release cli (similar to what a user would setup)
 const env = {
+  ...npmRegistry.authEnv,
   GH_TOKEN: gitbox.gitCredential,
   GITHUB_URL: mockServer.url,
-  NPM_EMAIL: 'integration@test.com',
-  NPM_USERNAME: 'integration',
-  NPM_PASSWORD: 'suchsecure',
   TRAVIS: 'true',
   CI: 'true',
   TRAVIS_BRANCH: 'master',
@@ -29,9 +27,9 @@ const env = {
 // Environment variables used only for the local npm command used to do verification
 const testEnv = {
   ...process.env,
+  ...npmRegistry.authEnv,
   npm_config_registry: npmRegistry.url,
-  NPM_EMAIL: 'integration@test.com',
-  LEGACY_TOKEN: Buffer.from(`${process.env.NPM_USERNAME}:${process.env.NPM_PASSWORD}`, 'utf8').toString('base64'),
+  LEGACY_TOKEN: Buffer.from(`${env.NPM_USERNAME}:${env.NPM_PASSWORD}`, 'utf8').toString('base64'),
 };
 
 const cli = require.resolve('../bin/semantic-release');
