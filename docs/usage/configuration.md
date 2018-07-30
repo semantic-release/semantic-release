@@ -57,8 +57,7 @@ $ semantic-release
 
 ### extends
 
-Type: `Array`, `String`
-
+Type: `Array`, `String`<br>
 CLI arguments: `-e`, `--extends`
 
 List of modules or file paths containing a [shareable configuration](shareable-configurations.md). If multiple shareable configurations are set, they will be imported in the order defined with each configuration option taking precedence over the options defined in a previous shareable configuration.
@@ -67,20 +66,16 @@ List of modules or file paths containing a [shareable configuration](shareable-c
 
 ### branch
 
-Type: `String`
-
-Default: `master`
-
+Type: `String`<br>
+Default: `master`<br>
 CLI arguments: `-b`, `--branch`
 
 The branch on which releases should happen.
 
 ### repositoryUrl
 
-Type: `String`
-
-Default: `repository` property in `package.json` or [git origin url](https://git-scm.com/book/en/v2/Git-Basics-Working-with-Remotes)
-
+Type: `String`<br>
+Default: `repository` property in `package.json` or [git origin url](https://git-scm.com/book/en/v2/Git-Basics-Working-with-Remotes)<br>
 CLI arguments: `-r`, `--repository-url`
 
 The git repository URL.
@@ -89,10 +84,8 @@ Any valid git url format is supported (See [Git protocols](https://git-scm.com/b
 
 ### tagFormat
 
-Type: `String`
-
-Default: `v${version}`
-
+Type: `String`<br>
+Default: `v${version}`<br>
 CLI arguments: `-t`, `--tag-format`
 
 The [Git tag](https://git-scm.com/book/en/v2/Git-Basics-Tagging) format used by **semantic-release** to identify releases. The tag name is generated with [Lodash template](https://lodash.com/docs#template) and will be compiled with the `version` variable.
@@ -101,40 +94,32 @@ The [Git tag](https://git-scm.com/book/en/v2/Git-Basics-Tagging) format used by 
 
 ### dryRun
 
-Type: `Boolean`
-
-Default: `false` if running in a CI environment, `true` otherwise
-
+Type: `Boolean`<br>
+Default: `false` if running in a CI environment, `true` otherwise<br>
 CLI arguments: `-d`, `--dry-run`
 
 Dry-run mode, skip publishing, print next version and release notes.
 
 ### noCi
 
-Type: `Boolean`
-
-Default: `false`
-
+Type: `Boolean`<br>
+Default: `false`<br>
 CLI arguments: `--no-ci`
 
 Skip Continuous Integration environment verifications. This allows for making releases from a local machine.
 
 ### debug
 
-Type: `Boolean`
-
-Default: `false`
-
+Type: `Boolean`<br>
+Default: `false`<br>
 CLI argument: `--debug`
 
 Output debugging information. It can also be enabled by setting the `DEBUG` environment variable to `semantic-release:*`.
 
 ### verifyConditions
 
-Type: `Array`, `String`, `Object`
-
-Default: `['@semantic-release/npm', '@semantic-release/github']`
-
+Type: `Array`, `String`, `Object`<br>
+Default: `['@semantic-release/npm', '@semantic-release/github']`<br>
 CLI argument: `--verify-conditions`
 
 Define the list of [verify conditions plugins](plugins.md#verifyconditions-plugin). Plugins will run in series, in the order defined in the `Array`.
@@ -143,10 +128,8 @@ See [Plugins configuration](plugins.md#configuration) for more details.
 
 ### analyzeCommits
 
-
-Default: `'@semantic-release/commit-analyzer'`
-
-Type: `Array`, `String`, `Object`
+Type: `Array`, `String`, `Object`<br>
+Default: `'@semantic-release/commit-analyzer'`<br>
 CLI argument: `--analyze-commits`
 
 Define the [analyze commits plugin](plugins.md#analyzecommits-plugin).
@@ -155,10 +138,8 @@ See [Plugins configuration](plugins.md#configuration) for more details.
 
 ### verifyRelease
 
-Type: `Array`, `String`, `Object`
-
-Default: `[]`
-
+Type: `Array`, `String`, `Object`<br>
+Default: `[]`<br>
 CLI argument: `--verify-release`
 
 Define the list of [verify release plugins](plugins.md#verifyrelease-plugin). Plugins will run in series, in the order defined in the `Array`.
@@ -167,10 +148,8 @@ See [Plugins configuration](plugins.md#configuration) for more details.
 
 ### generateNotes
 
-Type: `Array`, `String`, `Object`
-
-Default: `['@semantic-release/release-notes-generator']`
-
+Type: `Array`, `String`, `Object`<br>
+Default: `['@semantic-release/release-notes-generator']`<br>
 CLI argument: `--generate-notes`
 
 Define the [generate notes plugins](plugins.md#generatenotes-plugin).
@@ -179,10 +158,8 @@ See [Plugins configuration](plugins.md#configuration) for more details.
 
 ### prepare
 
-Type: `Array`, `String`, `Object`
-
-Default: `['@semantic-release/npm']`
-
+Type: `Array`, `String`, `Object`<br>
+Default: `['@semantic-release/npm']`<br>
 CLI argument: `--prepare`
 
 Define the list of [prepare plugins](plugins.md#prepare-plugin). Plugins will run in series, in the order defined in the `Array`.
@@ -191,10 +168,8 @@ See [Plugins configuration](plugins.md#configuration) for more details.
 
 ### publish
 
-Type: `Array`, `String`, `Object`
-
-Default: `['@semantic-release/npm', '@semantic-release/github']`
-
+Type: `Array`, `String`, `Object`<br>
+Default: `['@semantic-release/npm', '@semantic-release/github']`<br>
 CLI argument: `--publish`
 
 Define the list of [publish plugins](plugins.md#publish-plugin). Plugins will run in series, in the order defined in the `Array`.
@@ -203,10 +178,8 @@ See [Plugins configuration](plugins.md#configuration) for more details.
 
 ### success
 
-Type: `Array`, `String`, `Object`
-
-Default: `['@semantic-release/github']`
-
+Type: `Array`, `String`, `Object`<br>
+Default: `['@semantic-release/github']`<br>
 CLI argument: `--success`
 
 Define the list of [success plugins](plugins.md#success-plugin). Plugins will run in series, in the order defined in the `Array`.
@@ -215,10 +188,8 @@ See [Plugins configuration](plugins.md#configuration) for more details.
 
 ### fail
 
-Type: `Array`, `String`, `Object`
-
-Default: `['@semantic-release/github']`
-
+Type: `Array`, `String`, `Object`<br>
+Default: `['@semantic-release/github']`<br>
 CLI argument: `--fail`
 
 Define the list of [fail plugins](plugins.md#fail-plugin). Plugins will run in series, in the order defined in the `Array`.
