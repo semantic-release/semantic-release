@@ -1,4 +1,6 @@
-const {argv} = require('process');
+const {argv, env, stderr} = require('process');
+const util = require('util');
+const hideSensitive = require('./lib/hide-sensitive');
 
 const stringList = {
   type: 'string',
@@ -57,7 +59,7 @@ Usage:
     return 0;
   } catch (err) {
     if (err.name !== 'YError') {
-      console.error(err);
+      stderr.write(hideSensitive(env)(util.inspect(err, {colors: true})));
     }
     return 1;
   }
