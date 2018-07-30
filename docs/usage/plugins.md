@@ -10,25 +10,33 @@ See [plugins list](../extending/plugins-list.md).
 
 Responsible for verifying conditions necessary to proceed with the release: configuration is correct, authentication token are valid, etc...
 
-Default implementation: [@semantic-release/npm](https://github.com/semantic-release/npm#verifyconditions) and [@semantic-release/github](https://github.com/semantic-release/github#verifyconditions).
+Default implementation: [@semantic-release/npm](https://github.com/semantic-release/npm#verifyconditions) and [@semantic-release/github](https://github.com/semantic-release/github#verifyconditions).<br>
+Optional.<br>
+Accept multiple plugins.
 
 ### analyzeCommits plugin
 
 Responsible for determining the type of the next release (`major`, `minor` or `patch`).
 
-Default implementation: [@semantic-release/commit-analyzer](https://github.com/semantic-release/commit-analyzer).
+Default implementation: [@semantic-release/commit-analyzer](https://github.com/semantic-release/commit-analyzer).<br>
+Required.<br>
+Accept only one plugin.
 
 ### verifyRelease plugin
 
 Responsible for verifying the parameters (version, type, dist-tag etc...) of the release that is about to be published. For example the [cracks plugin](https://github.com/semantic-release/cracks) is able to verify that if a release contains breaking changes, its type must be `major`.
 
-Default implementation: none.
+Default implementation: none.<br>
+Optional.<br>
+Accept multiple plugins.
 
 ### generateNotes plugin
 
 Responsible for generating release notes. If multiple `generateNotes` plugins are defined, the release notes will be the result of the concatenation of plugin output.
 
-Default implementation: [@semantic-release/release-notes-generator](https://github.com/semantic-release/release-notes-generator).
+Default implementation: [@semantic-release/release-notes-generator](https://github.com/semantic-release/release-notes-generator).<br>
+Optional.<br>
+Accept multiple plugins.
 
 ### prepare plugin
 
@@ -36,25 +44,33 @@ Responsible for preparing the release, including:
 - Creating or updating files such as `package.json`, `CHANGELOG.md`, documentation or compiled assets.
 - Create and push commits
 
-Default implementation: [@semantic-release/npm](https://github.com/semantic-release/npm#prepare).
+Default implementation: [@semantic-release/npm](https://github.com/semantic-release/npm#prepare).<br>
+Optional.<br>
+Accept multiple plugins.
 
 ### publish plugin
 
 Responsible for publishing the release.
 
-Default implementation: [@semantic-release/npm](https://github.com/semantic-release/npm#publish) and [@semantic-release/github](https://github.com/semantic-release/github#publish).
+Default implementation: [@semantic-release/npm](https://github.com/semantic-release/npm#publish) and [@semantic-release/github](https://github.com/semantic-release/github#publish).<br>
+Optional.<br>
+Accept multiple plugins.
 
 ### success plugin
 
 Responsible for notifying of a new release.
 
-Default implementation: [@semantic-release/github](https://github.com/semantic-release/github#success).
+Default implementation: [@semantic-release/github](https://github.com/semantic-release/github#success).<br>
+Optional.<br>
+Accept multiple plugins.
 
 ### fail plugin
 
 Responsible for notifying of a failed release.
 
-Default implementation: [@semantic-release/github](https://github.com/semantic-release/github#fail).
+Default implementation: [@semantic-release/github](https://github.com/semantic-release/github#fail).<br>
+Optional.<br>
+Accept multiple plugins.
 
 ## Configuration
 
