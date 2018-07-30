@@ -4,10 +4,12 @@ import got from 'got';
 import delay from 'delay';
 import pRetry from 'p-retry';
 
-const IMAGE = 'npmjs/npm-docker-couchdb:1.6.1';
+const IMAGE = 'semanticrelease/npm-registry-docker:latest';
 const SERVER_PORT = 15986;
 const COUCHDB_PORT = 5984;
 const SERVER_HOST = 'localhost';
+const COUCHDB_USER = 'admin';
+const COUCHDB_PASSWORD = 'password';
 const NPM_USERNAME = 'integration';
 const NPM_PASSWORD = 'suchsecure';
 const NPM_EMAIL = 'integration@test.com';
@@ -15,7 +17,7 @@ const docker = new Docker();
 let container;
 
 /**
- * Download the `npm-docker-couchdb` Docker image, create a new container and start it.
+ * Download the `npm-registry-docker` Docker image, create a new container and start it.
  */
 async function start() {
   await getStream(await docker.pull(IMAGE));
@@ -24,10 +26,11 @@ async function start() {
     Tty: true,
     Image: IMAGE,
     PortBindings: {[`${COUCHDB_PORT}/tcp`]: [{HostPort: `${SERVER_PORT}`}]},
+    Env: [`COUCHDB_USER=${COUCHDB_USER}`, `COUCHDB_PASSWORD=${COUCHDB_PASSWORD}`],
   });
 
   await container.start();
-  await delay(3000);
+  await delay(4000);
 
   try {
     // Wait for the registry to be ready
@@ -37,13 +40,13 @@ async function start() {
       factor: 2,
     });
   } catch (err) {
-    throw new Error(`Couldn't start npm-docker-couchdb after 2 min`);
+    throw new Error(`Couldn't start npm-registry-docker after 2 min`);
   }
 
   // Create user
   await got(`http://${SERVER_HOST}:${SERVER_PORT}/_users/org.couchdb.user:${NPM_USERNAME}`, {
     json: true,
-    auth: 'admin:admin',
+    auth: `${COUCHDB_USER}:${COUCHDB_PASSWORD}`,
     method: 'PUT',
     body: {
       _id: `org.couchdb.user:${NPM_USERNAME}`,
@@ -66,7 +69,7 @@ const authEnv = {
 };
 
 /**
- * Stop and remote the `npm-docker-couchdb` Docker container.
+ * Stop and remote the `npm-registry-docker` Docker container.
  */
 async function stop() {
   await container.stop();
