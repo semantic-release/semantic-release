@@ -1,6 +1,8 @@
 import test from 'ava';
+import {escapeRegExp} from 'lodash';
 import proxyquire from 'proxyquire';
 import {stub} from 'sinon';
+import {SECRET_REPLACEMENT} from '../lib/definitions/constants';
 
 const requireNoCache = proxyquire.noPreserveCache();
 
@@ -206,5 +208,17 @@ test.serial('Return error code if semantic-release throw error', async t => {
   const exitCode = await cli();
 
   t.regex(t.context.errors, /semantic-release error/);
+  t.is(exitCode, 1);
+});
+
+test.serial('Hide sensitive environment variable values from the logs', async t => {
+  const env = {MY_TOKEN: 'secret token'};
+  const run = stub().rejects(new Error(`Throw error: Exposing token ${env.MY_TOKEN}`));
+  const argv = ['', ''];
+  const cli = requireNoCache('../cli', {'.': run, process: {...process, argv, env: {...process.env, ...env}}});
+
+  const exitCode = await cli();
+
+  t.regex(t.context.errors, new RegExp(`Throw error: Exposing token ${escapeRegExp(SECRET_REPLACEMENT)}`));
   t.is(exitCode, 1);
 });
