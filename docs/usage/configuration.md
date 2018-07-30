@@ -143,10 +143,10 @@ See [Plugins configuration](plugins.md#configuration) for more details.
 
 ### analyzeCommits
 
-Type: `String`, `Object`
 
 Default: `'@semantic-release/commit-analyzer'`
 
+Type: `Array`, `String`, `Object`
 CLI argument: `--analyze-commits`
 
 Define the [analyze commits plugin](plugins.md#analyzecommits-plugin).
