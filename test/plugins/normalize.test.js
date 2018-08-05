@@ -160,7 +160,10 @@ test('Plugin is called with "pluginConfig" (omitting "path", adding global confi
   await plugin({param: 'param'});
 
   t.true(
-    pluginFunction.calledWith({conf: 'confValue', global: 'globalValue'}, {param: 'param', logger: t.context.logger})
+    pluginFunction.calledWithMatch(
+      {conf: 'confValue', global: 'globalValue'},
+      {param: 'param', logger: t.context.logger}
+    )
   );
 });
 

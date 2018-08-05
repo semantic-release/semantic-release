@@ -1,4 +1,3 @@
-const process = require('process');
 const {template, pick} = require('lodash');
 const marked = require('marked');
 const TerminalRenderer = require('marked-terminal');
