@@ -1,7 +1,7 @@
 const SemanticReleaseError = require('@semantic-release/error');
 
 class InheritedError extends SemanticReleaseError {
-  constructor(message, code, newProperty) {
+  constructor(message, code) {
     super(message);
     Error.captureStackTrace(this, this.constructor);
     this.name = this.constructor.name;
