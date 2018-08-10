@@ -265,16 +265,3 @@ test('Do not add git credential to repositoryUrl if push is allowed', async t =>
     repositoryUrl
   );
 });
-
-test('Do not add git credentials if repositoryUrl is a "ssh" URL', async t => {
-  const {cwd} = await gitRepo();
-
-  t.is(
-    await getAuthUrl({
-      cwd,
-      env: {...env, GIT_CREDENTIALS: 'user:pass'},
-      options: {branch: 'master', repositoryUrl: 'ssh://git@host.null/owner/repo.git'},
-    }),
-    'ssh://git@host.null/owner/repo.git'
-  );
-});
