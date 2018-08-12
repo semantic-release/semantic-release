@@ -37,7 +37,7 @@ jobs:
       - run: npm install
       # Run optional required steps before releasing
       # - run: npm run build-script
-      - run: npx semantic-release
+      - run: npm semantic-release
 
 workflows:
   version: 2
