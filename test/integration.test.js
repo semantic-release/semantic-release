@@ -4,6 +4,7 @@ import test from 'ava';
 import {escapeRegExp} from 'lodash';
 import {writeJson, readJson} from 'fs-extra';
 import execa from 'execa';
+import {WritableStreamBuffer} from 'stream-buffers';
 import {SECRET_REPLACEMENT} from '../lib/definitions/constants';
 import {gitHead as getGitHead, gitTagHead, gitRepo, gitCommits, gitRemoteTagHead, gitPush} from './helpers/git-utils';
 import gitbox from './helpers/gitbox';
@@ -490,7 +491,7 @@ test('Run via JS API', async t => {
   t.log('Commit a feature');
   await gitCommits(['feat: Initial commit'], {cwd});
   t.log('$ Call semantic-release via API');
-  await semanticRelease(undefined, {cwd, env, stdout: {write: () => {}}, stderr: {write: () => {}}});
+  await semanticRelease(undefined, {cwd, env, stdout: new WritableStreamBuffer(), stderr: new WritableStreamBuffer()});
 
   // Verify package.json and has been updated
   t.is((await readJson(path.resolve(cwd, 'package.json'))).version, version);
