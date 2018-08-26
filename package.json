@@ -28,7 +28,7 @@
     "cosmiconfig": "^5.0.1",
     "debug": "^3.1.0",
     "env-ci": "^2.0.0",
-    "execa": "^0.11.0",
+    "execa": "^1.0.0",
     "figures": "^2.0.0",
     "find-versions": "^2.0.0",
     "get-stream": "^4.0.0",
