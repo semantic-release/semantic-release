@@ -1,10 +1,11 @@
 import test from 'ava';
+import {escapeRegExp, isString} from 'lodash';
 import proxyquire from 'proxyquire';
 import {spy, stub} from 'sinon';
 import {WritableStreamBuffer} from 'stream-buffers';
 import AggregateError from 'aggregate-error';
 import SemanticReleaseError from '@semantic-release/error';
-import {COMMIT_NAME, COMMIT_EMAIL} from '../lib/definitions/constants';
+import {COMMIT_NAME, COMMIT_EMAIL, SECRET_REPLACEMENT} from '../lib/definitions/constants';
 import {
   gitHead as getGitHead,
   gitTagHead,
@@ -1029,6 +1030,87 @@ test('Throw an Error if plugin returns an unexpected value', async t => {
     Error
   );
   t.regex(error.details, /string/);
+});
+
+test('Hide sensitive information passed to "fail" plugin', async t => {
+  const {cwd, repositoryUrl} = await gitRepo(true);
+
+  const fail = stub().resolves();
+  const env = {MY_TOKEN: 'secret token'};
+  const options = {
+    branch: 'master',
+    repositoryUrl,
+    verifyConditions: stub().throws(
+      new SemanticReleaseError(
+        `Message: Exposing token ${env.MY_TOKEN}`,
+        'ERR',
+        `Details: Exposing token ${env.MY_TOKEN}`
+      )
+    ),
+    success: stub().resolves(),
+    fail,
+  };
+
+  const semanticRelease = requireNoCache('..', {
+    './lib/get-logger': () => t.context.logger,
+    'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
+  });
+  await t.throws(
+    semanticRelease(options, {cwd, env, stdout: new WritableStreamBuffer(), stderr: new WritableStreamBuffer()}),
+    Error
+  );
+
+  const error = fail.args[0][1].errors[0];
+
+  t.is(error.message, `Message: Exposing token ${SECRET_REPLACEMENT}`);
+  t.is(error.details, `Details: Exposing token ${SECRET_REPLACEMENT}`);
+
+  Object.getOwnPropertyNames(error).forEach(prop => {
+    if (isString(error[prop])) {
+      t.notRegex(error[prop], new RegExp(escapeRegExp(env.MY_TOKEN)));
+    }
+  });
+});
+
+test('Hide sensitive information passed to "success" plugin', async t => {
+  const {cwd, repositoryUrl} = await gitRepo(true);
+  await gitCommits(['feat: initial release'], {cwd});
+  await gitTagVersion('v1.0.0', undefined, {cwd});
+  await gitCommits(['feat: new feature'], {cwd});
+  await gitPush(repositoryUrl, 'master', {cwd});
+
+  const success = stub().resolves();
+  const env = {MY_TOKEN: 'secret token'};
+  const options = {
+    branch: 'master',
+    repositoryUrl,
+    verifyConditions: false,
+    verifyRelease: false,
+    prepare: false,
+    publish: stub().resolves({
+      name: `Name: Exposing token ${env.MY_TOKEN}`,
+      url: `URL: Exposing token ${env.MY_TOKEN}`,
+    }),
+    success,
+    fail: stub().resolves(),
+  };
+
+  const semanticRelease = requireNoCache('..', {
+    './lib/get-logger': () => t.context.logger,
+    'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
+  });
+  await semanticRelease(options, {cwd, env, stdout: new WritableStreamBuffer(), stderr: new WritableStreamBuffer()});
+
+  const release = success.args[0][1].releases[0];
+
+  t.is(release.name, `Name: Exposing token ${SECRET_REPLACEMENT}`);
+  t.is(release.url, `URL: Exposing token ${SECRET_REPLACEMENT}`);
+
+  Object.getOwnPropertyNames(release).forEach(prop => {
+    if (isString(release[prop])) {
+      t.notRegex(release[prop], new RegExp(escapeRegExp(env.MY_TOKEN)));
+    }
+  });
 });
 
 test('Get all commits including the ones not in the shallow clone', async t => {
