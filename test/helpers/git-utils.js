@@ -69,7 +69,7 @@ export async function initBareRepo(repositoryUrl, branch = 'master') {
  * @returns {Array<Commit>} The created commits, in reverse order (to match `git log` order).
  */
 export async function gitCommits(messages, execaOpts) {
-  await pReduce(messages, async (_, message) =>
+  await pReduce(messages, (_, message) =>
     execa.stdout('git', ['commit', '-m', message, '--allow-empty', '--no-gpg-sign'], execaOpts)
   );
   return (await gitGetCommits(undefined, execaOpts)).slice(0, messages.length);
@@ -112,7 +112,7 @@ export async function gitCheckout(branch, create = true, execaOpts) {
  *
  * @return {String} The sha of the head commit in the current git repository.
  */
-export async function gitHead(execaOpts) {
+export function gitHead(execaOpts) {
   return execa.stdout('git', ['rev-parse', 'HEAD'], execaOpts);
 }
 
@@ -181,7 +181,7 @@ export async function gitAddConfig(name, value, execaOpts) {
  *
  * @return {String} The sha of the commit associated with `tagName` on the local repository.
  */
-export async function gitTagHead(tagName, execaOpts) {
+export function gitTagHead(tagName, execaOpts) {
   return execa.stdout('git', ['rev-list', '-1', tagName], execaOpts);
 }
 
@@ -209,7 +209,7 @@ export async function gitRemoteTagHead(repositoryUrl, tagName, execaOpts) {
  *
  * @return {String} The tag associatedwith the sha in parameter or `null`.
  */
-export async function gitCommitTag(gitHead, execaOpts) {
+export function gitCommitTag(gitHead, execaOpts) {
   return execa.stdout('git', ['describe', '--tags', '--exact-match', gitHead], execaOpts);
 }
 
