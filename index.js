@@ -60,14 +60,14 @@ async function run(context, plugins) {
 
   try {
     await verifyAuth(options.repositoryUrl, options.branch, {cwd, env});
-  } catch (err) {
+  } catch (error) {
     if (!(await isBranchUpToDate(options.branch, {cwd, env}))) {
       logger.log(
         `The local branch ${options.branch} is behind the remote one, therefore a new version won't be published.`
       );
       return false;
     }
-    logger.error(`The command "${err.cmd}" failed with the error message ${err.stderr}.`);
+    logger.error(`The command "${error.cmd}" failed with the error message ${error.stderr}.`);
     throw getError('EGITNOPERMISSION', {options});
   }
 
@@ -131,13 +131,13 @@ function logErrors({logger, stderr}, err) {
   }
 }
 
-async function callFail(context, plugins, error) {
-  const errors = extractErrors(error).filter(error => error.semanticRelease);
+async function callFail(context, plugins, err) {
+  const errors = extractErrors(err).filter(err => err.semanticRelease);
   if (errors.length > 0) {
     try {
       await plugins.fail({...context, errors});
-    } catch (err) {
-      logErrors(context, err);
+    } catch (error) {
+      logErrors(context, error);
     }
   }
 }
@@ -157,15 +157,15 @@ module.exports = async (opts = {}, {cwd = process.cwd(), env = process.env, stdo
       const result = await run(context, plugins);
       unhook();
       return result;
-    } catch (err) {
+    } catch (error) {
       if (!options.dryRun) {
-        await callFail(context, plugins, err);
+        await callFail(context, plugins, error);
       }
-      throw err;
+      throw error;
     }
-  } catch (err) {
-    logErrors(context, err);
+  } catch (error) {
+    logErrors(context, error);
     unhook();
-    throw err;
+    throw error;
   }
 };

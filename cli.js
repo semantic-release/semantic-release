@@ -57,9 +57,9 @@ Usage:
     }
     await require('.')(opts);
     return 0;
-  } catch (err) {
-    if (err.name !== 'YError') {
-      stderr.write(hideSensitive(env)(util.inspect(err, {colors: true})));
+  } catch (error) {
+    if (error.name !== 'YError') {
+      stderr.write(hideSensitive(env)(util.inspect(error, {colors: true})));
     }
     return 1;
   }
