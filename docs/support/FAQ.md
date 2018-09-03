@@ -98,7 +98,7 @@ See the [CI configuration recipes](../recipes/README.md#ci-configurations) for m
 
 ## Can I run semantic-release on my local machine rather than on a CI server?
 
-Yes, you can by explicitly setting the [`--no-ci` CLI option](../usage/configuration.md#options) option. You will also have to set the required [authentication](../usage/ci-configuration.md#authentication) via environment variables on your local machine, for example:
+Yes, you can by explicitly setting the [`--no-ci` CLI option](../usage/configuration.md#ci) option. You will also have to set the required [authentication](../usage/ci-configuration.md#authentication) via environment variables on your local machine, for example:
 
 ```bash
 $ NPM_TOKEN=<your_npm_token> GH_TOKEN=<your_github_token> npx semantic-release --no-ci
