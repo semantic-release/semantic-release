@@ -100,13 +100,15 @@ CLI arguments: `-d`, `--dry-run`
 
 Dry-run mode, skip publishing, print next version and release notes.
 
-### noCi
+### ci
 
 Type: `Boolean`<br>
-Default: `false`<br>
-CLI arguments: `--no-ci`
+Default: `true`<br>
+CLI arguments: `--ci` / `--no-ci`
 
-Skip Continuous Integration environment verifications. This allows for making releases from a local machine.
+Set to `fasle` to skip Continuous Integration environment verifications. This allows for making releases from a local machine.
+
+**Note**: The CLI arguments `--no-ci` is equivalent to `--ci false`.
 
 ### debug
 
