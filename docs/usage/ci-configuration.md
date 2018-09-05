@@ -10,14 +10,12 @@ See [CI configuration recipes](../recipes/README.md#ci-configurations) for more 
 
 **semantic-release** requires push access to the project Git repository in order to create [Git tags](https://git-scm.com/book/en/v2/Git-Basics-Tagging). The Git authentication can be set with one of the following environment variables:
 
-| Variable                        | Description                                                                                                                   |
-|---------------------------------|-------------------------------------------------------------------------------------------------------------------------------|
-| `GH_TOKEN` or `GITHUB_TOKEN`    | A GitHub [personal access token](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line).     |
-| `GL_TOKEN` or `GITLAB_TOKEN`    | A GitLab [personal access token](https://docs.gitlab.com/ce/user/profile/personal_access_tokens.html).                        |
-| `BB_TOKEN` or `BITBUCKET_TOKEN` | A Bitbucket [personal access token](https://confluence.atlassian.com/bitbucketserver/personal-access-tokens-939515499.html).  |
-| `GIT_CREDENTIALS`               | [URL encoded basic HTTP Authentication](https://en.wikipedia.org/wiki/Basic_access_authentication#URL_encoding) credentials). |
-
-`GIT_CREDENTIALS` must be the Git username and password in the format `<username>:<password>`.
+| Variable                        | Description                                                                                                                                                                                                                  |
+|---------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `GH_TOKEN` or `GITHUB_TOKEN`    | A GitHub [personal access token](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line).                                                                                                    |
+| `GL_TOKEN` or `GITLAB_TOKEN`    | A GitLab [personal access token](https://docs.gitlab.com/ce/user/profile/personal_access_tokens.html).                                                                                                                       |
+| `BB_TOKEN` or `BITBUCKET_TOKEN` | A Bitbucket [personal access token](https://confluence.atlassian.com/bitbucketserver/personal-access-tokens-939515499.html).                                                                                                 |
+| `GIT_CREDENTIALS`               | [URL encoded](https://en.wikipedia.org/wiki/Percent-encoding) Git username and password in the format `<username>:<password>`. The username and password must each be individually URL encoded, not the `:` separating them. |
 
 Alternatively the Git authentication can be set up via [SSH keys](../recipes/git-auth-ssh-keys.md).
 
