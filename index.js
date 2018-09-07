@@ -20,8 +20,8 @@ const {COMMIT_NAME, COMMIT_EMAIL} = require('./lib/definitions/constants');
 marked.setOptions({renderer: new TerminalRenderer()});
 
 async function run(context, plugins) {
-  const {isCi, branch: ciBranch, isPr} = envCi();
   const {cwd, env, options, logger} = context;
+  const {isCi, branch: ciBranch, isPr} = envCi({env, cwd});
 
   if (!isCi && !options.dryRun && !options.noCi) {
     logger.log('This run was not triggered in a known CI environment, running in dry-run mode.');
