@@ -130,7 +130,7 @@ See [Plugins configuration](plugins.md#configuration) for more details.
 
 ### analyzeCommits
 
-Type: `Array`, `String`, `Object`<br>
+Type: `String`, `Object`<br>
 Default: `'@semantic-release/commit-analyzer'`<br>
 CLI argument: `--analyze-commits`
 
