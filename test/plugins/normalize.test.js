@@ -152,9 +152,24 @@ test('Wrap "publish" plugin in a function that validate the output of the plugin
   t.regex(error.details, /2/);
 });
 
-test('Plugin is called with "pluginConfig" (omitting "path", adding global config) and input', async t => {
+test('Plugin is called with "pluginConfig" (with object definition) and input', async t => {
   const pluginFunction = stub().resolves();
   const pluginConf = {path: pluginFunction, conf: 'confValue'};
+  const options = {global: 'globalValue'};
+  const plugin = normalize({cwd, options, logger: t.context.logger}, '', pluginConf, {});
+  await plugin({param: 'param'});
+
+  t.true(
+    pluginFunction.calledWithMatch(
+      {conf: 'confValue', global: 'globalValue'},
+      {param: 'param', logger: t.context.logger}
+    )
+  );
+});
+
+test('Plugin is called with "pluginConfig" (with array definition) and input', async t => {
+  const pluginFunction = stub().resolves();
+  const pluginConf = [pluginFunction, {conf: 'confValue'}];
   const options = {global: 'globalValue'};
   const plugin = normalize({cwd, options, logger: t.context.logger}, '', pluginConf, {});
   await plugin({param: 'param'});

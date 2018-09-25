@@ -29,7 +29,7 @@ test('Export default plugins', t => {
   t.is(typeof plugins.fail, 'function');
 });
 
-test('Export plugins based on config', t => {
+test('Export plugins based on steps config', t => {
   const plugins = getPlugins(
     {
       cwd,
@@ -53,6 +53,88 @@ test('Export plugins based on config', t => {
   t.is(typeof plugins.publish, 'function');
   t.is(typeof plugins.success, 'function');
   t.is(typeof plugins.fail, 'function');
+});
+
+test('Export plugins based on "plugins" config (array)', async t => {
+  const plugin1 = {verifyConditions: stub(), publish: stub()};
+  const plugin2 = {verifyConditions: stub(), verifyRelease: stub()};
+  const plugins = getPlugins(
+    {cwd, logger: t.context.logger, options: {plugins: [plugin1, plugin2], verifyRelease: () => {}}},
+    {}
+  );
+
+  await plugins.verifyConditions({});
+  t.true(plugin1.verifyConditions.calledOnce);
+  t.true(plugin2.verifyConditions.calledOnce);
+
+  await plugins.publish({});
+  t.true(plugin1.publish.calledOnce);
+
+  await plugins.verifyRelease({});
+  t.true(plugin2.verifyRelease.notCalled);
+
+  // Verify the module returns a function for each plugin
+  t.is(typeof plugins.verifyConditions, 'function');
+  t.is(typeof plugins.analyzeCommits, 'function');
+  t.is(typeof plugins.verifyRelease, 'function');
+  t.is(typeof plugins.generateNotes, 'function');
+  t.is(typeof plugins.prepare, 'function');
+  t.is(typeof plugins.publish, 'function');
+  t.is(typeof plugins.success, 'function');
+  t.is(typeof plugins.fail, 'function');
+});
+
+test('Export plugins based on "plugins" config (single definition)', async t => {
+  const plugin1 = {verifyConditions: stub(), publish: stub()};
+  const plugins = getPlugins({cwd, logger: t.context.logger, options: {plugins: plugin1}}, {});
+
+  await plugins.verifyConditions({});
+  t.true(plugin1.verifyConditions.calledOnce);
+
+  await plugins.publish({});
+  t.true(plugin1.publish.calledOnce);
+
+  // Verify the module returns a function for each plugin
+  t.is(typeof plugins.verifyConditions, 'function');
+  t.is(typeof plugins.analyzeCommits, 'function');
+  t.is(typeof plugins.verifyRelease, 'function');
+  t.is(typeof plugins.generateNotes, 'function');
+  t.is(typeof plugins.prepare, 'function');
+  t.is(typeof plugins.publish, 'function');
+  t.is(typeof plugins.success, 'function');
+  t.is(typeof plugins.fail, 'function');
+});
+
+test('Merge global options, "plugins" options and sptep options', async t => {
+  const plugin1 = [{verifyConditions: stub(), publish: stub()}, {pluginOpt1: 'plugin1'}];
+  const plugin2 = [{verifyConditions: stub()}, {pluginOpt2: 'plugin2'}];
+  const plugin3 = [stub(), {pluginOpt3: 'plugin3'}];
+  const plugins = getPlugins(
+    {
+      cwd,
+      logger: t.context.logger,
+      options: {globalOpt: 'global', plugins: [plugin1, plugin2], verifyRelease: [plugin3]},
+    },
+    {}
+  );
+
+  await plugins.verifyConditions({});
+  t.deepEqual(plugin1[0].verifyConditions.args[0][0], {globalOpt: 'global', pluginOpt1: 'plugin1'});
+  t.deepEqual(plugin2[0].verifyConditions.args[0][0], {globalOpt: 'global', pluginOpt2: 'plugin2'});
+
+  await plugins.publish({});
+  t.deepEqual(plugin1[0].publish.args[0][0], {globalOpt: 'global', pluginOpt1: 'plugin1'});
+
+  await plugins.verifyRelease({});
+  t.deepEqual(plugin3[0].args[0][0], {globalOpt: 'global', pluginOpt3: 'plugin3'});
+});
+
+test('Unknown steps of plugins configured in "plugins" are ignored', t => {
+  const plugin1 = {verifyConditions: () => {}, unknown: () => {}};
+  const plugins = getPlugins({cwd, logger: t.context.logger, options: {plugins: [plugin1]}}, {});
+
+  t.is(typeof plugins.verifyConditions, 'function');
+  t.is(plugins.unknown, undefined);
 });
 
 test('Export plugins loaded from the dependency of a shareable config module', async t => {
@@ -121,11 +203,23 @@ test('Export plugins loaded from the dependency of a shareable config file', asy
 test('Use default when only options are passed for a single plugin', t => {
   const analyzeCommits = {};
   const generateNotes = {};
+  const publish = {};
   const success = () => {};
   const fail = [() => {}];
 
   const plugins = getPlugins(
-    {cwd, logger: t.context.logger, options: {analyzeCommits, generateNotes, success, fail}},
+    {
+      cwd,
+      logger: t.context.logger,
+      options: {
+        plugins: ['@semantic-release/commit-analyzer', '@semantic-release/release-notes-generator'],
+        analyzeCommits,
+        generateNotes,
+        publish,
+        success,
+        fail,
+      },
+    },
     {}
   );
 
@@ -159,14 +253,20 @@ test('Merge global options with plugin options', async t => {
   t.deepEqual(result.pluginConfig, {localOpt: 'local', globalOpt: 'global', otherOpt: 'locally-defined'});
 });
 
-test('Throw an error if plugins configuration are invalid', t => {
+test('Throw an error for each invalid plugin configuration', t => {
   const errors = [
     ...t.throws(() =>
       getPlugins(
         {
           cwd,
           logger: t.context.logger,
-          options: {verifyConditions: {}, analyzeCommits: [], verifyRelease: [{}], generateNotes: [{path: null}]},
+          options: {
+            plugins: ['@semantic-release/commit-analyzer', '@semantic-release/release-notes-generator'],
+            verifyConditions: 1,
+            analyzeCommits: [],
+            verifyRelease: [{}],
+            generateNotes: [{path: null}],
+          },
         },
         {}
       )
@@ -181,4 +281,39 @@ test('Throw an error if plugins configuration are invalid', t => {
   t.is(errors[2].code, 'EPLUGINCONF');
   t.is(errors[3].name, 'SemanticReleaseError');
   t.is(errors[3].code, 'EPLUGINCONF');
+});
+
+test('Throw EPLUGINSCONF error if the "plugins" option contains an old plugin definition (returns a function)', t => {
+  const errors = [
+    ...t.throws(() =>
+      getPlugins(
+        {
+          cwd,
+          logger: t.context.logger,
+          options: {plugins: ['./test/fixtures/multi-plugin', './test/fixtures/plugin-noop', () => {}]},
+        },
+        {}
+      )
+    ),
+  ];
+
+  t.is(errors[0].name, 'SemanticReleaseError');
+  t.is(errors[0].code, 'EPLUGINSCONF');
+  t.is(errors[1].name, 'SemanticReleaseError');
+  t.is(errors[1].code, 'EPLUGINSCONF');
+});
+
+test('Throw EPLUGINSCONF error for each invalid definition if the "plugins" option', t => {
+  const errors = [
+    ...t.throws(() =>
+      getPlugins({cwd, logger: t.context.logger, options: {plugins: [1, {path: 1}, [() => {}, {}, {}]]}}, {})
+    ),
+  ];
+
+  t.is(errors[0].name, 'SemanticReleaseError');
+  t.is(errors[0].code, 'EPLUGINSCONF');
+  t.is(errors[1].name, 'SemanticReleaseError');
+  t.is(errors[1].code, 'EPLUGINSCONF');
+  t.is(errors[2].name, 'SemanticReleaseError');
+  t.is(errors[2].code, 'EPLUGINSCONF');
 });
