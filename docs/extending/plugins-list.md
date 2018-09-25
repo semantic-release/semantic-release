@@ -57,3 +57,5 @@
   - [verifyConditions](https://github.com/felixfbecker/semantic-release-firefox#verifyconditions) Verify the presence of the authentication (set via environment variables).
   - [prepare](https://github.com/felixfbecker/semantic-release-firefox#prepare) Write the correct version to the manifest.json,   creates a xpi file of the dist folder and a zip of the sources.
   - [publish](https://github.com/felixfbecker/semantic-release-firefox#publish) Submit the generated archives to the webstore for review, and publish the item including release notes.
+- [semantic-release-gerrit](https://github.com/pascalMN/semantic-release-gerrit) Set of semantic-release plugins for projects in the Gerrit repositories.
+  - [generateNotes](https://github.com/pascalMN/semantic-release-gerrit#generatenotes) Generate release notes with Gerrit reviews URL.
