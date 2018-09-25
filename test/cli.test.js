@@ -33,6 +33,9 @@ test.serial('Pass options to semantic-release API', async t => {
     'https://github/com/owner/repo.git',
     '-t',
     `v\${version}`,
+    '-p',
+    'plugin1',
+    'plugin2',
     '-e',
     'config1',
     'config2',
@@ -68,6 +71,7 @@ test.serial('Pass options to semantic-release API', async t => {
   t.is(run.args[0][0].branch, 'master');
   t.is(run.args[0][0].repositoryUrl, 'https://github/com/owner/repo.git');
   t.is(run.args[0][0].tagFormat, `v\${version}`);
+  t.deepEqual(run.args[0][0].plugins, ['plugin1', 'plugin2']);
   t.deepEqual(run.args[0][0].extends, ['config1', 'config2']);
   t.deepEqual(run.args[0][0].verifyConditions, ['condition1', 'condition2']);
   t.is(run.args[0][0].analyzeCommits, 'analyze');
@@ -94,6 +98,9 @@ test.serial('Pass options to semantic-release API with alias arguments', async t
     'https://github/com/owner/repo.git',
     '--tag-format',
     `v\${version}`,
+    '--plugins',
+    'plugin1',
+    'plugin2',
     '--extends',
     'config1',
     'config2',
@@ -106,6 +113,7 @@ test.serial('Pass options to semantic-release API with alias arguments', async t
   t.is(run.args[0][0].branch, 'master');
   t.is(run.args[0][0].repositoryUrl, 'https://github/com/owner/repo.git');
   t.is(run.args[0][0].tagFormat, `v\${version}`);
+  t.deepEqual(run.args[0][0].plugins, ['plugin1', 'plugin2']);
   t.deepEqual(run.args[0][0].extends, ['config1', 'config2']);
   t.is(run.args[0][0].dryRun, true);
 
@@ -151,6 +159,8 @@ test.serial('Do not set properties in option for which arg is not in command lin
   t.false('debug' in run.args[0][0]);
   t.false('r' in run.args[0][0]);
   t.false('t' in run.args[0][0]);
+  t.false('p' in run.args[0][0]);
+  t.false('e' in run.args[0][0]);
 });
 
 test.serial('Set "noCi" options to "true" with "--no-ci"', async t => {

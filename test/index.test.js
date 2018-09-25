@@ -64,6 +64,7 @@ test('Plugins are called with expected values', async t => {
   const config = {branch: 'master', repositoryUrl, globalOpt: 'global', tagFormat: `v\${version}`};
   const options = {
     ...config,
+    plugins: false,
     verifyConditions: [verifyConditions1, verifyConditions2],
     analyzeCommits,
     verifyRelease,
@@ -359,6 +360,7 @@ test('Log all "verifyConditions" errors', async t => {
   const config = {branch: 'master', repositoryUrl, tagFormat: `v\${version}`};
   const options = {
     ...config,
+    plugins: false,
     verifyConditions: [stub().rejects(new AggregateError([error1, error2])), stub().rejects(error3)],
     fail,
   };

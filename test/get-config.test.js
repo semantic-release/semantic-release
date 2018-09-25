@@ -8,6 +8,13 @@ import {stub} from 'sinon';
 import yaml from 'js-yaml';
 import {gitRepo, gitCommits, gitShallowClone, gitAddConfig} from './helpers/git-utils';
 
+const DEFAULT_PLUGINS = [
+  '@semantic-release/commit-analyzer',
+  '@semantic-release/release-notes-generator',
+  '@semantic-release/npm',
+  '@semantic-release/github',
+];
+
 test.beforeEach(t => {
   t.context.plugins = stub().returns({});
   t.context.getConfig = proxyquire('../lib/get-config', {'./plugins': t.context.plugins});
@@ -69,6 +76,7 @@ test('Read options from package.json', async t => {
     branch: 'test_branch',
     repositoryUrl: 'https://host.null/owner/module.git',
     tagFormat: `v\${version}`,
+    plugins: false,
   };
   // Create package.json in repository root
   await outputJson(path.resolve(cwd, 'package.json'), {release: options});
@@ -89,6 +97,7 @@ test('Read options from .releaserc.yml', async t => {
     branch: 'test_branch',
     repositoryUrl: 'https://host.null/owner/module.git',
     tagFormat: `v\${version}`,
+    plugins: false,
   };
   // Create package.json in repository root
   await writeFile(path.resolve(cwd, '.releaserc.yml'), yaml.safeDump(options));
@@ -109,6 +118,7 @@ test('Read options from .releaserc.json', async t => {
     branch: 'test_branch',
     repositoryUrl: 'https://host.null/owner/module.git',
     tagFormat: `v\${version}`,
+    plugins: false,
   };
   // Create package.json in repository root
   await outputJson(path.resolve(cwd, '.releaserc.json'), options);
@@ -129,6 +139,7 @@ test('Read options from .releaserc.js', async t => {
     branch: 'test_branch',
     repositoryUrl: 'https://host.null/owner/module.git',
     tagFormat: `v\${version}`,
+    plugins: false,
   };
   // Create package.json in repository root
   await writeFile(path.resolve(cwd, '.releaserc.js'), `module.exports = ${JSON.stringify(options)}`);
@@ -149,6 +160,7 @@ test('Read options from release.config.js', async t => {
     branch: 'test_branch',
     repositoryUrl: 'https://host.null/owner/module.git',
     tagFormat: `v\${version}`,
+    plugins: false,
   };
   // Create package.json in repository root
   await writeFile(path.resolve(cwd, 'release.config.js'), `module.exports = ${JSON.stringify(options)}`);
@@ -176,6 +188,7 @@ test('Prioritise CLI/API parameters over file configuration and git repo', async
     branch: 'branch_cli',
     repositoryUrl: 'http://cli-url.com/owner/package',
     tagFormat: `cli\${version}`,
+    plugins: false,
   };
   const pkg = {release: pkgOptions, repository: 'git@host.null:owner/module.git'};
   // Create package.json in repository root
@@ -199,6 +212,7 @@ test('Read configuration from file path in "extends"', async t => {
     branch: 'test_branch',
     repositoryUrl: 'https://host.null/owner/module.git',
     tagFormat: `v\${version}`,
+    plugins: false,
   };
   // Create package.json and shareable.json in repository root
   await outputJson(path.resolve(cwd, 'package.json'), {release: pkgOptions});
@@ -226,6 +240,7 @@ test('Read configuration from module path in "extends"', async t => {
     branch: 'test_branch',
     repositoryUrl: 'https://host.null/owner/module.git',
     tagFormat: `v\${version}`,
+    plugins: false,
   };
   // Create package.json and shareable.json in repository root
   await outputJson(path.resolve(cwd, 'package.json'), {release: pkgOptions});
@@ -259,6 +274,7 @@ test('Read configuration from an array of paths in "extends"', async t => {
     analyzeCommits: {path: 'analyzeCommits2', param: 'analyzeCommits_param2'},
     branch: 'test_branch',
     tagFormat: `v\${version}`,
+    plugins: false,
   };
   // Create package.json and shareable.json in repository root
   await outputJson(path.resolve(cwd, 'package.json'), {release: pkgOptions});
@@ -296,6 +312,7 @@ test('Prioritize configuration from config file over "extends"', async t => {
     branch: 'test_branch',
     repositoryUrl: 'https://host.null/owner/module.git',
     tagFormat: `v\${version}`,
+    plugins: false,
   };
   // Create package.json and shareable.json in repository root
   await outputJson(path.resolve(cwd, 'package.json'), {release: pkgOptions});
@@ -341,6 +358,7 @@ test('Prioritize configuration from cli/API options over "extends"', async t => 
     publish: [{path: 'publishShareable', param: 'publishShareable_param2'}],
     branch: 'test_branch2',
     tagFormat: `v\${version}`,
+    plugins: false,
   };
   // Create package.json, shareable1.json and shareable2.json in repository root
   await outputJson(path.resolve(cwd, 'package.json'), {release: pkgOptions});
@@ -366,11 +384,13 @@ test('Allow to unset properties defined in shareable config with "null"', async 
     analyzeCommits: null,
     branch: 'test_branch',
     repositoryUrl: 'https://host.null/owner/module.git',
+    plugins: null,
   };
   const options1 = {
     generateNotes: 'generateNotes',
     analyzeCommits: {path: 'analyzeCommits', param: 'analyzeCommits_param'},
     tagFormat: `v\${version}`,
+    plugins: ['test-plugin'],
   };
   // Create package.json and shareable.json in repository root
   await outputJson(path.resolve(cwd, 'package.json'), {release: pkgOptions});
@@ -378,19 +398,25 @@ test('Allow to unset properties defined in shareable config with "null"', async 
 
   const {options} = await t.context.getConfig({cwd});
 
-  // Verify the options contains the plugin config from shareable.json
-  t.deepEqual(options, {...omit(options1, 'analyzeCommits'), ...omit(pkgOptions, ['extends', 'analyzeCommits'])});
-  // Verify the plugins module is called with the plugin options from shareable.json
+  // Verify the options contains the plugin config from shareable.json and the default `plugins`
+  t.deepEqual(options, {
+    ...omit(options1, ['analyzeCommits']),
+    ...omit(pkgOptions, ['extends', 'analyzeCommits']),
+    plugins: DEFAULT_PLUGINS,
+  });
+  // Verify the plugins module is called with the plugin options from shareable.json and the default `plugins`
   t.deepEqual(t.context.plugins.args[0][0], {
     options: {
       ...omit(options1, 'analyzeCommits'),
       ...omit(pkgOptions, ['extends', 'analyzeCommits']),
+      plugins: DEFAULT_PLUGINS,
     },
     cwd,
   });
   t.deepEqual(t.context.plugins.args[0][1], {
     generateNotes: './shareable.json',
     analyzeCommits: './shareable.json',
+    'test-plugin': './shareable.json',
   });
 });
 
@@ -407,6 +433,7 @@ test('Allow to unset properties defined in shareable config with "undefined"', a
     generateNotes: 'generateNotes',
     analyzeCommits: {path: 'analyzeCommits', param: 'analyzeCommits_param'},
     tagFormat: `v\${version}`,
+    plugins: false,
   };
   // Create package.json and release.config.js in repository root
   await writeFile(path.resolve(cwd, 'release.config.js'), `module.exports = ${format(pkgOptions)}`);

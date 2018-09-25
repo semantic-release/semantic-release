@@ -92,6 +92,18 @@ The [Git tag](https://git-scm.com/book/en/v2/Git-Basics-Tagging) format used by 
 
 **Note**: The `tagFormat` must contain the `version` variable exactly once and compile to a [valid Git reference](https://git-scm.com/docs/git-check-ref-format#_description).
 
+### plugins
+
+Type: `Array`<br>
+Default: `['@semantic-release/commit-analyzer', '@semantic-release/release-notes-generator', '@semantic-release/npm', '@semantic-release/github']`<br>
+CLI arguments: `-p`, `--plugins`
+
+Define the list of plugins to use. Plugins will run in series, in the order defined, for each [steps](../../README.md#release-steps) if they implement it.
+
+Plugins configuration can defined by wrapping the name and an options object in an array.
+
+See [Plugins configuration](plugins.md#configuration) for more details.
+
 ### dryRun
 
 Type: `Boolean`<br>

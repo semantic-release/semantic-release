@@ -19,11 +19,11 @@
     "Pierre Vanduynslager (https://twitter.com/@pvdlg_)"
   ],
   "dependencies": {
-    "@semantic-release/commit-analyzer": "^6.0.0",
+    "@semantic-release/commit-analyzer": "^6.1.0",
     "@semantic-release/error": "^2.2.0",
-    "@semantic-release/github": "^5.0.0",
-    "@semantic-release/npm": "^5.0.1",
-    "@semantic-release/release-notes-generator": "^7.0.0",
+    "@semantic-release/github": "^5.1.0",
+    "@semantic-release/npm": "^5.0.5",
+    "@semantic-release/release-notes-generator": "^7.1.0",
     "aggregate-error": "^1.0.0",
     "cosmiconfig": "^5.0.1",
     "debug": "^4.0.0",
