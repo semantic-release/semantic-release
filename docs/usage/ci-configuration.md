@@ -31,18 +31,3 @@ See each plugin documentation for the environment variables to set up.
 The authentication token/credentials have to be made available in the CI service via environment variables.
 
 See [CI configuration recipes](../recipes/README.md#ci-configurations) for more details on how to configure environment variables in your CI service.
-
-## Automatic setup with `semantic-release-cli`
-
-[`semantic-release-cli`](https://github.com/semantic-release/cli) allows for easy [installation](installation.md) of **semantic-release** in your Node project as well as setting up the CI configuration:
-
-```bash
-npm install -g semantic-release-cli
-
-cd your-module
-semantic-release-cli setup
-```
-
-![dialogue](../../media/semantic-release-cli.png)
-
-See the [semantic-release-cli](https://github.com/semantic-release/cli#what-it-does) documentation for more details.
