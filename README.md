@@ -98,6 +98,7 @@ After running the tests, the command `semantic-release` will execute the followi
 ## Documentation
 
 - Usage
+  - [Getting started](docs/usage/getting-started.md#getting-started)
   - [Installation](docs/usage/installation.md#installation)
   - [CI Configuration](docs/usage/ci-configuration.md#ci-configuration)
   - [Configuration](docs/usage/configuration.md#configuration)
