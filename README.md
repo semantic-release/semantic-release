@@ -18,6 +18,11 @@
   </a>
 </p>
 <p align="center">
+  <a href="https://waffle.io/semantic-release/semantic-release">
+    <img alt="Waffle.io" src="https://badge.waffle.io/semantic-release/semantic-release.svg?columns=all">
+  </a>
+</p>
+<p align="center">
   <a href="https://www.npmjs.com/package/semantic-release">
     <img alt="npm latest version" src="https://img.shields.io/npm/v/semantic-release/latest.svg">
   </a>
