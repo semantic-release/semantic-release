@@ -100,6 +100,14 @@ CLI arguments: `-d`, `--dry-run`
 
 Dry-run mode, skip publishing, print next version and release notes.
 
+### noTag
+
+Type: `Boolean`<br>
+Default: `false`
+CLI arguments: `--no-tag`
+
+Skip adding and pushing tag for repository.
+
 ### ci
 
 Type: `Boolean`<br>
