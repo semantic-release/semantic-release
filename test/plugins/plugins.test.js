@@ -59,7 +59,7 @@ test('Export plugins based on "plugins" config (array)', async t => {
   const plugin1 = {verifyConditions: stub(), publish: stub()};
   const plugin2 = {verifyConditions: stub(), verifyRelease: stub()};
   const plugins = getPlugins(
-    {cwd, logger: t.context.logger, options: {plugins: [plugin1, plugin2], verifyRelease: () => {}}},
+    {cwd, logger: t.context.logger, options: {plugins: [plugin1, [plugin2, {}]], verifyRelease: () => {}}},
     {}
   );
 
@@ -125,7 +125,7 @@ test('Use only last definition of single plugin steps declared in "plugins" conf
   t.is(typeof plugins.fail, 'function');
 });
 
-test('Merge global options, "plugins" options and sptep options', async t => {
+test('Merge global options, "plugins" options and step options', async t => {
   const plugin1 = [{verifyConditions: stub(), publish: stub()}, {pluginOpt1: 'plugin1'}];
   const plugin2 = [{verifyConditions: stub()}, {pluginOpt2: 'plugin2'}];
   const plugin3 = [stub(), {pluginOpt3: 'plugin3'}];
