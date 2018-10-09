@@ -45,6 +45,19 @@ This message is a little unclear, and might not have anything to with your `NPM_
 
 Best way to be sure, is to search [npmjs.org](https://www.npmjs.com/)) using your package name. If there is a name conflict, rename your package in your `package.json`
 
+## You cannot publish over the previously published version
+
+When running semantic-release you may encounter the following error:
+
+```
+An error occurred while running semantic-release: { Error: Command failed: npm publish ./. --registry https://registry.npmjs.org/
+npm ERR! publish Failed PUT 403
+npm ERR! code E403
+npm ERR! You cannot publish over the previously published versions <version number>
+```
+
+This error is commonly seen when migrating existing libraries over to semantic-release. By default, semantic-release will look for tagged releases in the form of `vX.Y.Z` with the version number representing the last version published to NPM. If this tag doesn't exist manually create one and then send out another automated release; semantic-release will then increment based on that tag and publish a new version to NPM.
+
 ## Squashed commits are ignored by **semantic-release**
 
 **semantic-release** parses commits according to a [commit message convention](https://github.com/semantic-release/semantic-release#commit-message-format) to figure out how they affect the codebase. Commits that doesn't follow the project's commit message convention are simply ignored.
