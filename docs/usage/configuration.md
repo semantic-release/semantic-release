@@ -121,7 +121,7 @@ Type: `Boolean`<br>
 Default: `true`<br>
 CLI arguments: `--ci` / `--no-ci`
 
-Set to `fasle` to skip Continuous Integration environment verifications. This allows for making releases from a local machine.
+Set to `false` to skip Continuous Integration environment verifications. This allows for making releases from a local machine.
 
 **Note**: The CLI arguments `--no-ci` is equivalent to `--ci false`.
 
