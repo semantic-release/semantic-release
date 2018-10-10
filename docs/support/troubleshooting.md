@@ -2,18 +2,25 @@
 
 ## You do not have permission to publish 'package-name'
 
-When running semantic-release you may encounter the following error:
+When running semantic-release you might encounter the following error:
 
-```
-An error occurred while running semantic-release: { Error: Command failed: npm publish ./. --registry https://registry.npmjs.org/
+```bash
 npm ERR! publish Failed PUT 403
 npm ERR! code E403
 npm ERR! You do not have permission to publish "<package-name>". Are you logged in as the correct user? : <package-name>
 ```
 
-This message is a little unclear, and might not have anything to with your `NPM_TOKEN` or authentication method. It might instead be related to the package name itself. If there is already a package with the same name as yours or, there is a very close match, it could trigger this error.
+This is most likely related to a misconfiguration of the [npm registry authentication](https://github.com/semantic-release/npm#npm-registry-authentication) or to your user [missing permission](https://docs.npmjs.com/cli/team) for publishing.
 
-Best way to be sure, is to search [npmjs.org](https://www.npmjs.com/)) using your package name. If there is a name conflict, rename your package in your `package.json`
+It might also happen if the package name you are trying to publish already exists (in such case npm consider you are trying to publish a new version of a package that is not yours, hence the permission error).
+
+To verify if your package name is available you can use [npm-name-cli](https://github.com/sindresorhus/npm-name-cli):
+```bash
+$ npm install --global npm-name-cli
+$ npm-name <package-name>
+```
+
+If the package name is not available, change it in your `package.json` or consider using an [npm scope](https://docs.npmjs.com/misc/scope).
 
 ## Squashed commits are ignored by **semantic-release**
 
