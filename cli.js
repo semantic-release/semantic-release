@@ -33,6 +33,7 @@ Usage:
     .option('publish', {...stringList, group: 'Plugins'})
     .option('success', {...stringList, group: 'Plugins'})
     .option('fail', {...stringList, group: 'Plugins'})
+    .option('no-tag', {describe: 'Skip creating git tag for repository', type: 'boolean', group: 'Options'})
     .option('debug', {describe: 'Output debugging information', type: 'boolean', group: 'Options'})
     .option('d', {alias: 'dry-run', describe: 'Skip publishing', type: 'boolean', group: 'Options'})
     .option('h', {alias: 'help', group: 'Options'})

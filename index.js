@@ -102,10 +102,12 @@ async function run(context, plugins) {
     nextRelease.notes = await plugins.generateNotes(context);
     await plugins.prepare(context);
 
-    // Create the tag before calling the publish plugins as some require the tag to exists
-    await tag(nextRelease.gitTag, {cwd, env});
-    await push(options.repositoryUrl, options.branch, {cwd, env});
-    logger.success(`Created tag ${nextRelease.gitTag}`);
+    if (!options.noTag) {
+      // Create the tag before calling the publish plugins as some require the tag to exists
+      await tag(nextRelease.gitTag, {cwd, env});
+      await push(options.repositoryUrl, options.branch, {cwd, env});
+      logger.success(`Created tag ${nextRelease.gitTag}`);
+    }
 
     context.releases = await plugins.publish(context);
 
