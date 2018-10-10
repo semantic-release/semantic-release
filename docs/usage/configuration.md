@@ -141,3 +141,28 @@ Output debugging information. It can also be enabled by setting the `DEBUG` envi
 | `GIT_AUTHOR_EMAIL`    | The author email associated with the [Git release tag](https://git-scm.com/book/en/v2/Git-Basics-Tagging). See [Git environment variables](https://git-scm.com/book/en/v2/Git-Internals-Environment-Variables#_committing).    | @semantic-release-bot email address. |
 | `GIT_COMMITTER_NAME`  | The committer name associated with the [Git release tag](https://git-scm.com/book/en/v2/Git-Basics-Tagging). See [Git environment variables](https://git-scm.com/book/en/v2/Git-Internals-Environment-Variables#_committing).  | @semantic-release-bot.               |
 | `GIT_COMMITTER_EMAIL` | The committer email associated with the [Git release tag](https://git-scm.com/book/en/v2/Git-Basics-Tagging). See [Git environment variables](https://git-scm.com/book/en/v2/Git-Internals-Environment-Variables#_committing). | @semantic-release-bot email address. |
+
+## Existing version tags
+
+**semantic-release** uses [Git tags](https://git-scm.com/book/en/v2/Git-Basics-Tagging) to determine the commits added since the last release. If a release have been published before setting up **semantic-release** you must make sure the most recent commit included in the last published release is in the [release branch](#branch) history and is tagged with the version released, formatted according to the [tag format](#tagformat) configured (defaults to `vx.y.z`).
+
+If the previous releases were published with [`npm publish`](https://docs.npmjs.com/cli/publish) this should already be the case.
+
+For example, if your release branch is `master`, the last release published on your project is `1.1.0` and the last commit included has the sha `1234567`, you must make sure this commit is in `master` history and is tagged with `v1.1.0`.
+
+```bash
+# Make sure the commit 1234567 is in the release branch history
+$ git branch --contains 1234567
+
+# If the commit is not in the branch history it means that either:
+# - you use a different branch than the one your release from before
+# - or the commit sha has been rewritten (with git rebase)
+# In both cases you need to configure your repository to have the last release commit in the history of the release branch
+
+# List the tags for the commit 1234567
+$ git tag --contains 1234567
+
+# If v1.1.0 is not in the list you add it with
+$ git tag v1.1.0 1234567
+$ git push origin v1.1.0
+```
