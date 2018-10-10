@@ -105,7 +105,7 @@ Define the list of plugins to use. Plugins will run in series, in the order defi
 
 Plugins configuration can defined by wrapping the name and an options object in an array.
 
-See [Plugins configuration](plugins.md#configuration) for more details.
+See [Plugins configuration](plugins.md#plugins) for more details.
 
 ### dryRun
 
