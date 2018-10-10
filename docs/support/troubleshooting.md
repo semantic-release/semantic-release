@@ -31,3 +31,26 @@ When [squashing commits](https://git-scm.com/book/en/v2/Git-Tools-Rewriting-Hist
 When squashing commits make sure to rewrite the resulting commit message to be compliant with the project's commit message convention.
 
 **Note**: if the resulting squashed commit would encompasses multiple changes (for example multiple unrelated features or fixes) then it's probably not a good idea to squash those commits together. A commit should contain exactly one self-contained functional change and a functional change should be contained in exactly one commit. See [atomic commits](https://en.wikipedia.org/wiki/Atomic_commit).
+
+## `reference already exists` error when pushing tag
+
+**semantic-release** read [Git tags](https://git-scm.com/book/en/v2/Git-Basics-Tagging) that are present in the history of your release branch in order to determine the last release published. Then it determines the next version to release based on the commits pushed since then and create the corresponding tag.
+If a tag with the name already in your repository, Git will throw and error as tags must be unique across the repository.
+This situation happens when you have a version tag identical to the new one **semantic-release** is trying to create that is not in the history of the current branch.
+
+If an actual release with that version number was published you need to merge all the commits up to that release into your release branch.
+
+If there is no published release with that version number, the tag must be deleted.
+
+```bash
+# Verify if the commit exists in the repository
+$ git rev-list -1 <tag name>
+# If a commit sha is returned, then the tag exists
+
+# Verify the branches having the tagged commit in their history
+$ git branch --contains <tag name>
+
+# Delete the tag
+$ git tag -d <tag name>
+$ git push origin :refs/tags/<tag name>
+```
