@@ -59,3 +59,6 @@
   - `publish`: Submit the generated archives to the webstore for review, and publish the item including release notes
 - [semantic-release-gerrit](https://github.com/pascalMN/semantic-release-gerrit)
   - `generateNotes`: Generate release notes with Gerrit reviews URL
+- [semantic-release-expo](https://github.com/bycedric/semantic-release-expo)
+  - `verifyConditions`: Verify Expo manifest(s) are readable and valid.
+  - `prepare`: Update version, ios build number and android version code in the Expo manifest(s).
