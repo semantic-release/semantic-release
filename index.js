@@ -62,14 +62,12 @@ async function run(context, plugins) {
     try {
       await verifyAuth(options.repositoryUrl, options.branch, {cwd, env});
     } catch (error) {
-      console.error('call isBranchUpToDate');
       if (!(await isBranchUpToDate(options.branch, {cwd, env}))) {
         logger.log(
           `The local branch ${options.branch} is behind the remote one, therefore a new version won't be published.`
         );
         return false;
       }
-      console.error('call throw error');
       throw error;
     }
   } catch (error) {
