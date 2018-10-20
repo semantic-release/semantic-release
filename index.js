@@ -96,14 +96,14 @@ async function run(context, plugins) {
 
   await plugins.verifyRelease(context);
 
+  nextRelease.notes = await plugins.generateNotes(context);
+
   if (options.dryRun) {
-    const notes = await plugins.generateNotes(context);
     logger.log(`Release note for version ${nextRelease.version}:`);
-    if (notes) {
-      context.stdout.write(marked(notes));
+    if (nextRelease.notes) {
+      context.stdout.write(marked(nextRelease.notes));
     }
   } else {
-    nextRelease.notes = await plugins.generateNotes(context);
     await plugins.prepare(context);
 
     // Create the tag before calling the publish plugins as some require the tag to exists
