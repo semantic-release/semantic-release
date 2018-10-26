@@ -1,5 +1,5 @@
 import test from 'ava';
-import {escapeRegExp, isString} from 'lodash';
+import {escapeRegExp, isString, sortBy} from 'lodash';
 import proxyquire from 'proxyquire';
 import {spy, stub} from 'sinon';
 import {WritableStreamBuffer} from 'stream-buffers';
@@ -375,13 +375,10 @@ test('Log all "verifyConditions" errors', async t => {
     )),
   ];
 
-  t.deepEqual(errors, [error1, error2, error3]);
-  t.deepEqual(t.context.error.args[t.context.error.args.length - 2], ['ERR2 error 2']);
-  t.deepEqual(t.context.error.args[t.context.error.args.length - 1], ['ERR3 error 3']);
-  t.deepEqual(t.context.error.args[t.context.error.args.length - 3], [
-    'An error occurred while running semantic-release: %O',
-    error1,
-  ]);
+  t.deepEqual(sortBy(errors, ['message']), sortBy([error1, error2, error3], ['message']));
+  t.true(t.context.error.calledWith('An error occurred while running semantic-release: %O', error1));
+  t.true(t.context.error.calledWith('ERR2 error 2'));
+  t.true(t.context.error.calledWith('ERR3 error 3'));
   t.true(t.context.error.calledAfter(t.context.log));
   t.is(fail.callCount, 1);
   t.deepEqual(fail.args[0][0], config);
@@ -423,9 +420,9 @@ test('Log all "verifyRelease" errors', async t => {
     )),
   ];
 
-  t.deepEqual(errors, [error1, error2]);
-  t.deepEqual(t.context.error.args[t.context.error.args.length - 2], ['ERR1 error 1']);
-  t.deepEqual(t.context.error.args[t.context.error.args.length - 1], ['ERR2 error 2']);
+  t.deepEqual(sortBy(errors, ['message']), sortBy([error1, error2], ['message']));
+  t.true(t.context.error.calledWith('ERR1 error 1'));
+  t.true(t.context.error.calledWith('ERR2 error 2'));
   t.is(fail.callCount, 1);
   t.deepEqual(fail.args[0][0], config);
   t.deepEqual(fail.args[0][1].errors, [error1, error2]);
@@ -520,9 +517,9 @@ test('Dry-run skips fail', async t => {
     )),
   ];
 
-  t.deepEqual(errors, [error1, error2]);
-  t.deepEqual(t.context.error.args[t.context.error.args.length - 2], ['ERR1 error 1']);
-  t.deepEqual(t.context.error.args[t.context.error.args.length - 1], ['ERR2 error 2']);
+  t.deepEqual(sortBy(errors, ['message']), sortBy([error1, error2], ['message']));
+  t.true(t.context.error.calledWith('ERR1 error 1'));
+  t.true(t.context.error.calledWith('ERR2 error 2'));
   t.is(fail.callCount, 0);
 });
 
