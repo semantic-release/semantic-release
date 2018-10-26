@@ -1086,6 +1086,7 @@ test('Hide sensitive information passed to "success" plugin', async t => {
     verifyConditions: false,
     verifyRelease: false,
     prepare: false,
+    generateNotes: stub().resolves(`Exposing token ${env.MY_TOKEN}`),
     publish: stub().resolves({
       name: `Name: Exposing token ${env.MY_TOKEN}`,
       url: `URL: Exposing token ${env.MY_TOKEN}`,
