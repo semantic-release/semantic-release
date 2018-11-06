@@ -30,7 +30,7 @@
     "env-ci": "^3.0.0",
     "execa": "^1.0.0",
     "figures": "^2.0.0",
-    "find-versions": "^2.0.0",
+    "find-versions": "^3.0.0",
     "get-stream": "^4.0.0",
     "git-log-parser": "^1.2.0",
     "hook-std": "^1.1.0",
