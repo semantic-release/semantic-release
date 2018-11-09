@@ -12,7 +12,25 @@ However, the [`@semantic-release/git`](https://github.com/semantic-release/git) 
 
 The `package.json`’s version will be updated by the `semantic-release` command just before publishing to [npm](https://www.npmjs.com), therefore it won't be available for scripts ran before the `semantic-release` command.
 
-As semantic-release uses the [npm CLI](https://docs.npmjs.com/cli/npm) to publish, all [npm hook scripts](https://docs.npmjs.com/misc/scripts#hook-scripts) will be executed. Therefore you can run your build script in the [`prepublishOnly`](https://docs.npmjs.com/misc/scripts#prepublish-and-prepare) hook. It will be executed after the `semantic-release` command update the `package.json`’s version and before publishing.
+As the [`@semantic-release/npm`](https://github.com/semantic-release/npm) plugin uses the [npm CLI](https://docs.npmjs.com/cli/npm) to update the `package.json` version and publish the package, all [npm hook scripts](https://docs.npmjs.com/misc/scripts#description) will be executed.
+
+You can run your build script in:
+- the `prepublishOnly` or `prepack` hook so it will be executed during the `publish` step of `@semantic-release/npm`
+- the `postversion` hook so it will be executed during the `prepare` step of `@semantic-release/npm`, which allow for example to update files before committing them with the [`@semantic-release/git`](https://github.com/semantic-release/git) plugin
+
+If using npm hook scripts is not possible, and alternative solution is to [`@semantic-release/exec`](https://github.com/semantic-release/exec) plugin to run your script in the `prepare` step:
+```json
+{
+  "plugins": [
+    "@semantic-release/commit-analyzer",
+    "@semantic-release/release-notes-generator",
+    "@semantic-release/npm",
+    ["@semantic-release/exec", {
+      "prepareCmd": "./my-build-script.sh ${nextRelease.version}",
+    }],
+  ]
+}
+```
 
 ## Is there a way to preview which version would currently get published?
 
