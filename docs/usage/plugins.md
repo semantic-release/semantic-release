@@ -15,6 +15,8 @@ A plugin is a npm module that can implement one or more of the following steps:
 | `success`          | Yes             | No       | Responsible for notifying of a new release.                                                                                                                                                   |
 | `fail`             | Yes             | No       | Responsible for notifying of a failed release.                                                                                                                                                |
 
+**Note:** If no plugin with a `analyzeCommits` step is defined `@semantic-release/commit-analyzer` will be used.
+
 See [available plugins](../extending/plugins-list.md).
 
 ## Plugins configuration
