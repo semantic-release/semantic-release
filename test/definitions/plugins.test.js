@@ -51,3 +51,13 @@ test('The "generateNotes" plugins output are concatenated with separator and sen
     `Note 1: Exposing token ${SECRET_REPLACEMENT}${RELEASE_NOTES_SEPARATOR}Note 2: Exposing token ${SECRET_REPLACEMENT}`
   );
 });
+
+test('The "analyzeCommits" plugins output are reduced to the highest release type', t => {
+  t.is(plugins.analyzeCommits.postprocess(['major', 'minor']), 'major');
+  t.is(plugins.analyzeCommits.postprocess(['', 'minor']), 'minor');
+  t.is(plugins.analyzeCommits.postprocess([undefined, 'patch']), 'patch');
+  t.is(plugins.analyzeCommits.postprocess([null, 'patch']), 'patch');
+  t.is(plugins.analyzeCommits.postprocess(['wrong_type', 'minor']), 'minor');
+  t.is(plugins.analyzeCommits.postprocess([]), undefined);
+  t.is(plugins.analyzeCommits.postprocess(['wrong_type']), undefined);
+});
