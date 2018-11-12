@@ -105,26 +105,6 @@ test('Export plugins based on "plugins" config (single definition)', async t => 
   t.is(typeof plugins.fail, 'function');
 });
 
-test('Use only last definition of single plugin steps declared in "plugins" config', async t => {
-  const plugin1 = {analyzeCommits: stub()};
-  const plugin2 = {analyzeCommits: stub()};
-  const plugins = getPlugins({cwd, logger: t.context.logger, options: {plugins: [plugin1, plugin2]}}, {});
-
-  await plugins.analyzeCommits({commits: []});
-  t.true(plugin1.analyzeCommits.notCalled);
-  t.true(plugin2.analyzeCommits.calledOnce);
-
-  // Verify the module returns a function for each plugin
-  t.is(typeof plugins.verifyConditions, 'function');
-  t.is(typeof plugins.analyzeCommits, 'function');
-  t.is(typeof plugins.verifyRelease, 'function');
-  t.is(typeof plugins.generateNotes, 'function');
-  t.is(typeof plugins.prepare, 'function');
-  t.is(typeof plugins.publish, 'function');
-  t.is(typeof plugins.success, 'function');
-  t.is(typeof plugins.fail, 'function');
-});
-
 test('Merge global options, "plugins" options and step options', async t => {
   const plugin1 = [{verifyConditions: stub(), publish: stub()}, {pluginOpt1: 'plugin1'}];
   const plugin2 = [{verifyConditions: stub()}, {pluginOpt2: 'plugin2'}];

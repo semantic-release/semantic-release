@@ -25,7 +25,7 @@ test('validatePlugin', t => {
   t.false(validatePlugin({path: 1}), 'Object definition, wrong path');
 });
 
-test('validateStep: multiple/optional plugin configuration', t => {
+test('validateStep: optional plugin configuration', t => {
   const type = {multiple: true, required: false};
 
   // Empty config
@@ -107,8 +107,8 @@ test('validateStep: multiple/optional plugin configuration', t => {
   );
 });
 
-test('validateStep: multiple/required plugin configuration', t => {
-  const type = {multiple: true, required: true};
+test('validateStep: required plugin configuration', t => {
+  const type = {required: true};
 
   // Empty config
   t.false(validateStep(type));
@@ -183,98 +183,6 @@ test('validateStep: multiple/required plugin configuration', t => {
       ['plugin-path.js', {options: 'value'}],
       [() => {}, {options: 'value'}],
       {path: null},
-      {path: 'plugin-path.js', options: 'value'},
-      {path: () => {}, options: 'value'},
-    ])
-  );
-});
-
-test('validateStep: single/required plugin configuration', t => {
-  const type = {multiple: false, required: true};
-
-  // Empty config
-  t.false(validateStep(type));
-  t.false(validateStep(type, []));
-
-  // Single value definition
-  t.true(validateStep(type, 'plugin-path.js'));
-  t.true(validateStep(type, () => {}));
-  t.true(validateStep(type, ['plugin-path.js']));
-  t.true(validateStep(type, [() => {}]));
-  t.false(validateStep(type, {}));
-  t.false(validateStep(type, [{}]));
-
-  // Array type definition
-  t.true(validateStep(type, [['plugin-path.js']]));
-  t.true(validateStep(type, [['plugin-path.js', {options: 'value'}]]));
-  t.true(validateStep(type, [[() => {}, {options: 'value'}]]));
-  t.false(validateStep(type, [['plugin-path.js', 1]]));
-
-  // Object type definition
-  t.true(validateStep(type, {path: 'plugin-path.js'}));
-  t.true(validateStep(type, {path: 'plugin-path.js', options: 'value'}));
-  t.true(validateStep(type, {path: () => {}, options: 'value'}));
-  t.false(validateStep(type, {path: null}));
-
-  // Considered as one Array definition and not as an Array of 2 definitions in case of single plugin type
-  t.true(validateStep(type, [() => {}, {options: 'value'}]));
-  t.true(validateStep(type, ['plugin-path.js', {options: 'value'}]));
-
-  // Multiple definitions
-  t.false(
-    validateStep(type, [
-      'plugin-path.js',
-      () => {},
-      ['plugin-path.js'],
-      ['plugin-path.js', {options: 'value'}],
-      [() => {}, {options: 'value'}],
-      {path: 'plugin-path.js'},
-      {path: 'plugin-path.js', options: 'value'},
-      {path: () => {}, options: 'value'},
-    ])
-  );
-});
-
-test('validateStep: single/optional plugin configuration', t => {
-  const type = {multiple: false, required: false};
-
-  // Empty config
-  t.true(validateStep(type));
-  t.true(validateStep(type, []));
-
-  // Single value definition
-  t.true(validateStep(type, 'plugin-path.js'));
-  t.true(validateStep(type, () => {}));
-  t.true(validateStep(type, ['plugin-path.js']));
-  t.true(validateStep(type, [() => {}]));
-  t.false(validateStep(type, {}));
-  t.false(validateStep(type, [{}]));
-
-  // Array type definition
-  t.true(validateStep(type, [['plugin-path.js']]));
-  t.true(validateStep(type, [['plugin-path.js', {options: 'value'}]]));
-  t.true(validateStep(type, [[() => {}, {options: 'value'}]]));
-  t.false(validateStep(type, [['plugin-path.js', 1]]));
-
-  // Object type definition
-  t.true(validateStep(type, {path: 'plugin-path.js'}));
-  t.true(validateStep(type, {path: 'plugin-path.js', options: 'value'}));
-  t.true(validateStep(type, {path: () => {}, options: 'value'}));
-  t.false(validateStep(type, {path: null}));
-
-  // Considered as one Array definition and not as an Array of 2 definitions in case of single plugin type
-  t.true(validateStep(type, [() => {}, {options: 'value'}]));
-  t.true(validateStep(type, ['plugin-path.js', {options: 'value'}]));
-
-  // Multiple definitions
-  t.false(
-    validateStep(type, [
-      'plugin-path.js',
-      () => {},
-      ['plugin-path.js'],
-      ['plugin-path.js', {options: 'value'}],
-      [() => {}, {options: 'value'}],
-      {path: 'plugin-path.js'},
       {path: 'plugin-path.js', options: 'value'},
       {path: () => {}, options: 'value'},
     ])

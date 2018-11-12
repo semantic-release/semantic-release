@@ -4,16 +4,16 @@ Each [release step](../../README.md#release-steps) is implemented by configurabl
 
 A plugin is a npm module that can implement one or more of the following steps:
 
-| Step               | Accept multiple | Required | Description                                                                                                                                                                                   |
-|--------------------|-----------------|----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `verifyConditions` | Yes             | No       | Responsible for verifying conditions necessary to proceed with the release: configuration is correct, authentication token are valid, etc...                                                  |
-| `analyzeCommits`   | No              | Yes      | Responsible for determining the type of the next release (`major`, `minor` or `patch`).                                                                                                       |
-| `verifyRelease`    | Yes             | No       | Responsible for verifying the parameters (version, type, dist-tag etc...) of the release that is about to be published.                                                                       |
-| `generateNotes`    | Yes             | No       | Responsible for generating the content of the release note. If multiple `generateNotes` plugins are defined, the release notes will be the result of the concatenation of each plugin output. |
-| `prepare`          | Yes             | No       | Responsible for preparing the release, for example creating or updating files such as `package.json`, `CHANGELOG.md`, documentation or compiled assets and pushing a commit.                  |
-| `publish`          | Yes             | No       | Responsible for publishing the release.                                                                                                                                                       |
-| `success`          | Yes             | No       | Responsible for notifying of a new release.                                                                                                                                                   |
-| `fail`             | Yes             | No       | Responsible for notifying of a failed release.                                                                                                                                                |
+| Step               | Required | Description                                                                                                                                                                                                          |
+|--------------------|----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `verifyConditions` | No       | Responsible for verifying conditions necessary to proceed with the release: configuration is correct, authentication token are valid, etc...                                                                         |
+| `analyzeCommits`   | Yes      | Responsible for determining the type of the next release (`major`, `minor` or `patch`). If multiple plugins with a `analyzeCommits` step are defined, the release type will be the highest one among plugins output. |
+| `verifyRelease`    | No       | Responsible for verifying the parameters (version, type, dist-tag etc...) of the release that is about to be published.                                                                                              |
+| `generateNotes`    | No       | Responsible for generating the content of the release note. If multiple plugins with a `generateNotes` step are defined, the release notes will be the result of the concatenation of each plugin output.            |
+| `prepare`          | No       | Responsible for preparing the release, for example creating or updating files such as `package.json`, `CHANGELOG.md`, documentation or compiled assets and pushing a commit.                                         |
+| `publish`          | No       | Responsible for publishing the release.                                                                                                                                                                              |
+| `success`          | No       | Responsible for notifying of a new release.                                                                                                                                                                          |
+| `fail`             | No       | Responsible for notifying of a failed release.                                                                                                                                                                       |
 
 **Note:** If no plugin with a `analyzeCommits` step is defined `@semantic-release/commit-analyzer` will be used.
 
