@@ -63,14 +63,14 @@ test('Export plugins based on "plugins" config (array)', async t => {
     {}
   );
 
-  await plugins.verifyConditions({});
+  await plugins.verifyConditions({options: {}});
   t.true(plugin1.verifyConditions.calledOnce);
   t.true(plugin2.verifyConditions.calledOnce);
 
-  await plugins.publish({});
+  await plugins.publish({options: {}});
   t.true(plugin1.publish.calledOnce);
 
-  await plugins.verifyRelease({});
+  await plugins.verifyRelease({options: {}});
   t.true(plugin2.verifyRelease.notCalled);
 
   // Verify the module returns a function for each plugin
@@ -88,10 +88,10 @@ test('Export plugins based on "plugins" config (single definition)', async t => 
   const plugin1 = {verifyConditions: stub(), publish: stub()};
   const plugins = getPlugins({cwd, logger: t.context.logger, options: {plugins: plugin1}}, {});
 
-  await plugins.verifyConditions({});
+  await plugins.verifyConditions({options: {}});
   t.true(plugin1.verifyConditions.calledOnce);
 
-  await plugins.publish({});
+  await plugins.publish({options: {}});
   t.true(plugin1.publish.calledOnce);
 
   // Verify the module returns a function for each plugin
@@ -118,14 +118,14 @@ test('Merge global options, "plugins" options and step options', async t => {
     {}
   );
 
-  await plugins.verifyConditions({});
+  await plugins.verifyConditions({options: {}});
   t.deepEqual(plugin1[0].verifyConditions.args[0][0], {globalOpt: 'global', pluginOpt1: 'plugin1'});
   t.deepEqual(plugin2[0].verifyConditions.args[0][0], {globalOpt: 'global', pluginOpt2: 'plugin2'});
 
-  await plugins.publish({});
+  await plugins.publish({options: {}});
   t.deepEqual(plugin1[0].publish.args[0][0], {globalOpt: 'global', pluginOpt1: 'plugin1'});
 
-  await plugins.verifyRelease({});
+  await plugins.verifyRelease({options: {}});
   t.deepEqual(plugin3[0].args[0][0], {globalOpt: 'global', pluginOpt3: 'plugin3'});
 });
 
@@ -248,7 +248,7 @@ test('Merge global options with plugin options', async t => {
     {}
   );
 
-  const [result] = await plugins.verifyRelease();
+  const [result] = await plugins.verifyRelease({options: {}});
 
   t.deepEqual(result.pluginConfig, {localOpt: 'local', globalOpt: 'global', otherOpt: 'locally-defined'});
 });
