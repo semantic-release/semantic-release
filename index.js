@@ -52,7 +52,7 @@ async function run(context, plugins) {
     );
     return false;
   }
-  logger.success(`Run automated release from branch ${ciBranch}`);
+  logger.success(`Run automated release from branch ${ciBranch}${options.dryRun ? ' in dry-run mode' : ''}`);
 
   await verify(context);
 
