@@ -428,7 +428,7 @@ test('Log all "verifyRelease" errors', async t => {
   t.deepEqual(fail.args[0][1].errors, [error1, error2]);
 });
 
-test('Dry-run skips publish and success', async t => {
+test('Dry-run skips prepare, publish and success', async t => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd, repositoryUrl} = await gitRepo(true);
   // Add commits to the master branch
@@ -446,6 +446,7 @@ test('Dry-run skips publish and success', async t => {
   const analyzeCommits = stub().resolves(nextRelease.type);
   const verifyRelease = stub().resolves();
   const generateNotes = stub().resolves(notes);
+  const prepare = stub().resolves();
   const publish = stub().resolves();
   const success = stub().resolves();
 
@@ -457,7 +458,7 @@ test('Dry-run skips publish and success', async t => {
     analyzeCommits,
     verifyRelease,
     generateNotes,
-    prepare: stub().resolves(),
+    prepare,
     publish,
     success,
   };
@@ -480,6 +481,7 @@ test('Dry-run skips publish and success', async t => {
   t.is(analyzeCommits.callCount, 1);
   t.is(verifyRelease.callCount, 1);
   t.is(generateNotes.callCount, 1);
+  t.is(prepare.callCount, 0);
   t.is(publish.callCount, 0);
   t.is(success.callCount, 0);
 });
