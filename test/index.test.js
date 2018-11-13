@@ -25,10 +25,12 @@ test.beforeEach(t => {
   t.context.log = spy();
   t.context.error = spy();
   t.context.success = spy();
+  t.context.warn = spy();
   t.context.logger = {
     log: t.context.log,
     error: t.context.error,
     success: t.context.success,
+    warn: t.context.warn,
     scope: () => t.context.logger,
   };
 });
@@ -476,14 +478,17 @@ test('Dry-run skips prepare, publish and success', async t => {
     })
   );
 
-  t.not(t.context.log.args[0][0], 'This run was not triggered in a known CI environment, running in dry-run mode.');
+  t.not(t.context.warn.args[0][0], 'This run was not triggered in a known CI environment, running in dry-run mode.');
   t.is(verifyConditions.callCount, 1);
   t.is(analyzeCommits.callCount, 1);
   t.is(verifyRelease.callCount, 1);
   t.is(generateNotes.callCount, 1);
   t.is(prepare.callCount, 0);
+  t.true(t.context.warn.calledWith(`Skip step "prepare" of plugin "[Function: ${prepare.name}]" in dry-run mode`));
   t.is(publish.callCount, 0);
+  t.true(t.context.warn.calledWith(`Skip step "publish" of plugin "[Function: ${publish.name}]" in dry-run mode`));
   t.is(success.callCount, 0);
+  t.true(t.context.warn.calledWith(`Skip step "success" of plugin "[Function: ${success.name}]" in dry-run mode`));
 });
 
 test('Dry-run skips fail', async t => {
@@ -523,6 +528,7 @@ test('Dry-run skips fail', async t => {
   t.true(t.context.error.calledWith('ERR1 error 1'));
   t.true(t.context.error.calledWith('ERR2 error 2'));
   t.is(fail.callCount, 0);
+  t.true(t.context.warn.calledWith(`Skip step "fail" of plugin "[Function: ${fail.name}]" in dry-run mode`));
 });
 
 test('Force a dry-run if not on a CI and "noCi" is not explicitly set', async t => {
@@ -573,7 +579,7 @@ test('Force a dry-run if not on a CI and "noCi" is not explicitly set', async t 
     })
   );
 
-  t.is(t.context.log.args[1][0], 'This run was not triggered in a known CI environment, running in dry-run mode.');
+  t.true(t.context.warn.calledWith('This run was not triggered in a known CI environment, running in dry-run mode.'));
   t.is(verifyConditions.callCount, 1);
   t.is(analyzeCommits.callCount, 1);
   t.is(verifyRelease.callCount, 1);

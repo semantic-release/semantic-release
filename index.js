@@ -24,7 +24,7 @@ async function run(context, plugins) {
   const {isCi, branch: ciBranch, isPr} = envCi({env, cwd});
 
   if (!isCi && !options.dryRun && !options.noCi) {
-    logger.log('This run was not triggered in a known CI environment, running in dry-run mode.');
+    logger.warn('This run was not triggered in a known CI environment, running in dry-run mode.');
     options.dryRun = true;
   } else {
     // When running on CI, set the commits author and commiter info and prevent the `git` CLI to prompt for username/password. See #703.
@@ -52,7 +52,9 @@ async function run(context, plugins) {
     );
     return false;
   }
-  logger.success(`Run automated release from branch ${ciBranch}${options.dryRun ? ' in dry-run mode' : ''}`);
+  logger[options.dryRun ? 'warn' : 'success'](
+    `Run automated release from branch ${ciBranch}${options.dryRun ? ' in dry-run mode' : ''}`
+  );
 
   await verify(context);
 
@@ -98,24 +100,28 @@ async function run(context, plugins) {
 
   nextRelease.notes = await plugins.generateNotes(context);
 
+  await plugins.prepare(context);
+
+  if (options.dryRun) {
+    logger.warn(`Skip ${nextRelease.gitTag} tag creation in dry-run mode`);
+  } else {
+    // Create the tag before calling the publish plugins as some require the tag to exists
+    await tag(nextRelease.gitTag, {cwd, env});
+    await push(options.repositoryUrl, options.branch, {cwd, env});
+    logger.success(`Created tag ${nextRelease.gitTag}`);
+  }
+
+  context.releases = await plugins.publish(context);
+
+  await plugins.success(context);
+
+  logger.success(`Published release ${nextRelease.version}`);
+
   if (options.dryRun) {
     logger.log(`Release note for version ${nextRelease.version}:`);
     if (nextRelease.notes) {
       context.stdout.write(marked(nextRelease.notes));
     }
-  } else {
-    await plugins.prepare(context);
-
-    // Create the tag before calling the publish plugins as some require the tag to exists
-    await tag(nextRelease.gitTag, {cwd, env});
-    await push(options.repositoryUrl, options.branch, {cwd, env});
-    logger.success(`Created tag ${nextRelease.gitTag}`);
-
-    context.releases = await plugins.publish(context);
-
-    await plugins.success(context);
-
-    logger.success(`Published release ${nextRelease.version}`);
   }
 
   return pick(context, ['lastRelease', 'commits', 'nextRelease', 'releases']);
@@ -162,9 +168,7 @@ module.exports = async (opts = {}, {cwd = process.cwd(), env = process.env, stdo
       unhook();
       return result;
     } catch (error) {
-      if (!options.dryRun) {
-        await callFail(context, plugins, error);
-      }
+      await callFail(context, plugins, error);
       throw error;
     }
   } catch (error) {
