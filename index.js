@@ -13,7 +13,7 @@ const getLastRelease = require('./lib/get-last-release');
 const {extractErrors} = require('./lib/utils');
 const getGitAuthUrl = require('./lib/get-git-auth-url');
 const getLogger = require('./lib/get-logger');
-const {fetch, verifyAuth, isBranchUpToDate, gitHead: getGitHead, tag, push} = require('./lib/git');
+const {fetch, verifyAuth, isBranchUpToDate, getGitHead, tag, push} = require('./lib/git');
 const getError = require('./lib/get-error');
 const {COMMIT_NAME, COMMIT_EMAIL} = require('./lib/definitions/constants');
 
