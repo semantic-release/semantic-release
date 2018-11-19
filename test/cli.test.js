@@ -186,7 +186,7 @@ test.serial('Display help', async t => {
   t.is(exitCode, 0);
 });
 
-test.serial('Returns error code and prints help if called with a command', async t => {
+test.serial('Return error code and prints help if called with a command', async t => {
   const run = stub().resolves(true);
   const argv = ['', '', 'pre'];
   const cli = requireNoCache('../cli', {'.': run, process: {...process, argv}});
