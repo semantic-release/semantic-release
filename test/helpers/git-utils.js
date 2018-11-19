@@ -26,7 +26,7 @@ import getStream from 'get-stream';
 export async function gitRepo(withRemote, branch = 'master') {
   let cwd = tempy.directory();
 
-  await execa('git', ['init'].concat(withRemote ? ['--bare'] : []), {cwd});
+  await execa('git', ['init', ...(withRemote ? ['--bare'] : [])], {cwd});
 
   const repositoryUrl = fileUrl(cwd);
   if (withRemote) {
