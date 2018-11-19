@@ -11,10 +11,16 @@ test('Throw a AggregateError', async t => {
 
   t.is(errors[0].name, 'SemanticReleaseError');
   t.is(errors[0].code, 'ENOREPOURL');
+  t.truthy(errors[0].message);
+  t.truthy(errors[0].details);
   t.is(errors[1].name, 'SemanticReleaseError');
   t.is(errors[1].code, 'EINVALIDTAGFORMAT');
+  t.truthy(errors[1].message);
+  t.truthy(errors[1].details);
   t.is(errors[2].name, 'SemanticReleaseError');
   t.is(errors[2].code, 'ETAGNOVERSION');
+  t.truthy(errors[2].message);
+  t.truthy(errors[2].details);
 });
 
 test('Throw a SemanticReleaseError if does not run on a git repository', async t => {
@@ -25,6 +31,8 @@ test('Throw a SemanticReleaseError if does not run on a git repository', async t
 
   t.is(errors[0].name, 'SemanticReleaseError');
   t.is(errors[0].code, 'ENOGITREPO');
+  t.truthy(errors[0].message);
+  t.truthy(errors[0].details);
 });
 
 test('Throw a SemanticReleaseError if the "tagFormat" is not valid', async t => {
@@ -35,6 +43,8 @@ test('Throw a SemanticReleaseError if the "tagFormat" is not valid', async t => 
 
   t.is(errors[0].name, 'SemanticReleaseError');
   t.is(errors[0].code, 'EINVALIDTAGFORMAT');
+  t.truthy(errors[0].message);
+  t.truthy(errors[0].details);
 });
 
 test('Throw a SemanticReleaseError if the "tagFormat" does not contains the "version" variable', async t => {
@@ -45,6 +55,8 @@ test('Throw a SemanticReleaseError if the "tagFormat" does not contains the "ver
 
   t.is(errors[0].name, 'SemanticReleaseError');
   t.is(errors[0].code, 'ETAGNOVERSION');
+  t.truthy(errors[0].message);
+  t.truthy(errors[0].details);
 });
 
 test('Throw a SemanticReleaseError if the "tagFormat" contains multiple "version" variables', async t => {
@@ -55,6 +67,8 @@ test('Throw a SemanticReleaseError if the "tagFormat" contains multiple "version
 
   t.is(errors[0].name, 'SemanticReleaseError');
   t.is(errors[0].code, 'ETAGNOVERSION');
+  t.truthy(errors[0].message);
+  t.truthy(errors[0].details);
 });
 
 test('Return "true" if all verification pass', async t => {
