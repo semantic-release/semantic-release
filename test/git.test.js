@@ -204,19 +204,18 @@ test('Return "true" if repository is up to date', async t => {
 });
 
 test('Return falsy if repository is not up to date', async t => {
-  let {cwd, repositoryUrl} = await gitRepo(true);
-  const repoDir = cwd;
+  const {cwd, repositoryUrl} = await gitRepo(true);
   await gitCommits(['First'], {cwd});
   await gitCommits(['Second'], {cwd});
   await gitPush(repositoryUrl, 'master', {cwd});
 
   t.true(await isBranchUpToDate('master', {cwd}));
 
-  cwd = await gitShallowClone(repositoryUrl);
-  await gitCommits(['Third'], {cwd});
-  await gitPush('origin', 'master', {cwd});
+  const tmpRepo = await gitShallowClone(repositoryUrl);
+  await gitCommits(['Third'], {cwd: tmpRepo});
+  await gitPush('origin', 'master', {cwd: tmpRepo});
 
-  t.falsy(await isBranchUpToDate('master', {cwd: repoDir}));
+  t.falsy(await isBranchUpToDate('master', {cwd}));
 });
 
 test('Return "true" if local repository is ahead', async t => {
