@@ -151,10 +151,24 @@ test('Add tag on head commit', async t => {
   await t.is(await gitCommitTag(commits[0].hash, {cwd}), 'tag_name');
 });
 
-test('Push tag and commit to remote repository', async t => {
+test('Push tag to remote repository', async t => {
   // Create a git repository with a remote, set the current working directory at the root of the repo
   const {cwd, repositoryUrl} = await gitRepo(true);
   const commits = await gitCommits(['Test commit'], {cwd});
+
+  await tag('tag_name', {cwd});
+  await push(repositoryUrl, 'master', {cwd});
+
+  t.is(await gitRemoteTagHead(repositoryUrl, 'tag_name', {cwd}), commits[0].hash);
+});
+
+test('Push tag to remote repository with remote branch ahaed', async t => {
+  const {cwd, repositoryUrl} = await gitRepo(true);
+  const commits = await gitCommits(['First'], {cwd});
+  await gitPush(repositoryUrl, 'master', {cwd});
+  const tmpRepo = await gitShallowClone(repositoryUrl);
+  await gitCommits(['Second'], {cwd: tmpRepo});
+  await gitPush('origin', 'master', {cwd: tmpRepo});
 
   await tag('tag_name', {cwd});
   await push(repositoryUrl, 'master', {cwd});
