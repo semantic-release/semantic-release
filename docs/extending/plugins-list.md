@@ -62,3 +62,8 @@
 - [semantic-release-expo](https://github.com/bycedric/semantic-release-expo)
   - `verifyConditions`: Verify Expo manifest(s) are readable and valid.
   - `prepare`: Update version, ios build number and android version code in the Expo manifest(s).
+- [maven-semantic-release](https://github.com/conveyal/maven-semantic-release)
+  - `verifyConditions`: Verifies that the pom.xml file and other files exist and are setup to allow releases
+  - `verifyRelease`: Checks and warns (does not error by default) if the version numbers found on maven central and within the Git project differ by quite a bit
+  - `prepare`: Changes the version number in the pom.xml (or all pom.xml files in maven projects with multiple pom.xml files).  Optionally creates a commit with this version number and pushes it to master
+  - `publish`: Runs `mvn deploy` to deploy to maven central. Optionally will update to next snapshot version and merge changes to development branch
