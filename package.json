@@ -112,9 +112,6 @@
   "publishConfig": {
     "tag": "next"
   },
-  "release": {
-    "branch": "caribou"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/semantic-release/semantic-release.git"
