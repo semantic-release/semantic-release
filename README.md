@@ -1,8 +1,8 @@
 <h1 align="center" style="border-bottom: none;">📦🚀 semantic-release</h1>
 <h3 align="center">Fully automated version management and package publishing</h3>
 <p align="center">
-  <a href="https://gitter.im/semantic-release/semantic-release">
-    <img alt="Gitter" src="https://badges.gitter.im/semantic-release/semantic-release.svg">
+  <a href="https://spectrum.chat/semantic-release">
+    <img alt="Join the community on Spectrum" src="https://withspectrum.github.io/badge/badge.svg">
   </a>
   <a href="https://travis-ci.org/semantic-release/semantic-release">
     <img alt="Travis" src="https://img.shields.io/travis/semantic-release/semantic-release/master.svg">
@@ -128,7 +128,7 @@ After running the tests, the command `semantic-release` will execute the followi
 ## Get help
 
 - [Stack Overflow](https://stackoverflow.com/questions/tagged/semantic-release)
-- [Gitter chat](https://gitter.im/semantic-release/semantic-release)
+- [Spectrum community](https://spectrum.chat/semantic-release)
 - [Twitter](https://twitter.com/SemanticRelease)
 
 ## Badge
