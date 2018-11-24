@@ -5,10 +5,10 @@
     <img alt="Gitter" src="https://badges.gitter.im/semantic-release/semantic-release.svg">
   </a>
   <a href="https://travis-ci.org/semantic-release/semantic-release">
-    <img alt="Travis" src="https://img.shields.io/travis/semantic-release/semantic-release/caribou.svg">
+    <img alt="Travis" src="https://img.shields.io/travis/semantic-release/semantic-release/master.svg">
   </a>
   <a href="https://codecov.io/gh/semantic-release/semantic-release">
-    <img alt="Codecov" src="https://img.shields.io/codecov/c/github/semantic-release/semantic-release/caribou.svg">
+    <img alt="Codecov" src="https://img.shields.io/codecov/c/github/semantic-release/semantic-release/master.svg">
   </a>
   <a href="https://greenkeeper.io">
     <img alt="Greenkeeper" src="https://badges.greenkeeper.io/semantic-release/semantic-release.svg">
