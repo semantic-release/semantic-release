@@ -212,7 +212,7 @@ test('Read configuration from file path in "extends"', async t => {
     branch: 'test_branch',
     repositoryUrl: 'https://host.null/owner/module.git',
     tagFormat: `v\${version}`,
-    plugins: false,
+    plugins: ['plugin-1', ['plugin-2', {plugin2Opt: 'value'}]],
   };
   // Create package.json and shareable.json in repository root
   await outputJson(path.resolve(cwd, 'package.json'), {release: pkgOptions});
@@ -227,6 +227,8 @@ test('Read configuration from file path in "extends"', async t => {
   t.deepEqual(t.context.plugins.args[0][1], {
     analyzeCommits: './shareable.json',
     generateNotes: './shareable.json',
+    'plugin-1': './shareable.json',
+    'plugin-2': './shareable.json',
   });
 });
 
