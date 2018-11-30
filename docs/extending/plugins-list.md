@@ -35,7 +35,7 @@
 
 ## Community plugins
 
-[Open a Pull Request](https://github.com/semantic-release/semantic-release/blob/caribou/CONTRIBUTING.md#submitting-a-pull-request) to add your plugin to the list.
+[Open a Pull Request](https://github.com/semantic-release/semantic-release/blob/master/CONTRIBUTING.md#submitting-a-pull-request) to add your plugin to the list.
 
 - [semantic-release-docker](https://github.com/felixfbecker/semantic-release-docker)
   - `verifyConditions`: Verify that all needed configuration is present and login to the Docker registry.

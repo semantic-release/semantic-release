@@ -7,11 +7,11 @@ node_js:
   - 10
   - 8
 
-# Trigger a push build on caribou and greenkeeper branches + PRs build on every branches
+# Trigger a push build on master and greenkeeper branches + PRs build on every branches
 # Avoid double build on PRs (See https://github.com/travis-ci/travis-ci/issues/1147)
 branches:
   only:
-    - caribou
+    - master
     - /^greenkeeper.*$/
 
 # Retry install on fail to avoid failing a build on network/disk/external errors
