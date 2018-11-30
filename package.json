@@ -60,10 +60,10 @@
     "js-yaml": "^3.10.0",
     "mockserver-client": "^5.1.1",
     "nock": "^10.0.0",
-    "nyc": "^12.0.1",
+    "nyc": "^13.1.0",
     "p-retry": "^2.0.0",
     "proxyquire": "^2.0.0",
-    "sinon": "^6.0.0",
+    "sinon": "^7.1.1",
     "stream-buffers": "^3.0.2",
     "tempy": "^0.2.1",
     "xo": "^0.23.0"
