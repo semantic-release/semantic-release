@@ -26,16 +26,16 @@
 - [@semantic-release/exec](https://github.com/semantic-release/exec)
   - `verifyConditions`: Execute a shell command to verify if the release should happen
   - `analyzeCommits`: Execute a shell command to determine the type of release
-  - `verifyRelease`: Execute a shell command to verifying a release that was determined before and is about to be published.
+  - `verifyRelease`: Execute a shell command to verifying a release that was determined before and is about to be published
   - `generateNotes`: Execute a shell command to generate the release note
   - `prepare`: Execute a shell command to prepare the release
   - `publish`: Execute a shell command to publish the release
   - `success`: Execute a shell command to notify of a new release
   - `fail`: Execute a shell command to notify of a failed release
 - [@semantic-release/apm](https://github.com/semantic-release/apm)
-  - `verifyConditions`: Verify the presence of the ATOM_ACCESS_TOKEN environment variable and the apm CLI
-  - `prepare`: Update the package.json version with npm version
-  - `publish`: Publish the Atom package
+  - `verifyConditions`: Verify the presence of the `ATOM_ACCESS_TOKEN` environment variable and the [`apm`](https://github.com/atom/apm) CLI
+  - `prepare`: Update the `package.json` version with [`npm version`](https://docs.npmjs.com/cli/version)
+  - `publish`: Publish the [Atom package](https://flight-manual.atom.io/hacking-atom/sections/publishing)
 
 ## Community plugins
 
@@ -43,10 +43,10 @@
 
 - [semantic-release-docker](https://github.com/felixfbecker/semantic-release-docker)
   - `verifyConditions`: Verify that all needed configuration is present and login to the Docker registry.
-  - `publish`: Tag the image specified by `name` with the new version, push it to Docker Hub and update the latest tag.
+  - `publish`: Tag the image specified by `name` with the new version, push it to Docker Hub and update the latest tag
 - [semantic-release-gcr](https://github.com/carlos-cubas/semantic-release-gcr)
-  - `verifyConditions`: Verify that all needed configuration is present and login to the Docker registry.
-  - `publish`: Tag the image specified by `name` with the new version, push it to Docker Hub and update the latest tag.
+  - `verifyConditions`: Verify that all needed configuration is present and login to the Docker registry
+  - `publish`: Tag the image specified by `name` with the new version, push it to Docker Hub and update the latest tag
 - [semantic-release-vsce](https://github.com/raix/semantic-release-vsce)
   - `verifyConditions`: Verify the presence and the validity of the vsce authentication and release configuration
   - `prepare`: Create a `.vsix` for distribution
@@ -55,11 +55,11 @@
   - `verifyConditions`: Check the dependencies format against a regexp before a release
 - [semantic-release-chrome](https://github.com/GabrielDuarteM/semantic-release-chrome)
   - `verifyConditions`: Verify the presence of the authentication (set via environment variables)
-  - `prepare`: Write the correct version to the manifest.json and creates a zip file of the whole dist folder
+  - `prepare`: Write the correct version to the `manifest.json` and creates a zip file of the whole dist folder
   - `publish`: Uploads the generated zip file to the webstore, and publish the item
 - [semantic-release-firefox](https://github.com/felixfbecker/semantic-release-firefox)
   - `verifyConditions`: Verify the presence of the authentication (set via environment variables)
-  - `prepare`: Write the correct version to the manifest.json,   creates a xpi file of the dist folder and a zip of the sources
+  - `prepare`: Write the correct version to the `manifest.json`, creates a `xpi` file of the dist folder and a zip of the sources
   - `publish`: Submit the generated archives to the webstore for review, and publish the item including release notes
 - [semantic-release-gerrit](https://github.com/pascalMN/semantic-release-gerrit)
   - `generateNotes`: Generate release notes with Gerrit reviews URL
@@ -67,7 +67,7 @@
   - `verifyConditions`: Verify Expo manifest(s) are readable and valid.
   - `prepare`: Update version, ios build number and android version code in the Expo manifest(s).
 - [maven-semantic-release](https://github.com/conveyal/maven-semantic-release)
-  - `verifyConditions`: Verifies that the pom.xml file and other files exist and are setup to allow releases
+  - `verifyConditions`: Verifies that the `pom.xml` file and other files exist and are setup to allow releases
   - `verifyRelease`: Checks and warns (does not error by default) if the version numbers found on maven central and within the Git project differ by quite a bit
-  - `prepare`: Changes the version number in the pom.xml (or all pom.xml files in maven projects with multiple pom.xml files).  Optionally creates a commit with this version number and pushes it to master
-  - `publish`: Runs `mvn deploy` to deploy to maven central. Optionally will update to next snapshot version and merge changes to development branch
+  - `prepare`: Changes the version number in the `pom.xml` (or all `pom.xml` files in maven projects with multiple `pom.xml` files) and optionally creates a commit with this version number and pushes it to `master`
+  - `publish`: Runs `mvn deploy` to deploy to maven central and optionally will update to next snapshot version and merge changes to development branch
