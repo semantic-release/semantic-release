@@ -22,7 +22,7 @@ test('Enforce ranges with branching release workflow', async t => {
     {name: 'beta', prerelease: true, tags: []},
     {name: 'alpha', prerelease: true, tags: []},
   ];
-  const getBranches = proxyquire('../../lib/branches', {'./get-tags': () => branches});
+  const getBranches = proxyquire('../../lib/branches', {'./get-tags': () => branches, './expand': () => []});
 
   let result = (await getBranches({options: {branches}})).map(({name, range}) => ({name, range}));
   t.is(getBranch(result, '1.0.x').range, '>=1.0.0 <1.0.0', 'Cannot release on 1.0.x before a releasing on master');
@@ -145,7 +145,7 @@ test('Throw SemanticReleaseError for invalid configurations', async t => {
     {name: 'alpha', prerelease: 'alpha', tags: []},
     {name: 'preview', prerelease: 'alpha', tags: []},
   ];
-  const getBranches = proxyquire('../../lib/branches', {'./get-tags': () => branches});
+  const getBranches = proxyquire('../../lib/branches', {'./get-tags': () => branches, './expand': () => []});
   const errors = [...(await t.throws(getBranches({options: {branches}})))];
 
   t.is(errors[0].name, 'SemanticReleaseError');
@@ -172,7 +172,7 @@ test('Throw SemanticReleaseError for invalid configurations', async t => {
 
 test('Throw a SemanticReleaseError if there is duplicate branches', async t => {
   const branches = [{name: 'master', tags: []}, {name: 'master', tags: []}];
-  const getBranches = proxyquire('../../lib/branches', {'./get-tags': () => branches});
+  const getBranches = proxyquire('../../lib/branches', {'./get-tags': () => branches, './expand': () => []});
 
   const errors = [...(await t.throws(getBranches({options: {branches}})))];
 
@@ -184,7 +184,7 @@ test('Throw a SemanticReleaseError if there is duplicate branches', async t => {
 
 test('Throw a SemanticReleaseError for each invalid branch name', async t => {
   const branches = [{name: '~master', tags: []}, {name: '^master', tags: []}];
-  const getBranches = proxyquire('../../lib/branches', {'./get-tags': () => branches});
+  const getBranches = proxyquire('../../lib/branches', {'./get-tags': () => branches, './expand': () => []});
 
   const errors = [...(await t.throws(getBranches({options: {branches}})))];
 

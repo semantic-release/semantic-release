@@ -1,24 +1,32 @@
 import test from 'ava';
 import expand from '../../lib/branches/expand';
-import {gitRepo, gitCommits, gitCheckout} from '../helpers/git-utils';
+import {gitRepo, gitCommits, gitCheckout, gitPush} from '../helpers/git-utils';
 
 test('Expand branches defined with globs', async t => {
-  const {cwd} = await gitRepo();
+  const {cwd, repositoryUrl} = await gitRepo(true);
   await gitCommits(['First'], {cwd});
+  await gitPush(repositoryUrl, 'master', {cwd});
   await gitCheckout('1.1.x', true, {cwd});
   await gitCommits(['Second'], {cwd});
+  await gitPush(repositoryUrl, '1.1.x', {cwd});
   await gitCheckout('1.x.x', true, {cwd});
   await gitCommits(['Third'], {cwd});
+  await gitPush(repositoryUrl, '1.x.x', {cwd});
   await gitCheckout('2.x', true, {cwd});
   await gitCommits(['Fourth'], {cwd});
+  await gitPush(repositoryUrl, '2.x', {cwd});
   await gitCheckout('next', true, {cwd});
   await gitCommits(['Fifth'], {cwd});
+  await gitPush(repositoryUrl, 'next', {cwd});
   await gitCheckout('pre/foo', true, {cwd});
   await gitCommits(['Sixth'], {cwd});
+  await gitPush(repositoryUrl, 'pre/foo', {cwd});
   await gitCheckout('pre/bar', true, {cwd});
   await gitCommits(['Seventh'], {cwd});
+  await gitPush(repositoryUrl, 'pre/bar', {cwd});
   await gitCheckout('beta', true, {cwd});
   await gitCommits(['Eighth'], {cwd});
+  await gitPush(repositoryUrl, 'beta', {cwd});
 
   const branches = [
     // Should match all maintenance type branches

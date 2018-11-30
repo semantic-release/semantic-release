@@ -18,7 +18,7 @@ const {extractErrors, makeTag} = require('./lib/utils');
 const getGitAuthUrl = require('./lib/get-git-auth-url');
 const getBranches = require('./lib/branches');
 const getLogger = require('./lib/get-logger');
-const {fetch, verifyAuth, isBranchUpToDate, getGitHead, tag, push} = require('./lib/git');
+const {verifyAuth, isBranchUpToDate, getGitHead, tag, push} = require('./lib/git');
 const getError = require('./lib/get-error');
 const {COMMIT_NAME, COMMIT_EMAIL} = require('./lib/definitions/constants');
 
@@ -52,8 +52,6 @@ async function run(context, plugins) {
 
   // Verify config
   await verify(context);
-
-  await fetch({cwd, env});
 
   context.branches = await getBranches(context);
   context.branch = context.branches.find(({name}) => name === ciBranch);
