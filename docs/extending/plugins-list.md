@@ -62,7 +62,8 @@
 - [semantic-release-expo](https://github.com/bycedric/semantic-release-expo)
   - `verifyConditions`: Verify Expo manifest(s) are readable and valid.
   - `prepare`: Update version, ios build number and android version code in the Expo manifest(s).
-- [maven-semantic-release](https://github.com/conveyal/maven-semantic-release)  **Warning:**  This requires additional setup to make sure a maven project has been setup for deployment to maven central.  There are currently no checks that everything is configured properly in OSSRH.  Also, all npm plugins must be overriden by these plugins or just the github plugin.  See project repo for more information.
-  - `verifyRelease`: Verifies that the pom.xml file exists and is setup to allow releases.  Also make sure that the version numbers found on maven central and within the github project are not too far off.
-  - `prepare`: Changes the version number in the pom.xml (or all pom.xml files in maven projects with multiple pom.xml files).  Also creates a commit with this version number and pushes it to master.
-  - `publish`: Runs `mvn deploy`.  After that completes successfully it then changes the version number to the next patch release and adds the word "-SNAPSHOT" to the end in the pom.xml file(s).  It then creates a commit of that change and pushes it to master.
+- [maven-semantic-release](https://github.com/conveyal/maven-semantic-release)
+  - `verifyConditions`: Verifies that the pom.xml file and other files exist and are setup to allow releases.
+  - `verifyRelease`: Checks and warns (does not error by default) if the version numbers found on maven central and within the github project differ by quite a bit.
+  - `prepare`: Changes the version number in the pom.xml (or all pom.xml files in maven projects with multiple pom.xml files).  Optionally creates a commit with this version number and pushes it to master.
+  - `publish`: Runs `mvn deploy` to deploy to maven central.  Optionally will update to next snapshot version and merge changes to development branch.
