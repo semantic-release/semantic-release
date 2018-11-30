@@ -157,7 +157,7 @@ test('Push tag to remote repository', async t => {
   const commits = await gitCommits(['Test commit'], {cwd});
 
   await tag('tag_name', {cwd});
-  await push(repositoryUrl, 'master', {cwd});
+  await push(repositoryUrl, {cwd});
 
   t.is(await gitRemoteTagHead(repositoryUrl, 'tag_name', {cwd}), commits[0].hash);
 });
@@ -171,7 +171,7 @@ test('Push tag to remote repository with remote branch ahaed', async t => {
   await gitPush('origin', 'master', {cwd: tmpRepo});
 
   await tag('tag_name', {cwd});
-  await push(repositoryUrl, 'master', {cwd});
+  await push(repositoryUrl, {cwd});
 
   t.is(await gitRemoteTagHead(repositoryUrl, 'tag_name', {cwd}), commits[0].hash);
 });
