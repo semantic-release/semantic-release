@@ -32,6 +32,10 @@
   - `publish`: Execute a shell command to publish the release
   - `success`: Execute a shell command to notify of a new release
   - `fail`: Execute a shell command to notify of a failed release
+- [@semantic-release/apm](https://github.com/semantic-release/apm)
+  - `verifyConditions`: Verify the presence of the ATOM_ACCESS_TOKEN environment variable and the apm CLI
+  - `prepare`: Update the package.json version with npm version
+  - `publish`: Publish the Atom package
 
 ## Community plugins
 
