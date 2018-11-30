@@ -58,7 +58,7 @@ test('Unshallow and fetch repository', async t => {
   // Verify the shallow clone contains only one commit
   t.is((await gitGetCommits(undefined, {cwd})).length, 1);
 
-  await fetch({cwd});
+  await fetch('master', {cwd});
 
   // Verify the shallow clone contains all the commits
   t.is((await gitGetCommits(undefined, {cwd})).length, 2);
@@ -66,10 +66,15 @@ test('Unshallow and fetch repository', async t => {
 
 test('Do not throw error when unshallow a complete repository', async t => {
   // Create a git repository, set the current working directory at the root of the repo
-  const {cwd} = await gitRepo(true);
-  // Add commits to the master branch
+  const {cwd, repositoryUrl} = await gitRepo(true);
   await gitCommits(['First'], {cwd});
-  await t.notThrows(fetch({cwd}));
+  await gitPush(repositoryUrl, 'master', {cwd});
+  await gitCheckout('second-branch', true, {cwd});
+  await gitCommits(['Second'], {cwd});
+  await gitPush(repositoryUrl, 'second-branch', {cwd});
+
+  await t.notThrows(fetch('master', {cwd}));
+  await t.notThrows(fetch('second-branch', {cwd}));
 });
 
 test('Fetch all tags on a detached head repository', async t => {
@@ -84,7 +89,7 @@ test('Fetch all tags on a detached head repository', async t => {
   await gitPush(repositoryUrl, 'master', {cwd});
   cwd = await gitDetachedHead(repositoryUrl, commit.hash);
 
-  await fetch({cwd});
+  await fetch('master', {cwd});
 
   t.deepEqual((await getTags({cwd})).sort(), ['v1.0.0', 'v1.0.1', 'v1.1.0'].sort());
 });
@@ -122,12 +127,15 @@ test('Verify if a branch exists', async t => {
 });
 
 test('Get all branches', async t => {
-  const {cwd} = await gitRepo();
+  const {cwd, repositoryUrl} = await gitRepo(true);
   await gitCommits(['First'], {cwd});
+  await gitPush(repositoryUrl, 'master', {cwd});
   await gitCheckout('second-branch', true, {cwd});
   await gitCommits(['Second'], {cwd});
+  await gitPush(repositoryUrl, 'second-branch', {cwd});
   await gitCheckout('third-branch', true, {cwd});
   await gitCommits(['Third'], {cwd});
+  await gitPush(repositoryUrl, 'third-branch', {cwd});
 
   t.deepEqual((await getBranches({cwd})).sort(), ['master', 'second-branch', 'third-branch'].sort());
 });
