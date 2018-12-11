@@ -67,6 +67,18 @@ test('Default values, reading repositoryUrl (http url) from package.json if not 
   t.is(result.tagFormat, `v\${version}`);
 });
 
+test('Convert "ci" option to "noCi"', async t => {
+  const pkg = {repository: 'https://host.null/owner/module.git', release: {ci: false}};
+  // Create a git repository, set the current working directory at the root of the repo
+  const {cwd} = await gitRepo();
+  // Create package.json in repository root
+  await outputJson(path.resolve(cwd, 'package.json'), pkg);
+
+  const {options: result} = await t.context.getConfig({cwd});
+
+  t.is(result.noCi, true);
+});
+
 test('Read options from package.json', async t => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
