@@ -133,6 +133,8 @@ CLI argument: `--debug`
 
 Output debugging information. This can also be enabled by setting the `DEBUG` environment variable to `semantic-release:*`.
 
+**Note**: The `debug` is used only supported via CLI argument. To enable debug mode from the [JS API](../developer-guide/js-api.md#javascript-api) use `require('debug').enable('semantic-release:*')`.
+
 ## Git environment variables
 
 | Variable              | Description                                                                                                                                                                                                                    | Default                              |
