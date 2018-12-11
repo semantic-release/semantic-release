@@ -47,11 +47,6 @@ Usage:
       return 0;
     }
 
-    // Set the `noCi` options as yargs sets the `ci` options instead (because arg starts with `--no`)
-    if (opts.ci === false) {
-      opts.noCi = true;
-    }
-
     if (opts.debug) {
       // Debug must be enabled before other requires in order to work
       require('debug').enable('semantic-release:*');

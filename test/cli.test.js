@@ -163,18 +163,6 @@ test.serial('Do not set properties in option for which arg is not in command lin
   t.false('e' in run.args[0][0]);
 });
 
-test.serial('Set "noCi" options to "true" with "--no-ci"', async t => {
-  const run = stub().resolves(true);
-  const argv = ['', '', '--no-ci'];
-  const cli = requireNoCache('../cli', {'.': run, process: {...process, argv}});
-
-  const exitCode = await cli();
-
-  t.is(run.args[0][0].noCi, true);
-
-  t.is(exitCode, 0);
-});
-
 test.serial('Display help', async t => {
   const run = stub().resolves(true);
   const argv = ['', '', '--help'];
