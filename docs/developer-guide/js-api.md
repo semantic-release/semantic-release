@@ -12,7 +12,14 @@ const stderrBuffer = WritableStreamBuffer();
 try {
   const result = await semanticRelease({
     // Core options
-    branch: 'master',
+    branches: [
+      '+([1-9])?(.{+([1-9]),x}).x',
+      'master',
+      'next',
+      'next-major',
+      {name: 'beta', prerelease: true},
+      {name: 'alpha', prerelease: true}
+    ],
     repositoryUrl: 'https://github.com/me/my-package.git',
     // Shareable config
     extends: 'my-shareable-config',
