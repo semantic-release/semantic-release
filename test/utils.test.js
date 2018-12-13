@@ -33,24 +33,37 @@ test('tagsToVersions', t => {
 
 test('isMajorRange', t => {
   t.false(isMajorRange('1.1.x'));
+  t.false(isMajorRange('1.11.x'));
+  t.false(isMajorRange('11.1.x'));
+  t.false(isMajorRange('11.11.x'));
   t.false(isMajorRange('1.1.X'));
   t.false(isMajorRange('1.1.0'));
 
   t.true(isMajorRange('1.x.x'));
+  t.true(isMajorRange('11.x.x'));
   t.true(isMajorRange('1.X.X'));
   t.true(isMajorRange('1.x'));
+  t.true(isMajorRange('11.x'));
   t.true(isMajorRange('1.X'));
 });
 
 test('isMaintenanceRange', t => {
   t.true(isMaintenanceRange('1.1.x'));
+  t.true(isMaintenanceRange('11.1.x'));
+  t.true(isMaintenanceRange('11.11.x'));
+  t.true(isMaintenanceRange('1.11.x'));
   t.true(isMaintenanceRange('1.x.x'));
+  t.true(isMaintenanceRange('11.x.x'));
   t.true(isMaintenanceRange('1.x'));
+  t.true(isMaintenanceRange('11.x'));
   t.true(isMaintenanceRange('1.1.X'));
   t.true(isMaintenanceRange('1.X.X'));
   t.true(isMaintenanceRange('1.X'));
 
   t.false(isMaintenanceRange('1.1.0'));
+  t.false(isMaintenanceRange('11.1.0'));
+  t.false(isMaintenanceRange('1.11.0'));
+  t.false(isMaintenanceRange('11.11.0'));
   t.false(isMaintenanceRange('~1.0.0'));
   t.false(isMaintenanceRange('^1.0.0'));
 });
