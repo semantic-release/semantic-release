@@ -3,7 +3,7 @@
 **semantic-release** allow to manage and automate complex release workflow, based on multiple Git branches and distribution channels. This allow to:
 - Distributes certain releases to a particular group of users via distribution channels
 - Manage the availability of releases on distribution channels via branches merge
-- Maintain multiple lines of releases in parrallel
+- Maintain multiple lines of releases in parallel
 - Work on large future releases outside the normal flow of one version increment per Git push
 
 See [Release workflow recipes](../recipes/README.md#release-workflow) for detailed examples.
