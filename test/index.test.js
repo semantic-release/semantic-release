@@ -1139,7 +1139,7 @@ test('Allow local releases with "noCi" option', async t => {
   t.is(success.callCount, 1);
 });
 
-test('Accept "undefined" value returned by the "generateNotes" plugins', async t => {
+test('Accept "undefined" value returned by "generateNotes" and "false" by "publish"', async t => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd, repositoryUrl} = await gitRepo(true);
   // Add commits to the master branch
@@ -1170,7 +1170,7 @@ test('Accept "undefined" value returned by the "generateNotes" plugins', async t
   const generateNotes1 = stub().resolves();
   const notes2 = 'Release notes 2';
   const generateNotes2 = stub().resolves(notes2);
-  const publish = stub().resolves();
+  const publish = stub().resolves(false);
 
   const options = {
     branches: ['master'],
