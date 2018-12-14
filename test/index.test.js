@@ -1139,30 +1139,23 @@ test('Allow local releases with "noCi" option', async t => {
   t.is(success.callCount, 1);
 });
 
-test('Accept "undefined" value returned by "generateNotes" and "false" by "publish"', async t => {
-  // Create a git repository, set the current working directory at the root of the repo
+test('Accept "undefined" value returned by "generateNotes" and "false" by "publish" and "addChannel"', async t => {
   const {cwd, repositoryUrl} = await gitRepo(true);
-  // Add commits to the master branch
-  let commits = await gitCommits(['First'], {cwd});
-  // Create the tag corresponding to version 1.0.0
+  await gitCommits(['First'], {cwd});
   await gitTagVersion('v1.0.0', undefined, {cwd});
-  // Add new commits to the master branch
-  commits = (await gitCommits(['Second'], {cwd})).concat(commits);
+  await gitTagVersion('v1.0.0@next', undefined, {cwd});
+  await gitTagVersion('v1.1.0@next', undefined, {cwd});
   await gitPush(repositoryUrl, 'master', {cwd});
+  await gitCheckout('next', true, {cwd});
+  await gitPush('origin', 'next', {cwd});
+  await gitCheckout('master', false, {cwd});
 
-  const lastRelease = {
-    name: 'v1.0.0',
-    version: '1.0.0',
-    gitHead: commits[commits.length - 1].hash,
-    gitTag: 'v1.0.0',
-    channel: undefined,
-  };
   const nextRelease = {
-    name: 'v2.0.0',
-    type: 'major',
-    version: '2.0.0',
+    name: 'v1.2.0',
+    type: 'minor',
+    version: '1.2.0',
     gitHead: await getGitHead({cwd}),
-    gitTag: 'v2.0.0',
+    gitTag: 'v1.2.0',
     channel: undefined,
   };
   const analyzeCommits = stub().resolves(nextRelease.type);
@@ -1171,15 +1164,16 @@ test('Accept "undefined" value returned by "generateNotes" and "false" by "publi
   const notes2 = 'Release notes 2';
   const generateNotes2 = stub().resolves(notes2);
   const publish = stub().resolves(false);
+  const addChannel = stub().resolves(false);
 
   const options = {
-    branches: ['master'],
+    branches: ['master', 'next'],
     repositoryUrl,
     verifyConditions: stub().resolves(),
     analyzeCommits,
     verifyRelease,
     generateNotes: [generateNotes1, generateNotes2],
-    addChannel: stub().resolves(),
+    addChannel,
     prepare: stub().resolves(),
     publish,
     success: stub().resolves(),
@@ -1200,20 +1194,12 @@ test('Accept "undefined" value returned by "generateNotes" and "false" by "publi
   );
 
   t.is(analyzeCommits.callCount, 1);
-  t.deepEqual(analyzeCommits.args[0][1].lastRelease, lastRelease);
-
   t.is(verifyRelease.callCount, 1);
-  t.deepEqual(verifyRelease.args[0][1].lastRelease, lastRelease);
-
-  t.is(generateNotes1.callCount, 1);
-  t.deepEqual(generateNotes1.args[0][1].lastRelease, lastRelease);
-
-  t.is(generateNotes2.callCount, 1);
-  t.deepEqual(generateNotes2.args[0][1].lastRelease, lastRelease);
-
+  t.is(generateNotes1.callCount, 2);
+  t.is(generateNotes2.callCount, 2);
+  t.is(addChannel.callCount, 1);
   t.is(publish.callCount, 1);
-  t.deepEqual(publish.args[0][1].lastRelease, lastRelease);
-  t.is(publish.args[0][1].nextRelease.notes, notes2);
+  t.deepEqual(publish.args[0][1].nextRelease, {...nextRelease, notes: notes2});
 });
 
 test('Returns false if triggered by a PR', async t => {
