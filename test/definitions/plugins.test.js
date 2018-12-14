@@ -22,7 +22,7 @@ test('The "generateNotes" plugin output, if defined, must be a string', t => {
   t.true(plugins.generateNotes.outputValidator('string'));
 });
 
-test('The "publish" plugin output, if defined, must be an object', t => {
+test('The "publish" plugin output, if defined, must be an object or "false"', t => {
   t.false(plugins.publish.outputValidator(1));
   t.false(plugins.publish.outputValidator('string'));
 
@@ -30,6 +30,7 @@ test('The "publish" plugin output, if defined, must be an object', t => {
   t.true(plugins.publish.outputValidator());
   t.true(plugins.publish.outputValidator(null));
   t.true(plugins.publish.outputValidator(''));
+  t.true(plugins.publish.outputValidator(false));
 });
 
 test('The "generateNotes" plugins output are concatenated with separator and sensitive data is hidden', t => {
