@@ -4,61 +4,21 @@
 
 The [Authentication](../usage/ci-configuration.md#authentication) environment variables can be configured in [Travis Repository Settings](https://docs.travis-ci.com/user/environment-variables/#defining-variables-in-repository-Settings) or with the [travis env set CLI](https://github.com/travis-ci/travis.rb#env).
 
-Alternatively, the default `NPM_TOKEN` and `GH_TOKEN` can be easily [setup with semantic-release-cli](../usage/ci-configuration.md#automatic-setup-with-semantic-release-cli).
+Alternatively, the default `NPM_TOKEN` and `GH_TOKEN` can be easily [setup with semantic-release-cli](../usage/getting-started.md#getting-started).
 
-## Single Node job configuration
+## Node.js projects configuration
 
-For projects that require to be tested only with a single [Node version](https://docs.travis-ci.com/user/getting-started/#Selecting-a-different-programming-language) on [one Operating System](https://docs.travis-ci.com/user/getting-started/#Selecting-infrastructure-(optional)).
-
-**Note**: [Node 8 is the minimal version required](../support/FAQ.md#why-does-semantic-release-require-node-version--83).
-
-### `.travis.yml` configuration for single Node job
-
-This example is a minimal configuration for semantic-release with a build running Node 8 on Linux. See [Travis - Customizing the Build](https://docs.travis-ci.com/user/customizing-the-build) for additional configuration options.
-
-It's recommended to run the `semantic-release` command in the [Travis `deploy` step](https://docs.travis-ci.com/user/customizing-the-build/#The-Build-Lifecycle) so if an error occurs the build will fail and Travis will send a notification.
-
-**Note**: It's not recommended to run the `semantic-release` command in the Travis `script` step as each script in this step will be executed regardless of the outcome of the previous one. See [travis-ci/travis-ci#1066](https://github.com/travis-ci/travis-ci/issues/1066).
-
-```yaml
-language: node_js
-
-node_js: 8
-
-deploy:
-  provider: script
-  skip_cleanup: true
-  script:
-    - npx semantic-release
-```
-
-### `package.json` configuration for single Node job
-
-A `package.json` is required only for [local](../usage/installation.md#local-installation) **semantic-release** installation.
-
-```json
-{
-  "devDependencies": {
-    "semantic-release": "^11.0.0"
-  }
-}
-```
-
-## Multiple Node jobs configuration
-
-For projects that require to be tested with multiple [Node versions](https://docs.travis-ci.com/user/languages/javascript-with-nodejs/#Specifying-Node.js-versions) and/or on multiple [Operating Systems](https://docs.travis-ci.com/user/multi-os).
-
-**Note**: At least one job must run a [Node >= 8 version](../support/FAQ.md#why-does-semantic-release-require-node-version--83).
-
-### `.travis.yml` configuration for multiple Node jobs
+### `.travis.yml` configuration for multiple Node.js jobs
 
 This example is a minimal configuration for **semantic-release** with a build running Node 6 and 8. See [Travis - Customizing the Build](https://docs.travis-ci.com/user/customizing-the-build) for additional configuration options.
 
-This example uses [`travis-deploy-once`](https://github.com/semantic-release/travis-deploy-once) in order to [Run `semantic-release` only after all tests succeeded](../usage/ci-configuration.md#run-semantic-release-only-after-all-tests-succeeded). Alternatively you can use [Travis CI Build Stages recipe](travis-build-stages.md).
+This example creates a `release` [build stage](https://docs.travis-ci.com/user/build-stages) that [runs `semantic-release` only after all test jobs are successful](../usage/ci-configuration.md#run-semantic-release-only-after-all-tests-succeeded).
 
 It's recommended to run the `semantic-release` command in the [Travis `deploy` step](https://docs.travis-ci.com/user/customizing-the-build/#The-Build-Lifecycle) so if an error occurs the build will fail and Travis will send a notification.
 
 **Note**: It's not recommended to run the `semantic-release` command in the Travis `script` step as each script in this step will be executed regardless of the outcome of the previous one. See [travis-ci/travis-ci#1066](https://github.com/travis-ci/travis-ci/issues/1066).
+
+**Advanced configuration**: Running the tests in the `script` step of the `release` stage is not necessary as the previous stage(s) already ran them. To increase speed, the `script` step of the `release` stage can be overwritten to skip the tests. Note that other commands such as build or compilation might still be required.
 
 ```yaml
 language: node_js
@@ -67,14 +27,19 @@ node_js:
   - 8
   - 6
 
-deploy:
-  provider: script
-  skip_cleanup: true
-  script:
-    - npx travis-deploy-once "npx semantic-release"
+jobs:
+  include:
+    # Define the release stage that runs semantic-release
+    - stage: release
+      node_js: lts/*
+      # Advanced: optionally overwrite your default `script` step to skip the tests
+      # script: skip
+      deploy:
+        provider: script
+        skip_cleanup: true
+        script:
+          - npx semantic-release
 ```
-
-**Note**: See the `travis-deploy-once` [`pro`](https://github.com/semantic-release/travis-deploy-once#-p---pro) and [`travis-url`](https://github.com/semantic-release/travis-deploy-once#-u---travis-url) options for using with [Travis Pro](https://docs.travis-ci.com/user/travis-pro) and [Travis Enterprise](https://enterprise.travis-ci.com).
 
 ### `package.json` configuration for multiple Node jobs
 
@@ -83,13 +48,12 @@ A `package.json` is required only for [local](../usage/installation.md#local-ins
 ```json
 {
   "devDependencies": {
-    "semantic-release": "^15.0.0",
-    "travis-deploy-once": "^5.0.0"
+    "semantic-release": "^15.0.0"
   }
 }
 ```
 
-## Non-JavaScript projects configuration
+## Non-Node.js projects configuration
 
 For projects that require to be tested with one or multiple version of a Non-JavaScript [language](https://docs.travis-ci.com/user/languages), optionally on multiple [Operating Systems](https://docs.travis-ci.com/user/multi-os).
 
@@ -97,13 +61,15 @@ This recipe cover the Travis specifics only. See [Non JavaScript projects recipe
 
 ### `.travis.yml` configuration for non-JavaScript projects
 
-This example is a minimal configuration for **semantic-release** with a build running [Go 1.6 and 1.7](https://docs.travis-ci.com/user/languages/go) on Linux and OSX. See [Travis - Customizing the Build](https://docs.travis-ci.com/user/customizing-the-build) for additional configuration options.
+This example is a minimal configuration for **semantic-release** with a build running [Go 1.6 and 1.7](https://docs.travis-ci.com/user/languages/go). See [Travis - Customizing the Build](https://docs.travis-ci.com/user/customizing-the-build) for additional configuration options.
 
-This example uses [`travis-deploy-once`](https://github.com/semantic-release/travis-deploy-once) in order to [run `semantic-release` only after all tests succeeded](../usage/ci-configuration.md#run-semantic-release-only-after-all-tests-succeeded). Alternatively you can use [Travis CI Build Stages recipe](travis-build-stages.md).
+This example creates a `release` [build stage](https://docs.travis-ci.com/user/build-stages) that [runs `semantic-release` only after all test jobs are successful](../usage/ci-configuration.md#run-semantic-release-only-after-all-tests-succeeded).
 
 It's recommended to run the `semantic-release` command in the [Travis `deploy` step](https://docs.travis-ci.com/user/customizing-the-build/#The-Build-Lifecycle) so if an error occurs the build will fail and Travis will send a notification.
 
 **Note**: It's not recommended to run the `semantic-release` command in the Travis `script` step as each script in this step will be executed regardless of the outcome of the previous one. See [travis-ci/travis-ci#1066](https://github.com/travis-ci/travis-ci/issues/1066).
+
+**Advanced configuration**: Running the tests in the `script` step of the `release` stage is not necessary as the previous stage(s) already ran them. To increase speed, the `script` step of the `release` stage can be overwritten to skip the tests. Note that other commands such as build or compilation might still be required.
 
 ```yaml
 language: go
@@ -112,18 +78,18 @@ go:
   - 1.6
   - 1.7
 
-os:
-  - linux
-  - osx
-
-deploy:
-  provider: script
-  skip_cleanup: true
-  script:
-    # Use nvm to install and use the Node LTS version (nvm is installed on all Travis images)
-    - nvm install lts/*
-    # Run semantic-release only on one job, after all other are successful
-    - npx travis-deploy-once "npx semantic-release"
+jobs:
+  include:
+    # Define the release stage that runs semantic-release
+    - stage: release
+      # Advanced: optionally overwrite your default `script` step to skip the tests
+      # script:
+      #   - make
+      deploy:
+        provider: script
+        skip_cleanup: true
+        script:
+          # Use nvm to install and use the Node LTS version (nvm is installed on all Travis images)
+          - nvm install lts/*
+          - npx semantic-release
 ```
-
-**Note**: See the `travis-deploy-once` [`pro`](https://github.com/semantic-release/travis-deploy-once#-p---pro) and [`travis-url`](https://github.com/semantic-release/travis-deploy-once#-u---travis-url) options for using with [Travis Pro](https://docs.travis-ci.com/user/travis-pro) and [Travis Enterprise](https://enterprise.travis-ci.com).
