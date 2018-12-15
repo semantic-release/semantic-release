@@ -44,7 +44,7 @@ test('Throw error if the last commit sha cannot be found', async t => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
 
-  await t.throws(getGitHead({cwd}), Error);
+  await t.throwsAsync(getGitHead({cwd}), Error);
 });
 
 test('Unshallow and fetch repository', async t => {
@@ -73,8 +73,8 @@ test('Do not throw error when unshallow a complete repository', async t => {
   await gitCommits(['Second'], {cwd});
   await gitPush(repositoryUrl, 'second-branch', {cwd});
 
-  await t.notThrows(fetch('master', {cwd}));
-  await t.notThrows(fetch('second-branch', {cwd}));
+  await t.notThrowsAsync(fetch('master', {cwd}));
+  await t.notThrowsAsync(fetch('second-branch', {cwd}));
 });
 
 test('Fetch all tags on a detached head repository', async t => {
@@ -108,7 +108,7 @@ test('Verify if the commit `sha` is in the direct history of the current branch'
   t.true(await isRefInHistory(commits[0].hash, 'master', false, {cwd}));
   t.falsy(await isRefInHistory(otherCommits[0].hash, 'master', false, {cwd}));
   t.falsy(await isRefInHistory(otherCommits[0].hash, 'missing-branch', false, {cwd}));
-  await t.throws(isRefInHistory('non-existant-sha', 'master', false, {cwd}));
+  await t.throwsAsync(isRefInHistory('non-existant-sha', 'master', false, {cwd}));
 });
 
 test('Verify if a branch exists', async t => {
@@ -243,7 +243,7 @@ test('Return falsy for invalid tag names', async t => {
 test('Throws error if obtaining the tags fails', async t => {
   const cwd = tempy.directory();
 
-  await t.throws(getTags({cwd}));
+  await t.throwsAsync(getTags({cwd}));
 });
 
 test('Return "true" if repository is up to date', async t => {

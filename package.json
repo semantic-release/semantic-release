@@ -49,7 +49,7 @@
     "yargs": "^12.0.0"
   },
   "devDependencies": {
-    "ava": "^0.25.0",
+    "ava": "^1.0.1",
     "clear-module": "^3.0.0",
     "codecov": "^3.0.0",
     "commitizen": "^3.0.0",
