@@ -480,7 +480,7 @@ test('Throw an Error if one of the shareable config cannot be found', async t =>
   await outputJson(path.resolve(cwd, 'package.json'), {release: pkhOptions});
   await outputJson(path.resolve(cwd, 'shareable1.json'), options1);
 
-  const error = await t.throws(t.context.getConfig({cwd}), Error);
+  const error = await t.throwsAsync(t.context.getConfig({cwd}), Error);
 
   t.is(error.message, "Cannot find module 'non-existing-path'");
   t.is(error.code, 'MODULE_NOT_FOUND');

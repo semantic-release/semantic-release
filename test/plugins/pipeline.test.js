@@ -83,7 +83,7 @@ test('Stop execution and throw error if a step rejects', async t => {
   const step2 = stub().rejects(new Error('test error'));
   const step3 = stub().resolves(3);
 
-  const error = await t.throws(pipeline([step1, step2, step3])(0), Error);
+  const error = await t.throwsAsync(pipeline([step1, step2, step3])(0), Error);
   t.is(error.message, 'test error');
   t.true(step1.calledWith(0));
   t.true(step2.calledWith(0));
@@ -98,7 +98,7 @@ test('Throw all errors from the first step throwing an AggregateError', async t 
   const step2 = stub().rejects(new AggregateError([error1, error2]));
   const step3 = stub().resolves(3);
 
-  const errors = await t.throws(pipeline([step1, step2, step3])(0));
+  const errors = await t.throwsAsync(pipeline([step1, step2, step3])(0));
 
   t.deepEqual([...errors], [error1, error2]);
   t.true(step1.calledWith(0));
@@ -113,7 +113,7 @@ test('Execute all even if a Promise rejects', async t => {
   const step2 = stub().rejects(error1);
   const step3 = stub().rejects(error2);
 
-  const errors = await t.throws(pipeline([step1, step2, step3], {settleAll: true})(0));
+  const errors = await t.throwsAsync(pipeline([step1, step2, step3], {settleAll: true})(0));
 
   t.deepEqual([...errors], [error1, error2]);
   t.true(step1.calledWith(0));
@@ -129,7 +129,7 @@ test('Throw all errors from all steps throwing an AggregateError', async t => {
   const step1 = stub().rejects(new AggregateError([error1, error2]));
   const step2 = stub().rejects(new AggregateError([error3, error4]));
 
-  const errors = await t.throws(pipeline([step1, step2], {settleAll: true})(0));
+  const errors = await t.throwsAsync(pipeline([step1, step2], {settleAll: true})(0));
 
   t.deepEqual([...errors], [error1, error2, error3, error4]);
   t.true(step1.calledWith(0));
@@ -145,7 +145,7 @@ test('Execute each function in series passing a transformed input even if a step
   const step4 = stub().resolves(4);
   const getNextInput = (prevResult, result) => prevResult + result;
 
-  const errors = await t.throws(pipeline([step1, step2, step3, step4], {settleAll: true, getNextInput})(0));
+  const errors = await t.throwsAsync(pipeline([step1, step2, step3, step4], {settleAll: true, getNextInput})(0));
 
   t.deepEqual([...errors], [error2, error3]);
   t.true(step1.calledWith(0));

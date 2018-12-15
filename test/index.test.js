@@ -337,7 +337,7 @@ test('Call all "success" plugins even if one errors out', async t => {
     'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
   });
 
-  await t.throws(
+  await t.throwsAsync(
     semanticRelease(options, {cwd, env: {}, stdout: new WritableStreamBuffer(), stderr: new WritableStreamBuffer()})
   );
 
@@ -372,7 +372,7 @@ test('Log all "verifyConditions" errors', async t => {
     'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
   });
   const errors = [
-    ...(await t.throws(
+    ...(await t.throwsAsync(
       semanticRelease(options, {cwd, env: {}, stdout: new WritableStreamBuffer(), stderr: new WritableStreamBuffer()})
     )),
   ];
@@ -417,7 +417,7 @@ test('Log all "verifyRelease" errors', async t => {
     'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
   });
   const errors = [
-    ...(await t.throws(
+    ...(await t.throwsAsync(
       semanticRelease(options, {cwd, env: {}, stdout: new WritableStreamBuffer(), stderr: new WritableStreamBuffer()})
     )),
   ];
@@ -519,7 +519,7 @@ test('Dry-run skips fail', async t => {
     'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
   });
   const errors = [
-    ...(await t.throws(
+    ...(await t.throwsAsync(
       semanticRelease(options, {cwd, env: {}, stdout: new WritableStreamBuffer(), stderr: new WritableStreamBuffer()})
     )),
   ];
@@ -957,7 +957,7 @@ test('Log both plugins errors and errors thrown by "fail" plugin', async t => {
     'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
   });
 
-  await t.throws(
+  await t.throwsAsync(
     semanticRelease(options, {cwd, env: {}, stdout: new WritableStreamBuffer(), stderr: new WritableStreamBuffer()})
   );
 
@@ -982,7 +982,7 @@ test('Call "fail" only if a plugin returns a SemanticReleaseError', async t => {
     'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
   });
 
-  await t.throws(
+  await t.throwsAsync(
     semanticRelease(options, {cwd, env: {}, stdout: new WritableStreamBuffer(), stderr: new WritableStreamBuffer()})
   );
 
@@ -999,7 +999,7 @@ test('Throw SemanticReleaseError if repositoryUrl is not set and cannot be found
     'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
   });
   const errors = [
-    ...(await t.throws(
+    ...(await t.throwsAsync(
       semanticRelease({}, {cwd, env: {}, stdout: new WritableStreamBuffer(), stderr: new WritableStreamBuffer()})
     )),
   ];
@@ -1036,7 +1036,7 @@ test('Throw an Error if plugin returns an unexpected value', async t => {
     './lib/get-logger': () => t.context.logger,
     'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
   });
-  const error = await t.throws(
+  const error = await t.throwsAsync(
     semanticRelease(options, {cwd, env: {}, stdout: new WritableStreamBuffer(), stderr: new WritableStreamBuffer()}),
     Error
   );
@@ -1066,7 +1066,7 @@ test('Hide sensitive information passed to "fail" plugin', async t => {
     './lib/get-logger': () => t.context.logger,
     'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
   });
-  await t.throws(
+  await t.throwsAsync(
     semanticRelease(options, {cwd, env, stdout: new WritableStreamBuffer(), stderr: new WritableStreamBuffer()}),
     Error
   );
