@@ -317,7 +317,7 @@ test('Exit with 1 if a plugin is not found', async t => {
     release: {analyzeCommits: 'non-existing-path', success: false, fail: false},
   });
 
-  const {code, stderr} = await t.throws(execa(cli, [], {env, cwd}));
+  const {code, stderr} = await t.throwsAsync(execa(cli, [], {env, cwd}));
   t.is(code, 1);
   t.regex(stderr, /Cannot find module/);
 });
@@ -335,7 +335,7 @@ test('Exit with 1 if a shareable config is not found', async t => {
     release: {extends: 'non-existing-path', success: false, fail: false},
   });
 
-  const {code, stderr} = await t.throws(execa(cli, [], {env, cwd}));
+  const {code, stderr} = await t.throwsAsync(execa(cli, [], {env, cwd}));
   t.is(code, 1);
   t.regex(stderr, /Cannot find module/);
 });
@@ -356,7 +356,7 @@ test('Exit with 1 if a shareable config reference a not found plugin', async t =
   });
   await writeJson(path.resolve(cwd, 'shareable.json'), shareable);
 
-  const {code, stderr} = await t.throws(execa(cli, [], {env, cwd}));
+  const {code, stderr} = await t.throwsAsync(execa(cli, [], {env, cwd}));
   t.is(code, 1);
   t.regex(stderr, /Cannot find module/);
 });
