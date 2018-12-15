@@ -7,7 +7,7 @@ test('Throw a AggregateError', async t => {
   const {cwd} = await gitRepo();
   const options = {};
 
-  const errors = [...(await t.throws(verify({cwd, options})))];
+  const errors = [...(await t.throwsAsync(verify({cwd, options})))];
 
   t.is(errors[0].name, 'SemanticReleaseError');
   t.is(errors[0].code, 'ENOREPOURL');
@@ -27,7 +27,7 @@ test('Throw a SemanticReleaseError if does not run on a git repository', async t
   const cwd = tempy.directory();
   const options = {};
 
-  const errors = [...(await t.throws(verify({cwd, options})))];
+  const errors = [...(await t.throwsAsync(verify({cwd, options})))];
 
   t.is(errors[0].name, 'SemanticReleaseError');
   t.is(errors[0].code, 'ENOGITREPO');
@@ -39,7 +39,7 @@ test('Throw a SemanticReleaseError if the "tagFormat" is not valid', async t => 
   const {cwd, repositoryUrl} = await gitRepo(true);
   const options = {repositoryUrl, tagFormat: `?\${version}`};
 
-  const errors = [...(await t.throws(verify({cwd, options})))];
+  const errors = [...(await t.throwsAsync(verify({cwd, options})))];
 
   t.is(errors[0].name, 'SemanticReleaseError');
   t.is(errors[0].code, 'EINVALIDTAGFORMAT');
@@ -51,7 +51,7 @@ test('Throw a SemanticReleaseError if the "tagFormat" does not contains the "ver
   const {cwd, repositoryUrl} = await gitRepo(true);
   const options = {repositoryUrl, tagFormat: 'test'};
 
-  const errors = [...(await t.throws(verify({cwd, options})))];
+  const errors = [...(await t.throwsAsync(verify({cwd, options})))];
 
   t.is(errors[0].name, 'SemanticReleaseError');
   t.is(errors[0].code, 'ETAGNOVERSION');
@@ -63,7 +63,7 @@ test('Throw a SemanticReleaseError if the "tagFormat" contains multiple "version
   const {cwd, repositoryUrl} = await gitRepo(true);
   const options = {repositoryUrl, tagFormat: `\${version}v\${version}`};
 
-  const errors = [...(await t.throws(verify({cwd, options})))];
+  const errors = [...(await t.throwsAsync(verify({cwd, options})))];
 
   t.is(errors[0].name, 'SemanticReleaseError');
   t.is(errors[0].code, 'ETAGNOVERSION');
@@ -75,5 +75,5 @@ test('Return "true" if all verification pass', async t => {
   const {cwd, repositoryUrl} = await gitRepo(true);
   const options = {repositoryUrl, tagFormat: `v\${version}`};
 
-  await t.notThrows(verify({cwd, options}));
+  await t.notThrowsAsync(verify({cwd, options}));
 });

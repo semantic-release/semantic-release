@@ -62,7 +62,7 @@ test('Wrap plugin in a function that add the "pluginName" to the error"', async 
     './plugin-error': './test/fixtures',
   });
 
-  const error = await t.throws(plugin({options: {}}));
+  const error = await t.throwsAsync(plugin({options: {}}));
 
   t.is(error.pluginName, './plugin-error');
 });
@@ -72,7 +72,7 @@ test('Wrap plugin in a function that add the "pluginName" to multiple errors"', 
     './plugin-errors': './test/fixtures',
   });
 
-  const errors = [...(await t.throws(plugin({options: {}})))];
+  const errors = [...(await t.throwsAsync(plugin({options: {}})))];
   for (const error of errors) {
     t.is(error.pluginName, './plugin-errors');
   }
@@ -107,7 +107,7 @@ test('Wrap "analyzeCommits" plugin in a function that validate the output of the
     {}
   );
 
-  const error = await t.throws(plugin({options: {}}));
+  const error = await t.throwsAsync(plugin({options: {}}));
 
   t.is(error.code, 'EANALYZECOMMITSOUTPUT');
   t.is(error.name, 'SemanticReleaseError');
@@ -125,7 +125,7 @@ test('Wrap "generateNotes" plugin in a function that validate the output of the 
     {}
   );
 
-  const error = await t.throws(plugin({options: {}}));
+  const error = await t.throwsAsync(plugin({options: {}}));
 
   t.is(error.code, 'EGENERATENOTESOUTPUT');
   t.is(error.name, 'SemanticReleaseError');
@@ -143,7 +143,7 @@ test('Wrap "publish" plugin in a function that validate the output of the plugin
     {}
   );
 
-  const error = await t.throws(plugin({options: {}}));
+  const error = await t.throwsAsync(plugin({options: {}}));
 
   t.is(error.code, 'EPUBLISHOUTPUT');
   t.is(error.name, 'SemanticReleaseError');
