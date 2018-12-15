@@ -14,7 +14,7 @@ branches:
     - master
     - next
     - beta
-    - /^\d+(.\d+)?.x$/
+    - /^\d+\.(\d+|x)(\.x)?$/
     - /^greenkeeper.*$/
 
 # Retry install on fail to avoid failing a build on network/disk/external errors
