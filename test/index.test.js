@@ -712,6 +712,7 @@ test('Accept "undefined" value returned by "generateNotes" and "false" by "publi
   const notes2 = 'Release notes 2';
   const generateNotes2 = stub().resolves(notes2);
   const publish = stub().resolves(false);
+  const success = stub().resolves();
 
   const options = {
     branch: 'master',
@@ -722,7 +723,7 @@ test('Accept "undefined" value returned by "generateNotes" and "false" by "publi
     generateNotes: [generateNotes1, generateNotes2],
     prepare: stub().resolves(),
     publish,
-    success: stub().resolves(),
+    success,
     fail: stub().resolves(),
   };
 
@@ -754,6 +755,9 @@ test('Accept "undefined" value returned by "generateNotes" and "false" by "publi
   t.is(publish.callCount, 1);
   t.deepEqual(publish.args[0][1].lastRelease, lastRelease);
   t.is(publish.args[0][1].nextRelease.notes, notes2);
+
+  t.is(success.callCount, 1);
+  t.deepEqual(success.args[0][1].releases, [{pluginName: '[Function: proxy]'}]);
 });
 
 test('Returns false if triggered by a PR', async t => {
