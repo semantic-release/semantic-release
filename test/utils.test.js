@@ -70,18 +70,30 @@ test('isMaintenanceRange', t => {
 
 test('getUpperBound', t => {
   t.is(getUpperBound('1.x.x'), '2.0.0');
+  t.is(getUpperBound('1.X.X'), '2.0.0');
+  t.is(getUpperBound('10.x.x'), '11.0.0');
   t.is(getUpperBound('1.x'), '2.0.0');
+  t.is(getUpperBound('10.x'), '11.0.0');
   t.is(getUpperBound('1.0.x'), '1.1.0');
+  t.is(getUpperBound('10.0.x'), '10.1.0');
+  t.is(getUpperBound('10.10.x'), '10.11.0');
   t.is(getUpperBound('1.0.0'), '1.0.0');
+  t.is(getUpperBound('10.0.0'), '10.0.0');
 
   t.is(getUpperBound('foo'), undefined);
 });
 
 test('getLowerBound', t => {
   t.is(getLowerBound('1.x.x'), '1.0.0');
+  t.is(getLowerBound('1.X.X'), '1.0.0');
+  t.is(getLowerBound('10.x.x'), '10.0.0');
   t.is(getLowerBound('1.x'), '1.0.0');
+  t.is(getLowerBound('10.x'), '10.0.0');
   t.is(getLowerBound('1.0.x'), '1.0.0');
+  t.is(getLowerBound('10.0.x'), '10.0.0');
+  t.is(getLowerBound('1.10.x'), '1.10.0');
   t.is(getLowerBound('1.0.0'), '1.0.0');
+  t.is(getLowerBound('10.0.0'), '10.0.0');
 
   t.is(getLowerBound('foo'), undefined);
 });
