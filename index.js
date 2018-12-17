@@ -127,6 +127,16 @@ async function run(context, plugins) {
 
   context.lastRelease = await getLastRelease(context);
 
+  if (context.lastRelease.gitTag) {
+    logger.log(
+      `Found git tag ${context.lastRelease.gitTag} associated with version ${context.lastRelease.version} on branch ${
+        context.branch.name
+      }`
+    );
+  } else {
+    logger.log(`No git tag version found on branch ${context.branch.name}`);
+  }
+
   context.commits = await getCommits(context);
 
   const nextRelease = {

@@ -1,12 +1,5 @@
 import test from 'ava';
-import {stub} from 'sinon';
 import getLastRelease from '../lib/get-last-release';
-
-test.beforeEach(t => {
-  // Stub the logger functions
-  t.context.log = stub();
-  t.context.logger = {log: t.context.log};
-});
 
 test('Get the highest non-prerelease valid tag', t => {
   const result = getLastRelease({
@@ -20,11 +13,9 @@ test('Get the highest non-prerelease valid tag', t => {
       type: 'release',
     },
     options: {tagFormat: `v\${version}`},
-    logger: t.context.logger,
   });
 
   t.deepEqual(result, {version: '2.0.0', gitTag: 'v2.0.0', name: 'v2.0.0', gitHead: '222', channel: undefined});
-  t.deepEqual(t.context.log.args[0][0], 'Found git tag v2.0.0 associated with version 2.0.0 on branch master');
 });
 
 test('Return empty object if no valid tag is found', t => {
@@ -35,11 +26,9 @@ test('Return empty object if no valid tag is found', t => {
       type: 'release',
     },
     options: {tagFormat: `v\${version}`},
-    logger: t.context.logger,
   });
 
   t.deepEqual(result, {});
-  t.deepEqual(t.context.log.args[0][0], 'No git tag version found on branch master');
 });
 
 test('Get the highest non-prerelease valid tag before a certain version', t => {
@@ -58,11 +47,9 @@ test('Get the highest non-prerelease valid tag before a certain version', t => {
         type: 'release',
       },
       options: {tagFormat: `v\${version}`},
-      logger: t.context.logger,
     },
     {before: '2.1.0'}
   );
 
   t.deepEqual(result, {version: '2.0.0', gitTag: 'v2.0.0', name: 'v2.0.0', gitHead: '333', channel: undefined});
-  t.deepEqual(t.context.log.args[0][0], 'Found git tag v2.0.0 associated with version 2.0.0 on branch master');
 });
