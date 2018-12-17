@@ -1,58 +1,62 @@
 import test from 'ava';
 import getReleasesToAdd from '../lib/get-releases-to-add';
 
-test('Return versions merged from release to maintenance branch', t => {
+test('Return versions merged from release to maintenance branch, excluding lower than branch start range', t => {
   const result = getReleasesToAdd({
     branch: {
-      name: '1.x',
-      channel: '1.x',
+      name: '2.x',
+      channel: '2.x',
+      type: 'maintenance',
+      'merge-range': '>=2.0.0 <3.0.0',
       tags: [
-        {gitTag: 'v1.0.0@1.x', version: '1.0.0', channel: '1.x', gitHead: '111'},
-        {gitTag: 'v1.0.0', version: '1.0.0', gitHead: '111'},
-        {gitTag: 'v1.1.0', version: '1.1.0', gitHead: '222'},
-        {gitTag: 'v1.1.1', version: '1.1.1', gitHead: '333'},
+        {gitTag: 'v2.0.0@2.x', version: '2.0.0', channel: '2.x', gitHead: '111'},
+        {gitTag: 'v2.0.0', version: '2.0.0', gitHead: '111'},
+        {gitTag: 'v2.1.0', version: '2.1.0', gitHead: '222'},
+        {gitTag: 'v2.1.1', version: '2.1.1', gitHead: '333'},
+        {gitTag: 'v1.0.0', version: '1.0.0', gitHead: '444'},
+        {gitTag: 'v1.1.0', version: '1.1.0', gitHead: '555'},
       ],
     },
-    branches: [{name: '1.x', channel: '1.x'}, {name: 'master'}],
+    branches: [{name: '2.x', channel: '2.x'}, {name: 'master'}],
     options: {tagFormat: `v\${version}`},
   });
 
   t.deepEqual(result, [
     {
-      lastRelease: {version: '1.0.0', channel: '1.x', gitTag: 'v1.0.0@1.x', name: 'v1.0.0', gitHead: '111'},
+      lastRelease: {version: '2.0.0', channel: '2.x', gitTag: 'v2.0.0@2.x', name: 'v2.0.0', gitHead: '111'},
       currentRelease: {
         type: 'minor',
-        version: '1.1.0',
+        version: '2.1.0',
         channel: undefined,
-        gitTag: 'v1.1.0',
-        name: 'v1.1.0',
+        gitTag: 'v2.1.0',
+        name: 'v2.1.0',
         gitHead: '222',
       },
       nextRelease: {
         type: 'minor',
-        version: '1.1.0',
-        channel: '1.x',
-        gitTag: 'v1.1.0@1.x',
-        name: 'v1.1.0',
+        version: '2.1.0',
+        channel: '2.x',
+        gitTag: 'v2.1.0@2.x',
+        name: 'v2.1.0',
         gitHead: '222',
       },
     },
     {
-      lastRelease: {version: '1.1.0', channel: undefined, gitTag: 'v1.1.0', name: 'v1.1.0', gitHead: '222'},
+      lastRelease: {version: '2.1.0', channel: undefined, gitTag: 'v2.1.0', name: 'v2.1.0', gitHead: '222'},
       currentRelease: {
         type: 'patch',
-        version: '1.1.1',
+        version: '2.1.1',
         channel: undefined,
-        gitTag: 'v1.1.1',
-        name: 'v1.1.1',
+        gitTag: 'v2.1.1',
+        name: 'v2.1.1',
         gitHead: '333',
       },
       nextRelease: {
         type: 'patch',
-        version: '1.1.1',
-        channel: '1.x',
-        gitTag: 'v1.1.1@1.x',
-        name: 'v1.1.1',
+        version: '2.1.1',
+        channel: '2.x',
+        gitTag: 'v2.1.1@2.x',
+        name: 'v2.1.1',
         gitHead: '333',
       },
     },
