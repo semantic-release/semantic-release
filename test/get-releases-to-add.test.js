@@ -1,12 +1,5 @@
 import test from 'ava';
-import {stub} from 'sinon';
 import getReleasesToAdd from '../lib/get-releases-to-add';
-
-test.beforeEach(t => {
-  // Stub the logger functions
-  t.context.log = stub();
-  t.context.logger = {log: t.context.log};
-});
 
 test('Return versions merged from release to maintenance branch', t => {
   const result = getReleasesToAdd({
@@ -22,7 +15,6 @@ test('Return versions merged from release to maintenance branch', t => {
     },
     branches: [{name: '1.x', channel: '1.x'}, {name: 'master'}],
     options: {tagFormat: `v\${version}`},
-    logger: t.context.logger,
   });
 
   t.deepEqual(result, [
@@ -80,7 +72,6 @@ test('Return versions merged from future branch to release branch', t => {
     },
     branches: [{name: 'master'}, {name: 'next', channel: 'next'}, {name: 'next-major', channel: 'next-major'}],
     options: {tagFormat: `v\${version}`},
-    logger: t.context.logger,
   });
 
   t.deepEqual(result, [
@@ -138,7 +129,6 @@ test('Return releases sorted by ascending order', t => {
     },
     branches: [{name: 'master'}, {name: 'next', channel: 'next'}, {name: 'next-major', channel: 'next-major'}],
     options: {tagFormat: `v\${version}`},
-    logger: t.context.logger,
   });
 
   t.deepEqual(result, [
@@ -188,7 +178,6 @@ test('no lastRelease', t => {
     branch: {name: 'master', tags: [{gitTag: 'v1.0.0@next', version: '1.0.0', channel: 'next', gitHead: '111'}]},
     branches: [{name: 'master'}, {name: 'next', channel: 'next'}],
     options: {tagFormat: `v\${version}`},
-    logger: t.context.logger,
   });
 
   t.deepEqual(result, [
@@ -231,7 +220,6 @@ test('Ignore pre-release versions', t => {
       {name: 'alpha', type: 'prerelease', channel: 'alpha'},
     ],
     options: {tagFormat: `v\${version}`},
-    logger: t.context.logger,
   });
 
   t.deepEqual(result, [
