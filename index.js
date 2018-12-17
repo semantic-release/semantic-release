@@ -178,9 +178,10 @@ async function run(context, plugins) {
     logger.success(`Created tag ${nextRelease.gitTag}`);
   }
 
-  context.releases.push(...(await plugins.publish(context)));
+  const releases = await plugins.publish(context);
+  context.releases.push(...releases);
 
-  await plugins.success(context);
+  await plugins.success({...context, releases});
 
   logger.success(`Published release ${nextRelease.version}`);
 

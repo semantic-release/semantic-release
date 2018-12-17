@@ -342,14 +342,14 @@ test('Plugins are called with expected values', async t => {
 
   t.deepEqual(success.args[1][0], config);
   t.deepEqual(success.args[1][1].options, options);
-  t.deepEqual(success.args[0][1].branch, branch);
-  t.deepEqual(success.args[0][1].branches, branches);
+  t.deepEqual(success.args[1][1].branch, branch);
+  t.deepEqual(success.args[1][1].branches, branches);
   t.deepEqual(success.args[1][1].logger, t.context.logger);
   t.deepEqual(success.args[1][1].lastRelease, lastRelease);
   t.deepEqual(success.args[1][1].commits[0].hash, commits[0].hash);
   t.deepEqual(success.args[1][1].commits[0].message, commits[0].message);
   t.deepEqual(success.args[1][1].nextRelease, {...nextRelease, notes: `${notes1}\n\n${notes2}\n\n${notes3}`});
-  t.deepEqual(success.args[1][1].releases, releases);
+  t.deepEqual(success.args[1][1].releases, [releases[1], releases[2]]);
 
   t.deepEqual(result, {
     lastRelease,
@@ -1203,7 +1203,7 @@ test('Accept "undefined" value returned by "generateNotes" and "false" by "publi
   t.is(success.callCount, 2);
   t.deepEqual(publish.args[0][1].nextRelease, {...nextRelease, notes: notes2});
   t.deepEqual(success.args[0][1].releases, [{pluginName: '[Function: proxy]'}]);
-  t.deepEqual(success.args[1][1].releases, [{pluginName: '[Function: proxy]'}, {pluginName: '[Function: proxy]'}]);
+  t.deepEqual(success.args[1][1].releases, [{pluginName: '[Function: proxy]'}]);
 });
 
 test('Returns false if triggered by a PR', async t => {
