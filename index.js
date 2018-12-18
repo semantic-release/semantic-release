@@ -86,7 +86,7 @@ async function run(context, plugins) {
     }
   } catch (error) {
     logger.error(`The command "${error.cmd}" failed with the error message ${error.stderr}.`);
-    throw getError('EGITNOPERMISSION', {options});
+    throw getError('EGITNOPERMISSION', context);
   }
 
   logger.success(`Allowed to push to the Git repository`);
@@ -98,8 +98,8 @@ async function run(context, plugins) {
   context.releases = [];
 
   await pEachSeries(releasesToAdd, async ({lastRelease, currentRelease, nextRelease}) => {
-    if (context.branch['merge-range'] && !semver.satisfies(nextRelease.version, context.branch['merge-range'])) {
-      errors.push(getError('EINVALIDMAINTENANCEMERGE', {nextRelease, branch: context.branch}));
+    if (context.branch.mergeRange && !semver.satisfies(nextRelease.version, context.branch.mergeRange)) {
+      errors.push(getError('EINVALIDMAINTENANCEMERGE', {...context, nextRelease}));
       return;
     }
 
