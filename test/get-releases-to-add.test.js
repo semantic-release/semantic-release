@@ -7,7 +7,7 @@ test('Return versions merged from release to maintenance branch, excluding lower
       name: '2.x',
       channel: '2.x',
       type: 'maintenance',
-      'merge-range': '>=2.0.0 <3.0.0',
+      mergeRange: '>=2.0.0 <3.0.0',
       tags: [
         {gitTag: 'v2.0.0@2.x', version: '2.0.0', channel: '2.x', gitHead: '111'},
         {gitTag: 'v2.0.0', version: '2.0.0', gitHead: '111'},
@@ -255,7 +255,7 @@ test('Exclude versions merged from release to maintenance branch if they have th
       name: '2.x',
       channel: 'latest',
       type: 'maintenance',
-      'merge-range': '>=2.0.0 <3.0.0',
+      mergeRange: '>=2.0.0 <3.0.0',
       tags: [
         {gitTag: 'v2.0.0', version: '2.0.0', gitHead: '111'},
         {gitTag: 'v2.0.0', version: '2.0.0', gitHead: '111'},

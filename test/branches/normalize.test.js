@@ -7,16 +7,14 @@ test('Maintenance branches - initial state', t => {
   const maintenance = [{name: '1.x', channel: '1.x', tags: []}, {name: '1.1.x', tags: []}, {name: '1.2.x', tags: []}];
   const release = [{name: 'master', tags: []}];
   t.deepEqual(
-    normalize
-      .maintenance({maintenance, release})
-      .map(({type, name, range, accept, channel, 'merge-range': maintenanceRange}) => ({
-        type,
-        name,
-        range,
-        accept,
-        channel,
-        'merge-range': maintenanceRange,
-      })),
+    normalize.maintenance({maintenance, release}).map(({type, name, range, accept, channel, mergeRange}) => ({
+      type,
+      name,
+      range,
+      accept,
+      channel,
+      mergeRange,
+    })),
     [
       {
         type: 'maintenance',
@@ -24,7 +22,7 @@ test('Maintenance branches - initial state', t => {
         range: '>=1.1.0 <1.0.0',
         accept: [],
         channel: '1.1.x',
-        'merge-range': '>=1.1.0 <1.2.0',
+        mergeRange: '>=1.1.0 <1.2.0',
       },
       {
         type: 'maintenance',
@@ -32,7 +30,7 @@ test('Maintenance branches - initial state', t => {
         range: '>=1.2.0 <1.0.0',
         accept: [],
         channel: '1.2.x',
-        'merge-range': '>=1.2.0 <1.3.0',
+        mergeRange: '>=1.2.0 <1.3.0',
       },
       {
         type: 'maintenance',
@@ -40,7 +38,7 @@ test('Maintenance branches - initial state', t => {
         range: '>=1.3.0 <1.0.0',
         accept: [],
         channel: '1.x',
-        'merge-range': '>=1.3.0 <2.0.0',
+        mergeRange: '>=1.3.0 <2.0.0',
       },
     ]
   );
@@ -63,13 +61,13 @@ test('Maintenance branches - cap range to first release present on default branc
   t.deepEqual(
     normalize
       .maintenance({maintenance, release})
-      .map(({type, name, range, accept, channel, 'merge-range': maintenanceRange}) => ({
+      .map(({type, name, range, accept, channel, mergeRange: maintenanceRange}) => ({
         type,
         name,
         range,
         accept,
         channel,
-        'merge-range': maintenanceRange,
+        mergeRange: maintenanceRange,
       })),
     [
       {
@@ -78,7 +76,7 @@ test('Maintenance branches - cap range to first release present on default branc
         range: '>=1.1.1 <1.2.0',
         accept: ['patch'],
         channel: 'name',
-        'merge-range': '>=1.1.0 <1.2.0',
+        mergeRange: '>=1.1.0 <1.2.0',
       },
       {
         type: 'maintenance',
@@ -86,7 +84,7 @@ test('Maintenance branches - cap range to first release present on default branc
         range: '>=1.2.1 <1.3.0',
         accept: ['patch'],
         channel: '1.2.x',
-        'merge-range': '>=1.2.0 <1.3.0',
+        mergeRange: '>=1.2.0 <1.3.0',
       },
       {
         type: 'maintenance',
@@ -94,7 +92,7 @@ test('Maintenance branches - cap range to first release present on default branc
         range: '>=1.5.0 <1.6.0',
         accept: ['patch'],
         channel: '1.x',
-        'merge-range': '>=1.3.0 <2.0.0',
+        mergeRange: '>=1.3.0 <2.0.0',
       },
       {
         type: 'maintenance',
@@ -102,7 +100,7 @@ test('Maintenance branches - cap range to first release present on default branc
         range: '>=2.0.0 <1.6.0',
         accept: [],
         channel: '2.x.x',
-        'merge-range': '>=2.0.0 <3.0.0',
+        mergeRange: '>=2.0.0 <3.0.0',
       },
     ]
   );
@@ -116,16 +114,14 @@ test('Maintenance branches - cap range to default branch last release if all rel
   const release = [{name: 'master', tags: toTags(['1.0.0', '1.2.0', '1.3.0', '2.0.0'])}];
 
   t.deepEqual(
-    normalize
-      .maintenance({maintenance, release})
-      .map(({type, name, range, accept, channel, 'merge-range': maintenanceRange}) => ({
-        type,
-        name,
-        range,
-        accept,
-        channel,
-        'merge-range': maintenanceRange,
-      })),
+    normalize.maintenance({maintenance, release}).map(({type, name, range, accept, channel, mergeRange}) => ({
+      type,
+      name,
+      range,
+      accept,
+      channel,
+      mergeRange,
+    })),
     [
       {
         type: 'maintenance',
@@ -133,7 +129,7 @@ test('Maintenance branches - cap range to default branch last release if all rel
         range: '>=1.3.0 <2.0.0',
         accept: ['patch', 'minor'],
         channel: '1.x',
-        'merge-range': '>=1.0.0 <2.0.0',
+        mergeRange: '>=1.0.0 <2.0.0',
       },
       {
         type: 'maintenance',
@@ -141,7 +137,7 @@ test('Maintenance branches - cap range to default branch last release if all rel
         range: '>=2.0.0 <2.0.0',
         accept: [],
         channel: '2.x.x',
-        'merge-range': '>=2.0.0 <3.0.0',
+        mergeRange: '>=2.0.0 <3.0.0',
       },
     ]
   );
