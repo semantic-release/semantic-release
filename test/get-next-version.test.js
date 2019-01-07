@@ -76,6 +76,16 @@ test('Increase version for patch release on prerelease branch', t => {
     }),
     '1.0.0-beta.2'
   );
+
+  t.is(
+    getNextVersion({
+      branch: {name: 'alpha', type: 'prerelease', prerelease: 'alpha'},
+      nextRelease: {type: 'patch', channel: 'alpha'},
+      lastRelease: {version: '1.0.0-beta.1', channel: 'beta'},
+      logger: t.context.logger,
+    }),
+    '1.0.1-alpha.1'
+  );
 });
 
 test('Increase version for minor release on prerelease branch', t => {
@@ -98,6 +108,16 @@ test('Increase version for minor release on prerelease branch', t => {
     }),
     '1.0.0-beta.2'
   );
+
+  t.is(
+    getNextVersion({
+      branch: {name: 'alpha', type: 'prerelease', prerelease: 'alpha'},
+      nextRelease: {type: 'minor', channel: 'alpha'},
+      lastRelease: {version: '1.0.0-beta.1', channel: 'beta'},
+      logger: t.context.logger,
+    }),
+    '1.1.0-alpha.1'
+  );
 });
 
 test('Increase version for major release on prerelease branch', t => {
@@ -119,6 +139,16 @@ test('Increase version for major release on prerelease branch', t => {
       logger: t.context.logger,
     }),
     '1.0.0-beta.2'
+  );
+
+  t.is(
+    getNextVersion({
+      branch: {name: 'alpha', type: 'prerelease', prerelease: 'alpha'},
+      nextRelease: {type: 'major', channel: 'alpha'},
+      lastRelease: {version: '1.0.0-beta.1', channel: 'beta'},
+      logger: t.context.logger,
+    }),
+    '2.0.0-alpha.1'
   );
 });
 
