@@ -26,7 +26,7 @@ Most **semantic-release** [plugins](plugins.md) require setting up authenticatio
 | `NPM_TOKEN` | npm token created via [npm token create](https://docs.npmjs.com/getting-started/working_with_tokens#how-to-create-new-tokens).<br/>**Note**: Only the `auth-only` [level of npm two-factor authentication](https://docs.npmjs.com/getting-started/using-two-factor-authentication#levels-of-authentication) is supported. |
 | `GH_TOKEN`  | GitHub authentication token.<br/>**Note**: Only the [personal token](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line) authentication is supported.                                                                                                                                 |
 
-See each plugin documentation for the environment variables to set up.
+See each plugin's documentation for the environment variables required.
 
 The authentication token/credentials have to be made available in the CI service via environment variables.
 
