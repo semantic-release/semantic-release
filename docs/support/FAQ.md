@@ -145,7 +145,7 @@ If you have introduced a breaking bug in a release you have 2 options:
 
 In both cases **semantic-release** will publish a new release, so your package users' will get the fixed/reverted version.
 
-Depending on the package manager you are using, you might be able to un-publish or deprecate a release, in order to prevent users to download it by accident. For example npm allows you to [un-publish](https://docs.npmjs.com/cli/unpublish) in [next 72 hours](https://www.npmjs.com/policies/unpublish) after releasing or to [deprecate](https://docs.npmjs.com/cli/deprecate) a release.
+Depending on the package manager you are using, you might be able to un-publish or deprecate a release, in order to prevent users from downloading it by accident. For example npm allows you to [un-publish](https://docs.npmjs.com/cli/unpublish) [within 72 hours](https://www.npmjs.com/policies/unpublish) after releasing. You may also [deprecate](https://docs.npmjs.com/cli/deprecate) a release if you would rather avoid un-publishing.
 
 In any case **do not remove the Git tag associated with the buggy version**, otherwise **semantic-release** will later try to republish that version. Publishing a version after un-publishing is not supported by most package managers.
 

@@ -12,7 +12,7 @@ npm ERR! You do not have permission to publish "<package-name>". Are you logged 
 
 This is most likely related to a misconfiguration of the [npm registry authentication](https://github.com/semantic-release/npm#npm-registry-authentication) or to your user [missing permission](https://docs.npmjs.com/cli/team) for publishing.
 
-It might also happen if the package name you are trying to publish already exists (in such case npm consider you are trying to publish a new version of a package that is not yours, hence the permission error).
+It might also happen if the package name you are trying to publish already exists (in the case of npm, you may be trying to publish a new version of a package that is not yours, hence the permission error).
 
 To verify if your package name is available you can use [npm-name-cli](https://github.com/sindresorhus/npm-name-cli):
 ```bash
