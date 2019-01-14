@@ -18,6 +18,31 @@ test('Get the highest non-prerelease valid tag', t => {
   t.deepEqual(result, {version: '2.0.0', gitTag: 'v2.0.0', name: 'v2.0.0', gitHead: '222', channel: undefined});
 });
 
+test('Get the highest prerelease valid tag, ignoring other tags from other prerelease channels', t => {
+  const result = getLastRelease({
+    branch: {
+      name: 'beta',
+      prerelease: 'beta',
+      channel: 'beta',
+      tags: [
+        {version: '1.0.0-beta.1', gitTag: 'v1.0.0-beta.1@beta', gitHead: '111', channel: 'beta'},
+        {version: '1.0.0-beta.2', gitTag: 'v1.0.0-beta.2@beta', gitHead: '222', channel: 'beta'},
+        {version: '1.0.0-alpha.1', gitTag: 'v1.0.0-alpha.1@alpha', gitHead: '333', channel: 'alpha'},
+      ],
+      type: 'prerelease',
+    },
+    options: {tagFormat: `v\${version}`},
+  });
+
+  t.deepEqual(result, {
+    version: '1.0.0-beta.2',
+    gitTag: 'v1.0.0-beta.2@beta',
+    name: 'v1.0.0-beta.2',
+    gitHead: '222',
+    channel: 'beta',
+  });
+});
+
 test('Return empty object if no valid tag is found', t => {
   const result = getLastRelease({
     branch: {
