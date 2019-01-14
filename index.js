@@ -52,6 +52,7 @@ async function run(context, plugins) {
     );
     return false;
   }
+
   logger[options.dryRun ? 'warn' : 'success'](
     `Run automated release from branch ${ciBranch}${options.dryRun ? ' in dry-run mode' : ''}`
   );
@@ -70,6 +71,7 @@ async function run(context, plugins) {
         );
         return false;
       }
+
       throw error;
     }
   } catch (error) {
@@ -92,6 +94,7 @@ async function run(context, plugins) {
     logger.log('There are no relevant changes, so no new version is released.');
     return false;
   }
+
   context.nextRelease = nextRelease;
   nextRelease.version = getNextVersion(context);
   nextRelease.gitTag = template(options.tagFormat)({version: nextRelease.version});
