@@ -64,6 +64,7 @@ async function run(context, plugins) {
     );
     return false;
   }
+
   logger[options.dryRun ? 'warn' : 'success'](
     `Run automated release from branch ${ciBranch}${options.dryRun ? ' in dry-run mode' : ''}`
   );
@@ -82,6 +83,7 @@ async function run(context, plugins) {
         );
         return false;
       }
+
       throw error;
     }
   } catch (error) {
