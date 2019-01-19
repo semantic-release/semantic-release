@@ -21,7 +21,7 @@ marked.setOptions({renderer: new TerminalRenderer()});
 
 async function run(context, plugins) {
   const {cwd, env, options, logger} = context;
-  const {isCi, branch: ciBranch, isPr} = envCi({env, cwd});
+  const {isCi, branch: ciBranch, isPr, prBranch} = envCi({env, cwd});
 
   if (!isCi && !options.dryRun && !options.noCi) {
     logger.warn('This run was not triggered in a known CI environment, running in dry-run mode.');
@@ -39,12 +39,12 @@ async function run(context, plugins) {
     });
   }
 
-  if (isCi && isPr && !options.noCi) {
+  if (isCi && isPr && !options.noCi && !options.skipPrCheck) {
     logger.log("This run was triggered by a pull request and therefore a new version won't be published.");
     return false;
   }
 
-  if (ciBranch !== options.branch) {
+  if ((isPr ? prBranch : ciBranch) !== options.branch) {
     logger.log(
       `This test run was triggered on the branch ${ciBranch}, while semantic-release is configured to only publish from ${
         options.branch
@@ -102,8 +102,8 @@ async function run(context, plugins) {
 
   await plugins.prepare(context);
 
-  if (options.dryRun) {
-    logger.warn(`Skip ${nextRelease.gitTag} tag creation in dry-run mode`);
+  if (options.dryRun || options.skipTag) {
+    logger.warn(`Skip ${nextRelease.gitTag} tag creation in dry-run / skip-tag mode`);
   } else {
     // Create the tag before calling the publish plugins as some require the tag to exists
     await tag(nextRelease.gitTag, {cwd, env});

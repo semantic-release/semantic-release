@@ -115,6 +115,20 @@ CLI arguments: `-d`, `--dry-run`
 
 Dry-run mode, skip publishing, print next version and release notes.
 
+### skipTag
+Type: `Boolean`<br>
+Default: `false`
+CLI arguments: `--skip-tag`
+
+Prevent tagging of the git commit on release.
+
+### skipPrCheck
+Type: `Boolean`<br>
+Default: `false`
+CLI arguments: `--skip-pr-check`
+
+Do not verify that execution is not triggered by a pull request.
+
 ### ci
 
 Type: `Boolean`<br>
