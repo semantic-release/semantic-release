@@ -158,6 +158,6 @@ Commit the encrypted private key and the `.circleci/config.yml` file to your rep
 
 ```bash
 $ git add git_deploy_key.enc .circleci/config.yml
-$ git commit -m "ci(cicle): Add the encrypted private ssh key"
+$ git commit -m "ci(circle): Add the encrypted private ssh key"
 $ git push
 ```

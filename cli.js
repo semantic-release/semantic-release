@@ -1,4 +1,4 @@
-const {argv, env, stderr} = require('process');
+const {argv, env, stderr} = require('process'); // eslint-disable-line node/prefer-global/process
 const util = require('util');
 const hideSensitive = require('./lib/hide-sensitive');
 
@@ -51,12 +51,14 @@ Usage:
       // Debug must be enabled before other requires in order to work
       require('debug').enable('semantic-release:*');
     }
+
     await require('.')(opts);
     return 0;
   } catch (error) {
     if (error.name !== 'YError') {
       stderr.write(hideSensitive(env)(util.inspect(error, {colors: true})));
     }
+
     return 1;
   }
 };

@@ -3,7 +3,7 @@
 // Bad news: We have to write plain ES5 in this file
 // Good news: It's the only file of the entire project
 
-/* eslint-disable no-var, promise/prefer-await-to-then, prefer-destructuring */
+/* eslint-disable no-var */
 
 var semver = require('semver');
 var execa = require('execa');
