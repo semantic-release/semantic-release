@@ -135,6 +135,14 @@ Output debugging information. This can also be enabled by setting the `DEBUG` en
 
 **Note**: The `debug` is used only supported via CLI argument. To enable debug mode from the [JS API](../developer-guide/js-api.md#javascript-api) use `require('debug').enable('semantic-release:*')`.
 
+### sign
+
+Type: `Boolean`<br>
+Default: `false`<br>
+CLI argument: `--sign` / `-s`
+
+Set to `true` to enable [git tag signatures](https://git-scm.com/book/id/v2/Git-Tools-Signing-Your-Work).
+
 ## Git environment variables
 
 | Variable              | Description                                                                                                                                                                                                                    | Default                              |

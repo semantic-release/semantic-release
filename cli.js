@@ -34,6 +34,7 @@ Usage:
     .option('success', {...stringList, group: 'Plugins'})
     .option('fail', {...stringList, group: 'Plugins'})
     .option('debug', {describe: 'Output debugging information', type: 'boolean', group: 'Options'})
+    .option('sign', {alias: 's', describe: 'Enable GPG signing of the tag', type: 'boolean', group: 'Options'})
     .option('d', {alias: 'dry-run', describe: 'Skip publishing', type: 'boolean', group: 'Options'})
     .option('h', {alias: 'help', group: 'Options'})
     .option('v', {alias: 'version', group: 'Options'})
