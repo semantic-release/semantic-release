@@ -169,7 +169,7 @@ test('Plugins are called with expected values', async t => {
   t.deepEqual(success.args[0][1].commits[0].message, commits[0].message);
   t.deepEqual(success.args[0][1].nextRelease, {...nextRelease, notes: `${notes1}\n\n${notes2}\n\n${notes3}`});
   t.deepEqual(success.args[0][1].releases, [
-    {...release1, ...nextRelease, notes: `${notes1}\n\n${notes2}\n\n${notes3}`, pluginName: '[Function: proxy]'},
+    {...release1, ...nextRelease, notes: `${notes1}\n\n${notes2}\n\n${notes3}`, pluginName: '[Function: functionStub]'},
     {...nextRelease, notes: `${notes1}\n\n${notes2}\n\n${notes3}`, pluginName: pluginNoop},
   ]);
 
@@ -178,7 +178,12 @@ test('Plugins are called with expected values', async t => {
     commits: [commits[0]],
     nextRelease: {...nextRelease, notes: `${notes1}\n\n${notes2}\n\n${notes3}`},
     releases: [
-      {...release1, ...nextRelease, notes: `${notes1}\n\n${notes2}\n\n${notes3}`, pluginName: '[Function: proxy]'},
+      {
+        ...release1,
+        ...nextRelease,
+        notes: `${notes1}\n\n${notes2}\n\n${notes3}`,
+        pluginName: '[Function: functionStub]',
+      },
       {...nextRelease, notes: `${notes1}\n\n${notes2}\n\n${notes3}`, pluginName: pluginNoop},
     ],
   });
@@ -342,10 +347,14 @@ test('Call all "success" plugins even if one errors out', async t => {
   );
 
   t.is(success1.callCount, 1);
-  t.deepEqual(success1.args[0][1].releases, [{...release, ...nextRelease, notes, pluginName: '[Function: proxy]'}]);
+  t.deepEqual(success1.args[0][1].releases, [
+    {...release, ...nextRelease, notes, pluginName: '[Function: functionStub]'},
+  ]);
 
   t.is(success2.callCount, 1);
-  t.deepEqual(success2.args[0][1].releases, [{...release, ...nextRelease, notes, pluginName: '[Function: proxy]'}]);
+  t.deepEqual(success2.args[0][1].releases, [
+    {...release, ...nextRelease, notes, pluginName: '[Function: functionStub]'},
+  ]);
 });
 
 test('Log all "verifyConditions" errors', async t => {
@@ -757,7 +766,7 @@ test('Accept "undefined" value returned by "generateNotes" and "false" by "publi
   t.is(publish.args[0][1].nextRelease.notes, notes2);
 
   t.is(success.callCount, 1);
-  t.deepEqual(success.args[0][1].releases, [{pluginName: '[Function: proxy]'}]);
+  t.deepEqual(success.args[0][1].releases, [{pluginName: '[Function: functionStub]'}]);
 });
 
 test('Returns false if triggered by a PR', async t => {
