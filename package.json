@@ -61,7 +61,7 @@
     "mockserver-client": "^5.1.1",
     "nock": "^10.0.0",
     "nyc": "^13.1.0",
-    "p-retry": "^3.0.0",
+    "p-retry": "^4.0.0",
     "proxyquire": "^2.0.0",
     "sinon": "^7.2.7",
     "stream-buffers": "^3.0.2",
