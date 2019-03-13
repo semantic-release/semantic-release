@@ -137,7 +137,7 @@ jobs:
           # Make sure only the current user can read the private key
           - chmod 600 /tmp/git_deploy_key
           # Create a script to return the passphrase environment variable to ssh-add
-          - echo 'echo ${SSH_PASSPHRASE}' > /tmp/askpass && chmod +x /tmp/askpass
+          - echo 'echo ${SSL_PASSPHRASE}' > /tmp/askpass && chmod +x /tmp/askpass
           # Start the authentication agent
           - eval "$(ssh-agent -s)"
           # Add the key to the authentication agent
