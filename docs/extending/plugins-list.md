@@ -73,3 +73,7 @@
   - `publish`: Runs `mvn deploy` to deploy to maven central and optionally will update to next snapshot version and merge changes to development branch
 - [semantic-release-ado](https://github.com/lluchmk/semantic-release-ado)
   - `prepare`: Stores the version number as an Azure DevOps pipeline variable availabe to downstream steps on the job
+- [gradle-semantic-release](https://github.com/KengoTODA/gradle-semantic-release-plugin)
+  - `verifyConditions`: Verify that project has a Gradle wrapper script, and `build.gradle` contains a task to publish artifacts.
+  - `prepare`: Changes the version number in the `gradle.properties`
+  - `publish`: Triggers Gradle to publish artifacts.
