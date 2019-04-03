@@ -12,7 +12,25 @@ However, the [`@semantic-release/git`](https://github.com/semantic-release/git) 
 
 The `package.json`’s version will be updated by the `semantic-release` command just before publishing to [npm](https://www.npmjs.com), therefore it won't be available for scripts ran before the `semantic-release` command.
 
-As semantic-release uses the [npm CLI](https://docs.npmjs.com/cli/npm) to publish, all [npm hook scripts](https://docs.npmjs.com/misc/scripts#hook-scripts) will be executed. Therefore you can run your build script in the [`prepublishOnly`](https://docs.npmjs.com/misc/scripts#prepublish-and-prepare) hook. It will be executed after the `semantic-release` command update the `package.json`’s version and before publishing.
+As the [`@semantic-release/npm`](https://github.com/semantic-release/npm) plugin uses the [npm CLI](https://docs.npmjs.com/cli/npm) to update the `package.json` version and publish the package, all [npm hook scripts](https://docs.npmjs.com/misc/scripts#description) will be executed.
+
+You can run your build script in:
+- the `prepublishOnly` or `prepack` hook so it will be executed during the `publish` step of `@semantic-release/npm`
+- the `postversion` hook so it will be executed during the `prepare` step of `@semantic-release/npm`, which allow for example to update files before committing them with the [`@semantic-release/git`](https://github.com/semantic-release/git) plugin
+
+If using npm hook scripts is not possible, and alternative solution is to [`@semantic-release/exec`](https://github.com/semantic-release/exec) plugin to run your script in the `prepare` step:
+```json
+{
+  "plugins": [
+    "@semantic-release/commit-analyzer",
+    "@semantic-release/release-notes-generator",
+    "@semantic-release/npm",
+    ["@semantic-release/exec", {
+      "prepareCmd": "./my-build-script.sh ${nextRelease.version}",
+    }],
+  ]
+}
+```
 
 ## Is there a way to preview which version would currently get published?
 
@@ -59,28 +77,23 @@ To publish a non-Node package (without a `package.json`) you would need to:
 
 See the [CI configuration recipes](../recipes/README.md#ci-configurations) for more details on specific CI environments.
 
-In addition you will need to configure the **semantic-release** [plugins](../usage/plugins.md#plugins) to:
-- Disable the [`@semantic-release/npm`](https://github.com/semantic-release/npm) plugin
-- Define plugins for the [verifyConditions](../usage/plugins.md#verifyconditions-plugin), [prepare](../usage/plugins.md#prepare-plugin) and [publish](../usage/plugins.md#publish-plugin) steps to release on your package registry. The [`@semantic-release/exec`](https://github.com/semantic-release/exec) plugin is recommended for situation where a release can be done with a shell command.
+In addition you will need to configure the **semantic-release** [plugins](../usage/plugins.md#plugins) to disable the [`@semantic-release/npm`](https://github.com/semantic-release/npm) plugin which is used by default and use a plugin for your project type.
 
-Here is a basic example to create [GitHub releases](https://help.github.com/articles/about-releases) and use shell command to publish:
+If there is no specific plugin for your project type you can use the [`@semantic-release/exec`](https://github.com/semantic-release/exec) plugin to publish the release with a shell command.
+
+Here is a basic example to create [GitHub releases](https://help.github.com/articles/about-releases) and use a shell command to publish:
 
 ```json
 {
-  "verifyConditions": ["@semantic-release/github"],
-  "prepare": [
-    {
-      "path": "@semantic-release/exec",
-      "cmd": "set-version ${nextRelease.version}"
-    }
-  ],
-  "publish": [
+  "plugins": [
+    "@semantic-release/commit-analyzer",
+    "@semantic-release/release-notes-generator",
     "@semantic-release/github",
-    {
-      "path": "@semantic-release/exec",
-      "cmd": "publish-package"
-    }
-  ],
+    ["@semantic-release/exec", {
+      "prepareCmd" : "set-version ${nextRelease.version}",
+      "publishCmd" : "publish-package"
+      }]
+  ]
 }
 ```
 
@@ -98,7 +111,7 @@ See the [CI configuration recipes](../recipes/README.md#ci-configurations) for m
 
 ## Can I run semantic-release on my local machine rather than on a CI server?
 
-Yes, you can by explicitly setting the [`--no-ci` CLI option](../usage/configuration.md#options) option. You will also have to set the required [authentication](../usage/ci-configuration.md#authentication) via environment variables on your local machine, for example:
+Yes, you can by explicitly setting the [`--no-ci` CLI option](../usage/configuration.md#ci) option. You will also have to set the required [authentication](../usage/ci-configuration.md#authentication) via environment variables on your local machine, for example:
 
 ```bash
 $ NPM_TOKEN=<your_npm_token> GH_TOKEN=<your_github_token> npx semantic-release --no-ci
@@ -114,7 +127,7 @@ See the [GitLab CI recipes](../recipes/gitlab-ci.md#using-semantic-release-with-
 
 ## Can I use semantic-release with any Git hosted environment?
 
-By default **semantic-release** uses the [`@semantic-release/github`](https://github.com/semantic-release/github) plugin to publish a [GitHub release](https://help.github.com/articles/about-releases). For other Git hosted environment the  [`@semantic-release/git`](https://github.com/semantic-release/git) and [`@semantic-release/changelog`](https://github.com/semantic-release/changelog) plugins can be used via [plugins configuration](../usage/plugins.md#configuration).
+By default **semantic-release** uses the [`@semantic-release/github`](https://github.com/semantic-release/github) plugin to publish a [GitHub release](https://help.github.com/articles/about-releases). For other Git hosted environment the  [`@semantic-release/git`](https://github.com/semantic-release/git) and [`@semantic-release/changelog`](https://github.com/semantic-release/changelog) plugins can be used via [plugins configuration](../usage/plugins.md).
 
 See the [`@semantic-release/git`](https://github.com/semantic-release/git#semantic-releasegit) [`@semantic-release/changelog`](https://github.com/semantic-release/changelog#semantic-releasechangelog) plugins documentation for more details.
 

@@ -30,7 +30,7 @@ async function start() {
       minTimeout: 1000,
       factor: 2,
     });
-  } catch (err) {
+  } catch (error) {
     throw new Error(`Couldn't start mock-server after 2 min`);
   }
 }
@@ -96,7 +96,7 @@ async function mock(
  * @param {Object} expectation The expectation created with `mock` function.
  * @return {Promise} A Promise that resolves if the expectation is met or reject otherwise.
  */
-async function verify(expectation) {
+function verify(expectation) {
   return client.verify(expectation);
 }
 

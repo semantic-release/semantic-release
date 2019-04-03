@@ -1,14 +1,14 @@
 import test from 'ava';
 import tempy from 'tempy';
 import {
-  gitTagHead,
+  getTagHead,
   isRefInHistory,
   fetch,
-  gitHead,
+  getGitHead,
   repoUrl,
   tag,
   push,
-  gitTags,
+  getTags,
   isGitRepo,
   verifyTagName,
   isBranchUpToDate,
@@ -33,7 +33,7 @@ test('Get the last commit sha', async t => {
   // Add commits to the master branch
   const commits = await gitCommits(['First'], {cwd});
 
-  const result = await gitHead({cwd});
+  const result = await getGitHead({cwd});
 
   t.is(result, commits[0].hash);
 });
@@ -42,7 +42,7 @@ test('Throw error if the last commit sha cannot be found', async t => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
 
-  await t.throws(gitHead({cwd}), Error);
+  await t.throws(getGitHead({cwd}), Error);
 });
 
 test('Unshallow and fetch repository', async t => {
@@ -84,7 +84,7 @@ test('Fetch all tags on a detached head repository', async t => {
 
   await fetch(repositoryUrl, {cwd});
 
-  t.deepEqual((await gitTags({cwd})).sort(), ['v1.0.0', 'v1.0.1', 'v1.1.0'].sort());
+  t.deepEqual((await getTags({cwd})).sort(), ['v1.0.0', 'v1.0.1', 'v1.1.0'].sort());
 });
 
 test('Verify if the commit `sha` is in the direct history of the current branch', async t => {
@@ -111,8 +111,8 @@ test('Get the commit sha for a given tag or falsy if the tag does not exists', a
   // Create the tag corresponding to version 1.0.0
   await gitTagVersion('v1.0.0', undefined, {cwd});
 
-  t.is(await gitTagHead('v1.0.0', {cwd}), commits[0].hash);
-  t.falsy(await gitTagHead('missing_tag', {cwd}));
+  t.is(await getTagHead('v1.0.0', {cwd}), commits[0].hash);
+  t.falsy(await getTagHead('missing_tag', {cwd}));
 });
 
 test('Return git remote repository url from config', async t => {
@@ -151,10 +151,24 @@ test('Add tag on head commit', async t => {
   await t.is(await gitCommitTag(commits[0].hash, {cwd}), 'tag_name');
 });
 
-test('Push tag and commit to remote repository', async t => {
+test('Push tag to remote repository', async t => {
   // Create a git repository with a remote, set the current working directory at the root of the repo
   const {cwd, repositoryUrl} = await gitRepo(true);
   const commits = await gitCommits(['Test commit'], {cwd});
+
+  await tag('tag_name', {cwd});
+  await push(repositoryUrl, 'master', {cwd});
+
+  t.is(await gitRemoteTagHead(repositoryUrl, 'tag_name', {cwd}), commits[0].hash);
+});
+
+test('Push tag to remote repository with remote branch ahaed', async t => {
+  const {cwd, repositoryUrl} = await gitRepo(true);
+  const commits = await gitCommits(['First'], {cwd});
+  await gitPush(repositoryUrl, 'master', {cwd});
+  const tmpRepo = await gitShallowClone(repositoryUrl);
+  await gitCommits(['Second'], {cwd: tmpRepo});
+  await gitPush('origin', 'master', {cwd: tmpRepo});
 
   await tag('tag_name', {cwd});
   await push(repositoryUrl, 'master', {cwd});
@@ -192,7 +206,7 @@ test('Return falsy for invalid tag names', async t => {
 test('Throws error if obtaining the tags fails', async t => {
   const cwd = tempy.directory();
 
-  await t.throws(gitTags({cwd}));
+  await t.throws(getTags({cwd}));
 });
 
 test('Return "true" if repository is up to date', async t => {
@@ -204,19 +218,18 @@ test('Return "true" if repository is up to date', async t => {
 });
 
 test('Return falsy if repository is not up to date', async t => {
-  let {cwd, repositoryUrl} = await gitRepo(true);
-  const repoDir = cwd;
+  const {cwd, repositoryUrl} = await gitRepo(true);
   await gitCommits(['First'], {cwd});
   await gitCommits(['Second'], {cwd});
   await gitPush(repositoryUrl, 'master', {cwd});
 
   t.true(await isBranchUpToDate('master', {cwd}));
 
-  cwd = await gitShallowClone(repositoryUrl);
-  await gitCommits(['Third'], {cwd});
-  await gitPush('origin', 'master', {cwd});
+  const tmpRepo = await gitShallowClone(repositoryUrl);
+  await gitCommits(['Third'], {cwd: tmpRepo});
+  await gitPush('origin', 'master', {cwd: tmpRepo});
 
-  t.falsy(await isBranchUpToDate('master', {cwd: repoDir}));
+  t.falsy(await isBranchUpToDate('master', {cwd}));
 });
 
 test('Return "true" if local repository is ahead', async t => {

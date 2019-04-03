@@ -6,7 +6,7 @@ import {writeJson, readJson} from 'fs-extra';
 import execa from 'execa';
 import {WritableStreamBuffer} from 'stream-buffers';
 import {SECRET_REPLACEMENT} from '../lib/definitions/constants';
-import {gitHead as getGitHead, gitTagHead, gitRepo, gitCommits, gitRemoteTagHead, gitPush} from './helpers/git-utils';
+import {gitHead, gitTagHead, gitRepo, gitCommits, gitRemoteTagHead, gitPush} from './helpers/git-utils';
 import gitbox from './helpers/gitbox';
 import mockServer from './helpers/mockserver';
 import npmRegistry from './helpers/npm-registry';
@@ -108,12 +108,12 @@ test('Release patch, minor and major versions', async t => {
   let [, releasedVersion, releasedGitHead] = /^version = '(.+)'\s+gitHead = '(.+)'$/.exec(
     (await execa('npm', ['show', packageName, 'version', 'gitHead'], {env: testEnv, cwd})).stdout
   );
-  let gitHead = await getGitHead({cwd});
+  let head = await gitHead({cwd});
   t.is(releasedVersion, version);
-  t.is(releasedGitHead, gitHead);
-  t.is(await gitTagHead(`v${version}`, {cwd}), gitHead);
-  t.is(await gitRemoteTagHead(authUrl, `v${version}`, {cwd}), gitHead);
-  t.log(`+ released ${releasedVersion} with gitHead ${releasedGitHead}`);
+  t.is(releasedGitHead, head);
+  t.is(await gitTagHead(`v${version}`, {cwd}), head);
+  t.is(await gitRemoteTagHead(authUrl, `v${version}`, {cwd}), head);
+  t.log(`+ released ${releasedVersion} with head ${releasedGitHead}`);
 
   await mockServer.verify(verifyMock);
   await mockServer.verify(createReleaseMock);
@@ -150,12 +150,12 @@ test('Release patch, minor and major versions', async t => {
   [, releasedVersion, releasedGitHead] = /^version = '(.+)'\s+gitHead = '(.+)'$/.exec(
     (await execa('npm', ['show', packageName, 'version', 'gitHead'], {env: testEnv, cwd})).stdout
   );
-  gitHead = await getGitHead({cwd});
+  head = await gitHead({cwd});
   t.is(releasedVersion, version);
-  t.is(releasedGitHead, gitHead);
-  t.is(await gitTagHead(`v${version}`, {cwd}), gitHead);
-  t.is(await gitRemoteTagHead(authUrl, `v${version}`, {cwd}), gitHead);
-  t.log(`+ released ${releasedVersion} with gitHead ${releasedGitHead}`);
+  t.is(releasedGitHead, head);
+  t.is(await gitTagHead(`v${version}`, {cwd}), head);
+  t.is(await gitRemoteTagHead(authUrl, `v${version}`, {cwd}), head);
+  t.log(`+ released ${releasedVersion} with head ${releasedGitHead}`);
 
   await mockServer.verify(verifyMock);
   await mockServer.verify(createReleaseMock);
@@ -192,12 +192,12 @@ test('Release patch, minor and major versions', async t => {
   [, releasedVersion, releasedGitHead] = /^version = '(.+)'\s+gitHead = '(.+)'$/.exec(
     (await execa('npm', ['show', packageName, 'version', 'gitHead'], {env: testEnv, cwd})).stdout
   );
-  gitHead = await getGitHead({cwd});
+  head = await gitHead({cwd});
   t.is(releasedVersion, version);
-  t.is(releasedGitHead, gitHead);
-  t.is(await gitTagHead(`v${version}`, {cwd}), gitHead);
-  t.is(await gitRemoteTagHead(authUrl, `v${version}`, {cwd}), gitHead);
-  t.log(`+ released ${releasedVersion} with gitHead ${releasedGitHead}`);
+  t.is(releasedGitHead, head);
+  t.is(await gitTagHead(`v${version}`, {cwd}), head);
+  t.is(await gitRemoteTagHead(authUrl, `v${version}`, {cwd}), head);
+  t.log(`+ released ${releasedVersion} with head ${releasedGitHead}`);
 
   await mockServer.verify(verifyMock);
   await mockServer.verify(createReleaseMock);
@@ -234,12 +234,12 @@ test('Release patch, minor and major versions', async t => {
   [, releasedVersion, releasedGitHead] = /^version = '(.+)'\s+gitHead = '(.+)'$/.exec(
     (await execa('npm', ['show', packageName, 'version', 'gitHead'], {env: testEnv, cwd})).stdout
   );
-  gitHead = await getGitHead({cwd});
+  head = await gitHead({cwd});
   t.is(releasedVersion, version);
-  t.is(releasedGitHead, gitHead);
-  t.is(await gitTagHead(`v${version}`, {cwd}), gitHead);
-  t.is(await gitRemoteTagHead(authUrl, `v${version}`, {cwd}), gitHead);
-  t.log(`+ released ${releasedVersion} with gitHead ${releasedGitHead}`);
+  t.is(releasedGitHead, head);
+  t.is(await gitTagHead(`v${version}`, {cwd}), head);
+  t.is(await gitRemoteTagHead(authUrl, `v${version}`, {cwd}), head);
+  t.log(`+ released ${releasedVersion} with head ${releasedGitHead}`);
 
   await mockServer.verify(verifyMock);
   await mockServer.verify(createReleaseMock);
@@ -388,12 +388,12 @@ test('Allow local releases with "noCi" option', async t => {
     (await execa('npm', ['show', packageName, 'version', 'gitHead'], {env: testEnv, cwd})).stdout
   );
 
-  const gitHead = await getGitHead({cwd});
+  const head = await gitHead({cwd});
   t.is(releasedVersion, version);
-  t.is(releasedGitHead, gitHead);
-  t.is(await gitTagHead(`v${version}`, {cwd}), gitHead);
-  t.is(await gitRemoteTagHead(authUrl, `v${version}`, {cwd}), gitHead);
-  t.log(`+ released ${releasedVersion} with gitHead ${releasedGitHead}`);
+  t.is(releasedGitHead, head);
+  t.is(await gitTagHead(`v${version}`, {cwd}), head);
+  t.is(await gitRemoteTagHead(authUrl, `v${version}`, {cwd}), head);
+  t.log(`+ released ${releasedVersion} with head ${releasedGitHead}`);
 
   await mockServer.verify(verifyMock);
   await mockServer.verify(createReleaseMock);
@@ -442,12 +442,12 @@ test('Pass options via CLI arguments', async t => {
   const [, releasedVersion, releasedGitHead] = /^version = '(.+)'\s+gitHead = '(.+)'$/.exec(
     (await execa('npm', ['show', packageName, 'version', 'gitHead'], {env: testEnv, cwd})).stdout
   );
-  const gitHead = await getGitHead({cwd});
+  const head = await gitHead({cwd});
   t.is(releasedVersion, version);
-  t.is(releasedGitHead, gitHead);
-  t.is(await gitTagHead(`v${version}`, {cwd}), gitHead);
-  t.is(await gitRemoteTagHead(authUrl, `v${version}`, {cwd}), gitHead);
-  t.log(`+ released ${releasedVersion} with gitHead ${releasedGitHead}`);
+  t.is(releasedGitHead, head);
+  t.is(await gitTagHead(`v${version}`, {cwd}), head);
+  t.is(await gitRemoteTagHead(authUrl, `v${version}`, {cwd}), head);
+  t.log(`+ released ${releasedVersion} with head ${releasedGitHead}`);
 });
 
 test('Run via JS API', async t => {
@@ -500,12 +500,12 @@ test('Run via JS API', async t => {
   const [, releasedVersion, releasedGitHead] = /^version = '(.+)'\s+gitHead = '(.+)'$/.exec(
     (await execa('npm', ['show', packageName, 'version', 'gitHead'], {env: testEnv, cwd})).stdout
   );
-  const gitHead = await getGitHead({cwd});
+  const head = await gitHead({cwd});
   t.is(releasedVersion, version);
-  t.is(releasedGitHead, gitHead);
-  t.is(await gitTagHead(`v${version}`, {cwd}), gitHead);
-  t.is(await gitRemoteTagHead(authUrl, `v${version}`, {cwd}), gitHead);
-  t.log(`+ released ${releasedVersion} with gitHead ${releasedGitHead}`);
+  t.is(releasedGitHead, head);
+  t.is(await gitTagHead(`v${version}`, {cwd}), head);
+  t.is(await gitRemoteTagHead(authUrl, `v${version}`, {cwd}), head);
+  t.log(`+ released ${releasedVersion} with head ${releasedGitHead}`);
 
   await mockServer.verify(verifyMock);
   await mockServer.verify(createReleaseMock);

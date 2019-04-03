@@ -62,7 +62,7 @@ test('Wrap plugin in a function that add the "pluginName" to the error"', async 
     './plugin-error': './test/fixtures',
   });
 
-  const error = await t.throws(plugin());
+  const error = await t.throws(plugin({options: {}}));
 
   t.is(error.pluginName, './plugin-error');
 });
@@ -72,7 +72,7 @@ test('Wrap plugin in a function that add the "pluginName" to multiple errors"', 
     './plugin-errors': './test/fixtures',
   });
 
-  const errors = [...(await t.throws(plugin()))];
+  const errors = [...(await t.throws(plugin({options: {}})))];
   for (const error of errors) {
     t.is(error.pluginName, './plugin-errors');
   }
@@ -107,7 +107,7 @@ test('Wrap "analyzeCommits" plugin in a function that validate the output of the
     {}
   );
 
-  const error = await t.throws(plugin());
+  const error = await t.throws(plugin({options: {}}));
 
   t.is(error.code, 'EANALYZECOMMITSOUTPUT');
   t.is(error.name, 'SemanticReleaseError');
@@ -125,7 +125,7 @@ test('Wrap "generateNotes" plugin in a function that validate the output of the 
     {}
   );
 
-  const error = await t.throws(plugin());
+  const error = await t.throws(plugin({options: {}}));
 
   t.is(error.code, 'EGENERATENOTESOUTPUT');
   t.is(error.name, 'SemanticReleaseError');
@@ -143,7 +143,7 @@ test('Wrap "publish" plugin in a function that validate the output of the plugin
     {}
   );
 
-  const error = await t.throws(plugin());
+  const error = await t.throws(plugin({options: {}}));
 
   t.is(error.code, 'EPUBLISHOUTPUT');
   t.is(error.name, 'SemanticReleaseError');
@@ -152,12 +152,27 @@ test('Wrap "publish" plugin in a function that validate the output of the plugin
   t.regex(error.details, /2/);
 });
 
-test('Plugin is called with "pluginConfig" (omitting "path", adding global config) and input', async t => {
+test('Plugin is called with "pluginConfig" (with object definition) and input', async t => {
   const pluginFunction = stub().resolves();
   const pluginConf = {path: pluginFunction, conf: 'confValue'};
   const options = {global: 'globalValue'};
   const plugin = normalize({cwd, options, logger: t.context.logger}, '', pluginConf, {});
-  await plugin({param: 'param'});
+  await plugin({options: {}, param: 'param'});
+
+  t.true(
+    pluginFunction.calledWithMatch(
+      {conf: 'confValue', global: 'globalValue'},
+      {param: 'param', logger: t.context.logger}
+    )
+  );
+});
+
+test('Plugin is called with "pluginConfig" (with array definition) and input', async t => {
+  const pluginFunction = stub().resolves();
+  const pluginConf = [pluginFunction, {conf: 'confValue'}];
+  const options = {global: 'globalValue'};
+  const plugin = normalize({cwd, options, logger: t.context.logger}, '', pluginConf, {});
+  await plugin({options: {}, param: 'param'});
 
   t.true(
     pluginFunction.calledWithMatch(
@@ -174,7 +189,7 @@ test('Prevent plugins to modify "pluginConfig"', async t => {
   const pluginConf = {path: pluginFunction, conf: {subConf: 'originalConf'}};
   const options = {globalConf: {globalSubConf: 'originalGlobalConf'}};
   const plugin = normalize({cwd, options, logger: t.context.logger}, '', pluginConf, {});
-  await plugin();
+  await plugin({options: {}});
 
   t.is(pluginConf.conf.subConf, 'originalConf');
   t.is(options.globalConf.globalSubConf, 'originalGlobalConf');
@@ -184,7 +199,7 @@ test('Prevent plugins to modify its input', async t => {
   const pluginFunction = stub().callsFake((pluginConfig, options) => {
     options.param.subParam = 'otherParam';
   });
-  const input = {param: {subParam: 'originalSubParam'}};
+  const input = {param: {subParam: 'originalSubParam'}, options: {}};
   const plugin = normalize({cwd, options: {}, logger: t.context.logger}, '', pluginFunction, {});
   await plugin(input);
 
@@ -205,7 +220,7 @@ test('Always pass a defined "pluginConfig" for plugin defined with string', asyn
     './test/fixtures/plugin-result-config',
     {}
   );
-  const pluginResult = await plugin();
+  const pluginResult = await plugin({options: {}});
 
   t.deepEqual(pluginResult.pluginConfig, {});
 });
@@ -218,7 +233,7 @@ test('Always pass a defined "pluginConfig" for plugin defined with path', async 
     {path: './test/fixtures/plugin-result-config'},
     {}
   );
-  const pluginResult = await plugin();
+  const pluginResult = await plugin({options: {}});
 
   t.deepEqual(pluginResult.pluginConfig, {});
 });

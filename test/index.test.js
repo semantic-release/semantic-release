@@ -1,5 +1,5 @@
 import test from 'ava';
-import {escapeRegExp, isString} from 'lodash';
+import {escapeRegExp, isString, sortBy} from 'lodash';
 import proxyquire from 'proxyquire';
 import {spy, stub} from 'sinon';
 import {WritableStreamBuffer} from 'stream-buffers';
@@ -25,10 +25,12 @@ test.beforeEach(t => {
   t.context.log = spy();
   t.context.error = spy();
   t.context.success = spy();
+  t.context.warn = spy();
   t.context.logger = {
     log: t.context.log,
     error: t.context.error,
     success: t.context.success,
+    warn: t.context.warn,
     scope: () => t.context.logger,
   };
 });
@@ -64,6 +66,7 @@ test('Plugins are called with expected values', async t => {
   const config = {branch: 'master', repositoryUrl, globalOpt: 'global', tagFormat: `v\${version}`};
   const options = {
     ...config,
+    plugins: false,
     verifyConditions: [verifyConditions1, verifyConditions2],
     analyzeCommits,
     verifyRelease,
@@ -359,6 +362,7 @@ test('Log all "verifyConditions" errors', async t => {
   const config = {branch: 'master', repositoryUrl, tagFormat: `v\${version}`};
   const options = {
     ...config,
+    plugins: false,
     verifyConditions: [stub().rejects(new AggregateError([error1, error2])), stub().rejects(error3)],
     fail,
   };
@@ -373,13 +377,10 @@ test('Log all "verifyConditions" errors', async t => {
     )),
   ];
 
-  t.deepEqual(errors, [error1, error2, error3]);
-  t.deepEqual(t.context.error.args[t.context.error.args.length - 2], ['ERR2 error 2']);
-  t.deepEqual(t.context.error.args[t.context.error.args.length - 1], ['ERR3 error 3']);
-  t.deepEqual(t.context.error.args[t.context.error.args.length - 3], [
-    'An error occurred while running semantic-release: %O',
-    error1,
-  ]);
+  t.deepEqual(sortBy(errors, ['message']), sortBy([error1, error2, error3], ['message']));
+  t.true(t.context.error.calledWith('An error occurred while running semantic-release: %O', error1));
+  t.true(t.context.error.calledWith('ERR2 error 2'));
+  t.true(t.context.error.calledWith('ERR3 error 3'));
   t.true(t.context.error.calledAfter(t.context.log));
   t.is(fail.callCount, 1);
   t.deepEqual(fail.args[0][0], config);
@@ -421,15 +422,15 @@ test('Log all "verifyRelease" errors', async t => {
     )),
   ];
 
-  t.deepEqual(errors, [error1, error2]);
-  t.deepEqual(t.context.error.args[t.context.error.args.length - 2], ['ERR1 error 1']);
-  t.deepEqual(t.context.error.args[t.context.error.args.length - 1], ['ERR2 error 2']);
+  t.deepEqual(sortBy(errors, ['message']), sortBy([error1, error2], ['message']));
+  t.true(t.context.error.calledWith('ERR1 error 1'));
+  t.true(t.context.error.calledWith('ERR2 error 2'));
   t.is(fail.callCount, 1);
   t.deepEqual(fail.args[0][0], config);
   t.deepEqual(fail.args[0][1].errors, [error1, error2]);
 });
 
-test('Dry-run skips publish and success', async t => {
+test('Dry-run skips prepare, publish and success', async t => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd, repositoryUrl} = await gitRepo(true);
   // Add commits to the master branch
@@ -447,6 +448,7 @@ test('Dry-run skips publish and success', async t => {
   const analyzeCommits = stub().resolves(nextRelease.type);
   const verifyRelease = stub().resolves();
   const generateNotes = stub().resolves(notes);
+  const prepare = stub().resolves();
   const publish = stub().resolves();
   const success = stub().resolves();
 
@@ -458,7 +460,7 @@ test('Dry-run skips publish and success', async t => {
     analyzeCommits,
     verifyRelease,
     generateNotes,
-    prepare: stub().resolves(),
+    prepare,
     publish,
     success,
   };
@@ -476,13 +478,17 @@ test('Dry-run skips publish and success', async t => {
     })
   );
 
-  t.not(t.context.log.args[0][0], 'This run was not triggered in a known CI environment, running in dry-run mode.');
+  t.not(t.context.warn.args[0][0], 'This run was not triggered in a known CI environment, running in dry-run mode.');
   t.is(verifyConditions.callCount, 1);
   t.is(analyzeCommits.callCount, 1);
   t.is(verifyRelease.callCount, 1);
   t.is(generateNotes.callCount, 1);
+  t.is(prepare.callCount, 0);
+  t.true(t.context.warn.calledWith(`Skip step "prepare" of plugin "[Function: ${prepare.name}]" in dry-run mode`));
   t.is(publish.callCount, 0);
+  t.true(t.context.warn.calledWith(`Skip step "publish" of plugin "[Function: ${publish.name}]" in dry-run mode`));
   t.is(success.callCount, 0);
+  t.true(t.context.warn.calledWith(`Skip step "success" of plugin "[Function: ${success.name}]" in dry-run mode`));
 });
 
 test('Dry-run skips fail', async t => {
@@ -518,10 +524,11 @@ test('Dry-run skips fail', async t => {
     )),
   ];
 
-  t.deepEqual(errors, [error1, error2]);
-  t.deepEqual(t.context.error.args[t.context.error.args.length - 2], ['ERR1 error 1']);
-  t.deepEqual(t.context.error.args[t.context.error.args.length - 1], ['ERR2 error 2']);
+  t.deepEqual(sortBy(errors, ['message']), sortBy([error1, error2], ['message']));
+  t.true(t.context.error.calledWith('ERR1 error 1'));
+  t.true(t.context.error.calledWith('ERR2 error 2'));
   t.is(fail.callCount, 0);
+  t.true(t.context.warn.calledWith(`Skip step "fail" of plugin "[Function: ${fail.name}]" in dry-run mode`));
 });
 
 test('Force a dry-run if not on a CI and "noCi" is not explicitly set', async t => {
@@ -572,7 +579,7 @@ test('Force a dry-run if not on a CI and "noCi" is not explicitly set', async t 
     })
   );
 
-  t.is(t.context.log.args[1][0], 'This run was not triggered in a known CI environment, running in dry-run mode.');
+  t.true(t.context.warn.calledWith('This run was not triggered in a known CI environment, running in dry-run mode.'));
   t.is(verifyConditions.callCount, 1);
   t.is(analyzeCommits.callCount, 1);
   t.is(verifyRelease.callCount, 1);
@@ -1087,6 +1094,7 @@ test('Hide sensitive information passed to "success" plugin', async t => {
     verifyConditions: false,
     verifyRelease: false,
     prepare: false,
+    generateNotes: stub().resolves(`Exposing token ${env.MY_TOKEN}`),
     publish: stub().resolves({
       name: `Name: Exposing token ${env.MY_TOKEN}`,
       url: `URL: Exposing token ${env.MY_TOKEN}`,

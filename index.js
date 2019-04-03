@@ -13,18 +13,18 @@ const getLastRelease = require('./lib/get-last-release');
 const {extractErrors} = require('./lib/utils');
 const getGitAuthUrl = require('./lib/get-git-auth-url');
 const getLogger = require('./lib/get-logger');
-const {fetch, verifyAuth, isBranchUpToDate, gitHead: getGitHead, tag, push} = require('./lib/git');
+const {fetch, verifyAuth, isBranchUpToDate, getGitHead, tag, push} = require('./lib/git');
 const getError = require('./lib/get-error');
 const {COMMIT_NAME, COMMIT_EMAIL} = require('./lib/definitions/constants');
 
 marked.setOptions({renderer: new TerminalRenderer()});
 
 async function run(context, plugins) {
-  const {isCi, branch: ciBranch, isPr} = envCi();
   const {cwd, env, options, logger} = context;
+  const {isCi, branch: ciBranch, isPr} = envCi({env, cwd});
 
   if (!isCi && !options.dryRun && !options.noCi) {
-    logger.log('This run was not triggered in a known CI environment, running in dry-run mode.');
+    logger.warn('This run was not triggered in a known CI environment, running in dry-run mode.');
     options.dryRun = true;
   } else {
     // When running on CI, set the commits author and commiter info and prevent the `git` CLI to prompt for username/password. See #703.
@@ -52,22 +52,28 @@ async function run(context, plugins) {
     );
     return false;
   }
-  logger.success(`Run automated release from branch ${ciBranch}`);
+  logger[options.dryRun ? 'warn' : 'success'](
+    `Run automated release from branch ${ciBranch}${options.dryRun ? ' in dry-run mode' : ''}`
+  );
 
   await verify(context);
 
   options.repositoryUrl = await getGitAuthUrl(context);
 
   try {
-    await verifyAuth(options.repositoryUrl, options.branch, {cwd, env});
-  } catch (err) {
-    if (!(await isBranchUpToDate(options.branch, {cwd, env}))) {
-      logger.log(
-        `The local branch ${options.branch} is behind the remote one, therefore a new version won't be published.`
-      );
-      return false;
+    try {
+      await verifyAuth(options.repositoryUrl, options.branch, {cwd, env});
+    } catch (error) {
+      if (!(await isBranchUpToDate(options.branch, {cwd, env}))) {
+        logger.log(
+          `The local branch ${options.branch} is behind the remote one, therefore a new version won't be published.`
+        );
+        return false;
+      }
+      throw error;
     }
-    logger.error(`The command "${err.cmd}" failed with the error message ${err.stderr}.`);
+  } catch (error) {
+    logger.error(`The command "${error.cmd}" failed with the error message ${error.stderr}.`);
     throw getError('EGITNOPERMISSION', {options});
   }
 
@@ -92,26 +98,30 @@ async function run(context, plugins) {
 
   await plugins.verifyRelease(context);
 
-  if (options.dryRun) {
-    const notes = await plugins.generateNotes(context);
-    logger.log(`Release note for version ${nextRelease.version}:`);
-    if (notes) {
-      context.stdout.write(marked(notes));
-    }
-  } else {
-    nextRelease.notes = await plugins.generateNotes(context);
-    await plugins.prepare(context);
+  nextRelease.notes = await plugins.generateNotes(context);
 
+  await plugins.prepare(context);
+
+  if (options.dryRun) {
+    logger.warn(`Skip ${nextRelease.gitTag} tag creation in dry-run mode`);
+  } else {
     // Create the tag before calling the publish plugins as some require the tag to exists
     await tag(nextRelease.gitTag, {cwd, env});
     await push(options.repositoryUrl, options.branch, {cwd, env});
     logger.success(`Created tag ${nextRelease.gitTag}`);
+  }
 
-    context.releases = await plugins.publish(context);
+  context.releases = await plugins.publish(context);
 
-    await plugins.success(context);
+  await plugins.success(context);
 
-    logger.success(`Published release ${nextRelease.version}`);
+  logger.success(`Published release ${nextRelease.version}`);
+
+  if (options.dryRun) {
+    logger.log(`Release note for version ${nextRelease.version}:`);
+    if (nextRelease.notes) {
+      context.stdout.write(marked(nextRelease.notes));
+    }
   }
 
   return pick(context, ['lastRelease', 'commits', 'nextRelease', 'releases']);
@@ -131,13 +141,13 @@ function logErrors({logger, stderr}, err) {
   }
 }
 
-async function callFail(context, plugins, error) {
-  const errors = extractErrors(error).filter(error => error.semanticRelease);
+async function callFail(context, plugins, err) {
+  const errors = extractErrors(err).filter(err => err.semanticRelease);
   if (errors.length > 0) {
     try {
       await plugins.fail({...context, errors});
-    } catch (err) {
-      logErrors(context, err);
+    } catch (error) {
+      logErrors(context, error);
     }
   }
 }
@@ -157,15 +167,13 @@ module.exports = async (opts = {}, {cwd = process.cwd(), env = process.env, stdo
       const result = await run(context, plugins);
       unhook();
       return result;
-    } catch (err) {
-      if (!options.dryRun) {
-        await callFail(context, plugins, err);
-      }
-      throw err;
+    } catch (error) {
+      await callFail(context, plugins, error);
+      throw error;
     }
-  } catch (err) {
-    logErrors(context, err);
+  } catch (error) {
+    logErrors(context, error);
     unhook();
-    throw err;
+    throw error;
   }
 };

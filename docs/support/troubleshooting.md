@@ -1,49 +1,26 @@
 # Troubleshooting
 
-## ENOTINHISTORY Commit not in history
-
-This error happens when the commit associated with the last release cannot be found in the branch history.
-
-Multiple situation can cause this issue:
-- The package name configured in your `package.json` already exists and **semantic-release** obtains the last release of that package, which is unrelated to yours
-- The commit history has been rewritten since the last release (with `git rebase` and `git push -f`)
-
-If the package name configured in your `package.json` already exits, you should change it, and commit the `package.json`. Then **semantic-release** will proceed normally and make the initial release.
-
-If you can identify the commit in your branch history that should be associated with the release version mentioned in the error message you can recover by tagging this commit:
-
-```bash
-$ git tag -f v<version of the last release> <commit sha1 corresponding to last release>
-$ git push -f --tags origin <your release branch>
-```
-
-## ENOGITHEAD There is no commit associated with last release
-
-This error happens when there is no commit associated with the last release that can be found in the package metadata on the npm registry.
-
-This usually happen when the last release has been made without access to the git repository informations.
-
-You can recover from that issue by identifying the commit in your branch history that should have been associated with the release version mentioned in the error message and tagging this commit:
-
-```bash
-$ git tag -f v<version of the last release> <commit sha1 corresponding to last release>
-$ git push -f --tags origin <your release branch>
-```
-
 ## You do not have permission to publish 'package-name'
 
-When running semantic-release you may encounter the following error:
+When running semantic-release you might encounter the following error:
 
-```
-An error occurred while running semantic-release: { Error: Command failed: npm publish ./. --registry https://registry.npmjs.org/
+```bash
 npm ERR! publish Failed PUT 403
 npm ERR! code E403
 npm ERR! You do not have permission to publish "<package-name>". Are you logged in as the correct user? : <package-name>
 ```
 
-This message is a little unclear, and might not have anything to with your `NPM_TOKEN` or authentication method. It might instead be related to the package name itself. If there is already a package with the same name as yours or, there is a very close match, it could trigger this error.
+This is most likely related to a misconfiguration of the [npm registry authentication](https://github.com/semantic-release/npm#npm-registry-authentication) or to your user [missing permission](https://docs.npmjs.com/cli/team) for publishing.
 
-Best way to be sure, is to search [npmjs.org](https://www.npmjs.com/)) using your package name. If there is a name conflict, rename your package in your `package.json`
+It might also happen if the package name you are trying to publish already exists (in such case npm consider you are trying to publish a new version of a package that is not yours, hence the permission error).
+
+To verify if your package name is available you can use [npm-name-cli](https://github.com/sindresorhus/npm-name-cli):
+```bash
+$ npm install --global npm-name-cli
+$ npm-name <package-name>
+```
+
+If the package name is not available, change it in your `package.json` or consider using an [npm scope](https://docs.npmjs.com/misc/scope).
 
 ## Squashed commits are ignored by **semantic-release**
 
@@ -54,3 +31,26 @@ When [squashing commits](https://git-scm.com/book/en/v2/Git-Tools-Rewriting-Hist
 When squashing commits make sure to rewrite the resulting commit message to be compliant with the project's commit message convention.
 
 **Note**: if the resulting squashed commit would encompasses multiple changes (for example multiple unrelated features or fixes) then it's probably not a good idea to squash those commits together. A commit should contain exactly one self-contained functional change and a functional change should be contained in exactly one commit. See [atomic commits](https://en.wikipedia.org/wiki/Atomic_commit).
+
+## `reference already exists` error when pushing tag
+
+**semantic-release** read [Git tags](https://git-scm.com/book/en/v2/Git-Basics-Tagging) that are present in the history of your release branch in order to determine the last release published. Then it determines the next version to release based on the commits pushed since then and create the corresponding tag.
+If a tag with the name already in your repository, Git will throw and error as tags must be unique across the repository.
+This situation happens when you have a version tag identical to the new one **semantic-release** is trying to create that is not in the history of the current branch.
+
+If an actual release with that version number was published you need to merge all the commits up to that release into your release branch.
+
+If there is no published release with that version number, the tag must be deleted.
+
+```bash
+# Verify if the commit exists in the repository
+$ git rev-list -1 <tag name>
+# If a commit sha is returned, then the tag exists
+
+# Verify the branches having the tagged commit in their history
+$ git branch --contains <tag name>
+
+# Delete the tag
+$ git tag -d <tag name>
+$ git push origin :refs/tags/<tag name>
+```

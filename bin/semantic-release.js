@@ -30,9 +30,9 @@ execa
       process.exit(1);
     }
   })
-  .catch(err => {
+  .catch(error => {
     console.error(`[semantic-release]: Git version ${MIN_GIT_VERSION} is required. No git binary found.`);
-    console.error(err);
+    console.error(error);
     process.exit(1);
   });
 

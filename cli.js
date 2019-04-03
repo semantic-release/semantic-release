@@ -22,12 +22,13 @@ Usage:
     .option('b', {alias: 'branch', describe: 'Git branch to release from', type: 'string', group: 'Options'})
     .option('r', {alias: 'repository-url', describe: 'Git repository URL', type: 'string', group: 'Options'})
     .option('t', {alias: 'tag-format', describe: 'Git tag format', type: 'string', group: 'Options'})
+    .option('p', {alias: 'plugins', describe: 'Plugins', ...stringList, group: 'Options'})
     .option('e', {alias: 'extends', describe: 'Shareable configurations', ...stringList, group: 'Options'})
     .option('ci', {describe: 'Toggle CI verifications', type: 'boolean', group: 'Options'})
     .option('verify-conditions', {...stringList, group: 'Plugins'})
     .option('analyze-commits', {type: 'string', group: 'Plugins'})
     .option('verify-release', {...stringList, group: 'Plugins'})
-    .option('generate-notes', {type: 'string', group: 'Plugins'})
+    .option('generate-notes', {...stringList, group: 'Plugins'})
     .option('prepare', {...stringList, group: 'Plugins'})
     .option('publish', {...stringList, group: 'Plugins'})
     .option('success', {...stringList, group: 'Plugins'})
@@ -57,9 +58,9 @@ Usage:
     }
     await require('.')(opts);
     return 0;
-  } catch (err) {
-    if (err.name !== 'YError') {
-      stderr.write(hideSensitive(env)(util.inspect(err, {colors: true})));
+  } catch (error) {
+    if (error.name !== 'YError') {
+      stderr.write(hideSensitive(env)(util.inspect(error, {colors: true})));
     }
     return 1;
   }
