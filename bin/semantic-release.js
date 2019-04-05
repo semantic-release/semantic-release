@@ -23,7 +23,7 @@ See https://github.com/semantic-release/semantic-release/blob/master/docs/suppor
 
 execa
   .stdout('git', ['--version'], {
-    preferLocal: false
+    preferLocal: false,
   })
   .then(stdout => {
     var gitVersion = findVersions(stdout)[0];
