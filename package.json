@@ -54,7 +54,7 @@
     "cz-conventional-changelog": "^2.0.0",
     "delay": "^4.0.0",
     "dockerode": "^2.5.2",
-    "file-url": "^2.0.2",
+    "file-url": "^3.0.0",
     "fs-extra": "^7.0.0",
     "got": "^9.0.0",
     "js-yaml": "^3.10.0",
