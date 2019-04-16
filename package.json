@@ -65,7 +65,7 @@
     "proxyquire": "^2.0.0",
     "sinon": "^7.2.7",
     "stream-buffers": "^3.0.2",
-    "tempy": "^0.2.1",
+    "tempy": "^0.3.0",
     "xo": "^0.24.0"
   },
   "engines": {
