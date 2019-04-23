@@ -84,3 +84,6 @@
 - [semantic-release-circleci-orb](https://github.com/matt-oakes/semantic-release-circleci-orb)
   - `verifyConditions`: Verify the presence of the `CIRCLECI_API_TOKEN` environment variable, `orbName` option, and the `circleci` CLI.
   - `publish`: Publish the CircleCI orb.
+- [semantic-release-github-pages](https://github.com/qiwi/semantic-release-gh-pages-plugin)
+  - `verifyConditions`: Verify the presence of the auth token set via environment variables.
+  - `publish`: Pushes commit to the documentation branch.
