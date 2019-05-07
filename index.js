@@ -23,7 +23,7 @@ async function run(context, plugins) {
   const {cwd, env, options, logger} = context;
   const environment = envCi({env, cwd});
   const {isCi, isPr} = environment;
-  const ciBranch = context.options.determineBranch ? context.options.determineBranch() : environment;
+  const ciBranch = context.options.determineBranch ? context.options.determineBranch() : environment.branch;
 
   if (!isCi && !options.dryRun && !options.noCi) {
     logger.warn('This run was not triggered in a known CI environment, running in dry-run mode.');
