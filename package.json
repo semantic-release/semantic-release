@@ -29,7 +29,7 @@
     "debug": "^4.0.0",
     "env-ci": "^3.0.0",
     "execa": "^1.0.0",
-    "figures": "^2.0.0",
+    "figures": "^3.0.0",
     "find-versions": "^3.0.0",
     "get-stream": "^5.0.0",
     "git-log-parser": "^1.2.0",
@@ -60,12 +60,12 @@
     "js-yaml": "^3.10.0",
     "mockserver-client": "^5.1.1",
     "nock": "^10.0.0",
-    "nyc": "^13.1.0",
+    "nyc": "^14.0.0",
     "p-retry": "^4.0.0",
     "proxyquire": "^2.0.0",
     "sinon": "^7.2.7",
     "stream-buffers": "^3.0.2",
-    "tempy": "^0.2.1",
+    "tempy": "^0.3.0",
     "xo": "^0.24.0"
   },
   "engines": {
