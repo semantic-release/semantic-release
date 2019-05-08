@@ -3,7 +3,7 @@
 This recipe will walk you through a simple example that uses distribution channels to make releases available only to a subset of users, in order to collect feedbacks before distributing the release to all users.
 
 This example uses the **semantic-release** default configuration:
-- [branches](../usage/configuration.md#branches): `['+([1-9])?(.{+([1-9]),x}).x', 'master', 'next', 'next-major', {name: 'beta', prerelease: true}, {name: 'alpha', prerelease: true}]`
+- [branches](../usage/configuration.md#branches): `['+([0-9])?(.{+([0-9]),x}).x', 'master', 'next', 'next-major', {name: 'beta', prerelease: true}, {name: 'alpha', prerelease: true}]`
 - [plugins](../usage/configuration.md#plugins): `['@semantic-release/commit-analyzer', '@semantic-release/release-notes-generator', '@semantic-release/npm', '@semantic-release/github']`
 
 ## Initial release
