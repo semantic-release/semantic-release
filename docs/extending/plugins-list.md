@@ -81,3 +81,6 @@
   - `verifyConditions`: Verify that project has a Gradle wrapper script, and `build.gradle` contains a task to publish artifacts.
   - `prepare`: Changes the version number in the `gradle.properties`
   - `publish`: Triggers Gradle to publish artifacts.
+- [semantic-release-circleci-orb](https://github.com/matt-oakes/semantic-release-circleci-orb)
+  - `verifyConditions`: Verify the presence of the `CIRCLECI_API_TOKEN` environment variable, `orbName` option, and the `circleci` CLI.
+  - `publish`: Publish the CircleCI orb.
