@@ -41,6 +41,10 @@
 
 [Open a Pull Request](https://github.com/semantic-release/semantic-release/blob/master/CONTRIBUTING.md#submitting-a-pull-request) to add your plugin to the list.
 
+- [semantic-release-slack-bot](https://github.com/juliuscc/semantic-release-slack-bot)
+  - `verifyConditions`: Verify that the environment variable `SLACK_WEBHOOK` has been defined.
+  - `success`: Publish a message about the success to a slack channel.
+  - `fail`: Optionally publish a message about failure to a slack channel.
 - [semantic-release-docker](https://github.com/felixfbecker/semantic-release-docker)
   - `verifyConditions`: Verify that all needed configuration is present and login to the Docker registry.
   - `publish`: Tag the image specified by `name` with the new version, push it to Docker Hub and update the latest tag
