@@ -13,7 +13,7 @@ try {
   const result = await semanticRelease({
     // Core options
     branches: [
-      '+([1-9])?(.{+([1-9]),x}).x',
+      '+([0-9])?(.{+([0-9]),x}).x',
       'master',
       'next',
       'next-major',

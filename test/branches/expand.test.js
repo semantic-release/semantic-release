@@ -6,9 +6,9 @@ test('Expand branches defined with globs', async t => {
   const {cwd, repositoryUrl} = await gitRepo(true);
   await gitCommits(['First'], {cwd});
   await gitPush(repositoryUrl, 'master', {cwd});
-  await gitCheckout('1.1.x', true, {cwd});
+  await gitCheckout('1.0.x', true, {cwd});
   await gitCommits(['Second'], {cwd});
-  await gitPush(repositoryUrl, '1.1.x', {cwd});
+  await gitPush(repositoryUrl, '1.0.x', {cwd});
   await gitCheckout('1.x.x', true, {cwd});
   await gitCommits(['Third'], {cwd});
   await gitPush(repositoryUrl, '1.x.x', {cwd});
@@ -30,7 +30,7 @@ test('Expand branches defined with globs', async t => {
 
   const branches = [
     // Should match all maintenance type branches
-    {name: '+([1-9])?(.{+([1-9]),x}).x'},
+    {name: '+([0-9])?(.{+([0-9]),x}).x'},
     {name: 'master', channel: 'latest'},
     {name: 'next'},
     {name: 'pre/{foo,bar}', channel: `\${name.replace(/^pre\\//g, '')}`, prerelease: true},
@@ -42,7 +42,7 @@ test('Expand branches defined with globs', async t => {
   ];
 
   t.deepEqual(await expand({cwd}, branches), [
-    {name: '1.1.x'},
+    {name: '1.0.x'},
     {name: '1.x.x'},
     {name: '2.x'},
     {name: 'master', channel: 'latest'},

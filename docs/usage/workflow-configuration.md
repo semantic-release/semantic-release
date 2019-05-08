@@ -34,7 +34,7 @@ It can be defined as a [glob](https://github.com/micromatch/micromatch#matching-
 
 If `name` doesn't match to any branch existing in the repository, the definition will be ignored. For example the default configuration includes the definition `next` and `next-major` which will become active only when the branches `next` and/or `next-major` are created in the repository. This allow to define your workflow once with all potential branches you might use and have the effective configuration evolving as you create new branches.
 
-For example the configuration `['+([1-9])?(.{+([1-9]),x}).x', 'master', 'next']` will be expanded as:
+For example the configuration `['+([0-9])?(.{+([0-9]),x}).x', 'master', 'next']` will be expanded as:
 ```js
 {
   branches: [
