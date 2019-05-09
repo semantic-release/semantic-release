@@ -131,9 +131,9 @@ test('Plugins are called with expected values', async t => {
       channel: undefined,
       gitTag: 'v1.0.0',
       notes: `${notes1}\n\n${notes2}\n\n${notes3}`,
-      pluginName: '[Function: proxy]',
+      pluginName: '[Function: functionStub]',
     },
-    {...nextRelease, ...release2, notes: `${notes1}\n\n${notes2}\n\n${notes3}`, pluginName: '[Function: proxy]'},
+    {...nextRelease, ...release2, notes: `${notes1}\n\n${notes2}\n\n${notes3}`, pluginName: '[Function: functionStub]'},
     {...nextRelease, notes: `${notes1}\n\n${notes2}\n\n${notes3}`, pluginName: pluginNoop},
   ];
 
@@ -694,10 +694,10 @@ async function addChannelMacro(t, mergeFunction) {
   const result = await semanticRelease(options, {cwd, env: {}, stdout: {write: () => {}}, stderr: {write: () => {}}});
 
   t.deepEqual(result.releases, [
-    {...nextRelease1, ...release1, notes, pluginName: '[Function: proxy]'},
-    {...nextRelease1, notes, pluginName: '[Function: proxy]'},
-    {...nextRelease2, ...release1, notes, pluginName: '[Function: proxy]'},
-    {...nextRelease2, notes, pluginName: '[Function: proxy]'},
+    {...nextRelease1, ...release1, notes, pluginName: '[Function: functionStub]'},
+    {...nextRelease1, notes, pluginName: '[Function: functionStub]'},
+    {...nextRelease2, ...release1, notes, pluginName: '[Function: functionStub]'},
+    {...nextRelease2, notes, pluginName: '[Function: functionStub]'},
   ]);
 
   // Verify the tag has been created on the local and remote repo and reference
@@ -769,10 +769,14 @@ test('Call all "success" plugins even if one errors out', async t => {
 
   t.is(success1.callCount, 1);
   t.deepEqual(success1.args[0][0], config);
-  t.deepEqual(success1.args[0][1].releases, [{...nextRelease, ...release, notes, pluginName: '[Function: proxy]'}]);
+  t.deepEqual(success1.args[0][1].releases, [
+    {...nextRelease, ...release, notes, pluginName: '[Function: functionStub]'},
+  ]);
 
   t.is(success2.callCount, 1);
-  t.deepEqual(success2.args[0][1].releases, [{...nextRelease, ...release, notes, pluginName: '[Function: proxy]'}]);
+  t.deepEqual(success2.args[0][1].releases, [
+    {...nextRelease, ...release, notes, pluginName: '[Function: functionStub]'},
+  ]);
 });
 
 test('Log all "verifyConditions" errors', async t => {
@@ -1202,8 +1206,8 @@ test('Accept "undefined" value returned by "generateNotes" and "false" by "publi
   t.is(publish.callCount, 1);
   t.is(success.callCount, 2);
   t.deepEqual(publish.args[0][1].nextRelease, {...nextRelease, notes: notes2});
-  t.deepEqual(success.args[0][1].releases, [{pluginName: '[Function: proxy]'}]);
-  t.deepEqual(success.args[1][1].releases, [{pluginName: '[Function: proxy]'}]);
+  t.deepEqual(success.args[0][1].releases, [{pluginName: '[Function: functionStub]'}]);
+  t.deepEqual(success.args[1][1].releases, [{pluginName: '[Function: functionStub]'}]);
 });
 
 test('Returns false if triggered by a PR', async t => {
@@ -1399,7 +1403,7 @@ test('Throws "EINVALIDMAINTENANCEMERGE" if merge an out of range release in a ma
   t.is(publish.callCount, 0);
 
   t.is(success.callCount, 1);
-  t.deepEqual(success.args[0][1].releases, [{...nextRelease, notes, pluginName: '[Function: proxy]'}]);
+  t.deepEqual(success.args[0][1].releases, [{...nextRelease, notes, pluginName: '[Function: functionStub]'}]);
 
   t.is(fail.callCount, 1);
   t.deepEqual(fail.args[0][1].errors, errors);
