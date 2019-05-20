@@ -137,7 +137,7 @@ test('Get all branches', async t => {
   await gitCommits(['Third'], {cwd});
   await gitPush(repositoryUrl, 'third-branch', {cwd});
 
-  t.deepEqual((await getBranches({cwd})).sort(), ['master', 'second-branch', 'third-branch'].sort());
+  t.deepEqual((await getBranches(repositoryUrl, {cwd})).sort(), ['master', 'second-branch', 'third-branch'].sort());
 });
 
 test('Get the commit sha for a given tag or falsy if the tag does not exists', async t => {

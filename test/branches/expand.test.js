@@ -41,7 +41,7 @@ test('Expand branches defined with globs', async t => {
     {name: 'beta', channel: `channel-\${name}`, prerelease: true},
   ];
 
-  t.deepEqual(await expand({cwd}, branches), [
+  t.deepEqual(await expand(repositoryUrl, {cwd}, branches), [
     {name: '1.0.x'},
     {name: '1.x.x'},
     {name: '2.x'},
