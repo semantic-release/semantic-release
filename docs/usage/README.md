@@ -6,3 +6,4 @@
 - [Configuration](configuration.md#configuration)
 - [Plugins](plugins.md)
 - [Shareable configurations](shareable-configurations.md)
+- [Workflow configuraion](workflow-configuration.md)
