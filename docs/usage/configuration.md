@@ -73,9 +73,7 @@ Type: `Array`, `String`, `Object`<br>
 Default: `['+([0-9])?(.{+([0-9]),x}).x', 'master', 'next', 'next-major', {name: 'beta', prerelease: true}, {name: 'alpha', prerelease: true}]`<br>
 CLI arguments: `--branches`
 
-The branches on which releases should happen.
-
-Branch names are specified using [bash style pattern matching](https://www.gnu.org/software/bash/manual/html_node/Pattern-Matching.html#Pattern-Matching)
+The branches on which releases should happen.  For more information see [workflow configuration](./workflow-configuration.md).
 
 By default **semantic-release** will release:
 - regular releases to the default distribution channel from the branch `master`
