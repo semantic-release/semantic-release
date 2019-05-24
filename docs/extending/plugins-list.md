@@ -41,6 +41,10 @@
 
 [Open a Pull Request](https://github.com/semantic-release/semantic-release/blob/master/CONTRIBUTING.md#submitting-a-pull-request) to add your plugin to the list.
 
+- [semantic-release-slack-bot](https://github.com/juliuscc/semantic-release-slack-bot)
+  - `verifyConditions`: Verify that the environment variable `SLACK_WEBHOOK` has been defined.
+  - `success`: Publish a message about the success to a slack channel.
+  - `fail`: Optionally publish a message about failure to a slack channel.
 - [semantic-release-docker](https://github.com/felixfbecker/semantic-release-docker)
   - `verifyConditions`: Verify that all needed configuration is present and login to the Docker registry.
   - `publish`: Tag the image specified by `name` with the new version, push it to Docker Hub and update the latest tag
@@ -77,3 +81,9 @@
   - `verifyConditions`: Verify that project has a Gradle wrapper script, and `build.gradle` contains a task to publish artifacts.
   - `prepare`: Changes the version number in the `gradle.properties`
   - `publish`: Triggers Gradle to publish artifacts.
+- [semantic-release-circleci-orb](https://github.com/matt-oakes/semantic-release-circleci-orb)
+  - `verifyConditions`: Verify the presence of the `CIRCLECI_API_TOKEN` environment variable, `orbName` option, and the `circleci` CLI.
+  - `publish`: Publish the CircleCI orb.
+- [semantic-release-github-pages](https://github.com/qiwi/semantic-release-gh-pages-plugin)
+  - `verifyConditions`: Verify the presence of the auth token set via environment variables.
+  - `publish`: Pushes commit to the documentation branch.
