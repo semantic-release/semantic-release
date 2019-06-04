@@ -2,15 +2,19 @@
 
 ## Official plugins
 - [@semantic-release/commit-analyzer](https://github.com/semantic-release/commit-analyzer)
+  - **Note**: this is already part of semantic-release and does not have to be installed separately
   - `analyzeCommits`: Determine the type of release by analyzing commits with [conventional-changelog](https://github.com/conventional-changelog/conventional-changelog)
 - [@semantic-release/release-notes-generator](https://github.com/semantic-release/release-notes-generator)
+  - **Note**: this is already part of semantic-release and does not have to be installed separately
   - `generateNotes`: Generate release notes for the commits added since the last release with [conventional-changelog](https://github.com/conventional-changelog/conventional-changelog)
 - [@semantic-release/github](https://github.com/semantic-release/github)
+  - **Note**: this is already part of semantic-release and does not have to be installed separately
   - `verifyConditions`: Verify the presence and the validity of the GitHub authentication and release configuration
   - `publish`: Publish a [GitHub release](https://help.github.com/articles/about-releases)
   - `success`: Add a comment to GitHub issues and pull requests resolved in the release
   - `fail`: Open a GitHub issue when a release fails
 - [@semantic-release/npm](https://github.com/semantic-release/npm)
+  - **Note**: this is already part of semantic-release and does not have to be installed separately
   - `verifyConditions`: Verify the presence and the validity of the npm authentication and release configuration
   - `prepare`: Update the package.json version and create the npm package tarball
   - `publish`: Publish the package on the npm registry
