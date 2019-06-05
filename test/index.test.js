@@ -83,7 +83,7 @@ test('Plugins are called with expected values', async t => {
   const prepare = stub().resolves();
   const publish = stub().resolves(release2);
   const success = stub().resolves();
-  const env = {...process.env};
+  const env = {};
   const config = {
     branches: [{name: 'master'}, {name: 'next'}],
     repositoryUrl,
@@ -562,7 +562,7 @@ test('Publish a pre-release version', async t => {
     './lib/get-logger': () => t.context.logger,
     'env-ci': () => ({isCi: true, branch: 'beta', isPr: false}),
   });
-  let {releases} = await semanticRelease(options, {cwd, stdout: {write: () => {}}, stderr: {write: () => {}}});
+  let {releases} = await semanticRelease(options, {cwd, env: {}, stdout: {write: () => {}}, stderr: {write: () => {}}});
 
   t.is(releases.length, 1);
   t.is(releases[0].version, '1.1.0-beta.1');
@@ -571,6 +571,7 @@ test('Publish a pre-release version', async t => {
   await gitCommits(['fix: a fix'], {cwd});
   ({releases} = await semanticRelease(options, {
     cwd,
+    env: {},
     stdout: {write: () => {}},
     stderr: {write: () => {}},
   }));
