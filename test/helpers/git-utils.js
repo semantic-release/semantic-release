@@ -195,7 +195,7 @@ export function gitTagHead(tagName, execaOpts) {
  * @return {String} The sha of the commit associated with `tagName` on the remote repository.
  */
 export async function gitRemoteTagHead(repositoryUrl, tagName, execaOpts) {
-  return (await execa.stdout('git', ['ls-remote', '--tags', repositoryUrl, tagName], execaOpts))
+  return (await execa.stdout('git', ['ls-remote', repositoryUrl, `${tagName}^{}`], execaOpts))
     .split('\n')
     .filter(tag => Boolean(tag))
     .map(tag => tag.match(/^(\S+)/)[1])[0];
