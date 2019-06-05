@@ -58,7 +58,7 @@ test('Unshallow and fetch repository', async t => {
   // Verify the shallow clone contains only one commit
   t.is((await gitGetCommits(undefined, {cwd})).length, 1);
 
-  await fetch('master', {cwd});
+  await fetch(repositoryUrl, 'master', {cwd});
 
   // Verify the shallow clone contains all the commits
   t.is((await gitGetCommits(undefined, {cwd})).length, 2);
@@ -73,8 +73,8 @@ test('Do not throw error when unshallow a complete repository', async t => {
   await gitCommits(['Second'], {cwd});
   await gitPush(repositoryUrl, 'second-branch', {cwd});
 
-  await t.notThrowsAsync(fetch('master', {cwd}));
-  await t.notThrowsAsync(fetch('second-branch', {cwd}));
+  await t.notThrowsAsync(fetch(repositoryUrl, 'master', {cwd}));
+  await t.notThrowsAsync(fetch(repositoryUrl, 'second-branch', {cwd}));
 });
 
 test('Fetch all tags on a detached head repository', async t => {
@@ -89,7 +89,7 @@ test('Fetch all tags on a detached head repository', async t => {
   await gitPush(repositoryUrl, 'master', {cwd});
   cwd = await gitDetachedHead(repositoryUrl, commit.hash);
 
-  await fetch('master', {cwd});
+  await fetch(repositoryUrl, 'master', {cwd});
 
   t.deepEqual((await getTags({cwd})).sort(), ['v1.0.0', 'v1.0.1', 'v1.1.0'].sort());
 });
@@ -137,7 +137,7 @@ test('Get all branches', async t => {
   await gitCommits(['Third'], {cwd});
   await gitPush(repositoryUrl, 'third-branch', {cwd});
 
-  t.deepEqual((await getBranches({cwd})).sort(), ['master', 'second-branch', 'third-branch'].sort());
+  t.deepEqual((await getBranches(repositoryUrl, {cwd})).sort(), ['master', 'second-branch', 'third-branch'].sort());
 });
 
 test('Get the commit sha for a given tag or falsy if the tag does not exists', async t => {
@@ -251,7 +251,7 @@ test('Return "true" if repository is up to date', async t => {
   await gitCommits(['First'], {cwd});
   await gitPush(repositoryUrl, 'master', {cwd});
 
-  t.true(await isBranchUpToDate('master', {cwd}));
+  t.true(await isBranchUpToDate(repositoryUrl, 'master', {cwd}));
 });
 
 test('Return falsy if repository is not up to date', async t => {
@@ -260,13 +260,13 @@ test('Return falsy if repository is not up to date', async t => {
   await gitCommits(['Second'], {cwd});
   await gitPush(repositoryUrl, 'master', {cwd});
 
-  t.true(await isBranchUpToDate('master', {cwd}));
+  t.true(await isBranchUpToDate(repositoryUrl, 'master', {cwd}));
 
   const tmpRepo = await gitShallowClone(repositoryUrl);
   await gitCommits(['Third'], {cwd: tmpRepo});
   await gitPush('origin', 'master', {cwd: tmpRepo});
 
-  t.falsy(await isBranchUpToDate('master', {cwd}));
+  t.falsy(await isBranchUpToDate(repositoryUrl, 'master', {cwd}));
 });
 
 test('Return "true" if local repository is ahead', async t => {
@@ -275,5 +275,5 @@ test('Return "true" if local repository is ahead', async t => {
   await gitPush(repositoryUrl, 'master', {cwd});
   await gitCommits(['Second'], {cwd});
 
-  t.true(await isBranchUpToDate('master', {cwd}));
+  t.true(await isBranchUpToDate(repositoryUrl, 'master', {cwd}));
 });

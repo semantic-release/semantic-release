@@ -353,7 +353,7 @@ test('Plugins are called with expected values', async t => {
 
   t.deepEqual(result, {
     lastRelease,
-    commits: [{...commits[0], gitTags: '(HEAD -> master, origin/master, origin/HEAD, next)'}],
+    commits: [{...commits[0], gitTags: '(HEAD -> master, next)'}],
     nextRelease: {...nextRelease, notes: `${notes1}\n\n${notes2}\n\n${notes3}`},
     releases,
   });

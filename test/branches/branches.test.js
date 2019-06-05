@@ -24,7 +24,7 @@ test('Enforce ranges with branching release workflow', async t => {
   ];
   const getBranches = proxyquire('../../lib/branches', {'./get-tags': () => branches, './expand': () => []});
 
-  let result = (await getBranches({options: {branches}})).map(({name, range}) => ({name, range}));
+  let result = (await getBranches('repositoryUrl', {options: {branches}})).map(({name, range}) => ({name, range}));
   t.is(getBranch(result, '1.0.x').range, '>=1.0.0 <1.0.0', 'Cannot release on 1.0.x before a releasing on master');
   t.is(getBranch(result, '1.x').range, '>=1.1.0 <1.0.0', 'Cannot release on 1.x before a releasing on master');
   t.is(getBranch(result, 'master').range, '>=1.0.0 <1.1.0', 'Can release only patch on master');
@@ -32,43 +32,43 @@ test('Enforce ranges with branching release workflow', async t => {
   t.is(getBranch(result, 'next-major').range, '>=2.0.0', 'Can release only major on next-major');
 
   release(branches, 'master', '1.0.0');
-  result = (await getBranches({options: {branches}})).map(({name, range}) => ({name, range}));
+  result = (await getBranches('repositoryUrl', {options: {branches}})).map(({name, range}) => ({name, range}));
   t.is(getBranch(result, '1.0.x').range, '>=1.0.0 <1.0.0', 'Cannot release on 1.0.x before a releasing on master');
   t.is(getBranch(result, '1.x').range, '>=1.1.0 <1.0.0', 'Cannot release on 1.x before a releasing on master');
   t.is(getBranch(result, 'master').range, '>=1.0.0 <1.1.0', 'Can release only patch on master');
 
   release(branches, 'master', '1.0.1');
-  result = (await getBranches({options: {branches}})).map(({name, range}) => ({name, range}));
+  result = (await getBranches('repositoryUrl', {options: {branches}})).map(({name, range}) => ({name, range}));
   t.is(getBranch(result, 'master').range, '>=1.0.1 <1.1.0', 'Can release only patch, > than 1.0.1 on master');
 
   merge(branches, 'master', 'next');
   merge(branches, 'master', 'next-major');
-  result = (await getBranches({options: {branches}})).map(({name, range}) => ({name, range}));
+  result = (await getBranches('repositoryUrl', {options: {branches}})).map(({name, range}) => ({name, range}));
   t.is(getBranch(result, 'master').range, '>=1.0.1 <1.1.0', 'Can release only patch, > than 1.0.1 on master');
   t.is(getBranch(result, 'next').range, '>=1.1.0 <2.0.0', 'Can release only minor on next');
   t.is(getBranch(result, 'next-major').range, '>=2.0.0', 'Can release only major on next-major');
 
   release(branches, 'next', '1.1.0');
   release(branches, 'next', '1.1.1');
-  result = (await getBranches({options: {branches}})).map(({name, range}) => ({name, range}));
+  result = (await getBranches('repositoryUrl', {options: {branches}})).map(({name, range}) => ({name, range}));
   t.is(getBranch(result, 'next').range, '>=1.1.1 <2.0.0', 'Can release only patch or minor, > than 1.1.0 on next');
 
   release(branches, 'next-major', '2.0.0');
   release(branches, 'next-major', '2.0.1');
-  result = (await getBranches({options: {branches}})).map(({name, range}) => ({name, range}));
+  result = (await getBranches('repositoryUrl', {options: {branches}})).map(({name, range}) => ({name, range}));
   t.is(getBranch(result, 'next-major').range, '>=2.0.1', 'Can release any version, > than 2.0.1 on next-major');
 
   merge(branches, 'next-major', 'beta');
   release(branches, 'beta', '3.0.0-beta.1');
   merge(branches, 'beta', 'alpha');
   release(branches, 'alpha', '4.0.0-alpha.1');
-  result = (await getBranches({options: {branches}})).map(({name, range}) => ({name, range}));
+  result = (await getBranches('repositoryUrl', {options: {branches}})).map(({name, range}) => ({name, range}));
   t.is(getBranch(result, 'next-major').range, '>=2.0.1', 'Can release any version, > than 2.0.1 on next-major');
 
   merge(branches, 'master', '1.0.x');
   merge(branches, 'master', '1.x');
   release(branches, 'master', '1.0.1');
-  result = (await getBranches({options: {branches}})).map(({name, range}) => ({name, range}));
+  result = (await getBranches('repositoryUrl', {options: {branches}})).map(({name, range}) => ({name, range}));
   t.is(getBranch(result, 'master').range, '>=1.0.1 <1.1.0', 'Can release only patch, > than 1.0.1 on master');
   t.is(
     getBranch(result, '1.0.x').range,
@@ -80,7 +80,7 @@ test('Enforce ranges with branching release workflow', async t => {
   release(branches, 'master', '1.0.2');
   release(branches, 'master', '1.0.3');
   release(branches, 'master', '1.0.4');
-  result = (await getBranches({options: {branches}})).map(({name, range}) => ({name, range}));
+  result = (await getBranches('repositoryUrl', {options: {branches}})).map(({name, range}) => ({name, range}));
   t.is(getBranch(result, 'master').range, '>=1.0.4 <1.1.0', 'Can release only patch, > than 1.0.4 on master');
   t.is(
     getBranch(result, '1.0.x').range,
@@ -90,7 +90,7 @@ test('Enforce ranges with branching release workflow', async t => {
   t.is(getBranch(result, '1.x').range, '>=1.1.0 <1.0.2', 'Cannot release on 1.x before >= 1.2.0 is released on master');
 
   merge(branches, 'next', 'master');
-  result = (await getBranches({options: {branches}})).map(({name, range}) => ({name, range}));
+  result = (await getBranches('repositoryUrl', {options: {branches}})).map(({name, range}) => ({name, range}));
   t.is(getBranch(result, 'master').range, '>=1.1.1 <1.2.0', 'Can release only patch, > than 1.1.1 on master');
   t.is(getBranch(result, 'next').range, '>=1.2.0 <2.0.0', 'Can release only patch or minor, > than 1.2.0 on next');
   t.is(getBranch(result, 'next-major').range, '>=2.0.1', 'Can release any version, > than 2.0.1 on next-major');
@@ -102,34 +102,34 @@ test('Enforce ranges with branching release workflow', async t => {
   t.is(getBranch(result, '1.x').range, '>=1.1.0 <1.0.2', 'Cannot release on 1.x before >= 2.0.0 is released on master');
 
   merge(branches, 'master', '1.0.x', '1.0.4');
-  result = (await getBranches({options: {branches}})).map(({name, range}) => ({name, range}));
+  result = (await getBranches('repositoryUrl', {options: {branches}})).map(({name, range}) => ({name, range}));
   t.is(getBranch(result, 'master').range, '>=1.1.1 <1.2.0', 'Can release only patch, > than 1.1.1 on master');
   t.is(getBranch(result, '1.0.x').range, '>=1.0.4 <1.1.0', 'Can release on 1.0.x only within range');
   t.is(getBranch(result, '1.x').range, '>=1.1.0 <1.1.0', 'Cannot release on 1.x before >= 2.0.0 is released on master');
 
   merge(branches, 'master', '1.x');
-  result = (await getBranches({options: {branches}})).map(({name, range}) => ({name, range}));
+  result = (await getBranches('repositoryUrl', {options: {branches}})).map(({name, range}) => ({name, range}));
   t.is(getBranch(result, 'master').range, '>=1.1.1 <1.2.0', 'Can release only patch, > than 1.1.1 on master');
   t.is(getBranch(result, '1.0.x').range, '>=1.0.4 <1.1.0', 'Can release on 1.0.x only within range');
   t.is(getBranch(result, '1.x').range, '>=1.1.1 <1.1.1', 'Cannot release on 1.x before >= 2.0.0 is released on master');
 
   merge(branches, 'next-major', 'next');
   merge(branches, 'next', 'master');
-  result = (await getBranches({options: {branches}})).map(({name, range}) => ({name, range}));
+  result = (await getBranches('repositoryUrl', {options: {branches}})).map(({name, range}) => ({name, range}));
   t.is(getBranch(result, 'master').range, '>=2.0.1 <2.1.0', 'Can release only patch, > than 2.0.1 on master');
   t.is(getBranch(result, 'next').range, '>=2.1.0 <3.0.0', 'Can release only minor on next');
   t.is(getBranch(result, 'next-major').range, '>=3.0.0', 'Can release only major on next-major');
   t.is(getBranch(result, '1.x').range, '>=1.1.1 <2.0.0', 'Can release on 1.x only within range');
 
   merge(branches, 'beta', 'master');
-  result = (await getBranches({options: {branches}})).map(({name, range}) => ({name, range}));
+  result = (await getBranches('repositoryUrl', {options: {branches}})).map(({name, range}) => ({name, range}));
   t.is(getBranch(result, 'master').range, '>=2.0.1 <2.1.0', 'Can release only patch, > than 2.0.1 on master');
   t.is(getBranch(result, 'next').range, '>=2.1.0 <3.0.0', 'Can release only minor on next');
   t.is(getBranch(result, 'next-major').range, '>=3.0.0', 'Can release only major on next-major');
 
   branches.push({name: '1.1.x', tags: []});
   merge(branches, '1.x', '1.1.x');
-  result = (await getBranches({options: {branches}})).map(({name, range}) => ({name, range}));
+  result = (await getBranches('repositoryUrl', {options: {branches}})).map(({name, range}) => ({name, range}));
   t.is(getBranch(result, '1.0.x').range, '>=1.0.4 <1.1.0', 'Can release on 1.0.x only within range');
   t.is(getBranch(result, '1.1.x').range, '>=1.1.1 <1.2.0', 'Can release on 1.1.x only within range');
   t.is(getBranch(result, '1.x').range, '>=1.2.0 <2.0.0', 'Can release on 1.x only within range');
@@ -146,7 +146,7 @@ test('Throw SemanticReleaseError for invalid configurations', async t => {
     {name: 'preview', prerelease: 'alpha', tags: []},
   ];
   const getBranches = proxyquire('../../lib/branches', {'./get-tags': () => branches, './expand': () => []});
-  const errors = [...(await t.throwsAsync(getBranches({options: {branches}})))];
+  const errors = [...(await t.throwsAsync(getBranches('repositoryUrl', {options: {branches}})))];
 
   t.is(errors[0].name, 'SemanticReleaseError');
   t.is(errors[0].code, 'EMAINTENANCEBRANCH');
@@ -174,7 +174,7 @@ test('Throw a SemanticReleaseError if there is duplicate branches', async t => {
   const branches = [{name: 'master', tags: []}, {name: 'master', tags: []}];
   const getBranches = proxyquire('../../lib/branches', {'./get-tags': () => branches, './expand': () => []});
 
-  const errors = [...(await t.throwsAsync(getBranches({options: {branches}})))];
+  const errors = [...(await t.throwsAsync(getBranches('repositoryUrl', {options: {branches}})))];
 
   t.is(errors[0].name, 'SemanticReleaseError');
   t.is(errors[0].code, 'EDUPLICATEBRANCHES');
@@ -186,7 +186,7 @@ test('Throw a SemanticReleaseError for each invalid branch name', async t => {
   const branches = [{name: '~master', tags: []}, {name: '^master', tags: []}];
   const getBranches = proxyquire('../../lib/branches', {'./get-tags': () => branches, './expand': () => []});
 
-  const errors = [...(await t.throwsAsync(getBranches({options: {branches}})))];
+  const errors = [...(await t.throwsAsync(getBranches('repositoryUrl', {options: {branches}})))];
 
   t.is(errors[0].name, 'SemanticReleaseError');
   t.is(errors[0].code, 'EINVALIDBRANCHNAME');

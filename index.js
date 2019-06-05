@@ -53,7 +53,8 @@ async function run(context, plugins) {
   // Verify config
   await verify(context);
 
-  context.branches = await getBranches(context);
+  options.repositoryUrl = await getGitAuthUrl(context);
+  context.branches = await getBranches(options.repositoryUrl, context);
   context.branch = context.branches.find(({name}) => name === ciBranch);
 
   if (!context.branch) {
@@ -69,13 +70,11 @@ async function run(context, plugins) {
     `Run automated release from branch ${ciBranch}${options.dryRun ? ' in dry-run mode' : ''}`
   );
 
-  options.repositoryUrl = await getGitAuthUrl(context);
-
   try {
     try {
       await verifyAuth(options.repositoryUrl, context.branch.name, {cwd, env});
     } catch (error) {
-      if (!(await isBranchUpToDate(context.branch.name, {cwd, env}))) {
+      if (!(await isBranchUpToDate(options.repositoryUrl, context.branch.name, {cwd, env}))) {
         logger.log(
           `The local branch ${
             context.branch.name
