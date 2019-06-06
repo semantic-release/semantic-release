@@ -35,7 +35,7 @@
     "aggregate-error": "^3.0.0",
     "cosmiconfig": "^5.0.1",
     "debug": "^4.0.0",
-    "env-ci": "^3.0.0",
+    "env-ci": "^4.0.0",
     "execa": "^1.0.0",
     "figures": "^3.0.0",
     "find-versions": "^3.0.0",
