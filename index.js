@@ -46,9 +46,7 @@ async function run(context, plugins) {
 
   if (ciBranch !== options.branch) {
     logger.log(
-      `This test run was triggered on the branch ${ciBranch}, while semantic-release is configured to only publish from ${
-        options.branch
-      }, therefore a new version won’t be published.`
+      `This test run was triggered on the branch ${ciBranch}, while semantic-release is configured to only publish from ${options.branch}, therefore a new version won’t be published.`
     );
     return false;
   }
