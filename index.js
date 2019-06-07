@@ -76,9 +76,7 @@ async function run(context, plugins) {
     } catch (error) {
       if (!(await isBranchUpToDate(options.repositoryUrl, context.branch.name, {cwd, env}))) {
         logger.log(
-          `The local branch ${
-            context.branch.name
-          } is behind the remote one, therefore a new version won't be published.`
+          `The local branch ${context.branch.name} is behind the remote one, therefore a new version won't be published.`
         );
         return false;
       }
@@ -130,9 +128,7 @@ async function run(context, plugins) {
 
   if (context.lastRelease.gitTag) {
     logger.log(
-      `Found git tag ${context.lastRelease.gitTag} associated with version ${context.lastRelease.version} on branch ${
-        context.branch.name
-      }`
+      `Found git tag ${context.lastRelease.gitTag} associated with version ${context.lastRelease.version} on branch ${context.branch.name}`
     );
   } else {
     logger.log(`No git tag version found on branch ${context.branch.name}`);
