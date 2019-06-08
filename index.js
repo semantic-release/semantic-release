@@ -22,6 +22,8 @@ marked.setOptions({renderer: new TerminalRenderer()});
 async function run(context, plugins) {
   const {cwd, env, options, logger} = context;
   const environment = envCi({env, cwd});
+  console.log(environment);
+  return;
   const {isCi, isPr} = environment;
   const ciBranch = context.options.determineBranch ? context.options.determineBranch() : environment.branch;
 
