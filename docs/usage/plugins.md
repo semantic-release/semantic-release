@@ -17,15 +17,26 @@ A plugin is a npm module that can implement one or more of the following steps:
 
 **Note:** If no plugin with a `analyzeCommits` step is defined `@semantic-release/commit-analyzer` will be used.
 
-See [available plugins](../extending/plugins-list.md).
+## Plugins installation
+
+These five plugins are already part of **semantic-release** and don't have to be installed separately:
+```
+"@semantic-release/commit-analyzer"	
+"@semantic-release/error"	
+"@semantic-release/github"	
+"@semantic-release/npm"	
+"@semantic-release/release-notes-generator"
+```
+
+[Additional plugins](../extending/plugins-list.md) have to be installed via npm:
+
+```bash
+$ npm install @semantic-release/git @semantic-release/changelog -D
+```
 
 ## Plugins configuration
 
-Each plugin must be installed and configured with the [`plugins` options](./configuration.md#plugins) by specifying the list of plugins by npm module name.
-
-```bash
-$ npm install @semantic-release/commit-analyzer @semantic-release/release-notes-generator @semantic-release/npm -D
-```
+Each plugin must be configured with the [`plugins` options](./configuration.md#plugins) by specifying the list of plugins by npm module name.
 
 ```json
 {
