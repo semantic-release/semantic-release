@@ -6,11 +6,12 @@ The [Authentication](../usage/ci-configuration.md#authentication) environment va
 
 
 ### Node.js projects configuration
-First install all the required plugins
+install all the required plugins
 ```
 npm i -D @semantic-release/changelog@next @semantic-release/commit-analyzer@next @semantic-release/git@next @semantic-release/npm@next @semantic-release/release-notes-generator@next semantic-release@next
 ```
 
+### Package.json configuration
 Make sure you configure your package.json file with the required plugins.
 A sample configuration may look like this.
 
