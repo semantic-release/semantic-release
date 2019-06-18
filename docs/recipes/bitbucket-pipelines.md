@@ -1,31 +1,16 @@
-This document shows how you can setup semantic-release with bitbucket's pipelines.
+# Using semantic-release with [Bitbucket-Pipelines](https://de.atlassian.com/software/bitbucket/features/pipelines)
 
-# Setup
-First make sure you install all the required plugins
+## Environment variables
+
+The [Authentication](../usage/ci-configuration.md#authentication) environment variables can be configured in [Pipelines Repository Settings](https://confluence.atlassian.com/bitbucket/variables-in-pipelines-794502608.html)
+
+
+### Node.js projects configuration
+First install all the required plugins
 ```
 npm i -D @semantic-release/changelog@next @semantic-release/commit-analyzer@next @semantic-release/git@next @semantic-release/npm@next @semantic-release/release-notes-generator@next semantic-release@next
 ```
 
-# Pipelines Configuration
-1. Setup the necessary environment variables or SSH keys for Authentication as mentioned [here](https://github.com/semantic-release/semantic-release/blob/master/docs/usage/ci-configuration.md#authentication) and add the required environment variables (like NPM_TOKEN and/or NPM_REGISTRY_URL) to the repository's pipelines' settings from bitbucket UI.
-2. create a bitbucket-pipelines.yml in the root directory of the repository with the following.
-
-```
-image: node:latest
-
-pipelines:
-  default:
-    - step:
-        caches:
-          - node
-        script: # Modify the commands below to build your repository.
-          - printf "//`node -p \"require('url').parse(process.env.NPM_REGISTRY_URL || 'https://registry.npmjs.org').host\"`/:_authToken=${NPM_TOKEN}\nregistry=${NPM_REGISTRY_URL:-https://registry.npmjs.org}\n" >> ~/.npmrc
-          - npm install
-          - npm test
-          - npx semantic-release
-```
-
-# Package.json configuration
 Make sure you configure your package.json file with the required plugins.
 A sample configuration may look like this.
 
@@ -43,3 +28,23 @@ A sample configuration may look like this.
   ]
 },
   ```
+
+### `bitbucket-pipelines.yml` Configuration
+1. Make sure you have the required environment variables like NPM_TOKEN and/or NPM_REGISTRY_URL set up correctly in the repository's pipelines' settings from bitbucket's UI.
+2. create a bitbucket-pipelines.yml in the root directory of the repository with the following.
+
+```
+image: node:latest
+
+pipelines:
+  default:
+    - step:
+        caches:
+          - node
+        script:
+          - printf "//`node -p \"require('url').parse(process.env.NPM_REGISTRY_URL || 'https://registry.npmjs.org').host\"`/:_authToken=${NPM_TOKEN}\nregistry=${NPM_REGISTRY_URL:-https://registry.npmjs.org}\n" >> ~/.npmrc
+          - npm install
+          - npm test
+          - npx semantic-release
+```
+
