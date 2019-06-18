@@ -31,7 +31,7 @@ A sample configuration may look like this.
 
 ### `bitbucket-pipelines.yml` Configuration
 1. Make sure you have the required environment variables like NPM_TOKEN and/or NPM_REGISTRY_URL set up correctly in the repository's pipelines' settings from bitbucket's UI.
-2. create a bitbucket-pipelines.yml in the root directory of the repository with the following.
+2. create a `bitbucket-pipelines.yml` file in the root directory of the repository with the following.
 
 ```
 image: node:latest
