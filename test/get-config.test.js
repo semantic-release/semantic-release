@@ -482,6 +482,6 @@ test('Throw an Error if one of the shareable config cannot be found', async t =>
 
   const error = await t.throwsAsync(t.context.getConfig({cwd}), Error);
 
-  t.is(error.message, "Cannot find module 'non-existing-path'");
+  t.regex(error.message, /Cannot find module 'non-existing-path'/);
   t.is(error.code, 'MODULE_NOT_FOUND');
 });
