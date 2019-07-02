@@ -48,7 +48,7 @@ Each plugin must be configured with the [`plugins` options](./configuration.md#p
 
 ## Plugin ordering
 
-For each [release step](../../README.md#release-steps) the plugins that implement that step will be executed in the order in which the are defined.
+For each [release step](../../README.md#release-steps) the plugins that implement that step will be executed in the order in which they are defined.
 
 ```json
 {
