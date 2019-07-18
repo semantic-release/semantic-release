@@ -21,9 +21,8 @@ See https://github.com/semantic-release/semantic-release/blob/master/docs/suppor
   process.exit(1);
 }
 
-execa
-  .stdout('git', ['--version'])
-  .then(stdout => {
+execa('git', ['--version'])
+  .then(({stdout}) => {
     var gitVersion = findVersions(stdout)[0];
     if (semver.lt(gitVersion, MIN_GIT_VERSION)) {
       console.error(`[semantic-release]: Git version ${MIN_GIT_VERSION} is required. Found ${gitVersion}.`);
