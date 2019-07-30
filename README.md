@@ -93,7 +93,7 @@ After running the tests, the command `semantic-release` will execute the followi
 ## Documentation
 
 - Usage
-  - [Getting started](docs/usage/getting-started.md#getting-started)
+  - [Getting started](docs/usage/getting-started.md)
   - [Installation](docs/usage/installation.md#installation)
   - [CI Configuration](docs/usage/ci-configuration.md#ci-configuration)
   - [Configuration](docs/usage/configuration.md#configuration)
@@ -103,12 +103,17 @@ After running the tests, the command `semantic-release` will execute the followi
   - [Plugins](docs/extending/plugins-list.md)
   - [Shareable configuration](docs/extending/shareable-configurations-list.md)
 - Recipes
-  - [CI configurations](docs/recipes/README.md)
-  - [Package managers and languages](docs/recipes/README.md)
+  - [CI configurations](docs/recipes/ci-configurations.md)
+	- [CircleCI 2.0 workflows](docs/recipes/circleci-workflows.md)
+	- [Travis CI](docs/recipes/travis.md)
+	- [GitLab CI](docs/recipes/gitlab-ci.md)
+  - [Git hosted services](docs/recipes/git-hosted-services.md)
+	- [Git authentication with SSH keys](docs/recipes/git-auth-ssh-keys.md)
+  - [Package managers and languages](docs/recipes/package-managers-and-languages.md)
 - Developer guide
   - [JavaScript API](docs/developer-guide/js-api.md)
-  - [Plugins](docs/developer-guide/plugin.md)
-  - [Shareable configuration](docs/developer-guide/shareable-configuration.md)
+  - [Plugin development](docs/developer-guide/plugin.md)
+  - [Shareable configuration development](docs/developer-guide/shareable-configuration.md)
 - Support
   - [Resources](docs/support/resources.md)
   - [Frequently Asked Questions](docs/support/FAQ.md)
