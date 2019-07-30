@@ -56,7 +56,7 @@ If your CI environment provides [nvm](https://github.com/creationix/nvm) you can
 $ nvm install 8 && yarn global add semantic-release && semantic-release
 ```
 
-See the [CI configuration recipes](../recipes/README.md#ci-configurations) for more details on specific CI environments.
+See the [CI configuration recipes](../recipes/ci-configurations.md) for more details on specific CI environments.
 
 As `semantic-release` is recommended to be executed with [`npx`](https://www.npmjs.com/package/npx) an alternative is required for usage with Yarn. Even though it is possible to install npx with Yarn, it's not recommended. Yarn and npx would be using different cache locations.
 
@@ -75,7 +75,7 @@ To publish a non-Node package (without a `package.json`) you would need to:
 - Set **semantic-release** [options](../usage/configuration.md#options) via [CLI arguments or rc file](../usage/configuration.md#configuration)
 - Make sure your CI job executing the `semantic-release` command has access to [Node >= 8](#why-does-semantic-release-require-node-version--83) to execute the `semantic-release` command
 
-See the [CI configuration recipes](../recipes/README.md#ci-configurations) for more details on specific CI environments.
+See the [CI configuration recipes](../recipes/ci-configurations.md) for more details on specific CI environments.
 
 In addition you will need to configure the **semantic-release** [plugins](../usage/plugins.md#plugins) to disable the [`@semantic-release/npm`](https://github.com/semantic-release/npm) plugin which is used by default and use a plugin for your project type.
 
@@ -107,7 +107,7 @@ Yes, **semantic-release** can be used with any CI service, as long as it provide
 - A way to set [authentication](../usage/ci-configuration.md#authentication) via environment variables
 - A way to guarantee that the `semantic-release` command is [executed only after all the tests of all the jobs in the CI build pass](../usage/ci-configuration.md#run-semantic-release-only-after-all-tests-succeeded)
 
-See the [CI configuration recipes](../recipes/README.md#ci-configurations) for more details on specific CI environments.
+See the [CI configuration recipes](../recipes/ci-configurations.md) for more details on specific CI environments.
 
 ## Can I run semantic-release on my local machine rather than on a CI server?
 
