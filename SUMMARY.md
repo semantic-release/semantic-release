@@ -12,14 +12,13 @@
 - [Shareable configuration](docs/extending/shareable-configurations-list.md)
 
 ## Recipes
-- [CI configurations](docs/recipes/README.md)
+- [CI configurations](docs/recipes/ci-configurations.md)
 	- [CircleCI 2.0 workflows](docs/recipes/circleci-workflows.md)
 	- [Travis CI](docs/recipes/travis.md)
-	- [Travis CI with build stages](docs/recipes/travis-build-stages.md)
 	- [GitLab CI](docs/recipes/gitlab-ci.md)
-- [Git hosted services](docs/recipes/README.md)
+- [Git hosted services](docs/recipes/git-hosted-services.md)
 	- [Git authentication with SSH keys](docs/recipes/git-auth-ssh-keys.md)
-- [Package managers and languages](docs/recipes/README.md)
+- [Package managers and languages](docs/recipes/package-managers-and-languages.md)
 
 ## Developer guide
 - [JavaScript API](docs/developer-guide/js-api.md)
