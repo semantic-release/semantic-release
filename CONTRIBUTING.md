@@ -9,6 +9,7 @@ As a contributor, here are the guidelines we would like you to follow:
 - [Submitting a Pull Request](#submitting-a-pull-request)
 - [Coding rules](#coding-rules)
 - [Working with the code](#working-with-the-code)
+- [Working with the doc](#working-with-the-doc)
 
 We also recommend that you read [How to Contribute to Open Source](https://opensource.guide/how-to-contribute).
 
@@ -249,3 +250,10 @@ $ npm run test
 All the [semantic-release](https://github.com/semantic-release) repositories use [Commitizen](https://github.com/commitizen/cz-cli) to help you create [valid commit messages](#commit-message-guidelines).
 
 After staging your changes with `git add`, run `npm run cm` to start the interactive commit message CLI.
+
+## Working with the doc
+
+Working with the doc is like [working with the code](#working-with-the-code), with the difference that you might find useful to see your changes locally before submitting.
+
+You can do that by following the instructions on [how to use gitbook locally](https://til.secretgeek.net/gitbook/use_gitbook_locally.html).
+
