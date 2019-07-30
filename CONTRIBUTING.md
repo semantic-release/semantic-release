@@ -255,5 +255,36 @@ After staging your changes with `git add`, run `npm run cm` to start the interac
 
 Working with the doc is like [working with the code](#working-with-the-code), with the difference that you might find useful to see your changes locally before submitting.
 
-You can do that by following the instructions on [how to use gitbook locally](https://til.secretgeek.net/gitbook/use_gitbook_locally.html).
+You can do that by following the instructions below (copy/paste-ish from "[Use gitbook locally](https://til.secretgeek.net/gitbook/use_gitbook_locally.html)"):
+
+
+Install `gitbook-cli` globally:
+```
+$ npm install --global gitbook-cli
+```
+
+> **WARNING**: `gitbook-cli` will install the `gitbook` package when it is building the doc. If you have `gitbook` already installed, uninstall it first with a `npm uninstall -g gitbook` before installing `gitbook-cli`. 
+
+Once `gitbook-cli` is installed, from the root of the repo you're working on, you run...
+```
+$ gitbook build .
+Installing GitBook 3.2.3   # it installs the gitbook package automatically
+[..]
+```
+
+And it will generate a subfolder called `_book` which contains `index.html` and all the other html of the finished book. (You may want to add `_book` to your `.gitignore`)
+
+You can view that `_book\index.html` file directly in a browser, or serve the content locally from a mini webserver by running:
+```
+gitbook serve .
+```
+
+And then browse the result on the `port` 4000:
+```
+http://localhost:4000/
+```
+
+You can use a different `port` by using the `--port` argument, e.g. `gitbook serve . --port 4003`.
+
+You can output as `html`, `pdf`, `epub` or `mobi`. To find out how, use `gitbook help`.
 
