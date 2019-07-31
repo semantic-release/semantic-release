@@ -9,16 +9,16 @@
 - [Shareable configurations](docs/01-usage/shareable-configurations.md)
 
 ## Extensions
-- [Plugins](docs/02-extending/plugins-list.md)
-- [Shareable configuration](docs/02-extending/shareable-configurations-list.md)
+- [Available plugins](docs/02-extending/plugins-list.md)
+- [Available shareable configuration](docs/02-extending/shareable-configurations-list.md)
 
 ## Recipes
 - [CI pipelines recipes](docs/03-recipes/ci-pipelines-recipes.md)
-	- [CircleCI 2.0 workflows](docs/03-recipes/circleci-workflows.md)
-	- [Travis CI](docs/03-recipes/travis.md)
-	- [GitLab CI](docs/03-recipes/gitlab-ci.md)
+  - [CircleCI 2.0 workflows](docs/03-recipes/circleci-workflows.md)
+  - [Travis CI](docs/03-recipes/travis.md)
+  - [GitLab CI](docs/03-recipes/gitlab-ci.md)
 - [Git hosted services](docs/03-recipes/git-hosted-services.md)
-	- [Git authentication with SSH keys](docs/03-recipes/git-auth-ssh-keys.md)
+  - [Git authentication with SSH keys](docs/03-recipes/git-auth-ssh-keys.md)
 - [Package managers and languages](docs/03-recipes/package-managers-and-languages.md)
 
 ## Developer guide
