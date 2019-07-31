@@ -2,9 +2,9 @@
 
 ## Environment variables
 
-The [Authentication](../usage/ci-configuration.md#authentication) environment variables can be configured in [CircleCi Project Settings](https://circleci.com/docs/2.0/env-vars/#adding-environment-variables-in-the-app)..
+The [Authentication](../01-usage/ci-configuration.md#authentication) environment variables can be configured in [CircleCi Project Settings](https://circleci.com/docs/2.0/env-vars/#adding-environment-variables-in-the-app)..
 
-Alternatively, the default `NPM_TOKEN` and `GH_TOKEN` can be easily [setup with semantic-release-cli](../usage/getting-started.md#getting-started).
+Alternatively, the default `NPM_TOKEN` and `GH_TOKEN` can be easily [setup with semantic-release-cli](../01-usage/01-getting-started.md#getting-started).
 
 ## Multiple Node jobs configuration
 
@@ -12,7 +12,7 @@ Alternatively, the default `NPM_TOKEN` and `GH_TOKEN` can be easily [setup with 
 
 This example is a minimal configuration for **semantic-release** with a build running Node 6 and 8. See [CircleCI documentation](https://circleci.com/docs/2.0) for additional configuration options.
 
-This example create the workflows `test_node_4`, `test_node_6`, `test_node_8` and `release`. The release workflows will [run `semantic-release` only after the all the `test_node_*` are successful](../usage/ci-configuration.md#run-semantic-release-only-after-all-tests-succeeded).
+This example create the workflows `test_node_4`, `test_node_6`, `test_node_8` and `release`. The release workflows will [run `semantic-release` only after the all the `test_node_*` are successful](../01-usage/ci-configuration.md#run-semantic-release-only-after-all-tests-succeeded).
 
 ```yaml
 version: 2
@@ -54,7 +54,7 @@ workflows:
 
 ### `package.json` configuration for multiple Node jobs
 
-A `package.json` is required only for [local](../usage/installation.md#local-installation) **semantic-release** installation.
+A `package.json` is required only for [local](../01-usage/installation.md#local-installation) **semantic-release** installation.
 
 ```json
 {

@@ -65,9 +65,9 @@ Type: `Object`
 
 **semantic-release** options.
 
-Can be used to set any [core option](../usage/configuration.md#configuration) or [plugin options](../usage/plugins.md#configuration).
+Can be used to set any [core option](../01-usage/configuration.md#configuration) or [plugin options](../01-usage/plugins.md#configuration).
 
-Each option, will take precedence over options configured in the [configuration file](../usage/configuration.md#configuration) and [shareable configurations](../usage/configuration.md#extends).
+Each option, will take precedence over options configured in the [configuration file](../01-usage/configuration.md#configuration) and [shareable configurations](../01-usage/configuration.md#extends).
 
 #### config
 
@@ -229,7 +229,7 @@ Example:
 
 Type: `Array<Object>`
 
-The list of releases published, one release per [publish plugin](../usage/plugins.md#publish-plugin).<br>
+The list of releases published, one release per [publish plugin](../01-usage/plugins.md#publish-plugin).<br>
 Each release object has the following properties:
 
 | Name       | Type     | Description                                                                                   |
