@@ -3,6 +3,7 @@
 ## Manual setup
 
 You can use **semantic-release** with the following manual setup steps:
+
 1. [Install **semantic-release**](installation.md) either locally for your project or globally
 1. Configure:
     1. Your Continuous Integration service to [run **semantic-release**](ci-configuration.md#run-semantic-release-only-after-all-tests-succeeded)
@@ -23,6 +24,7 @@ $ cd your-module
 $ semantic-release-cli setup
 ```
 The output looks something like this:
+
 ![dialogue](../../media/semantic-release-cli.png)
 
 Available options and other information can be found on [`semantic-release-cli`'s doc](https://github.com/semantic-release/cli#semantic-release-cli).
