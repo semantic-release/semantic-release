@@ -156,7 +156,7 @@ Example (`.releaserc` file content):
     ["@semantic-release/exec", {
       "verifyConditionsCmd": "./verify.sh"
     }],
-    "@semantic-release/git",
+    "@semantic-release/github",
     "@semantic-release/gitlab",
   ]
 }
