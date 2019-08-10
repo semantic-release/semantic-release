@@ -18,5 +18,5 @@ $ npx semantic-release
 
 ## Global installation
 
-> **Note:** For a global installation is no longer recommended. Please use local installation and `npx` instead.
+> **Note:** Global installation is no longer recommended. Please use local installation and `npx` instead.
 
