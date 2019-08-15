@@ -25,6 +25,7 @@ import {
   gitRemoteTagHead,
   gitPush,
   gitDetachedHead,
+  gitGetTagger,
 } from './helpers/git-utils';
 
 test('Get the last commit sha', async t => {
@@ -146,7 +147,7 @@ test('Add tag on head commit', async t => {
   const {cwd} = await gitRepo();
   const commits = await gitCommits(['Test commit'], {cwd});
 
-  await tag('tag_name', {cwd});
+  await tag('tag_name', false, {cwd});
 
   await t.is(await gitCommitTag(commits[0].hash, {cwd}), 'tag_name');
 });
@@ -156,7 +157,7 @@ test('Push tag to remote repository', async t => {
   const {cwd, repositoryUrl} = await gitRepo(true);
   const commits = await gitCommits(['Test commit'], {cwd});
 
-  await tag('tag_name', {cwd});
+  await tag('tag_name', false, {cwd});
   await push(repositoryUrl, {cwd});
 
   t.is(await gitRemoteTagHead(repositoryUrl, 'tag_name', {cwd}), commits[0].hash);
@@ -170,10 +171,40 @@ test('Push tag to remote repository with remote branch ahaed', async t => {
   await gitCommits(['Second'], {cwd: tmpRepo});
   await gitPush('origin', 'master', {cwd: tmpRepo});
 
-  await tag('tag_name', {cwd});
+  await tag('tag_name', false, {cwd});
   await push(repositoryUrl, {cwd});
 
   t.is(await gitRemoteTagHead(repositoryUrl, 'tag_name', {cwd}), commits[0].hash);
+});
+
+test('Annotated tag contains tagger', async t => {
+  const {cwd, repositoryUrl} = await gitRepo(true);
+  await gitAddConfig('user.name', 'theUsername', {cwd});
+  await gitAddConfig('user.email', 'theUser@email.com', {cwd});
+  await gitPush(repositoryUrl, 'master', {cwd});
+  const tmpRepo = await gitShallowClone(repositoryUrl);
+  await gitCommits(['Second'], {cwd: tmpRepo});
+  await gitPush('origin', 'master', {cwd: tmpRepo});
+
+  await tag('tag_name', true, {cwd});
+  await push(repositoryUrl, {cwd});
+
+  t.is(await gitGetTagger('tag_name', {cwd}), 'theUsername <theUser@email.com>');
+});
+
+test('Non-annotated tag contains no tagger', async t => {
+  const {cwd, repositoryUrl} = await gitRepo(true);
+  await gitAddConfig('user.name', 'theUsername', {cwd});
+  await gitAddConfig('user.email', 'theUser@email.com', {cwd});
+  await gitPush(repositoryUrl, 'master', {cwd});
+  const tmpRepo = await gitShallowClone(repositoryUrl);
+  await gitCommits(['Second'], {cwd: tmpRepo});
+  await gitPush('origin', 'master', {cwd: tmpRepo});
+
+  await tag('tag_name', false, {cwd});
+  await push(repositoryUrl, {cwd});
+
+  t.is(await gitGetTagger('tag_name', {cwd}), undefined);
 });
 
 test('Return "true" if in a Git repository', async t => {

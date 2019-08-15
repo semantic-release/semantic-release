@@ -227,3 +227,21 @@ export async function gitCommitTag(gitHead, execaOpts) {
 export async function gitPush(repositoryUrl = 'origin', branch = 'master', execaOpts) {
   await execa('git', ['push', '--tags', repositoryUrl, `HEAD:${branch}`], execaOpts);
 }
+
+/**
+ * Get the tagger of a tag.
+ *
+ * @param {String} [tagName] The name of the tag to get the tagger from.
+ * @param {Object} [execaOpts] Options to pass to `execa`.
+ *
+ * @return {String} The name of the tagger or undefined when none is available.
+ * @throws {Error} If the `git` command fails.
+ */
+export async function gitGetTagger(tagName, execaOpts) {
+  return (await execa('git', ['show', tagName], execaOpts)).stdout
+    .split('\n')
+    .map(line => line.match(/Tagger: (.*)/))
+    .filter(Boolean)
+    .filter(match => match.length > 0)
+    .map(match => match[1])[0];
+}
