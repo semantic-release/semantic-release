@@ -16,7 +16,7 @@ if (!semver.satisfies(process.version, pkg.engines.node)) {
   console.error(
     `[semantic-release]: node version ${pkg.engines.node} is required. Found ${process.version}.
 
-See https://github.com/semantic-release/semantic-release/blob/master/docs/support/node-version.md for more details and solutions.`
+See https://github.com/semantic-release/semantic-release/blob/master/docs/05-support/node-version.md for more details and solutions.`
   );
   process.exit(1);
 }
