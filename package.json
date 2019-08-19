@@ -47,7 +47,7 @@
     "resolve-from": "^5.0.0",
     "semver": "^6.0.0",
     "signale": "^1.2.1",
-    "yargs": "^13.1.0"
+    "yargs": "^14.0.0"
   },
   "devDependencies": {
     "ava": "^2.0.0",
