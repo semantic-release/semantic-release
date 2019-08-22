@@ -19,6 +19,8 @@ A plugin is a npm module that can implement one or more of the following steps:
 
 ## Plugins installation
 
+### Default plugins
+
 These four plugins are already part of **semantic-release** and don't have to be installed separately:
 ```
 "@semantic-release/commit-analyzer"
@@ -27,13 +29,15 @@ These four plugins are already part of **semantic-release** and don't have to be
 "@semantic-release/release-notes-generator"
 ```
 
+### Additional plugins
+
 [Additional plugins](../extending/plugins-list.md) have to be installed via npm:
 
 ```bash
 $ npm install @semantic-release/git @semantic-release/changelog -D
 ```
 
-## Plugins configuration
+## Plugins declaration and execution order
 
 Each plugin must be configured with the [`plugins` options](./configuration.md#plugins) by specifying the list of plugins by npm module name.
 
@@ -44,8 +48,6 @@ Each plugin must be configured with the [`plugins` options](./configuration.md#p
 ```
 
 **Note:** If the `plugins` option is defined, it overrides the default plugin list, rather than merging with it.
-
-## Plugin ordering
 
 For each [release step](../../README.md#release-steps) the plugins that implement that step will be executed in the order in which they are defined.
 
@@ -67,11 +69,11 @@ With this configuration **semantic-release** will:
 - execute the `generateNotes` implementation of `@semantic-release/release-notes-generator`
 - execute the `publish` implementation of `@semantic-release/npm`
 
-## Plugin options
+## Plugin options configuration
 
-A plugin options can specified by wrapping the name and an options object in an array. Options configured this way will be passed only to that specific plugin.
+A plugin configuration can be specified by wrapping the name and an options object in an array. Options configured this way will be passed only to that specific plugin.
 
-Global plugin options can defined at the root of the **semantic-release** configuration object. Options configured this way will be passed to all plugins.
+Global plugin configuration can be defined at the root of the **semantic-release** configuration object. Options configured this way will be passed to all plugins.
 
 ```json
 {
