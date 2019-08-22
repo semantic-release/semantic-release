@@ -19,12 +19,11 @@ A plugin is a npm module that can implement one or more of the following steps:
 
 ## Plugins installation
 
-These five plugins are already part of **semantic-release** and don't have to be installed separately:
+These four plugins are already part of **semantic-release** and don't have to be installed separately:
 ```
-"@semantic-release/commit-analyzer"	
-"@semantic-release/error"	
-"@semantic-release/github"	
-"@semantic-release/npm"	
+"@semantic-release/commit-analyzer"
+"@semantic-release/github"
+"@semantic-release/npm"
 "@semantic-release/release-notes-generator"
 ```
 
