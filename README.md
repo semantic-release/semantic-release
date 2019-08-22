@@ -103,12 +103,13 @@ After running the tests, the command `semantic-release` will execute the followi
   - [Plugins](docs/extending/plugins-list.md)
   - [Shareable configuration](docs/extending/shareable-configurations-list.md)
 - Recipes
-  - [CI configurations](docs/recipes/README.md)
-  - [Package managers and languages](docs/recipes/README.md)
+  - [CI configurations](docs/recipes/README.md#ci-configurations)
+  - [Git hosted services](docs/recipes/README.md#git-hosted-services)
+  - [Package managers and languages](docs/recipes/README.md#package-managers-and-languages)
 - Developer guide
   - [JavaScript API](docs/developer-guide/js-api.md)
-  - [Plugins](docs/developer-guide/plugin.md)
-  - [Shareable configuration](docs/developer-guide/shareable-configuration.md)
+  - [Plugins development](docs/developer-guide/plugin.md)
+  - [Shareable configuration development](docs/developer-guide/shareable-configuration.md)
 - Support
   - [Resources](docs/support/resources.md)
   - [Frequently Asked Questions](docs/support/FAQ.md)
