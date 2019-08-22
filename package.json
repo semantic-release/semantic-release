@@ -17,11 +17,6 @@
   "bugs": {
     "url": "https://github.com/semantic-release/semantic-release/issues"
   },
-  "config": {
-    "commitizen": {
-      "path": "cz-conventional-changelog"
-    }
-  },
   "contributors": [
     "Gregor Martynus (https://twitter.com/gr2m)",
     "Pierre Vanduynslager (https://twitter.com/@pvdlg_)"
@@ -42,9 +37,9 @@
     "get-stream": "^5.0.0",
     "git-log-parser": "^1.2.0",
     "hook-std": "^2.0.0",
-    "hosted-git-info": "^2.7.1",
-    "lodash": "^4.17.4",
-    "marked": "^0.6.0",
+    "hosted-git-info": "^3.0.0",
+    "lodash": "^4.17.15",
+    "marked": "^0.7.0",
     "marked-terminal": "^3.2.0",
     "p-locate": "^4.0.0",
     "p-reduce": "^2.0.0",
@@ -52,14 +47,12 @@
     "resolve-from": "^5.0.0",
     "semver": "^6.0.0",
     "signale": "^1.2.1",
-    "yargs": "^13.1.0"
+    "yargs": "^14.0.0"
   },
   "devDependencies": {
     "ava": "^2.0.0",
-    "clear-module": "^3.0.0",
+    "clear-module": "^4.0.0",
     "codecov": "^3.0.0",
-    "commitizen": "^3.0.0",
-    "cz-conventional-changelog": "^2.0.0",
     "delay": "^4.0.0",
     "dockerode": "^2.5.2",
     "file-url": "^3.0.0",
@@ -125,7 +118,6 @@
     "url": "git+https://github.com/semantic-release/semantic-release.git"
   },
   "scripts": {
-    "cm": "git-cz",
     "codecov": "codecov -f coverage/coverage-final.json",
     "lint": "xo",
     "pretest": "npm run lint",

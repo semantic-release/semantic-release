@@ -1,1 +1,0 @@
-# Plugin developer guide

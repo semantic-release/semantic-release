@@ -255,6 +255,6 @@ test('Throws an error if the plugin is not found', t => {
     Error
   );
 
-  t.is(error.message, "Cannot find module 'non-existing-path'");
+  t.regex(error.message, /Cannot find module 'non-existing-path'/);
   t.is(error.code, 'MODULE_NOT_FOUND');
 });
