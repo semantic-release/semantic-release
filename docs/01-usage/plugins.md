@@ -75,11 +75,11 @@ Global plugin options can defined at the root of the **semantic-release** config
     "@semantic-release/commit-analyzer",
     "@semantic-release/release-notes-generator",
     ["@semantic-release/github", {
-      "assets": ["dist/**"]
+      "assets": ["dist/**"]                # plugin configuration
       }],
     "@semantic-release/git"
   ],
-  "preset": "angular"
+  "preset": "angular"                      # option passed to all plugins
 }
 ```
 
