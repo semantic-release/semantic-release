@@ -1,7 +1,7 @@
 # Shareable configurations
 
-A shareable configuration is an npm package that exports a **semantic-release** configuration object. It allows for use of the same configuration across several projects.
+A shareable configuration is an [npm](https://www.npmjs.com/) package that exports a **semantic-release** configuration object. It allows for use of the same configuration across several projects.
 
-Shareable configurations to be use can be declared with the [`extends` option](configuration.md#extends).
+The shareable configurations to use can be set with the [extends](configuration.md#extends) option.
 
-See [shareable configurations list](../02-extending/shareable-configurations-list.md) for examples.
+See [shareable configurations list](../02-extending/shareable-configurations-list.md).

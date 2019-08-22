@@ -154,7 +154,7 @@ Example (`.releaserc` file content):
     "@semantic-release/release-notes-generator",
     "@semantic-release-docker",
     ["@semantic-release/exec", {
-      "verifyConditionsCmd": "./verify.sh"
+      "verifyConditionsCmd": "./verify.sh"    # plugin configuration
     }],
     "@semantic-release/git",
     "@semantic-release/gitlab",
