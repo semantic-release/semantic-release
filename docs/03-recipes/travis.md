@@ -4,7 +4,7 @@
 
 The [Authentication](../01-usage/ci-configuration.md#authentication) environment variables can be configured in [Travis Repository Settings](https://docs.travis-ci.com/user/environment-variables/#defining-variables-in-repository-Settings) or with the [travis env set CLI](https://github.com/travis-ci/travis.rb#env).
 
-Alternatively, the default `NPM_TOKEN` and `GH_TOKEN` can be easily [setup with semantic-release-cli](../01-usage/getting-started.md).
+Alternatively, the default `NPM_TOKEN` and `GH_TOKEN` can be easily [setup with semantic-release-cli](../01-usage/01-getting-started.md#getting-started).
 
 ## Node.js projects configuration
 
