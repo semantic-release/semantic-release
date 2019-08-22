@@ -236,7 +236,7 @@ In addition the [verify conditions step](../../README.md#release-steps) verifies
 
 **semantic-release** is written using the latest [ECMAScript 2017](https://www.ecma-international.org/publications/standards/Ecma-262.htm) features, without transpilation which **requires Node version 8.3 or higher**.
 
-See [Node version requirement](../support/node-version.md#node-version-requirement) for more details and solutions.
+See [Node version requirement](./node-version.md#node-version-requirement) for more details and solutions.
 
 ## What is npx?
 
