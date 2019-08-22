@@ -4,4 +4,4 @@ A shareable configuration is an [npm](https://www.npmjs.com/) package that expor
 
 The shareable configurations to use can be set with the [extends](configuration.md#extends) option.
 
-See [shareable configurations list](../02-extending/shareable-configurations-list.md).
+See [shareable configurations list](../extending/shareable-configurations-list.md).
