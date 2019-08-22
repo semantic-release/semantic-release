@@ -12,7 +12,7 @@ See our [Node Support Policy](node-support-policy.md) for our long-term promise 
 
 The recommended approach is to run the `semantic-release` command from a CI job running on Node 8.3 or higher. This can either be a job used by your project to test on Node >= 8.3 or a dedicated job for the release steps.
 
-See [CI configuration](../usage/ci-configuration.md) and [CI configuration recipes](../recipes/ci-configurations.md) for more details.
+See [CI configuration](../usage/ci-configuration.md) and [CI configuration recipes](../recipes/README.md#ci-configurations) for more details.
 
 ## Alternative solutions
 
