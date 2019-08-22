@@ -4,7 +4,7 @@
 
 The [Authentication](../01-usage/ci-configuration.md#authentication) environment variables can be configured in [CircleCi Project Settings](https://circleci.com/docs/2.0/env-vars/#adding-environment-variables-in-the-app)..
 
-Alternatively, the default `NPM_TOKEN` and `GH_TOKEN` can be easily [setup with semantic-release-cli](../01-usage/getting-started.md#guided-setup-through-semantic-release-cli).
+Alternatively, the default `NPM_TOKEN` and `GH_TOKEN` can be easily [setup with semantic-release-cli](../01-usage/01-getting-started.md#getting-started).
 
 ## Multiple Node jobs configuration
 
