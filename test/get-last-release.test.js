@@ -30,6 +30,34 @@ test('Get the highest non-prerelease valid tag', async t => {
   t.deepEqual(t.context.log.args[0], ['Found git tag v2.0.0 associated with version 2.0.0']);
 });
 
+test('Get the highest prerelease valid tag', async t => {
+  // Create a git repository, set the current working directory at the root of the repo
+  const {cwd} = await gitRepo();
+  // Create some commits and tags
+  await gitCommits(['First'], {cwd});
+  await gitTagVersion('foo', undefined, {cwd});
+  await gitCommits(['Second'], {cwd});
+  await gitTagVersion('v2.0.0', undefined, {cwd});
+  await gitCommits(['Third'], {cwd});
+  await gitTagVersion('v1.0.0', undefined, {cwd});
+  await gitCommits(['Fourth'], {cwd});
+  await gitTagVersion('v3.0', undefined, {cwd});
+  const commits = await gitCommits(['Fifth'], {cwd});
+  await gitTagVersion('v3.0.0-beta.1', undefined, {cwd});
+
+  const result = await getLastRelease({
+    cwd,
+    options: {
+      tagFormat: `v\${version}`,
+      prereleases: true,
+    },
+    logger: t.context.logger,
+  });
+
+  t.deepEqual(result, {gitHead: commits[0].hash, gitTag: 'v3.0.0-beta.1', version: '3.0.0-beta.1'});
+  t.deepEqual(t.context.log.args[0], ['Found git tag v3.0.0-beta.1 associated with version 3.0.0-beta.1']);
+});
+
 test('Get the highest tag in the history of the current branch', async t => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
