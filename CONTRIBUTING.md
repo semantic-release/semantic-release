@@ -9,7 +9,6 @@ As a contributor, here are the guidelines we would like you to follow:
 - [Submitting a Pull Request](#submitting-a-pull-request)
 - [Coding rules](#coding-rules)
 - [Working with the code](#working-with-the-code)
-- [Working with the doc](#working-with-the-doc)
 
 We also recommend that you read [How to Contribute to Open Source](https://opensource.guide/how-to-contribute).
 
@@ -21,7 +20,7 @@ Help us keep **semantic-release** open and inclusive. Please read and follow our
 
 ### Improve documentation
 
-As a **semantic-release** user, you are the perfect candidate to help us improve our documentation: typo corrections, clarifications, more examples, new [recipes](docs/03-recipes/README.md), etc. Take a look at the [documentation issues that need help](https://github.com/issues?utf8=%E2%9C%93&q=is%3Aopen+is%3Aissue+user%3Asemantic-release+archived%3Afalse+label%3A%22help+wanted%22+label%3Adocs+).
+As a **semantic-release** user, you are the perfect candidate to help us improve our documentation: typo corrections, clarifications, more examples, new [recipes](docs/recipes/README.md), etc. Take a look at the [documentation issues that need help](https://github.com/issues?utf8=%E2%9C%93&q=is%3Aopen+is%3Aissue+user%3Asemantic-release+archived%3Afalse+label%3A%22help+wanted%22+label%3Adocs+).
 
 Please follow the [Documentation guidelines](#documentation).
 
@@ -37,7 +36,7 @@ Confirmed bugs and ready-to-implement features are marked with the [help wanted 
 
 ## Using the issue tracker
 
-The issue tracker is the channel for [bug reports](#bug-report), [features requests](#feature-request) and [submitting pull requests](#submitting-a-pull-request) only. Please use the [Support](docs/05-support/README.md) and [Get help](README.md#get-help) sections for support, troubleshooting and questions.
+The issue tracker is the channel for [bug reports](#bug-report), [features requests](#feature-request) and [submitting pull requests](#submitting-a-pull-request) only. Please use the [Support](docs/support/README.md) and [Get help](README.md#get-help) sections for support, troubleshooting and questions.
 
 Before opening an issue or a Pull Request, please use the [GitHub issue search](https://github.com/issues?utf8=%E2%9C%93&q=user%3Asemantic-release) to make sure the bug or feature request hasn't been already reported or fixed.
 
@@ -51,7 +50,7 @@ Feature requests are welcome, but take a moment to find out whether your idea fi
 
 ### New plugin request
 
-[Plugins](docs/01-usage/plugins.md) are a great way to extend **semantic-release** capabilities, integrate with other systems and support new project type. Please provide as much detail and context as possible and fill the information requested in the [New plugin request template](https://github.com/semantic-release/semantic-release/issues/new?template=plugin-request.md).
+[Plugins](docs/usage/plugins.md) are a great way to extend **semantic-release** capabilities, integrate with other systems and support new project type. Please provide as much detail and context as possible and fill the information requested in the [New plugin request template](https://github.com/semantic-release/semantic-release/issues/new?template=plugin-request.md).
 
 ## Submitting a Pull Request
 
@@ -250,41 +249,3 @@ $ npm run test
 All the [semantic-release](https://github.com/semantic-release) repositories use [Commitizen](https://github.com/commitizen/cz-cli) to help you create [valid commit messages](#commit-message-guidelines).
 
 After staging your changes with `git add`, run `npm run cm` to start the interactive commit message CLI.
-
-## Working with the doc
-
-Working with the doc is like [working with the code](#working-with-the-code), with the difference that you might find useful to see your changes locally before submitting.
-
-You can do that by following the instructions below (copy/paste-ish from "[Use gitbook locally](https://til.secretgeek.net/gitbook/use_gitbook_locally.html)"):
-
-
-Install `gitbook-cli` globally:
-```
-$ npm install --global gitbook-cli
-```
-
-> **WARNING**: `gitbook-cli` will install the `gitbook` package when it is building the doc. If you have `gitbook` already installed, uninstall it first with a `npm uninstall -g gitbook` before installing `gitbook-cli`. 
-
-Once `gitbook-cli` is installed, from the root of the repo you're working on, you run...
-```
-$ gitbook build .
-Installing GitBook 3.2.3   # it installs the gitbook package automatically
-[..]
-```
-
-And it will generate a subfolder called `_book` which contains `index.html` and all the other html of the finished book. (You may want to add `_book` to your `.gitignore`)
-
-You can view that `_book\index.html` file directly in a browser, or serve the content locally from a mini webserver by running:
-```
-gitbook serve .
-```
-
-And then browse the result on the `port` 4000:
-```
-http://localhost:4000/
-```
-
-You can use a different `port` by using the `--port` argument, e.g. `gitbook serve . --port 4003`.
-
-You can output as `html`, `pdf`, `epub` or `mobi`. To find out how, use `gitbook help`.
-
