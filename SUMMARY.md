@@ -1,6 +1,7 @@
 # Summary
 
 ## Usage
+- [Getting started](docs/usage/getting-started.md#getting-started)
 - [Installation](docs/usage/installation.md#installation)
 - [CI Configuration](docs/usage/ci-configuration.md#ci-configuration)
 - [Configuration](docs/usage/configuration.md#configuration)
@@ -12,19 +13,18 @@
 - [Shareable configuration](docs/extending/shareable-configurations-list.md)
 
 ## Recipes
-- [CI configurations](docs/recipes/README.md)
-	- [CircleCI 2.0 workflows](docs/recipes/circleci-workflows.md)
+- [CI configurations](docs/recipes/README.md#ci-configurations)
+	- [CircleCI 2.0](docs/recipes/circleci-workflows.md)
 	- [Travis CI](docs/recipes/travis.md)
-	- [Travis CI with build stages](docs/recipes/travis-build-stages.md)
 	- [GitLab CI](docs/recipes/gitlab-ci.md)
-- [Git hosted services](docs/recipes/README.md)
+- [Git hosted services](docs/recipes/README.md#git-hosted-services)
 	- [Git authentication with SSH keys](docs/recipes/git-auth-ssh-keys.md)
-- [Package managers and languages](docs/recipes/README.md)
+- [Package managers and languages](docs/recipes/README.md#package-managers-and-languages)
 
 ## Developer guide
 - [JavaScript API](docs/developer-guide/js-api.md)
-- [Plugin](docs/developer-guide/plugin.md)
-- [Shareable configuration](docs/developer-guide/shareable-configuration.md)
+- [Plugin development](docs/developer-guide/plugin.md)
+- [Shareable configuration development](docs/developer-guide/shareable-configuration.md)
 
 ## Support
 - [Resources](docs/support/resources.md)

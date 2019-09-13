@@ -18,11 +18,6 @@
   </a>
 </p>
 <p align="center">
-  <a href="https://waffle.io/semantic-release/semantic-release">
-    <img alt="Waffle.io" src="https://badge.waffle.io/semantic-release/semantic-release.svg?columns=all">
-  </a>
-</p>
-<p align="center">
   <a href="https://www.npmjs.com/package/semantic-release">
     <img alt="npm latest version" src="https://img.shields.io/npm/v/semantic-release/latest.svg">
   </a>
@@ -61,7 +56,7 @@ This removes the immediate connection between human emotions and version numbers
 
 By default **semantic-release** uses [Angular Commit Message Conventions](https://github.com/angular/angular.js/blob/master/DEVELOPERS.md#-git-commit-guidelines). The commit message format can be changed with the [`preset` or `config` options](docs/usage/configuration.md#options) of the [@semantic-release/commit-analyzer](https://github.com/semantic-release/commit-analyzer#options) and [@semantic-release/release-notes-generator](https://github.com/semantic-release/release-notes-generator#options) plugins.
 
-Tools such as [commitizen](https://github.com/commitizen/cz-cli), [commitlint](https://github.com/marionebl/commitlint) or [semantic-git-commit-cli](https://github.com/JPeer264/node-semantic-git-commit-cli) can be used to help contributors and enforce valid commit messages.
+Tools such as [commitizen](https://github.com/commitizen/cz-cli), [commitlint](https://github.com/conventional-changelog/commitlint) or [semantic-git-commit-cli](https://github.com/JPeer264/node-semantic-git-commit-cli) can be used to help contributors and enforce valid commit messages.
 
 Here is an example of the release type that will be done based on a commit messages:
 
@@ -119,8 +114,8 @@ After running the tests, the command `semantic-release` will execute the followi
   - [Package managers and languages](docs/recipes/README.md)
 - Developer guide
   - [JavaScript API](docs/developer-guide/js-api.md)
-  - [Plugins](docs/developer-guide/plugin.md)
-  - [Shareable configuration](docs/developer-guide/shareable-configuration.md)
+  - [Plugins development](docs/developer-guide/plugin.md)
+  - [Shareable configuration development](docs/developer-guide/shareable-configuration.md)
 - Support
   - [Resources](docs/support/resources.md)
   - [Frequently Asked Questions](docs/support/FAQ.md)

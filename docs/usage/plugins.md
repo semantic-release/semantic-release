@@ -17,15 +17,29 @@ A plugin is a npm module that can implement one or more of the following steps:
 
 **Note:** If no plugin with a `analyzeCommits` step is defined `@semantic-release/commit-analyzer` will be used.
 
-See [available plugins](../extending/plugins-list.md).
+## Plugins installation
 
-## Plugins configuration
+### Default plugins
 
-Each plugin must be installed and configured with the [`plugins` options](./configuration.md#plugins) by specifying the list of plugins by npm module name.
+These four plugins are already part of **semantic-release** and don't have to be installed separately:
+```
+"@semantic-release/commit-analyzer"
+"@semantic-release/github"
+"@semantic-release/npm"
+"@semantic-release/release-notes-generator"
+```
+
+### Additional plugins
+
+[Additional plugins](../extending/plugins-list.md) have to be installed via npm:
 
 ```bash
-$ npm install @semantic-release/commit-analyzer @semantic-release/release-notes-generator @semantic-release/npm -D
+$ npm install @semantic-release/git @semantic-release/changelog -D
 ```
+
+## Plugins declaration and execution order
+
+Each plugin must be configured with the [`plugins` options](./configuration.md#plugins) by specifying the list of plugins by npm module name.
 
 ```json
 {
@@ -33,9 +47,9 @@ $ npm install @semantic-release/commit-analyzer @semantic-release/release-notes-
 }
 ```
 
-## Plugin ordering
+**Note:** If the `plugins` option is defined, it overrides the default plugin list, rather than merging with it.
 
-For each [release step](../../README.md#release-steps) the plugins that implement that step will be executed in the order in which the are defined.
+For each [release step](../../README.md#release-steps) the plugins that implement that step will be executed in the order in which they are defined.
 
 ```json
 {
@@ -55,11 +69,11 @@ With this configuration **semantic-release** will:
 - execute the `generateNotes` implementation of `@semantic-release/release-notes-generator`
 - execute the `publish` implementation of `@semantic-release/npm`
 
-## Plugin options
+## Plugin options configuration
 
-A plugin options can specified by wrapping the name and an options object in an array. Options configured this way will be passed only to that specific plugin.
+A plugin configuration can be specified by wrapping the name and an options object in an array. Options configured this way will be passed only to that specific plugin.
 
-Global plugin options can defined at the root of the **semantic-release** configuration object. Options configured this way will be passed to all plugins.
+Global plugin configuration can be defined at the root of the **semantic-release** configuration object. Options configured this way will be passed to all plugins.
 
 ```json
 {

@@ -46,7 +46,7 @@ try {
     }
 
     for (const release of releases) {
-      console.log(`The release was published with plugin "${pluginName}".`);
+      console.log(`The release was published with plugin "${release.pluginName}".`);
     }
   } else {
     console.log('No release published.');
