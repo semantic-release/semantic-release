@@ -273,19 +273,6 @@ test('Return the "https" formatted URL if "gitCredentials" is defined with "BITB
   );
 });
 
-test('Return the "https" formatted URL if "GITHUB_ACTION" is set', async t => {
-  const {cwd} = await gitRepo();
-
-  t.is(
-    await getAuthUrl({
-      cwd,
-      env: {...env, GITHUB_ACTION: 'foo', GITHUB_TOKEN: 'token'},
-      options: {branch: 'master', repositoryUrl: 'git@host.null:owner/repo.git'},
-    }),
-    'https://x-access-token:token@host.null/owner/repo.git'
-  );
-});
-
 test('Handle "https" URL with group and subgroup, with "GIT_CREDENTIALS"', async t => {
   const {cwd} = await gitRepo();
 
