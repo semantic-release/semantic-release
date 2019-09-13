@@ -4,7 +4,7 @@
 
 **semantic-release** takes care of updating the `package.json`’s version before publishing to [npm](https://www.npmjs.com).
 
-By default, only the published package will contains the version, which is the only place where it is *really* required, but the updated `package.json` will not be pushed to the Git repository
+By default, only the published package will contain the version, which is the only place where it is *really* required, but the updated `package.json` will not be pushed to the Git repository
 
 However, the [`@semantic-release/git`](https://github.com/semantic-release/git) plugin can be used to push the updated `package.json` as well as other files to the Git repository.
 
@@ -236,7 +236,7 @@ In addition the [verify conditions step](../../README.md#release-steps) verifies
 
 **semantic-release** is written using the latest [ECMAScript 2017](https://www.ecma-international.org/publications/standards/Ecma-262.htm) features, without transpilation which **requires Node version 8.3 or higher**.
 
-See [Node version requirement](../support/node-version.md#node-version-requirement) for more details and solutions.
+See [Node version requirement](./node-version.md#node-version-requirement) for more details and solutions.
 
 ## What is npx?
 

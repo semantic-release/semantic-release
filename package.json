@@ -3,71 +3,72 @@
   "description": "Automated semver compliant package publishing",
   "version": "0.0.0-development",
   "author": "Stephan Bönnemann <stephan@boennemann.me> (http://boennemann.me)",
+  "ava": {
+    "files": [
+      "test/**/*.test.js"
+    ],
+    "helpers": [
+      "test/helpers/**/*"
+    ]
+  },
   "bin": {
     "semantic-release": "bin/semantic-release.js"
   },
   "bugs": {
     "url": "https://github.com/semantic-release/semantic-release/issues"
   },
-  "config": {
-    "commitizen": {
-      "path": "cz-conventional-changelog"
-    }
-  },
   "contributors": [
     "Gregor Martynus (https://twitter.com/gr2m)",
     "Pierre Vanduynslager (https://twitter.com/@pvdlg_)"
   ],
   "dependencies": {
-    "@semantic-release/commit-analyzer": "^7.0.0-beta.1",
+    "@semantic-release/commit-analyzer": "^7.0.0-beta.3",
     "@semantic-release/error": "^2.2.0",
-    "@semantic-release/github": "^5.4.0-beta.1",
-    "@semantic-release/npm": "^5.2.0-beta.5",
+    "@semantic-release/github": "^5.5.0-beta.1",
+    "@semantic-release/npm": "^5.2.0-beta.8",
     "@semantic-release/release-notes-generator": "^7.1.2",
-    "aggregate-error": "^2.0.0",
+    "aggregate-error": "^3.0.0",
     "cosmiconfig": "^5.0.1",
     "debug": "^4.0.0",
-    "env-ci": "^3.0.0",
+    "env-ci": "^4.0.0",
     "execa": "^1.0.0",
-    "figures": "^2.0.0",
+    "figures": "^3.0.0",
     "find-versions": "^3.0.0",
-    "get-stream": "^4.0.0",
+    "get-stream": "^5.0.0",
     "git-log-parser": "^1.2.0",
-    "hook-std": "^1.1.0",
-    "hosted-git-info": "^2.7.1",
-    "lodash": "^4.17.4",
-    "marked": "^0.6.0",
+    "hook-std": "^2.0.0",
+    "hosted-git-info": "^3.0.0",
+    "lodash": "^4.17.15",
+    "marked": "^0.7.0",
     "marked-terminal": "^3.2.0",
     "micromatch": "3.1.5",
     "p-each-series": "^1.0.0",
-    "p-reduce": "^1.0.0",
-    "read-pkg-up": "^4.0.0",
-    "resolve-from": "^4.0.0",
-    "semver": "^5.4.1",
+    "p-reduce": "^2.0.0",
+    "read-pkg-up": "^6.0.0",
+    "resolve-from": "^5.0.0",
+    "semver": "^6.0.0",
     "semver-diff": "^2.1.0",
     "signale": "^1.2.1",
-    "yargs": "^12.0.0"
+    "yargs": "^14.0.0"
   },
   "devDependencies": {
-    "ava": "^1.0.1",
-    "clear-module": "^3.0.0",
+    "ava": "^2.0.0",
+    "clear-module": "^4.0.0",
     "codecov": "^3.0.0",
-    "commitizen": "^3.0.0",
-    "cz-conventional-changelog": "^2.0.0",
     "delay": "^4.0.0",
     "dockerode": "^2.5.2",
-    "file-url": "^2.0.2",
-    "fs-extra": "^7.0.0",
+    "file-url": "^3.0.0",
+    "fs-extra": "^8.0.0",
     "got": "^9.0.0",
     "js-yaml": "^3.10.0",
     "mockserver-client": "^5.1.1",
-    "nock": "^10.0.0",
-    "nyc": "^13.1.0",
-    "p-retry": "^3.0.0",
+    "nock": "^11.1.0",
+    "nyc": "^14.0.0",
+    "p-retry": "^4.0.0",
     "proxyquire": "^2.0.0",
-    "sinon": "^7.1.1",
+    "sinon": "^7.2.7",
     "stream-buffers": "^3.0.2",
-    "tempy": "^0.2.1",
+    "tempy": "^0.3.0",
     "xo": "^0.24.0"
   },
   "engines": {
@@ -119,7 +120,6 @@
     "url": "git+https://github.com/semantic-release/semantic-release.git"
   },
   "scripts": {
-    "cm": "git-cz",
     "codecov": "codecov -f coverage/coverage-final.json",
     "lint": "xo",
     "pretest": "npm run lint",
