@@ -54,7 +54,7 @@
     "clear-module": "^4.0.0",
     "codecov": "^3.0.0",
     "delay": "^4.0.0",
-    "dockerode": "^2.5.2",
+    "dockerode": "^3.0.0",
     "file-url": "^3.0.0",
     "fs-extra": "^8.0.0",
     "got": "^9.0.0",
