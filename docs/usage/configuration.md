@@ -1,7 +1,7 @@
 # Configuration
 
 **semantic-release** configuration consists of:
-- Git repository ([URL](#repositoryurl) and options [release branch](#branch) and [tag format](#tagformat))
+- Git repository ([URL](#repositoryurl) and options [release branches](#branches) and [tag format](#tagformat))
 - Plugins [declaration](#plugins) and options
 - Run mode ([debug](#debug), [dry run](#dryrun) and [local (no CI)](#ci))
 
@@ -76,7 +76,7 @@ The branches on which releases should happen. By default **semantic-release** wi
 
 **Note**: Once **semantic-release** is configured, any user with the permission to push commits on one of those branches will be able to publish a release. It is recommended to protect those branches, for example with [GitHub protected branches](https://help.github.com/articles/about-protected-branches).
 
-See [Plugins configuration](plugins.md#plugins) for more details.
+See [Plugins configuration](workflow-configuration.md#workflow-configuration) for more details.
 
 ### repositoryUrl
 
@@ -150,7 +150,7 @@ Output debugging information. This can also be enabled by setting the `DEBUG` en
 ## Existing version tags
 
 **semantic-release** uses [Git tags](https://git-scm.com/book/en/v2/Git-Basics-Tagging) to determine the commits added since the last release.
-If a release has been published before setting up **semantic-release** you must make sure the most recent commit included in the last published release is in the [release branch](#branch) history and is tagged with the version released, formatted according to the [tag format](#tagformat) configured (defaults to `vx.y.z`).
+If a release has been published before setting up **semantic-release** you must make sure the most recent commit included in the last published release is in the [release branches](#branches) history and is tagged with the version released, formatted according to the [tag format](#tagformat) configured (defaults to `vx.y.z`).
 
 If the previous releases were published with [`npm publish`](https://docs.npmjs.com/cli/publish) this should already be the case.
 
