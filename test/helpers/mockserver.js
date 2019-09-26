@@ -30,7 +30,7 @@ async function start() {
       minTimeout: 1000,
       factor: 2,
     });
-  } catch (error) {
+  } catch (_) {
     throw new Error(`Couldn't start mock-server after 2 min`);
   }
 }

@@ -1,3 +1,5 @@
+/* eslint require-atomic-updates: off */
+
 const {template, pick} = require('lodash');
 const marked = require('marked');
 const TerminalRenderer = require('marked-terminal');
