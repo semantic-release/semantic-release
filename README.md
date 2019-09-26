@@ -103,6 +103,7 @@ After running the tests, the command `semantic-release` will execute the followi
   - [CI Configuration](docs/usage/ci-configuration.md#ci-configuration)
   - [Configuration](docs/usage/configuration.md#configuration)
   - [Plugins](docs/usage/plugins.md)
+  - [Workflow configuration](docs/usage/workflow-configuration.md)
   - [Shareable configurations](docs/usage/shareable-configurations.md)
 - Extending
   - [Plugins](docs/extending/plugins-list.md)
