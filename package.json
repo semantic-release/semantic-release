@@ -43,7 +43,7 @@
     "marked-terminal": "^3.2.0",
     "p-locate": "^4.0.0",
     "p-reduce": "^2.0.0",
-    "read-pkg-up": "^6.0.0",
+    "read-pkg-up": "^7.0.0",
     "resolve-from": "^5.0.0",
     "semver": "^6.0.0",
     "signale": "^1.2.1",
