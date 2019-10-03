@@ -91,3 +91,7 @@
 - [semantic-release-github-pages](https://github.com/qiwi/semantic-release-gh-pages-plugin)
   - `verifyConditions`: Verify the presence of the auth token set via environment variables.
   - `publish`: Pushes commit to the documentation branch.
+- [leiningen-semantic-release](https://github.com/NoxHarmonium/leiningen-semantic-release)
+  - `verifyConditions`: Checks the project.clj is syntactically valid.
+  - `prepare`: Update the project.clj version and package the output jar file.
+  - `publish`: Publish the jar (and generated Maven metadata) to a maven repository (or clojars).
