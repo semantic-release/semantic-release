@@ -52,7 +52,7 @@ This removes the immediate connection between human emotions and version numbers
 
 By default **semantic-release** uses [Angular Commit Message Conventions](https://github.com/angular/angular.js/blob/master/DEVELOPERS.md#-git-commit-guidelines). The commit message format can be changed with the [`preset` or `config` options](docs/usage/configuration.md#options) of the [@semantic-release/commit-analyzer](https://github.com/semantic-release/commit-analyzer#options) and [@semantic-release/release-notes-generator](https://github.com/semantic-release/release-notes-generator#options) plugins.
 
-Tools such as [commitizen](https://github.com/commitizen/cz-cli), [commitlint](https://github.com/conventional-changelog/commitlint) or [semantic-git-commit-cli](https://github.com/JPeer264/node-semantic-git-commit-cli) can be used to help contributors and enforce valid commit messages.
+Tools such as [commitizen](https://github.com/commitizen/cz-cli) or [commitlint](https://github.com/conventional-changelog/commitlint) can be used to help contributors and enforce valid commit messages.
 
 Here is an example of the release type that will be done based on a commit messages:
 
