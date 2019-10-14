@@ -40,18 +40,6 @@ jobs:
         run: npx semantic-release
 ```
 
-### `package.json` configuration
-
-A `package.json` is required only for [local](../usage/installation.md#local-installation) **semantic-release** installation.
-
-```json
-{
-   "devDependencies":{
-      "semantic-release":"^15.13.18"
-   }
-}
-```
-
 ## Pushing `package.json` changes to `master` branch
 
 If you want to keep your `package.json` updated in your code versioning with your released version you could use [`@semantic-release/git`](https://github.com/semantic-release/git) plugin. To use it you'll need to generate a `GH_TOKEN` with [permission to push changes to `master` branch](https://help.github.com/en/articles/enabling-branch-restrictions).
