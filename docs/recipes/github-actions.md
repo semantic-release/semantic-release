@@ -4,8 +4,6 @@
 
 The [Authentication](../usage/ci-configuration.md#authentication) environment variables can be configured with [Secret variables](https://help.github.com/en/articles/virtual-environments-for-github-actions#creating-and-using-secrets-encrypted-variables).
 
-For this example, you'll need to setup a `NPM_TOKEN` to publish your package to NPM registry and a `GH_TOKEN` to generate a release at GitHub.
-
 ## Node project configuration
 
 [GitHub Actions](https://github.com/features/actions) supports [Workflows](https://help.github.com/en/articles/configuring-workflows) allowing to test on multiple Node versions and publishing a release only when all test pass.
@@ -61,8 +59,6 @@ And `Release` workflow will be triggered.
 
 A `package.json` is required only for [local](../usage/installation.md#local-installation) **semantic-release** installation.
 
-Package [`@semantic-release/git`](https://github.com/semantic-release/git) is optional but **recommended** to push your `package.json` version changes to master before generate GitHub release.
-
 ```json
 {
    "release":{
@@ -70,21 +66,15 @@ Package [`@semantic-release/git`](https://github.com/semantic-release/git) is op
          "@semantic-release/commit-analyzer",
          "@semantic-release/github",
          "@semantic-release/npm",
-         "@semantic-release/release-notes-generator",
-         [
-            "@semantic-release/git",
-            {
-               "assets":[
-                  "package.json"
-               ],
-               "message":"chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
-            }
-         ]
+         "@semantic-release/release-notes-generator"
       ]
    },
    "devDependencies":{
-      "@semantic-release/git":"^7.0.16",
       "semantic-release":"^15.13.18"
    }
 }
 ```
+
+## Pushing `package.json` changes to `master` branch
+
+If you want to keep your `package.json` updated in your code versioning with your released version you could use [`@semantic-release/git`](https://github.com/semantic-release/git) plugin. To use it you'll need to generate a `GH_TOKEN` with [permission to push changes to `master` branch](https://help.github.com/en/articles/enabling-branch-restrictions).
