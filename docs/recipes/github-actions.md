@@ -47,14 +47,6 @@ A `package.json` is required only for [local](../usage/installation.md#local-ins
 
 ```json
 {
-   "release":{
-      "plugins":[
-         "@semantic-release/commit-analyzer",
-         "@semantic-release/github",
-         "@semantic-release/npm",
-         "@semantic-release/release-notes-generator"
-      ]
-   },
    "devDependencies":{
       "semantic-release":"^15.13.18"
    }
