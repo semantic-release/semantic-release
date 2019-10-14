@@ -38,23 +38,6 @@ jobs:
         run: npx semantic-release
 ```
 
-Anoter option is to use a trigger [`repository_dispatch`](https://help.github.com/en/articles/events-that-trigger-workflows#external-events-repository_dispatch) to have control when you want to generate a release only making a HTTP request, e.g.:
-
-```yaml
-name: Release
-on: [repository_dispatch]
-jobs:
-# ...
-```
-
-So you just call (with your personal `GH_TOKEN` or from a generic/ci user):
-
-```
-$ curl -v -H "Accept: application/vnd.github.everest-preview+json" -H "Authorization: token ${GH_TOKEN}" https://api.github.com/repos/[org-name-or-username]/[repository]/dispatches -d '{ "event_type": "any" }'
-```
-
-And `Release` workflow will be triggered.
-
 ### `package.json` configuration
 
 A `package.json` is required only for [local](../usage/installation.md#local-installation) **semantic-release** installation.
@@ -78,3 +61,22 @@ A `package.json` is required only for [local](../usage/installation.md#local-ins
 ## Pushing `package.json` changes to `master` branch
 
 If you want to keep your `package.json` updated in your code versioning with your released version you could use [`@semantic-release/git`](https://github.com/semantic-release/git) plugin. To use it you'll need to generate a `GH_TOKEN` with [permission to push changes to `master` branch](https://help.github.com/en/articles/enabling-branch-restrictions).
+
+## Trigger semantic-release on demand
+
+There is a way to trigger semantic-relase on demand, we can just use [`repository_dispatch`](https://help.github.com/en/articles/events-that-trigger-workflows#external-events-repository_dispatch) to have control when you want to generate a release only making a HTTP request, e.g.:
+
+```yaml
+name: Release
+on: [repository_dispatch]
+jobs:
+# ...
+```
+
+So just call (with your personal `GH_TOKEN` or from a generic/ci user):
+
+```
+$ curl -v -H "Accept: application/vnd.github.everest-preview+json" -H "Authorization: token ${GH_TOKEN}" https://api.github.com/repos/[org-name-or-username]/[repository]/dispatches -d '{ "event_type": "any" }'
+```
+
+And `Release` workflow will be triggered.
