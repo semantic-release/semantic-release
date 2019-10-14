@@ -2,8 +2,7 @@
 
 ## Environment variables
 
-The [Authentication](../usage/ci-configuration.md#authentication) environment variables can be configured with [Secret variables](https://help.github.com/en/articles/virtual-environments-for-github-actions#creating-and-using-secrets-encrypted-variabl
-es).
+The [Authentication](../usage/ci-configuration.md#authentication) environment variables can be configured with [Secret variables](https://help.github.com/en/articles/virtual-environments-for-github-actions#creating-and-using-secrets-encrypted-variables).
 
 For this example, you'll need to setup a [`NPM_TOKEN`](https://docs.npmjs.com/creating-and-viewing-authentication-tokens) to publish your package to NPM registry and a [`GH_TOKEN`](https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line) to generate a release at GitHub.
 
