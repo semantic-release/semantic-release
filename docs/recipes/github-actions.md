@@ -32,7 +32,7 @@ jobs:
         with:
           node-version: '12.4.0'
       - name: Install
-        run: npm i
+        run: npm ci
       - name: Generate release
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
