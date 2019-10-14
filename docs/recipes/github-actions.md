@@ -6,8 +6,6 @@ The [Authentication](../usage/ci-configuration.md#authentication) environment va
 
 For this example, you'll need to setup a `NPM_TOKEN` to publish your package to NPM registry and a `GH_TOKEN` to generate a release at GitHub.
 
-If you want to push changes in your `package.json` to your `master` branch before generate release, what is recommended, you may need to add [`@semantic-release/git`](https://github.com/semantic-release/git). With this plugin your `GH_TOKEN` must have permission to push commits to `master` branch.
-
 ## Node project configuration
 
 [GitHub Actions](https://github.com/features/actions) supports [Workflows](https://help.github.com/en/articles/configuring-workflows) allowing to test on multiple Node versions and publishing a release only when all test pass.
