@@ -4,7 +4,7 @@
 
 The [Authentication](../usage/ci-configuration.md#authentication) environment variables can be configured with [Secret variables](https://help.github.com/en/articles/virtual-environments-for-github-actions#creating-and-using-secrets-encrypted-variables).
 
-For this example, you'll need to setup a [`NPM_TOKEN`](https://docs.npmjs.com/creating-and-viewing-authentication-tokens) to publish your package to NPM registry and a [`GH_TOKEN`](https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line) to generate a release at GitHub.
+For this example, you'll need to setup a [`NPM_TOKEN`](https://docs.npmjs.com/creating-and-viewing-authentication-tokens) to publish your package to NPM registry. GitHub Actions [automatically adds](https://help.github.com/en/articles/virtual-environments-for-github-actions#github_token-secret) [`GITHUB_TOKEN`](https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line) to be used in workflows.
 
 ## Node project configuration
 
@@ -35,18 +35,18 @@ jobs:
         run: npm ci
       - name: Generate release
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npx semantic-release
 ```
 
 ## Pushing `package.json` changes to `master` branch
 
-If you want to keep your `package.json` updated in your code versioning with your released version you could use [`@semantic-release/git`](https://github.com/semantic-release/git) plugin. To use it you'll need to generate a `GH_TOKEN` with [permission to push changes to `master` branch](https://help.github.com/en/articles/enabling-branch-restrictions).
+If you want to keep your `package.json` updated in your code versioning with your released version you could use [`@semantic-release/git`](https://github.com/semantic-release/git) plugin. To use it you'll need to generate a [`GITHUB_TOKEN`](https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line) with [permission to push changes to `master` branch](https://help.github.com/en/articles/enabling-branch-restrictions).
 
 ## Trigger semantic-release on demand
 
-There is a way to trigger semantic-relase on demand, we can just use [`repository_dispatch`](https://help.github.com/en/articles/events-that-trigger-workflows#external-events-repository_dispatch) to have control when you want to generate a release only making a HTTP request, e.g.:
+There is a way to trigger semantic-relase on demand, we can just use [`repository_dispatch`](https://help.github.com/en/articles/events-that-trigger-workflows#external-events-repository_dispatch) to have control when you want to generate a release only making an HTTP request, e.g.:
 
 ```yaml
 name: Release
