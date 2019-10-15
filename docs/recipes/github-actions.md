@@ -50,7 +50,9 @@ There is a way to trigger semantic-relase on demand, we can just use [`repositor
 
 ```yaml
 name: Release
-on: [repository_dispatch]
+on:
+  repository_dispatch:
+    types: [semantic-release]
 jobs:
 # ...
 ```
@@ -58,7 +60,7 @@ jobs:
 So just call (with your personal `GH_TOKEN` or from a generic/ci user):
 
 ```
-$ curl -v -H "Accept: application/vnd.github.everest-preview+json" -H "Authorization: token ${GH_TOKEN}" https://api.github.com/repos/[org-name-or-username]/[repository]/dispatches -d '{ "event_type": "any" }'
+$ curl -v -H "Accept: application/vnd.github.everest-preview+json" -H "Authorization: token ${GH_TOKEN}" https://api.github.com/repos/[org-name-or-username]/[repository]/dispatches -d '{ "event_type": "semantic-release" }'
 ```
 
 And `Release` workflow will be triggered.
