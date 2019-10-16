@@ -30,7 +30,7 @@ jobs:
       - uses: actions/checkout@v1
       - uses: actions/setup-node@master
         with:
-          node-version: '12.4.0'
+          node-version: 12
       - name: Install
         run: npm ci
       - name: Generate release
