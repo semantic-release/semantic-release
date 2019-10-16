@@ -35,7 +35,7 @@ jobs:
         run: npm ci
       - name: Generate release
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npx semantic-release
 ```
@@ -57,10 +57,10 @@ jobs:
 # ...
 ```
 
-So just call (with your personal `GH_TOKEN` or from a generic/ci user):
+So just call (with your personal `GITHUB_TOKEN` or from a generic/ci user):
 
 ```
-$ curl -v -H "Accept: application/vnd.github.everest-preview+json" -H "Authorization: token ${GH_TOKEN}" https://api.github.com/repos/[org-name-or-username]/[repository]/dispatches -d '{ "event_type": "semantic-release" }'
+$ curl -v -H "Accept: application/vnd.github.everest-preview+json" -H "Authorization: token ${GITHUB_TOKEN}" https://api.github.com/repos/[org-name-or-username]/[repository]/dispatches -d '{ "event_type": "semantic-release" }'
 ```
 
 And `Release` workflow will be triggered.
