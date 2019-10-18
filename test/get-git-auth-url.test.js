@@ -70,8 +70,8 @@ test('Convert shorthand URL', async t => {
   const {cwd} = await gitRepo();
 
   t.is(
-    await getAuthUrl({cwd, env, options: {repositoryUrl: 'semanitc-release/semanitc-release'}}),
-    'https://github.com/semanitc-release/semanitc-release.git'
+    await getAuthUrl({cwd, env, options: {repositoryUrl: 'semantic-release/semantic-release'}}),
+    'https://github.com/semantic-release/semantic-release.git'
   );
 });
 
@@ -82,9 +82,9 @@ test('Convert GitLab shorthand URL', async t => {
     await getAuthUrl({
       cwd,
       env,
-      options: {branch: 'master', repositoryUrl: 'gitlab:semanitc-release/semanitc-release'},
+      options: {branch: 'master', repositoryUrl: 'gitlab:semantic-release/semantic-release'},
     }),
-    'https://gitlab.com/semanitc-release/semanitc-release.git'
+    'https://gitlab.com/semantic-release/semantic-release.git'
   );
 });
 
