@@ -42,7 +42,7 @@ jobs:
 
 ## Pushing `package.json` changes to `master` branch
 
-If you want to keep your `package.json` updated in your code versioning with your released version you could use [`@semantic-release/git`](https://github.com/semantic-release/git) plugin. To use it you'll need to generate a [`GITHUB_TOKEN`](https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line) with [permission to push changes to `master` branch](https://help.github.com/en/articles/enabling-branch-restrictions).
+If you want to keep your `package.json` updated in your code versioning with your released version you could use [`@semantic-release/git`](https://github.com/semantic-release/git) plugin. To use it you'll need to [generate a personal access token](https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line) with [permission to push changes to `master` branch](https://help.github.com/en/articles/enabling-branch-restrictions). Store the personal access token as a secret, then set the `GITHUB_TOKEN` environment variable from it (instead of from the provided `GITHUB_TOKEN` secret)
 
 ## Trigger semantic-release on demand
 
