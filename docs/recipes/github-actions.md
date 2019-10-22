@@ -2,19 +2,19 @@
 
 ## Environment variables
 
-The [Authentication](../usage/ci-configuration.md#authentication) environment variables can be configured with [Secret variables](https://help.github.com/en/articles/virtual-environments-for-github-actions#creating-and-using-secrets-encrypted-variables).
+The [Authentication](../usage/ci-configuration.md#authentication) environment variables can be configured with [Secret Variables](https://help.github.com/en/articles/virtual-environments-for-github-actions#creating-and-using-secrets-encrypted-variables).
 
-For this example, you'll need to setup a [`NPM_TOKEN`](https://docs.npmjs.com/creating-and-viewing-authentication-tokens) to publish your package to NPM registry. GitHub Actions [automatically adds](https://help.github.com/en/articles/virtual-environments-for-github-actions#github_token-secret) [`GITHUB_TOKEN`](https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line) to be used in workflows.
+In this example an [`NPM_TOKEN`](https://docs.npmjs.com/creating-and-viewing-authentication-tokens) is required to publish a package to the npm registry. GitHub Actions [automatically populate](https://help.github.com/en/articles/virtual-environments-for-github-actions#github_token-secret) a [`GITHUB_TOKEN`](https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line) environment variable which can be used in Workflows.
 
 ## Node project configuration
 
-[GitHub Actions](https://github.com/features/actions) supports [Workflows](https://help.github.com/en/articles/configuring-workflows) allowing to test on multiple Node versions and publishing a release only when all test pass.
+[GitHub Actions](https://github.com/features/actions) support [Workflows](https://help.github.com/en/articles/configuring-workflows), allowing to run tests on multiple Node versions and publish a release only when all test pass.
 
-**Note**: The publish pipeline must run a [Node >= 8 version](../support/FAQ.md#why-does-semantic-release-require-node-version--83).
+**Note**: The publish pipeline must run on [Node version >= 8.3](../support/FAQ.md#why-does-semantic-release-require-node-version--83).
 
 ### `.github/workflows/release.yml` configuration for Node projects
 
-This example is a minimal configuration for [`semantic-release`](https://github.com/semantic-release/semantic-release) with a build running Node 12 when receives a new commit at `master` branch. See [Configuring a workflow](https://help.github.com/en/articles/configuring-a-workflow) for additional configuration options.
+The following is a minimal configuration for [`semantic-release`](https://github.com/semantic-release/semantic-release) with a build running on Node 12 when a new commit is pushed to a `master` branch. See [Configuring a Workflow](https://help.github.com/en/articles/configuring-a-workflow) for additional configuration options.
 
 ```yaml
 name: Release
@@ -23,30 +23,34 @@ on:
     branches:
       - master
 jobs:
-  install:
-    name: "Generate release"
+  release:
+    name: Release
     runs-on: ubuntu-18.04
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-node@master
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
         with:
           node-version: 12
-      - name: Install
+      - name: Install dependencies
         run: npm ci
-      - name: Generate release
+      - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npx semantic-release
 ```
 
-## Pushing `package.json` changes to `master` branch
+## Pushing `package.json` changes to a `master` branch
 
-If you want to keep your `package.json` updated in your code versioning with your released version you could use [`@semantic-release/git`](https://github.com/semantic-release/git) plugin. To use it you'll need to [generate a personal access token](https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line) with [permission to push changes to `master` branch](https://help.github.com/en/articles/enabling-branch-restrictions). Store the personal access token as a secret, then set the `GITHUB_TOKEN` environment variable from it (instead of from the provided `GITHUB_TOKEN` secret)
+To keep `package.json` updated in the `master` branch, [`@semantic-release/git`](https://github.com/semantic-release/git) plugin can be used.
+
+**Note**: Automatically populated `GITHUB_TOKEN` cannot be used if branch protection is enabled for the target branch. It is **not** advised to mitigate this limitation by overriding an automatically populated `GITHUB_TOKEN` variable with a [Personal Access Tokens](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line), as it poses a security risk. Since Secret Variables are available for Workflows triggered by any branch, it becomes a potential vector of attack, where a Workflow triggered from a non-protected branch can expose and use a token with elevated permissions, yielding branch protection insignificant. One can use Personal Access Tokens in trusted environments, where all developers should have the ability to perform administrative actions in the given repository and branch protection is enabled solely for convenience purposes, to remind about required reviews or CI checks.
 
 ## Trigger semantic-release on demand
 
-There is a way to trigger semantic-relase on demand, we can just use [`repository_dispatch`](https://help.github.com/en/articles/events-that-trigger-workflows#external-events-repository_dispatch) to have control when you want to generate a release only making an HTTP request, e.g.:
+There is a way to trigger semantic-relase on demand. Use [`repository_dispatch`](https://help.github.com/en/articles/events-that-trigger-workflows#external-events-repository_dispatch) event to have control on when to generate a release by making an HTTP request, e.g.:
 
 ```yaml
 name: Release
@@ -57,10 +61,8 @@ jobs:
 # ...
 ```
 
-So just call (with your personal `GITHUB_TOKEN` or from a generic/ci user):
+To trigger a release, call (with a [Personal Access Tokens](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line) stored in `GITHUB_TOKEN` environment variable):
 
 ```
 $ curl -v -H "Accept: application/vnd.github.everest-preview+json" -H "Authorization: token ${GITHUB_TOKEN}" https://api.github.com/repos/[org-name-or-username]/[repository]/dispatches -d '{ "event_type": "semantic-release" }'
 ```
-
-And `Release` workflow will be triggered.
