@@ -224,7 +224,7 @@ All the [semantic-release](https://github.com/semantic-release) repositories use
 Before pushing your code changes make sure there are no linting errors with `npm run lint`.
 
 **Tips**:
-- Most linting errors can be automatically fixed with `npm run lint --fix`.
+- Most linting errors can be automatically fixed with `npm run lint -- --fix`.
 - Install the [XO plugin](https://github.com/sindresorhus/xo#editor-plugins) for your editor to see linting errors directly in your editor and automatically fix them on save.
 
 ### Tests
