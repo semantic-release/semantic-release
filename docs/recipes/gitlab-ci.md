@@ -8,7 +8,7 @@ The [Authentication](../usage/ci-configuration.md#authentication) environment va
 
 GitLab CI supports [Pipelines](https://docs.gitlab.com/ee/ci/pipelines.html) allowing to test on multiple Node versions and publishing a release only when all test pass.
 
-**Note**: The publish pipeline must run a [Node >= 8 version](../support/FAQ.md#why-does-semantic-release-require-node-version--83).
+**Note**: The publish pipeline must run a [Node >= 8.16 version](../support/FAQ.md#why-does-semantic-release-require-node-version--816).
 
 ### `.gitlab-ci.yml` configuration for Node projects
 
