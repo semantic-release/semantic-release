@@ -93,3 +93,30 @@ test('Return empty array if there is no commits', async t => {
   // Verify no commit is retrieved
   t.deepEqual(result, []);
 });
+
+test('Get all commits under a path when there is no last release ', async t => {
+  /**
+   * FIXME: to be able to properly test this we will need to mock the git
+   * repository differently so that we can add files to a commit during test
+   * so that we have a consistent set of commits with file names that fall
+   * under a path. Until then we are just verifying that we get a different
+   * result than what we would expect if we were to not filter by path.
+   * */
+
+  // Create a git repository, set the current working directory at the root of the repo
+  const {cwd} = await gitRepo();
+  // Add commits to the master branch
+  const commits = await gitCommits(['First', 'Second'], {cwd});
+  console.log(commits.length);
+  // Retrieve the commits with the commits module
+  const result = await getCommits({
+    cwd,
+    lastRelease: {},
+    logger: t.context.logger,
+    options: {commitPaths: ['test/*', 'test2/*']},
+  });
+
+  // Verify the commits created and retrieved by the module are identical
+  t.is(result.length, 0);
+  // T.deepEqual(result, commits);
+});
