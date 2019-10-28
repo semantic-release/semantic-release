@@ -1,4 +1,4 @@
-<h1 align="center" style="border-bottom: none;">📦🚀 semantic-release</h1>
+<h1 align="center" style="border-bottom: none;">📦🚀 semantic-release-plus</h1>
 <h3 align="center">Fully automated version management and package publishing</h3>
 <p align="center">
   <a href="https://spectrum.chat/semantic-release">
@@ -25,6 +25,8 @@
     <img alt="npm next version" src="https://img.shields.io/npm/v/semantic-release/next.svg">
   </a>
 </p>
+
+**semantic-release-plus** is a drop in replacement for **semantic release** that adds some enhancements.
 
 **semantic-release-flex** automates the whole package release workflow including: determining the next version number, generating the release notes and publishing the package.
 
