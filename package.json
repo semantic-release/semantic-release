@@ -1,6 +1,6 @@
 {
-  "name": "semantic-release",
-  "description": "Automated semver compliant package publishing",
+  "name": "semantic-release-plus",
+  "description": "Fork of Automated semver compliant package publishing to enable additional features",
   "version": "0.0.0-development",
   "author": "Stephan Bönnemann <stephan@boennemann.me> (http://boennemann.me)",
   "ava": {
@@ -15,11 +15,12 @@
     "semantic-release": "bin/semantic-release.js"
   },
   "bugs": {
-    "url": "https://github.com/semantic-release/semantic-release/issues"
+    "url": "https://github.com/semantic-release-plus/semantic-release/issues"
   },
   "contributors": [
     "Gregor Martynus (https://twitter.com/gr2m)",
-    "Pierre Vanduynslager (https://twitter.com/@pvdlg_)"
+    "Pierre Vanduynslager (https://twitter.com/@pvdlg_)",
+    "Justin Dietz (joamos.dev@gmail.com)"
   ],
   "dependencies": {
     "@semantic-release/commit-analyzer": "^6.1.0",
@@ -79,7 +80,7 @@
     "index.js",
     "cli.js"
   ],
-  "homepage": "https://github.com/semantic-release/semantic-release#readme",
+  "homepage": "https://github.com/semantic-release-plus/semantic-release#readme",
   "keywords": [
     "author",
     "automation",
@@ -115,13 +116,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/semantic-release/semantic-release.git"
+    "url": "git+https://github.com/semantic-release-plus/semantic-release.git"
   },
   "scripts": {
     "codecov": "codecov -f coverage/coverage-final.json",
     "lint": "xo",
     "pretest": "npm run lint",
-    "semantic-release": "./bin/semantic-release.js",
+    "semantic-release": "node ./bin/semantic-release.js",
     "test": "nyc ava -v"
   },
   "xo": {

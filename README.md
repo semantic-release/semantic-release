@@ -26,7 +26,7 @@
   </a>
 </p>
 
-**semantic-release** automates the whole package release workflow including: determining the next version number, generating the release notes and publishing the package.
+**semantic-release-flex** automates the whole package release workflow including: determining the next version number, generating the release notes and publishing the package.
 
 This removes the immediate connection between human emotions and version numbers, strictly following the [Semantic Versioning](http://semver.org) specification.
 
