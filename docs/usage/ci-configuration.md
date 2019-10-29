@@ -6,6 +6,7 @@ The `semantic-release` command must be executed only after all the tests in the 
 Here is a few example of the CI services that can be used to achieve this:
 - [Travis Build Stages](https://docs.travis-ci.com/user/build-stages)
 - [CircleCI Workflows](https://circleci.com/docs/2.0/workflows)
+- [GitHub Actions](https://github.com/features/actions)
 - [Codeship Deployment Pipelines](https://documentation.codeship.com/basic/builds-and-configuration/deployment-pipelines)
 - [GitLab Pipelines](https://docs.gitlab.com/ee/ci/pipelines.html#introduction-to-pipelines-and-jobs)
 - [Codefresh Pipelines](https://codefresh.io/docs/docs/configure-ci-cd-pipeline/introduction-to-codefresh-pipelines)

@@ -38,7 +38,7 @@ Yes with the [dry-run options](../usage/configuration.md#dryrun) which prints to
 
 ## Can I use semantic-release with Yarn?
 
-If you are using a [local](../usage/installation.md#local-installation) **semantic-release** installation and run multiple CI jobs with different versions, the `yarn install` command will fail on jobs running with Node < 8 as **semantic-release** requires [Node >= 8.15](#why-does-semantic-release-require-node-version--815) and specifies it in its `package.json`s [`engines`](https://docs.npmjs.com/files/package.json#engines) key.
+If you are using a [local](../usage/installation.md#local-installation) **semantic-release** installation and run multiple CI jobs with different versions, the `yarn install` command will fail on jobs running with Node < 8 as **semantic-release** requires [Node >= 8.16](#why-does-semantic-release-require-node-version--816) and specifies it in its `package.json`s [`engines`](https://docs.npmjs.com/files/package.json#engines) key.
 
 The recommended solution is to use the [Yarn](https://yarnpkg.com) [--ignore-engines](https://yarnpkg.com/en/docs/cli/install#toc-yarn-install-ignore-engines) option to install the project dependencies on the CI environment, so Yarn will ignore the **semantic-release**'s `engines` key:
 
@@ -48,7 +48,7 @@ $ yarn install --ignore-engines
 
 **Note**: Several CI services use Yarn by default if your repository contains a `yarn.lock` file. So you should override the install step to specify `yarn install --ignore-engines`.
 
-Alternatively you can use a [global](../usage/installation.md#global-installation) **semantic-release** installation and make sure to install and run the `semantic-release` command only in a CI jobs running with Node >= 8.15.
+Alternatively you can use a [global](../usage/installation.md#global-installation) **semantic-release** installation and make sure to install and run the `semantic-release` command only in a CI jobs running with Node >= 8.16.
 
 If your CI environment provides [nvm](https://github.com/creationix/nvm) you can switch to Node 8 before installing and running the `semantic-release` command:
 
@@ -73,7 +73,7 @@ Yes, **semantic-release** is a Node CLI application but it can be used to publis
 To publish a non-Node package (without a `package.json`) you would need to:
 - Use a [global](../usage/installation.md#global-installation) **semantic-release** installation
 - Set **semantic-release** [options](../usage/configuration.md#options) via [CLI arguments or rc file](../usage/configuration.md#configuration)
-- Make sure your CI job executing the `semantic-release` command has access to [Node >= 8](#why-does-semantic-release-require-node-version--83) to execute the `semantic-release` command
+- Make sure your CI job executing the `semantic-release` command has access to [Node >= 8.16](#why-does-semantic-release-require-node-version--816) to execute the `semantic-release` command
 
 See the [CI configuration recipes](../recipes/README.md#ci-configurations) for more details on specific CI environments.
 
@@ -141,11 +141,11 @@ See the [`@semantic-release/npm`](https://github.com/semantic-release/npm#semant
 
 If you have introduced a breaking bug in a release you have 2 options:
 - If you have a fix immediately ready, commit and push it (or merge it via a pull request) to the release branch
-- Otherwise [revert the commit](https://git-scm.com/docs/git-revert) that introduced the bug and push the revert commit (or merge it via a pull request) to the release branch
+- Otherwise, [revert the commit](https://git-scm.com/docs/git-revert) that introduced the bug and push the revert commit (or merge it via a pull request) to the release branch
 
-In both cases **semantic-release** will publish a new release, so your package users' will get the fixed/reverted version.
+In both cases **semantic-release** will publish a new release, so your package users will get the fixed/reverted version.
 
-Depending on the package manager you are using, you might be able to un-publish or deprecate a release, in order to prevent users from downloading it by accident. For example npm allows you to [un-publish](https://docs.npmjs.com/cli/unpublish) [within 72 hours](https://www.npmjs.com/policies/unpublish) after releasing. You may also [deprecate](https://docs.npmjs.com/cli/deprecate) a release if you would rather avoid un-publishing.
+Depending on the package manager you are using, you might be able to un-publish or deprecate a release, in order to prevent users from downloading it by accident. For example, npm allows you to [un-publish](https://docs.npmjs.com/cli/unpublish) [within 72 hours](https://www.npmjs.com/policies/unpublish) after release. You may also [deprecate](https://docs.npmjs.com/cli/deprecate) a release if you would rather avoid un-publishing.
 
 In any case **do not remove the Git tag associated with the buggy version**, otherwise **semantic-release** will later try to republish that version. Publishing a version after un-publishing is not supported by most package managers.
 
@@ -232,9 +232,9 @@ See [“Introduction to SemVer” - Irina Gebauer](https://blog.greenkeeper.io/i
 
 In addition the [verify conditions step](../../README.md#release-steps) verifies that all necessary conditions for proceeding with a release are met, and a new release will be performed [only if all your tests pass](../usage/ci-configuration.md#run-semantic-release-only-after-all-tests-succeeded).
 
-## Why does semantic-release require Node version >= 8.15?
+## Why does semantic-release require Node version >= 8.16?
 
-**semantic-release** is written using the latest [ECMAScript 2017](https://www.ecma-international.org/publications/standards/Ecma-262.htm) features, without transpilation which **requires Node version 8.15 or higher**.
+**semantic-release** is written using the latest [ECMAScript 2017](https://www.ecma-international.org/publications/standards/Ecma-262.htm) features, without transpilation which **requires Node version 8.16 or higher**.
 
 See [Node version requirement](./node-version.md#node-version-requirement) for more details and solutions.
 

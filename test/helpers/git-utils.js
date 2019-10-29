@@ -99,10 +99,10 @@ export async function gitGetCommits(from, execaOpts) {
  * Checkout a branch on the current git repository.
  *
  * @param {String} branch Branch name.
- * @param {Boolean} create `true` to create the branch, `false` to checkout an existing branch.
+ * @param {Boolean} create to create the branch, `false` to checkout an existing branch.
  * @param {Object} [execaOpts] Options to pass to `execa`.
  */
-export async function gitCheckout(branch, create = true, execaOpts) {
+export async function gitCheckout(branch, create, execaOpts) {
   await execa('git', create ? ['checkout', '-b', branch] : ['checkout', branch], execaOpts);
 }
 
@@ -223,7 +223,7 @@ export async function gitCommitTag(gitHead, execaOpts) {
  *
  * @throws {Error} if the push failed.
  */
-export async function gitPush(repositoryUrl = 'origin', branch = 'master', execaOpts) {
+export async function gitPush(repositoryUrl, branch, execaOpts) {
   await execa('git', ['push', '--tags', repositoryUrl, `HEAD:${branch}`], execaOpts);
 }
 

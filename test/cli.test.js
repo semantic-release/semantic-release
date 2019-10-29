@@ -175,7 +175,7 @@ test.serial('Display help', async t => {
   t.is(exitCode, 0);
 });
 
-test.serial('Return error code and prints help if called with a command', async t => {
+test.serial('Return error exitCode and prints help if called with a command', async t => {
   const run = stub().resolves(true);
   const argv = ['', '', 'pre'];
   const cli = requireNoCache('../cli', {'.': run, process: {...process, argv}});
@@ -187,7 +187,7 @@ test.serial('Return error code and prints help if called with a command', async 
   t.is(exitCode, 1);
 });
 
-test.serial('Return error code if multiple plugin are set for single plugin', async t => {
+test.serial('Return error exitCode if multiple plugin are set for single plugin', async t => {
   const run = stub().resolves(true);
   const argv = ['', '', '--analyze-commits', 'analyze1', 'analyze2'];
   const cli = requireNoCache('../cli', {'.': run, process: {...process, argv}});
@@ -199,7 +199,7 @@ test.serial('Return error code if multiple plugin are set for single plugin', as
   t.is(exitCode, 1);
 });
 
-test.serial('Return error code if semantic-release throw error', async t => {
+test.serial('Return error exitCode if semantic-release throw error', async t => {
   const run = stub().rejects(new Error('semantic-release error'));
   const argv = ['', ''];
   const cli = requireNoCache('../cli', {'.': run, process: {...process, argv}});

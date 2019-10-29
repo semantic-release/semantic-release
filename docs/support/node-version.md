@@ -1,6 +1,6 @@
 # Node version requirement
 
-**semantic-release** is written using the latest [ECMAScript 2017](https://www.ecma-international.org/publications/standards/Ecma-262.htm) features, without transpilation which requires **requires Node version 8.15 or higher**.
+**semantic-release** is written using the latest [ECMAScript 2017](https://www.ecma-international.org/publications/standards/Ecma-262.htm) features, without transpilation which requires **requires Node version 8.16 or higher**.
 
 **semantic-release** is meant to be used in a CI environment as a development support tool, not as a production dependency. Therefore the only constraint is to run the `semantic-release` in a CI environment providing Node 8 or higher.
 
@@ -8,9 +8,9 @@ See our [Node Support Policy](node-support-policy.md) for our long-term promise 
 
 ## Recommended solution
 
-### Run at least one CI job with Node >= 8.15
+### Run at least one CI job with Node >= 8.16
 
-The recommended approach is to run the `semantic-release` command from a CI job running on Node 8.15 or higher. This can either be a job used by your project to test on Node >= 8.15 or a dedicated job for the release steps.
+The recommended approach is to run the `semantic-release` command from a CI job running on Node 8.16 or higher. This can either be a job used by your project to test on Node >= 8.16 or a dedicated job for the release steps.
 
 See [CI configuration](../usage/ci-configuration.md) and [CI configuration recipes](../recipes/README.md#ci-configurations) for more details.
 

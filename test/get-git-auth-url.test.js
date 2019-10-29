@@ -86,9 +86,9 @@ test('Convert shorthand URL', async t => {
       cwd,
       env,
       branch: {name: 'master'},
-      options: {repositoryUrl: 'semanitc-release/semanitc-release'},
+      options: {repositoryUrl: 'semantic-release/semantic-release'},
     }),
-    'https://github.com/semanitc-release/semanitc-release.git'
+    'https://github.com/semantic-release/semantic-release.git'
   );
 });
 
@@ -100,9 +100,9 @@ test('Convert GitLab shorthand URL', async t => {
       cwd,
       env,
       branch: {name: 'master'},
-      options: {repositoryUrl: 'gitlab:semanitc-release/semanitc-release'},
+      options: {repositoryUrl: 'gitlab:semantic-release/semantic-release'},
     }),
-    'https://gitlab.com/semanitc-release/semanitc-release.git'
+    'https://gitlab.com/semantic-release/semantic-release.git'
   );
 });
 
@@ -161,6 +161,19 @@ test('Return the "http" formatted URL if "gitCredentials" is defined and reposit
   );
 });
 
+test('Return the "http" formatted URL if "gitCredentials" is defined and repositoryUrl is a "http" URL with custom port', async t => {
+  const {cwd} = await gitRepo();
+
+  t.is(
+    await getAuthUrl({
+      cwd,
+      env: {...env, GIT_CREDENTIALS: 'user:pass'},
+      options: {branch: 'master', repositoryUrl: 'http://host.null:8080/owner/repo.git'},
+    }),
+    'http://user:pass@host.null:8080/owner/repo.git'
+  );
+});
+
 test('Return the "https" formatted URL if "gitCredentials" is defined and repositoryUrl is a "git+https" URL', async t => {
   const {cwd} = await gitRepo();
 
@@ -186,6 +199,19 @@ test('Return the "http" formatted URL if "gitCredentials" is defined and reposit
       options: {repositoryUrl: 'git+http://host.null/owner/repo.git'},
     }),
     'http://user:pass@host.null/owner/repo.git'
+  );
+});
+
+test('Return the "http" formatted URL if "gitCredentials" is defined and repositoryUrl is a "ssh" URL', async t => {
+  const {cwd} = await gitRepo();
+
+  t.is(
+    await getAuthUrl({
+      cwd,
+      env: {...env, GIT_CREDENTIALS: 'user:pass'},
+      options: {branch: 'master', repositoryUrl: 'ssh://git@host.null:2222/owner/repo.git'},
+    }),
+    'https://user:pass@host.null/owner/repo.git'
   );
 });
 
