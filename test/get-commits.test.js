@@ -106,17 +106,44 @@ test('Get all commits under a path when there is no last release ', async t => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
   // Add commits to the master branch
-  const commits = await gitCommits(['First', 'Second'], {cwd});
-  console.log(commits.length);
+  await gitCommits(['First', 'Second'], {cwd});
   // Retrieve the commits with the commits module
   const result = await getCommits({
     cwd,
     lastRelease: {},
     logger: t.context.logger,
-    options: {commitPaths: ['test/*', 'test2/*']},
+    options: {commitPaths: ['i/dont/exist/*', 'still/dont/exist/*']},
   });
 
   // Verify the commits created and retrieved by the module are identical
   t.is(result.length, 0);
-  // T.deepEqual(result, commits);
+  t.deepEqual(result, []);
 });
+
+// Test('Get all commits using commitPaths option ', async t => {
+//   /**
+//    * FIXME: to be able to properly test this we will need to mock the git
+//    * repository differently so that we can add files to a commit during test
+//    * so that we have a consistent set of commits with file names that fall
+//    * under a path. Until then we are just verifying that we get a different
+//    * result than what we would expect if we were to not filter by path.
+//    * */
+
+//   // Create a git repository, set the current working directory at the root of the repo
+//   const {cwd} = await gitRepo();
+//   // Add commits to the master branch
+//   const commits = await gitCommits(['First', 'Second'], {cwd});
+//   // Retrieve the commits with the commits module
+//   const result = await getCommits({
+//     cwd,
+//     lastRelease: {},
+//     logger: t.context.logger,
+//     options: {commitPaths: [`*`]},
+//   });
+
+//   console.log('commits:', commits);
+//   // Verify the commits created and retrieved by the module are identical
+//   console.log('result:', result);
+//   t.is(result.length, commits.length);
+//   t.deepEqual(result, commits);
+// });
