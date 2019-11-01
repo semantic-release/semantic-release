@@ -109,15 +109,15 @@ test('Return branches with and empty tags array if no valid tag is found', async
   await gitCommits(['Third'], {cwd});
   await gitTagVersion('v3.0', undefined, {cwd});
 
-  const result = await getTags({cwd, options: {tagFormat: `prefix@v\${version}`}}, [{name: 'master'}, {name: 'next'}]);
+  const result = await getTags({cwd, options: {tagFormat: `prefix@v\${version}`}}, [{name: 'master'}]);
 
-  t.deepEqual(result, [{name: 'master', tags: []}, {name: 'next', tags: []}]);
+  t.deepEqual(result, [{name: 'master', tags: []}]);
 });
 
 test('Return branches with and empty tags array if no valid tag is found in history of configured branches', async t => {
   const {cwd} = await gitRepo();
   await gitCommits(['First'], {cwd});
-  await gitCheckout('other-branch', true, {cwd});
+  await gitCheckout('next', true, {cwd});
   await gitCommits(['Second'], {cwd});
   await gitTagVersion('v1.0.0', undefined, {cwd});
   await gitTagVersion('v1.0.0@next', undefined, {cwd});
