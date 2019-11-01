@@ -91,7 +91,7 @@ test('Fetch all tags on a detached head repository', async t => {
 
   await fetch(repositoryUrl, 'master', {cwd});
 
-  t.deepEqual((await getTags({cwd})).sort(), ['v1.0.0', 'v1.0.1', 'v1.1.0'].sort());
+  t.deepEqual((await getTags('master', {cwd})).sort(), ['v1.0.0', 'v1.0.1', 'v1.1.0'].sort());
 });
 
 test('Verify if the commit `sha` is in the direct history of the current branch', async t => {
@@ -243,7 +243,7 @@ test('Return falsy for invalid tag names', async t => {
 test('Throws error if obtaining the tags fails', async t => {
   const cwd = tempy.directory();
 
-  await t.throwsAsync(getTags({cwd}));
+  await t.throwsAsync(getTags('master', {cwd}));
 });
 
 test('Return "true" if repository is up to date', async t => {

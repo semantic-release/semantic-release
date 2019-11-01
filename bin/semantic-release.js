@@ -10,7 +10,7 @@ var execa = require('execa');
 var findVersions = require('find-versions');
 var pkg = require('../package.json');
 
-var MIN_GIT_VERSION = '2.0.0';
+var MIN_GIT_VERSION = '2.7.1';
 
 if (!semver.satisfies(process.version, pkg.engines.node)) {
   console.error(
