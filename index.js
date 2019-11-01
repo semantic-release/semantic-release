@@ -84,7 +84,7 @@ async function run(context, plugins) {
       throw error;
     }
   } catch (error) {
-    logger.error(`The command "${error.cmd}" failed with the error message ${error.stderr}.`);
+    logger.error(`The command "${error.command}" failed with the error message ${error.stderr}.`);
     throw getError('EGITNOPERMISSION', context);
   }
 
