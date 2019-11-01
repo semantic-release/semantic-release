@@ -256,16 +256,3 @@ export async function mergeFf(ref, execaOpts) {
 export async function rebase(ref, execaOpts) {
   await execa('git', ['rebase', ref], execaOpts);
 }
-
-export async function changeAuthor(sha, execaOpts) {
-  await execa(
-    'git',
-    [
-      'filter-branch',
-      '-f',
-      '--env-filter',
-      `if [[ "$GIT_COMMIT" = "${sha}" ]]; then export GIT_COMMITTER_NAME="New Author" GIT_COMMITTER_EMAIL="author@test.com"; fi`,
-    ],
-    execaOpts
-  );
-}

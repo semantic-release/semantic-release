@@ -105,10 +105,10 @@ test('Verify if the commit `sha` is in the direct history of the current branch'
   const otherCommits = await gitCommits(['Second'], {cwd});
   await gitCheckout('master', false, {cwd});
 
-  t.true(await isRefInHistory(commits[0].hash, 'master', false, {cwd}));
-  t.falsy(await isRefInHistory(otherCommits[0].hash, 'master', false, {cwd}));
-  t.falsy(await isRefInHistory(otherCommits[0].hash, 'missing-branch', false, {cwd}));
-  await t.throwsAsync(isRefInHistory('non-existant-sha', 'master', false, {cwd}));
+  t.true(await isRefInHistory(commits[0].hash, 'master', {cwd}));
+  t.falsy(await isRefInHistory(otherCommits[0].hash, 'master', {cwd}));
+  t.falsy(await isRefInHistory(otherCommits[0].hash, 'missing-branch', {cwd}));
+  await t.throwsAsync(isRefInHistory('non-existant-sha', 'master', {cwd}));
 });
 
 test('Verify if a branch exists', async t => {

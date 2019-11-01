@@ -1,6 +1,6 @@
 import test from 'ava';
 import getTags from '../../lib/branches/get-tags';
-import {gitRepo, gitCommits, gitTagVersion, gitCheckout, merge, changeAuthor} from '../helpers/git-utils';
+import {gitRepo, gitCommits, gitTagVersion, gitCheckout} from '../helpers/git-utils';
 
 test('Get the valid tags', async t => {
   const {cwd} = await gitRepo();
@@ -173,30 +173,5 @@ test('Get the highest valid tag corresponding to the "tagFormat"', async t => {
   await gitTagVersion('3.0.0-bar.2', undefined, {cwd});
   t.deepEqual(await getTags({cwd, options: {tagFormat: `\${version}-bar.2`}}, [{name: 'master'}]), [
     {name: 'master', tags: [{gitTag: '3.0.0-bar.2', version: '3.0.0', channel: undefined, gitHead: commits[0].hash}]},
-  ]);
-});
-
-test('Get the tag on branch where commits have been rebased', async t => {
-  const {cwd} = await gitRepo();
-  const commits = await gitCommits(['First'], {cwd});
-  await gitCheckout('next', true, {cwd});
-  commits.push(...(await gitCommits(['Second/n/n/commit body'], {cwd})));
-  await gitTagVersion('v1.0.0@next', undefined, {cwd});
-  await gitCheckout('master', false, {cwd});
-  await merge('next', {cwd});
-  // Simulate GitHub "Rebase and Merge" by changing the committer info, which will result in a new commit sha and losing the tag
-  await changeAuthor(commits[1].hash, {cwd});
-
-  const result = await getTags({cwd, options: {tagFormat: `v\${version}`}}, [{name: 'master'}, {name: 'next'}]);
-
-  t.deepEqual(result, [
-    {
-      name: 'master',
-      tags: [{gitTag: 'v1.0.0@next', version: '1.0.0', channel: 'next', gitHead: commits[1].hash}],
-    },
-    {
-      name: 'next',
-      tags: [{gitTag: 'v1.0.0@next', version: '1.0.0', channel: 'next', gitHead: commits[1].hash}],
-    },
   ]);
 });
