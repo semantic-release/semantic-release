@@ -65,7 +65,7 @@ async function run(context, plugins) {
     try {
       await verifyAuth(options.repositoryUrl, options.branch, {cwd, env});
     } catch (error) {
-      if (!(await isBranchUpToDate(options.branch, {cwd, env}))) {
+      if (!(await isBranchUpToDate(options.repositoryUrl, options.branch, {cwd, env}))) {
         logger.log(
           `The local branch ${options.branch} is behind the remote one, therefore a new version won't be published.`
         );
