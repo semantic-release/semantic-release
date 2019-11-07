@@ -9,12 +9,12 @@ test('Return versions merged from release to maintenance branch, excluding lower
       type: 'maintenance',
       mergeRange: '>=2.0.0 <3.0.0',
       tags: [
-        {gitTag: 'v2.0.0@2.x', version: '2.0.0', channel: '2.x', gitHead: '111'},
-        {gitTag: 'v2.0.0', version: '2.0.0', gitHead: '111'},
-        {gitTag: 'v2.1.0', version: '2.1.0', gitHead: '222'},
-        {gitTag: 'v2.1.1', version: '2.1.1', gitHead: '333'},
-        {gitTag: 'v1.0.0', version: '1.0.0', gitHead: '444'},
-        {gitTag: 'v1.1.0', version: '1.1.0', gitHead: '555'},
+        {gitTag: 'v2.0.0@2.x', version: '2.0.0', channel: '2.x'},
+        {gitTag: 'v2.0.0', version: '2.0.0'},
+        {gitTag: 'v2.1.0', version: '2.1.0'},
+        {gitTag: 'v2.1.1', version: '2.1.1'},
+        {gitTag: 'v1.0.0', version: '1.0.0'},
+        {gitTag: 'v1.1.0', version: '1.1.0'},
       ],
     },
     branches: [{name: '2.x', channel: '2.x'}, {name: 'master'}],
@@ -23,14 +23,14 @@ test('Return versions merged from release to maintenance branch, excluding lower
 
   t.deepEqual(result, [
     {
-      lastRelease: {version: '2.0.0', channel: '2.x', gitTag: 'v2.0.0@2.x', name: 'v2.0.0', gitHead: '111'},
+      lastRelease: {version: '2.0.0', channel: '2.x', gitTag: 'v2.0.0@2.x', name: 'v2.0.0', gitHead: 'v2.0.0@2.x'},
       currentRelease: {
         type: 'minor',
         version: '2.1.0',
         channel: undefined,
         gitTag: 'v2.1.0',
         name: 'v2.1.0',
-        gitHead: '222',
+        gitHead: 'v2.1.0',
       },
       nextRelease: {
         type: 'minor',
@@ -38,18 +38,18 @@ test('Return versions merged from release to maintenance branch, excluding lower
         channel: '2.x',
         gitTag: 'v2.1.0@2.x',
         name: 'v2.1.0',
-        gitHead: '222',
+        gitHead: 'v2.1.0',
       },
     },
     {
-      lastRelease: {version: '2.1.0', channel: undefined, gitTag: 'v2.1.0', name: 'v2.1.0', gitHead: '222'},
+      lastRelease: {version: '2.1.0', channel: undefined, gitTag: 'v2.1.0', name: 'v2.1.0', gitHead: 'v2.1.0'},
       currentRelease: {
         type: 'patch',
         version: '2.1.1',
         channel: undefined,
         gitTag: 'v2.1.1',
         name: 'v2.1.1',
-        gitHead: '333',
+        gitHead: 'v2.1.1',
       },
       nextRelease: {
         type: 'patch',
@@ -57,7 +57,7 @@ test('Return versions merged from release to maintenance branch, excluding lower
         channel: '2.x',
         gitTag: 'v2.1.1@2.x',
         name: 'v2.1.1',
-        gitHead: '333',
+        gitHead: 'v2.1.1',
       },
     },
   ]);
@@ -68,10 +68,10 @@ test('Return versions merged between release branches', t => {
     branch: {
       name: 'master',
       tags: [
-        {gitTag: 'v1.0.0', version: '1.0.0', gitHead: '111'},
-        {gitTag: 'v1.0.0@next', version: '1.0.0', channel: 'next', gitHead: '111'},
-        {gitTag: 'v1.1.0@next', version: '1.1.0', channel: 'next', gitHead: '222'},
-        {gitTag: 'v2.0.0@next-major', version: '2.0.0', channel: 'next-major', gitHead: '333'},
+        {gitTag: 'v1.0.0', version: '1.0.0'},
+        {gitTag: 'v1.0.0@next', version: '1.0.0', channel: 'next'},
+        {gitTag: 'v1.1.0@next', version: '1.1.0', channel: 'next'},
+        {gitTag: 'v2.0.0@next-major', version: '2.0.0', channel: 'next-major'},
       ],
     },
     branches: [{name: 'master'}, {name: 'next', channel: 'next'}, {name: 'next-major', channel: 'next-major'}],
@@ -80,14 +80,14 @@ test('Return versions merged between release branches', t => {
 
   t.deepEqual(result, [
     {
-      lastRelease: {version: '1.0.0', channel: undefined, gitTag: 'v1.0.0', name: 'v1.0.0', gitHead: '111'},
+      lastRelease: {version: '1.0.0', channel: undefined, gitTag: 'v1.0.0', name: 'v1.0.0', gitHead: 'v1.0.0'},
       currentRelease: {
         type: 'minor',
         version: '1.1.0',
         channel: 'next',
         gitTag: 'v1.1.0@next',
         name: 'v1.1.0',
-        gitHead: '222',
+        gitHead: 'v1.1.0@next',
       },
       nextRelease: {
         type: 'minor',
@@ -95,18 +95,18 @@ test('Return versions merged between release branches', t => {
         channel: undefined,
         gitTag: 'v1.1.0',
         name: 'v1.1.0',
-        gitHead: '222',
+        gitHead: 'v1.1.0@next',
       },
     },
     {
-      lastRelease: {version: '1.1.0', gitTag: 'v1.1.0@next', name: 'v1.1.0', gitHead: '222', channel: 'next'},
+      lastRelease: {version: '1.1.0', gitTag: 'v1.1.0@next', name: 'v1.1.0', gitHead: 'v1.1.0@next', channel: 'next'},
       currentRelease: {
         type: 'major',
         version: '2.0.0',
         channel: 'next-major',
         gitTag: 'v2.0.0@next-major',
         name: 'v2.0.0',
-        gitHead: '333',
+        gitHead: 'v2.0.0@next-major',
       },
       nextRelease: {
         type: 'major',
@@ -114,7 +114,7 @@ test('Return versions merged between release branches', t => {
         channel: undefined,
         gitTag: 'v2.0.0',
         name: 'v2.0.0',
-        gitHead: '333',
+        gitHead: 'v2.0.0@next-major',
       },
     },
   ]);
@@ -125,10 +125,10 @@ test('Return releases sorted by ascending order', t => {
     branch: {
       name: 'master',
       tags: [
-        {gitTag: 'v2.0.0@next-major', version: '2.0.0', channel: 'next-major', gitHead: '333'},
-        {gitTag: 'v1.1.0@next', version: '1.1.0', channel: 'next', gitHead: '222'},
-        {gitTag: 'v1.0.0', version: '1.0.0', gitHead: '111'},
-        {gitTag: 'v1.0.0@next', version: '1.0.0', channel: 'next', gitHead: '111'},
+        {gitTag: 'v2.0.0@next-major', version: '2.0.0', channel: 'next-major'},
+        {gitTag: 'v1.1.0@next', version: '1.1.0', channel: 'next'},
+        {gitTag: 'v1.0.0', version: '1.0.0'},
+        {gitTag: 'v1.0.0@next', version: '1.0.0', channel: 'next'},
       ],
     },
     branches: [{name: 'master'}, {name: 'next', channel: 'next'}, {name: 'next-major', channel: 'next-major'}],
@@ -137,14 +137,14 @@ test('Return releases sorted by ascending order', t => {
 
   t.deepEqual(result, [
     {
-      lastRelease: {version: '1.0.0', channel: undefined, gitTag: 'v1.0.0', name: 'v1.0.0', gitHead: '111'},
+      lastRelease: {version: '1.0.0', channel: undefined, gitTag: 'v1.0.0', name: 'v1.0.0', gitHead: 'v1.0.0'},
       currentRelease: {
         type: 'minor',
         version: '1.1.0',
         channel: 'next',
         gitTag: 'v1.1.0@next',
         name: 'v1.1.0',
-        gitHead: '222',
+        gitHead: 'v1.1.0@next',
       },
       nextRelease: {
         type: 'minor',
@@ -152,18 +152,18 @@ test('Return releases sorted by ascending order', t => {
         channel: undefined,
         gitTag: 'v1.1.0',
         name: 'v1.1.0',
-        gitHead: '222',
+        gitHead: 'v1.1.0@next',
       },
     },
     {
-      lastRelease: {version: '1.1.0', gitTag: 'v1.1.0@next', name: 'v1.1.0', gitHead: '222', channel: 'next'},
+      lastRelease: {version: '1.1.0', gitTag: 'v1.1.0@next', name: 'v1.1.0', gitHead: 'v1.1.0@next', channel: 'next'},
       currentRelease: {
         type: 'major',
         version: '2.0.0',
         channel: 'next-major',
         gitTag: 'v2.0.0@next-major',
         name: 'v2.0.0',
-        gitHead: '333',
+        gitHead: 'v2.0.0@next-major',
       },
       nextRelease: {
         type: 'major',
@@ -171,7 +171,7 @@ test('Return releases sorted by ascending order', t => {
         channel: undefined,
         gitTag: 'v2.0.0',
         name: 'v2.0.0',
-        gitHead: '333',
+        gitHead: 'v2.0.0@next-major',
       },
     },
   ]);
@@ -179,7 +179,10 @@ test('Return releases sorted by ascending order', t => {
 
 test('No lastRelease', t => {
   const result = getReleasesToAdd({
-    branch: {name: 'master', tags: [{gitTag: 'v1.0.0@next', version: '1.0.0', channel: 'next', gitHead: '111'}]},
+    branch: {
+      name: 'master',
+      tags: [{gitTag: 'v1.0.0@next', version: '1.0.0', channel: 'next'}],
+    },
     branches: [{name: 'master'}, {name: 'next', channel: 'next'}],
     options: {tagFormat: `v\${version}`},
   });
@@ -193,7 +196,7 @@ test('No lastRelease', t => {
         channel: 'next',
         gitTag: 'v1.0.0@next',
         name: 'v1.0.0',
-        gitHead: '111',
+        gitHead: 'v1.0.0@next',
       },
       nextRelease: {
         type: 'major',
@@ -201,7 +204,7 @@ test('No lastRelease', t => {
         channel: undefined,
         gitTag: 'v1.0.0',
         name: 'v1.0.0',
-        gitHead: '111',
+        gitHead: 'v1.0.0@next',
       },
     },
   ]);
@@ -212,10 +215,10 @@ test('Ignore pre-release versions', t => {
     branch: {
       name: 'master',
       tags: [
-        {gitTag: 'v1.0.0', version: '1.0.0', gitHead: '111'},
-        {gitTag: 'v1.0.0@next', version: '1.0.0', channel: 'next', gitHead: '111'},
-        {gitTag: 'v1.1.0@next', version: '1.1.0', channel: 'next', gitHead: '222'},
-        {gitTag: 'v2.0.0-alpha.1@alpha', version: '2.0.0', channel: 'alpha', gitHead: '333'},
+        {gitTag: 'v1.0.0', version: '1.0.0'},
+        {gitTag: 'v1.0.0@next', version: '1.0.0', channel: 'next'},
+        {gitTag: 'v1.1.0@next', version: '1.1.0', channel: 'next'},
+        {gitTag: 'v2.0.0-alpha.1@alpha', version: '2.0.0', channel: 'alpha'},
       ],
     },
     branches: [
@@ -228,14 +231,14 @@ test('Ignore pre-release versions', t => {
 
   t.deepEqual(result, [
     {
-      lastRelease: {version: '1.0.0', channel: undefined, gitTag: 'v1.0.0', name: 'v1.0.0', gitHead: '111'},
+      lastRelease: {version: '1.0.0', channel: undefined, gitTag: 'v1.0.0', name: 'v1.0.0', gitHead: 'v1.0.0'},
       currentRelease: {
         type: 'minor',
         version: '1.1.0',
         channel: 'next',
         gitTag: 'v1.1.0@next',
         name: 'v1.1.0',
-        gitHead: '222',
+        gitHead: 'v1.1.0@next',
       },
       nextRelease: {
         type: 'minor',
@@ -243,7 +246,7 @@ test('Ignore pre-release versions', t => {
         channel: undefined,
         gitTag: 'v1.1.0',
         name: 'v1.1.0',
-        gitHead: '222',
+        gitHead: 'v1.1.0@next',
       },
     },
   ]);
@@ -257,12 +260,12 @@ test('Exclude versions merged from release to maintenance branch if they have th
       type: 'maintenance',
       mergeRange: '>=2.0.0 <3.0.0',
       tags: [
-        {gitTag: 'v2.0.0', version: '2.0.0', gitHead: '111'},
-        {gitTag: 'v2.0.0', version: '2.0.0', gitHead: '111'},
-        {gitTag: 'v2.1.0', version: '2.1.0', gitHead: '222'},
-        {gitTag: 'v2.1.1', version: '2.1.1', gitHead: '333'},
-        {gitTag: 'v1.0.0', version: '1.0.0', gitHead: '444'},
-        {gitTag: 'v1.1.0', version: '1.1.0', gitHead: '555'},
+        {gitTag: 'v2.0.0', version: '2.0.0'},
+        {gitTag: 'v2.0.0', version: '2.0.0'},
+        {gitTag: 'v2.1.0', version: '2.1.0'},
+        {gitTag: 'v2.1.1', version: '2.1.1'},
+        {gitTag: 'v1.0.0', version: '1.0.0'},
+        {gitTag: 'v1.1.0', version: '1.1.0'},
       ],
     },
     branches: [{name: '2.x', channel: 'latest'}, {name: 'master', channel: 'latest'}],
@@ -278,9 +281,9 @@ test('Exclude versions merged between release branches if they have the same "ch
       name: 'master',
       channel: 'latest',
       tags: [
-        {gitTag: 'v1.0.0', channel: 'latest', version: '1.0.0', gitHead: '111'},
-        {gitTag: 'v1.1.0', channel: 'latest', version: '1.1.0', gitHead: '222'},
-        {gitTag: 'v2.0.0', channel: 'latest', version: '2.0.0', gitHead: '333'},
+        {gitTag: 'v1.0.0', channel: 'latest', version: '1.0.0'},
+        {gitTag: 'v1.1.0', channel: 'latest', version: '1.1.0'},
+        {gitTag: 'v2.0.0', channel: 'latest', version: '2.0.0'},
       ],
     },
     branches: [
@@ -300,9 +303,9 @@ test('Exclude versions merged between release branches if they all have "channel
       name: 'master',
       channel: false,
       tags: [
-        {gitTag: 'v1.0.0', version: '1.0.0', gitHead: '111'},
-        {gitTag: 'v1.1.0', version: '1.1.0', gitHead: '222'},
-        {gitTag: 'v2.0.0', version: '2.0.0', gitHead: '333'},
+        {gitTag: 'v1.0.0', version: '1.0.0'},
+        {gitTag: 'v1.1.0', version: '1.1.0'},
+        {gitTag: 'v2.0.0', version: '2.0.0'},
       ],
     },
     branches: [{name: 'master', channel: false}, {name: 'next', channel: false}, {name: 'next-major', channel: false}],

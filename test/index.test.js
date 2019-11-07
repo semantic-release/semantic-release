@@ -96,7 +96,7 @@ test('Plugins are called with expected values', async t => {
       name: 'master',
       range: '>=1.0.0 <2.0.0',
       accept: ['patch', 'minor'],
-      tags: [{channel: 'next', gitTag: 'v1.0.0@next', version: '1.0.0', gitHead: commits[commits.length - 1].hash}],
+      tags: [{channel: 'next', gitTag: 'v1.0.0@next', version: '1.0.0'}],
       type: 'release',
     },
     {
@@ -104,7 +104,7 @@ test('Plugins are called with expected values', async t => {
       name: 'next',
       range: '>=2.0.0',
       accept: ['patch', 'minor', 'major'],
-      tags: [{channel: 'next', gitHead: commits[commits.length - 1].hash, gitTag: 'v1.0.0@next', version: '1.0.0'}],
+      tags: [{channel: 'next', gitTag: 'v1.0.0@next', version: '1.0.0'}],
       type: 'release',
     },
   ];

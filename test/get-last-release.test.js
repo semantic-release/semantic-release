@@ -6,16 +6,16 @@ test('Get the highest non-prerelease valid tag', t => {
     branch: {
       name: 'master',
       tags: [
-        {version: '2.0.0', gitTag: 'v2.0.0', gitHead: '222'},
-        {version: '1.0.0', gitTag: 'v1.0.0', gitHead: '111'},
-        {version: '3.0.0-beta.1', gitTag: 'v3.0.0-beta.1@beta', gitHead: '333'},
+        {version: '2.0.0', gitTag: 'v2.0.0', gitHead: 'v2.0.0'},
+        {version: '1.0.0', gitTag: 'v1.0.0', gitHead: 'v1.0.0'},
+        {version: '3.0.0-beta.1', gitTag: 'v3.0.0-beta.1@beta', gitHead: 'v3.0.0-beta.1@beta'},
       ],
       type: 'release',
     },
     options: {tagFormat: `v\${version}`},
   });
 
-  t.deepEqual(result, {version: '2.0.0', gitTag: 'v2.0.0', name: 'v2.0.0', gitHead: '222', channel: undefined});
+  t.deepEqual(result, {version: '2.0.0', gitTag: 'v2.0.0', name: 'v2.0.0', gitHead: 'v2.0.0', channel: undefined});
 });
 
 test('Get the highest prerelease valid tag, ignoring other tags from other prerelease channels', t => {
@@ -25,9 +25,9 @@ test('Get the highest prerelease valid tag, ignoring other tags from other prere
       prerelease: 'beta',
       channel: 'beta',
       tags: [
-        {version: '1.0.0-beta.1', gitTag: 'v1.0.0-beta.1@beta', gitHead: '111', channel: 'beta'},
-        {version: '1.0.0-beta.2', gitTag: 'v1.0.0-beta.2@beta', gitHead: '222', channel: 'beta'},
-        {version: '1.0.0-alpha.1', gitTag: 'v1.0.0-alpha.1@alpha', gitHead: '333', channel: 'alpha'},
+        {version: '1.0.0-beta.1', gitTag: 'v1.0.0-beta.1@beta', gitHead: 'v1.0.0-beta.1@beta', channel: 'beta'},
+        {version: '1.0.0-beta.2', gitTag: 'v1.0.0-beta.2@beta', gitHead: 'v1.0.0-beta.2@beta', channel: 'beta'},
+        {version: '1.0.0-alpha.1', gitTag: 'v1.0.0-alpha.1@alpha', gitHead: 'v1.0.0-alpha.1@alpha', channel: 'alpha'},
       ],
       type: 'prerelease',
     },
@@ -38,7 +38,7 @@ test('Get the highest prerelease valid tag, ignoring other tags from other prere
     version: '1.0.0-beta.2',
     gitTag: 'v1.0.0-beta.2@beta',
     name: 'v1.0.0-beta.2',
-    gitHead: '222',
+    gitHead: 'v1.0.0-beta.2@beta',
     channel: 'beta',
   });
 });
@@ -47,7 +47,7 @@ test('Return empty object if no valid tag is found', t => {
   const result = getLastRelease({
     branch: {
       name: 'master',
-      tags: [{version: '3.0.0-beta.1', gitTag: 'v3.0.0-beta.1@beta', gitHead: '111'}],
+      tags: [{version: '3.0.0-beta.1', gitTag: 'v3.0.0-beta.1@beta', gitHead: 'v3.0.0-beta.1@beta'}],
       type: 'release',
     },
     options: {tagFormat: `v\${version}`},
@@ -63,11 +63,11 @@ test('Get the highest non-prerelease valid tag before a certain version', t => {
         name: 'master',
         channel: undefined,
         tags: [
-          {version: '2.0.0', gitTag: 'v2.0.0', gitHead: '333'},
-          {version: '1.0.0', gitTag: 'v1.0.0', gitHead: '111'},
-          {version: '2.0.0-beta.1', gitTag: 'v2.0.0-beta.1@beta', gitHead: '222'},
-          {version: '2.1.0', gitTag: 'v2.1.0', gitHead: '444'},
-          {version: '2.1.1', gitTag: 'v2.1.1', gitHead: '555'},
+          {version: '2.0.0', gitTag: 'v2.0.0', gitHead: 'v2.0.0'},
+          {version: '1.0.0', gitTag: 'v1.0.0', gitHead: 'v1.0.0'},
+          {version: '2.0.0-beta.1', gitTag: 'v2.0.0-beta.1@beta', gitHead: 'v2.0.0-beta.1@beta'},
+          {version: '2.1.0', gitTag: 'v2.1.0', gitHead: 'v2.1.0'},
+          {version: '2.1.1', gitTag: 'v2.1.1', gitHead: 'v2.1.1'},
         ],
         type: 'release',
       },
@@ -76,5 +76,5 @@ test('Get the highest non-prerelease valid tag before a certain version', t => {
     {before: '2.1.0'}
   );
 
-  t.deepEqual(result, {version: '2.0.0', gitTag: 'v2.0.0', name: 'v2.0.0', gitHead: '333', channel: undefined});
+  t.deepEqual(result, {version: '2.0.0', gitTag: 'v2.0.0', name: 'v2.0.0', gitHead: 'v2.0.0', channel: undefined});
 });
