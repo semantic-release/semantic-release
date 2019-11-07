@@ -18,7 +18,7 @@ const {extractErrors, makeTag} = require('./lib/utils');
 const getGitAuthUrl = require('./lib/get-git-auth-url');
 const getBranches = require('./lib/branches');
 const getLogger = require('./lib/get-logger');
-const {verifyAuth, isBranchUpToDate, getGitHead, tag, push} = require('./lib/git');
+const {verifyAuth, isBranchUpToDate, getGitHead, tag, push, getTagHead} = require('./lib/git');
 const getError = require('./lib/get-error');
 const {COMMIT_NAME, COMMIT_EMAIL} = require('./lib/definitions/constants');
 
@@ -97,6 +97,8 @@ async function run(context, plugins) {
   context.releases = [];
 
   await pEachSeries(releasesToAdd, async ({lastRelease, currentRelease, nextRelease}) => {
+    nextRelease.gitHead = await getTagHead(nextRelease.gitHead, {cwd, env});
+    currentRelease.gitHead = await getTagHead(currentRelease.gitHead, {cwd, env});
     if (context.branch.mergeRange && !semver.satisfies(nextRelease.version, context.branch.mergeRange)) {
       errors.push(getError('EINVALIDMAINTENANCEMERGE', {...context, nextRelease}));
       return;
@@ -125,6 +127,9 @@ async function run(context, plugins) {
   }
 
   context.lastRelease = await getLastRelease(context);
+  if (context.lastRelease.gitHead) {
+    context.lastRelease.gitHead = await getTagHead(context.lastRelease.gitHead, {cwd, env});
+  }
 
   if (context.lastRelease.gitTag) {
     logger.log(
