@@ -140,7 +140,7 @@ test('Get all branches', async t => {
   t.deepEqual((await getBranches(repositoryUrl, {cwd})).sort(), ['master', 'second-branch', 'third-branch'].sort());
 });
 
-test('Get the commit sha for a given tag or falsy if the tag does not exists', async t => {
+test('Get the commit sha for a given tag', async t => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
   // Add commits to the master branch
@@ -149,7 +149,6 @@ test('Get the commit sha for a given tag or falsy if the tag does not exists', a
   await gitTagVersion('v1.0.0', undefined, {cwd});
 
   t.is(await getTagHead('v1.0.0', {cwd}), commits[0].hash);
-  t.falsy(await getTagHead('missing_tag', {cwd}));
 });
 
 test('Return git remote repository url from config', async t => {
