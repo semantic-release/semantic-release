@@ -32,7 +32,7 @@
     "cosmiconfig": "^6.0.0",
     "debug": "^4.0.0",
     "env-ci": "^4.0.0",
-    "execa": "^1.0.0",
+    "execa": "^3.2.0",
     "figures": "^3.0.0",
     "find-versions": "^3.0.0",
     "get-stream": "^5.0.0",
@@ -71,7 +71,7 @@
     "xo": "^0.25.0"
   },
   "engines": {
-    "node": ">=8.3"
+    "node": ">=8.16"
   },
   "files": [
     "bin",

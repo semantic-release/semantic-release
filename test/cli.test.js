@@ -66,7 +66,7 @@ test.serial('Pass options to semantic-release API', async t => {
   ];
   const cli = requireNoCache('../cli', {'.': run, process: {...process, argv}});
 
-  const code = await cli();
+  const exitCode = await cli();
 
   t.is(run.args[0][0].branch, 'master');
   t.is(run.args[0][0].repositoryUrl, 'https://github/com/owner/repo.git');
@@ -84,7 +84,7 @@ test.serial('Pass options to semantic-release API', async t => {
   t.is(run.args[0][0].debug, true);
   t.is(run.args[0][0].dryRun, true);
 
-  t.is(code, 0);
+  t.is(exitCode, 0);
 });
 
 test.serial('Pass options to semantic-release API with alias arguments', async t => {
@@ -108,7 +108,7 @@ test.serial('Pass options to semantic-release API with alias arguments', async t
   ];
   const cli = requireNoCache('../cli', {'.': run, process: {...process, argv}});
 
-  const code = await cli();
+  const exitCode = await cli();
 
   t.is(run.args[0][0].branch, 'master');
   t.is(run.args[0][0].repositoryUrl, 'https://github/com/owner/repo.git');
@@ -117,7 +117,7 @@ test.serial('Pass options to semantic-release API with alias arguments', async t
   t.deepEqual(run.args[0][0].extends, ['config1', 'config2']);
   t.is(run.args[0][0].dryRun, true);
 
-  t.is(code, 0);
+  t.is(exitCode, 0);
 });
 
 test.serial('Pass unknown options to semantic-release API', async t => {
@@ -125,13 +125,13 @@ test.serial('Pass unknown options to semantic-release API', async t => {
   const argv = ['', '', '--bool', '--first-option', 'value1', '--second-option', 'value2', '--second-option', 'value3'];
   const cli = requireNoCache('../cli', {'.': run, process: {...process, argv}});
 
-  const code = await cli();
+  const exitCode = await cli();
 
   t.is(run.args[0][0].bool, true);
   t.is(run.args[0][0].firstOption, 'value1');
   t.deepEqual(run.args[0][0].secondOption, ['value2', 'value3']);
 
-  t.is(code, 0);
+  t.is(exitCode, 0);
 });
 
 test.serial('Pass empty Array to semantic-release API for list option set to "false"', async t => {
@@ -139,11 +139,11 @@ test.serial('Pass empty Array to semantic-release API for list option set to "fa
   const argv = ['', '', '--publish', 'false'];
   const cli = requireNoCache('../cli', {'.': run, process: {...process, argv}});
 
-  const code = await cli();
+  const exitCode = await cli();
 
   t.deepEqual(run.args[0][0].publish, []);
 
-  t.is(code, 0);
+  t.is(exitCode, 0);
 });
 
 test.serial('Do not set properties in option for which arg is not in command line', async t => {
@@ -168,45 +168,45 @@ test.serial('Display help', async t => {
   const argv = ['', '', '--help'];
   const cli = requireNoCache('../cli', {'.': run, process: {...process, argv}});
 
-  const code = await cli();
+  const exitCode = await cli();
 
   t.regex(t.context.logs, /Run automated package publishing/);
-  t.is(code, 0);
+  t.is(exitCode, 0);
 });
 
-test.serial('Return error code and prints help if called with a command', async t => {
+test.serial('Return error exitCode and prints help if called with a command', async t => {
   const run = stub().resolves(true);
   const argv = ['', '', 'pre'];
   const cli = requireNoCache('../cli', {'.': run, process: {...process, argv}});
 
-  const code = await cli();
+  const exitCode = await cli();
 
   t.regex(t.context.errors, /Run automated package publishing/);
   t.regex(t.context.errors, /Too many non-option arguments/);
-  t.is(code, 1);
+  t.is(exitCode, 1);
 });
 
-test.serial('Return error code if multiple plugin are set for single plugin', async t => {
+test.serial('Return error exitCode if multiple plugin are set for single plugin', async t => {
   const run = stub().resolves(true);
   const argv = ['', '', '--analyze-commits', 'analyze1', 'analyze2'];
   const cli = requireNoCache('../cli', {'.': run, process: {...process, argv}});
 
-  const code = await cli();
+  const exitCode = await cli();
 
   t.regex(t.context.errors, /Run automated package publishing/);
   t.regex(t.context.errors, /Too many non-option arguments/);
-  t.is(code, 1);
+  t.is(exitCode, 1);
 });
 
-test.serial('Return error code if semantic-release throw error', async t => {
+test.serial('Return error exitCode if semantic-release throw error', async t => {
   const run = stub().rejects(new Error('semantic-release error'));
   const argv = ['', ''];
   const cli = requireNoCache('../cli', {'.': run, process: {...process, argv}});
 
-  const code = await cli();
+  const exitCode = await cli();
 
   t.regex(t.context.errors, /semantic-release error/);
-  t.is(code, 1);
+  t.is(exitCode, 1);
 });
 
 test.serial('Hide sensitive environment variable values from the logs', async t => {
@@ -215,8 +215,8 @@ test.serial('Hide sensitive environment variable values from the logs', async t 
   const argv = ['', ''];
   const cli = requireNoCache('../cli', {'.': run, process: {...process, argv, env: {...process.env, ...env}}});
 
-  const code = await cli();
+  const exitCode = await cli();
 
   t.regex(t.context.errors, new RegExp(`Throw error: Exposing token ${escapeRegExp(SECRET_REPLACEMENT)}`));
-  t.is(code, 1);
+  t.is(exitCode, 1);
 });
