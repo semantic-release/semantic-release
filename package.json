@@ -64,6 +64,7 @@
     "nock": "^11.1.0",
     "nyc": "^14.0.0",
     "p-retry": "^4.0.0",
+    "prettier": "1.19.1",
     "proxyquire": "^2.0.0",
     "sinon": "^7.2.7",
     "stream-buffers": "^3.0.2",
