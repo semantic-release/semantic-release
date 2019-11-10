@@ -47,7 +47,12 @@ test('Execute each function in series passing the "lastResult" and "result" to "
   const result = await pipeline([step1, step2, step3, step4], {settleAll: false, getNextInput})(5);
 
   t.deepEqual(result, [1, 2, 3, 4]);
-  t.deepEqual(getNextInput.args, [[5, 1], [5, 2], [5, 3], [5, 4]]);
+  t.deepEqual(getNextInput.args, [
+    [5, 1],
+    [5, 2],
+    [5, 3],
+    [5, 4],
+  ]);
 });
 
 test('Execute each function in series calling "transform" to modify the results', async t => {
@@ -61,7 +66,12 @@ test('Execute each function in series calling "transform" to modify the results'
   const result = await pipeline([step1, step2, step3, step4], {getNextInput, transform})(5);
 
   t.deepEqual(result, [1 + 1, 2 + 1, 3 + 1, 4 + 1]);
-  t.deepEqual(getNextInput.args, [[5, 1 + 1], [5, 2 + 1], [5, 3 + 1], [5, 4 + 1]]);
+  t.deepEqual(getNextInput.args, [
+    [5, 1 + 1],
+    [5, 2 + 1],
+    [5, 3 + 1],
+    [5, 4 + 1],
+  ]);
 });
 
 test('Execute each function in series calling "transform" to modify the results with "settleAll"', async t => {
@@ -75,7 +85,12 @@ test('Execute each function in series calling "transform" to modify the results 
   const result = await pipeline([step1, step2, step3, step4], {settleAll: true, getNextInput, transform})(5);
 
   t.deepEqual(result, [1 + 1, 2 + 1, 3 + 1, 4 + 1]);
-  t.deepEqual(getNextInput.args, [[5, 1 + 1], [5, 2 + 1], [5, 3 + 1], [5, 4 + 1]]);
+  t.deepEqual(getNextInput.args, [
+    [5, 1 + 1],
+    [5, 2 + 1],
+    [5, 3 + 1],
+    [5, 4 + 1],
+  ]);
 });
 
 test('Stop execution and throw error if a step rejects', async t => {
