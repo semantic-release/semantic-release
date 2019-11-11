@@ -10,7 +10,7 @@ In this example an [`NPM_TOKEN`](https://docs.npmjs.com/creating-and-viewing-aut
 
 [GitHub Actions](https://github.com/features/actions) support [Workflows](https://help.github.com/en/articles/configuring-workflows), allowing to run tests on multiple Node versions and publish a release only when all test pass.
 
-**Note**: The publish pipeline must run on [Node version >= 8.3](../support/FAQ.md#why-does-semantic-release-require-node-version--83).
+**Note**: The publish pipeline must run on [Node version >= 8.16](../support/FAQ.md#why-does-semantic-release-require-node-version--816).
 
 ### `.github/workflows/release.yml` configuration for Node projects
 
