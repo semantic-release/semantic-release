@@ -1,34 +1,32 @@
 <h1 align="center" style="border-bottom: none;">📦🚀 semantic-release-plus</h1>
 <h3 align="center">Fully automated version management and package publishing</h3>
 <p align="center">
-  <a href="https://spectrum.chat/semantic-release">
-    <img alt="Join the community on Spectrum" src="https://withspectrum.github.io/badge/badge.svg">
+  <a href="https://travis-ci.com/semantic-release-plus/semantic-release">
+    <img alt="Travis" src="https://img.shields.io/travis/semantic-release-plus/semantic-release/master.svg">
   </a>
-  <a href="https://travis-ci.org/semantic-release/semantic-release">
-    <img alt="Travis" src="https://img.shields.io/travis/semantic-release/semantic-release/master.svg">
+  <a href="https://codecov.io/gh/semantic-release-plus/semantic-release">
+    <img alt="Codecov" src="https://img.shields.io/codecov/c/github/semantic-release-plus/semantic-release/master.svg">
   </a>
-  <a href="https://codecov.io/gh/semantic-release/semantic-release">
-    <img alt="Codecov" src="https://img.shields.io/codecov/c/github/semantic-release/semantic-release/master.svg">
-  </a>
-  <a href="https://greenkeeper.io">
-    <img alt="Greenkeeper" src="https://badges.greenkeeper.io/semantic-release/semantic-release.svg">
-  </a>
+  <a href="https://renovatebot.com/"><img src="https://img.shields.io/badge/renovate-enabled-brightgreen.svg" alt="renovate"></a>
   <a href="#badge">
-    <img alt="semantic-release" src="https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg">
+    <img alt="semantic-release-plus" src="https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release--plus-e10079.svg">
   </a>
 </p>
 <p align="center">
-  <a href="https://www.npmjs.com/package/semantic-release">
-    <img alt="npm latest version" src="https://img.shields.io/npm/v/semantic-release/latest.svg">
+  <a href="https://www.npmjs.com/package/semantic-release-plus">
+    <img alt="npm latest version" src="https://img.shields.io/npm/v/semantic-release-plus/latest.svg">
   </a>
-  <a href="https://www.npmjs.com/package/semantic-release">
-    <img alt="npm next version" src="https://img.shields.io/npm/v/semantic-release/next.svg">
+  <a href="https://www.npmjs.com/package/semantic-release-plus">
+    <img alt="npm next version" src="https://img.shields.io/npm/v/semantic-release-plus/next.svg">
   </a>
 </p>
 
-**semantic-release-plus** is a drop in replacement for **semantic release** that adds some enhancements.
+**semantic-release-plus** is a drop in replacement for **semantic release** that adds some enhancements:
+- [X] Filter commit by path [commitPaths](docs/usage/configuration.md#commitPaths)
+- [ ] Set the logging level
+- [ ] Print the next version only
 
-**semantic-release-flex** automates the whole package release workflow including: determining the next version number, generating the release notes and publishing the package.
+**semantic-release** automates the whole package release workflow including: determining the next version number, generating the release notes and publishing the package.
 
 This removes the immediate connection between human emotions and version numbers, strictly following the [Semantic Versioning](http://semver.org) specification.
 
