@@ -14,6 +14,7 @@ import {
   getFirstVersion,
   getRange,
   makeTag,
+  isSameChannel,
 } from '../lib/utils';
 
 test('extractErrors', t => {
@@ -177,4 +178,13 @@ test('makeTag', t => {
   t.is(makeTag(`v\${version}`, '1.0.0', null), 'v1.0.0');
   t.is(makeTag(`v\${version}`, '1.0.0', 'next'), 'v1.0.0@next');
   t.is(makeTag(`v\${version}@test`, '1.0.0', 'next'), 'v1.0.0@next@test');
+});
+
+test('isSameChannel', t => {
+  t.true(isSameChannel('next', 'next'));
+  t.true(isSameChannel(null, undefined));
+  t.true(isSameChannel(false, undefined));
+  t.true(isSameChannel('', false));
+
+  t.false(isSameChannel('next', false));
 });

@@ -581,6 +581,117 @@ test('Publish a pre-release version', async t => {
   t.is(releases[0].gitTag, 'v1.1.0-beta.2@beta');
 });
 
+test('Publish releases from different branch on the same channel', async t => {
+  const {cwd, repositoryUrl} = await gitRepo(true);
+  await gitCommits(['feat: initial commit'], {cwd});
+  await gitTagVersion('v1.0.0', undefined, {cwd});
+  await gitPush(repositoryUrl, 'master', {cwd});
+  await gitCheckout('next-major', true, {cwd});
+  await gitPush(repositoryUrl, 'next-major', {cwd});
+  await gitCheckout('next', true, {cwd});
+  await gitCommits(['feat: a feature'], {cwd});
+  await gitPush(repositoryUrl, 'next', {cwd});
+
+  const config = {
+    branches: ['master', {name: 'next', channel: false}, {name: 'next-major', channel: false}],
+    repositoryUrl,
+  };
+  const addChannel = stub().resolves({});
+  const options = {
+    ...config,
+    verifyConditions: stub().resolves(),
+    verifyRelease: stub().resolves(),
+    generateNotes: stub().resolves(''),
+    addChannel,
+    prepare: stub().resolves(),
+    publish: stub().resolves(),
+    success: stub().resolves(),
+    fail: stub().resolves(),
+  };
+
+  let semanticRelease = requireNoCache('..', {
+    './lib/get-logger': () => t.context.logger,
+    'env-ci': () => ({isCi: true, branch: 'next', isPr: false}),
+  });
+  let {releases} = await semanticRelease(options, {cwd, env: {}, stdout: {write: () => {}}, stderr: {write: () => {}}});
+
+  t.is(releases.length, 1);
+  t.is(releases[0].version, '1.1.0');
+  t.is(releases[0].gitTag, 'v1.1.0');
+
+  await gitCommits(['fix: a fix'], {cwd});
+  ({releases} = await semanticRelease(options, {
+    cwd,
+    env: {},
+    stdout: {write: () => {}},
+    stderr: {write: () => {}},
+  }));
+
+  t.is(releases.length, 1);
+  t.is(releases[0].version, '1.1.1');
+  t.is(releases[0].gitTag, 'v1.1.1');
+
+  await gitCheckout('master', false, {cwd});
+  await merge('next', {cwd});
+  await gitPush('origin', 'master', {cwd});
+
+  semanticRelease = requireNoCache('..', {
+    './lib/get-logger': () => t.context.logger,
+    'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
+  });
+
+  t.falsy(await semanticRelease(options, {cwd, env: {}, stdout: {write: () => {}}, stderr: {write: () => {}}}));
+  t.is(addChannel.callCount, 0);
+});
+
+test('Publish pre-releases the same channel as regular releases', async t => {
+  const {cwd, repositoryUrl} = await gitRepo(true);
+  await gitCommits(['feat: initial commit'], {cwd});
+  await gitTagVersion('v1.0.0', undefined, {cwd});
+  await gitPush(repositoryUrl, 'master', {cwd});
+  await gitCheckout('beta', true, {cwd});
+  await gitCommits(['feat: a feature'], {cwd});
+  await gitPush(repositoryUrl, 'beta', {cwd});
+
+  const config = {
+    branches: ['master', {name: 'beta', channel: false, prerelease: true}],
+    repositoryUrl,
+  };
+  const options = {
+    ...config,
+    verifyConditions: stub().resolves(),
+    verifyRelease: stub().resolves(),
+    generateNotes: stub().resolves(''),
+    addChannel: false,
+    prepare: stub().resolves(),
+    publish: stub().resolves(),
+    success: stub().resolves(),
+    fail: stub().resolves(),
+  };
+
+  const semanticRelease = requireNoCache('..', {
+    './lib/get-logger': () => t.context.logger,
+    'env-ci': () => ({isCi: true, branch: 'beta', isPr: false}),
+  });
+  let {releases} = await semanticRelease(options, {cwd, env: {}, stdout: {write: () => {}}, stderr: {write: () => {}}});
+
+  t.is(releases.length, 1);
+  t.is(releases[0].version, '1.1.0-beta.1');
+  t.is(releases[0].gitTag, 'v1.1.0-beta.1');
+
+  await gitCommits(['fix: a fix'], {cwd});
+  ({releases} = await semanticRelease(options, {
+    cwd,
+    env: {},
+    stdout: {write: () => {}},
+    stderr: {write: () => {}},
+  }));
+
+  t.is(releases.length, 1);
+  t.is(releases[0].version, '1.1.0-beta.2');
+  t.is(releases[0].gitTag, 'v1.1.0-beta.2');
+});
+
 test('Do not add pre-releases to a different channel', async t => {
   const {cwd, repositoryUrl} = await gitRepo(true);
   const commits = await gitCommits(['feat: initial release'], {cwd});
