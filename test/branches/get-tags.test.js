@@ -129,7 +129,10 @@ test('Return branches with and empty tags array if no valid tag is found in hist
 
   const result = await getTags({cwd, options: {tagFormat: `prefix@v\${version}`}}, [{name: 'master'}, {name: 'next'}]);
 
-  t.deepEqual(result, [{name: 'master', tags: []}, {name: 'next', tags: []}]);
+  t.deepEqual(result, [
+    {name: 'master', tags: []},
+    {name: 'next', tags: []},
+  ]);
 });
 
 test('Get the highest valid tag corresponding to the "tagFormat"', async t => {
