@@ -48,8 +48,10 @@ For example the configuration `['+([0-9])?(.{+([0-9]),x}).x', 'master', 'next']`
 
 ### channel
 
-The `channel` can be defined for any branch type. If it's not defined, releases will be done on the default distribution channel (for example the `@latest` [dist-tag](https://docs.npmjs.com/cli/dist-tag) for npm).
-The value of `channel`, if defined, is generated with [Lodash template](https://lodash.com/docs#template) with the variable `name` available.
+The `channel` can be defined for any branch type. By default releases will be done on the default distribution channel (for example the `@latest` [dist-tag](https://docs.npmjs.com/cli/dist-tag) for npm) for the first [release branch](#release-branches) and on a distribution channel named based on the branch `name` for any other branch.
+If the `channel` property is set to `false` the default channel will be used.
+
+The value of `channel`, if defined as a string, is generated with [Lodash template](https://lodash.com/docs#template) with the variable `name` available.
 
 For example the configuration `['master', {name: 'next', channel: 'channel-${name}'}]` will be expanded as:
 ```js
@@ -78,7 +80,7 @@ For example the configuration `['1.1.x', '1.2.x', 'master']` will be expanded as
 
 ### prerelease
 
-A `prerelease` property applies only to pre-release branches, is required and The `prerelease` value must be valid per the [Semantic Versioning Specification](https://semver.org/#spec-item-9). It will determine the name of versions (for example if `prerelease` is set to `beta` the version be formatted like `2.0.0-beta.1`, `2.0.0-beta.2` etc...).
+A `prerelease` property applies only to pre-release branches and the `prerelease` value must be valid per the [Semantic Versioning Specification](https://semver.org/#spec-item-9). It will determine the name of versions (for example if `prerelease` is set to `beta` the version be formatted like `2.0.0-beta.1`, `2.0.0-beta.2` etc...).
 If the `prerelease` property is set to `true` the `name` value will be used.
 
 The value of `prerelease`, if defined as a string, is generated with [Lodash template](https://lodash.com/docs#template) with the variable `name` available.
