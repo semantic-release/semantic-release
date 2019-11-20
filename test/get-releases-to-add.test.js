@@ -268,7 +268,10 @@ test('Exclude versions merged from release to maintenance branch if they have th
         {gitTag: 'v1.1.0', version: '1.1.0'},
       ],
     },
-    branches: [{name: '2.x', channel: 'latest'}, {name: 'master', channel: 'latest'}],
+    branches: [
+      {name: '2.x', channel: 'latest'},
+      {name: 'master', channel: 'latest'},
+    ],
     options: {tagFormat: `v\${version}`},
   });
 
@@ -308,7 +311,11 @@ test('Exclude versions merged between release branches if they all have "channel
         {gitTag: 'v2.0.0', version: '2.0.0'},
       ],
     },
-    branches: [{name: 'master', channel: false}, {name: 'next', channel: false}, {name: 'next-major', channel: false}],
+    branches: [
+      {name: 'master', channel: false},
+      {name: 'next', channel: false},
+      {name: 'next-major', channel: false},
+    ],
     options: {tagFormat: `v\${version}`},
   });
 

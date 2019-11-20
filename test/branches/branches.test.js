@@ -171,7 +171,10 @@ test('Throw SemanticReleaseError for invalid configurations', async t => {
 });
 
 test('Throw a SemanticReleaseError if there is duplicate branches', async t => {
-  const branches = [{name: 'master', tags: []}, {name: 'master', tags: []}];
+  const branches = [
+    {name: 'master', tags: []},
+    {name: 'master', tags: []},
+  ];
   const getBranches = proxyquire('../../lib/branches', {'./get-tags': () => branches, './expand': () => []});
 
   const errors = [...(await t.throwsAsync(getBranches('repositoryUrl', {options: {branches}})))];
@@ -183,7 +186,10 @@ test('Throw a SemanticReleaseError if there is duplicate branches', async t => {
 });
 
 test('Throw a SemanticReleaseError for each invalid branch name', async t => {
-  const branches = [{name: '~master', tags: []}, {name: '^master', tags: []}];
+  const branches = [
+    {name: '~master', tags: []},
+    {name: '^master', tags: []},
+  ];
   const getBranches = proxyquire('../../lib/branches', {'./get-tags': () => branches, './expand': () => []});
 
   const errors = [...(await t.throwsAsync(getBranches('repositoryUrl', {options: {branches}})))];

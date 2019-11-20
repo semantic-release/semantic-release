@@ -4,7 +4,11 @@ import normalize from '../../lib/branches/normalize';
 const toTags = versions => versions.map(version => ({version}));
 
 test('Maintenance branches - initial state', t => {
-  const maintenance = [{name: '1.x', channel: '1.x', tags: []}, {name: '1.1.x', tags: []}, {name: '1.2.x', tags: []}];
+  const maintenance = [
+    {name: '1.x', channel: '1.x', tags: []},
+    {name: '1.1.x', tags: []},
+    {name: '1.2.x', tags: []},
+  ];
   const release = [{name: 'master', tags: []}];
   t.deepEqual(
     normalize.maintenance({maintenance, release}).map(({type, name, range, accept, channel, mergeRange}) => ({
@@ -303,24 +307,35 @@ test('Prerelease branches', t => {
     {name: 'alpha', prerelease: 'preview', tags: []},
   ];
 
-  t.deepEqual(normalize.prerelease({prerelease}).map(({type, name, channel}) => ({type, name, channel})), [
-    {type: 'prerelease', name: 'beta', channel: 'beta'},
-    {type: 'prerelease', name: 'alpha', channel: 'alpha'},
-  ]);
+  t.deepEqual(
+    normalize.prerelease({prerelease}).map(({type, name, channel}) => ({type, name, channel})),
+    [
+      {type: 'prerelease', name: 'beta', channel: 'beta'},
+      {type: 'prerelease', name: 'alpha', channel: 'alpha'},
+    ]
+  );
 });
 
 test('Allow to set channel to "false" to prevent default', t => {
   const maintenance = [{name: '1.x', channel: false, tags: []}];
-  const release = [{name: 'master', channel: false, tags: []}, {name: 'next', channel: false, tags: []}];
+  const release = [
+    {name: 'master', channel: false, tags: []},
+    {name: 'next', channel: false, tags: []},
+  ];
   const prerelease = [{name: 'beta', channel: false, prerelease: true, tags: []}];
-  t.deepEqual(normalize.maintenance({maintenance, release}).map(({name, channel}) => ({name, channel})), [
-    {name: '1.x', channel: false},
-  ]);
-  t.deepEqual(normalize.release({release}).map(({name, channel}) => ({name, channel})), [
-    {name: 'master', channel: false},
-    {name: 'next', channel: false},
-  ]);
-  t.deepEqual(normalize.prerelease({prerelease}).map(({name, channel}) => ({name, channel})), [
-    {name: 'beta', channel: false},
-  ]);
+  t.deepEqual(
+    normalize.maintenance({maintenance, release}).map(({name, channel}) => ({name, channel})),
+    [{name: '1.x', channel: false}]
+  );
+  t.deepEqual(
+    normalize.release({release}).map(({name, channel}) => ({name, channel})),
+    [
+      {name: 'master', channel: false},
+      {name: 'next', channel: false},
+    ]
+  );
+  t.deepEqual(
+    normalize.prerelease({prerelease}).map(({name, channel}) => ({name, channel})),
+    [{name: 'beta', channel: false}]
+  );
 });

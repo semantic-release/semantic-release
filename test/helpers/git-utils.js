@@ -86,9 +86,11 @@ export async function gitCommits(messages, execaOpts) {
  */
 export async function gitGetCommits(from, execaOpts) {
   Object.assign(gitLogParser.fields, {hash: 'H', message: 'B', gitTags: 'd', committerDate: {key: 'ci', type: Date}});
-  return (await getStream.array(
-    gitLogParser.parse({_: `${from ? from + '..' : ''}HEAD`}, {...execaOpts, env: {...process.env, ...execaOpts.env}})
-  )).map(commit => {
+  return (
+    await getStream.array(
+      gitLogParser.parse({_: `${from ? from + '..' : ''}HEAD`}, {...execaOpts, env: {...process.env, ...execaOpts.env}})
+    )
+  ).map(commit => {
     commit.message = commit.message.trim();
     commit.gitTags = commit.gitTags.trim();
     return commit;
