@@ -8,9 +8,10 @@ test('A "maintenance" branch is identified by having a "range" property or a "na
   t.true(maintenance.filter({name: 'some-name', range: '1.x.x'}));
   t.true(maintenance.filter({name: 'some-name', range: '1.1.x'}));
   t.true(maintenance.filter({name: 'some-name', range: ''}));
-  t.true(maintenance.filter({name: 'some-name', range: null}));
-  t.true(maintenance.filter({name: 'some-name', range: false}));
+  t.true(maintenance.filter({name: 'some-name', range: true}));
 
+  t.false(maintenance.filter({name: 'some-name', range: null}));
+  t.false(maintenance.filter({name: 'some-name', range: false}));
   t.false(maintenance.filter({name: 'some-name'}));
   t.false(maintenance.filter({name: '1.0.0'}));
   t.false(maintenance.filter({name: 'x.x.x'}));
@@ -24,9 +25,8 @@ test('A "maintenance" branches must have a "range" property formatted like "N.x"
   t.false(maintenance.branchValidator({name: 'some-name', range: '>=1.0.0 <2.0.0'}));
   t.false(maintenance.branchValidator({name: 'some-name', range: '1.0.0'}));
   t.false(maintenance.branchValidator({name: 'some-name', range: 'wrong-range'}));
+  t.false(maintenance.branchValidator({name: 'some-name', range: true}));
   t.false(maintenance.branchValidator({name: 'some-name', range: ''}));
-  t.false(maintenance.branchValidator({name: 'some-name', range: null}));
-  t.false(maintenance.branchValidator({name: 'some-name', range: false}));
 });
 
 test('The "maintenance" branches must have unique ranges', t => {
@@ -36,13 +36,13 @@ test('The "maintenance" branches must have unique ranges', t => {
   t.false(maintenance.branchesValidator([{range: '1.x.x'}, {range: '1.x'}]));
 });
 
-test('A "prerelease" branch is identified by having a range "prerelease" property', t => {
+test('A "prerelease" branch is identified by having a thruthy "prerelease" property', t => {
   t.true(prerelease.filter({name: 'some-name', prerelease: true}));
   t.true(prerelease.filter({name: 'some-name', prerelease: 'beta'}));
   t.true(prerelease.filter({name: 'some-name', prerelease: ''}));
-  t.true(prerelease.filter({name: 'some-name', prerelease: null}));
-  t.true(prerelease.filter({name: 'some-name', prerelease: false}));
 
+  t.false(prerelease.filter({name: 'some-name', prerelease: null}));
+  t.false(prerelease.filter({name: 'some-name', prerelease: false}));
   t.false(prerelease.filter({name: 'some-name'}));
 });
 
