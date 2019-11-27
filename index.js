@@ -106,9 +106,13 @@ async function run(context, plugins) {
       const commits = await getCommits({...context, lastRelease, nextRelease});
       nextRelease.notes = await plugins.generateNotes({...context, commits, lastRelease, nextRelease});
 
-      await tag(nextRelease.gitTag, nextRelease.gitHead, {cwd, env});
-      await push(options.repositoryUrl, {cwd, env});
-      logger.success(`Created tag ${nextRelease.gitTag}`);
+      if (options.dryRun) {
+        logger.warn(`Skip ${nextRelease.gitTag} tag creation in dry-run mode`);
+      } else {
+        await tag(nextRelease.gitTag, nextRelease.gitHead, {cwd, env});
+        await push(options.repositoryUrl, {cwd, env});
+        logger.success(`Created tag ${nextRelease.gitTag}`);
+      }
 
       context.branch.tags.push({
         version: nextRelease.version,
