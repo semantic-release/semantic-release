@@ -1,5 +1,5 @@
 import test from 'ava';
-import {escapeRegExp, isString, sortBy} from 'lodash';
+import {escapeRegExp, isString, sortBy, omit} from 'lodash';
 import proxyquire from 'proxyquire';
 import {spy, stub} from 'sinon';
 import {WritableStreamBuffer} from 'stream-buffers';
@@ -57,7 +57,7 @@ test('Plugins are called with expected values', async t => {
     gitHead: commits[commits.length - 1].hash,
     gitTag: 'v1.0.0@next',
     name: 'v1.0.0',
-    channel: 'next',
+    channels: ['next'],
   };
   const nextRelease = {
     name: 'v1.1.0',
@@ -96,7 +96,7 @@ test('Plugins are called with expected values', async t => {
       name: 'master',
       range: '>=1.0.0 <2.0.0',
       accept: ['patch', 'minor'],
-      tags: [{channel: 'next', gitTag: 'v1.0.0@next', version: '1.0.0'}],
+      tags: [{channels: ['next'], gitTag: 'v1.0.0@next', version: '1.0.0'}],
       type: 'release',
     },
     {
@@ -104,7 +104,7 @@ test('Plugins are called with expected values', async t => {
       name: 'next',
       range: '>=2.0.0',
       accept: ['patch', 'minor', 'major'],
-      tags: [{channel: 'next', gitTag: 'v1.0.0@next', version: '1.0.0'}],
+      tags: [{channels: ['next'], gitTag: 'v1.0.0@next', version: '1.0.0'}],
       type: 'release',
     },
   ];
@@ -124,7 +124,7 @@ test('Plugins are called with expected values', async t => {
 
   const releases = [
     {
-      ...lastRelease,
+      ...omit(lastRelease, 'channels'),
       ...release1,
       type: 'major',
       version: '1.0.0',
@@ -176,7 +176,7 @@ test('Plugins are called with expected values', async t => {
   t.deepEqual(generateNotes1.args[0][1].commits[0].hash, commits[1].hash);
   t.deepEqual(generateNotes1.args[0][1].commits[0].message, commits[1].message);
   t.deepEqual(generateNotes1.args[0][1].nextRelease, {
-    ...lastRelease,
+    ...omit(lastRelease, 'channels'),
     type: 'major',
     version: '1.0.0',
     channel: undefined,
@@ -193,7 +193,7 @@ test('Plugins are called with expected values', async t => {
   t.deepEqual(generateNotes2.args[0][1].commits[0].hash, commits[1].hash);
   t.deepEqual(generateNotes2.args[0][1].commits[0].message, commits[1].message);
   t.deepEqual(generateNotes2.args[0][1].nextRelease, {
-    ...lastRelease,
+    ...omit(lastRelease, 'channels'),
     type: 'major',
     version: '1.0.0',
     channel: undefined,
@@ -211,7 +211,7 @@ test('Plugins are called with expected values', async t => {
   t.deepEqual(generateNotes3.args[0][1].commits[0].hash, commits[1].hash);
   t.deepEqual(generateNotes3.args[0][1].commits[0].message, commits[1].message);
   t.deepEqual(generateNotes3.args[0][1].nextRelease, {
-    ...lastRelease,
+    ...omit(lastRelease, 'channels'),
     type: 'major',
     version: '1.0.0',
     channel: undefined,
@@ -236,7 +236,7 @@ test('Plugins are called with expected values', async t => {
   t.deepEqual(addChannel.args[0][1].lastRelease, {});
   t.deepEqual(addChannel.args[0][1].currentRelease, {...lastRelease, type: 'major'});
   t.deepEqual(addChannel.args[0][1].nextRelease, {
-    ...lastRelease,
+    ...omit(lastRelease, 'channels'),
     type: 'major',
     version: '1.0.0',
     channel: undefined,
@@ -330,7 +330,7 @@ test('Plugins are called with expected values', async t => {
   t.deepEqual(success.args[0][1].commits[0].hash, commits[1].hash);
   t.deepEqual(success.args[0][1].commits[0].message, commits[1].message);
   t.deepEqual(success.args[0][1].nextRelease, {
-    ...lastRelease,
+    ...omit(lastRelease, 'channels'),
     type: 'major',
     version: '1.0.0',
     channel: undefined,
@@ -782,14 +782,6 @@ async function addChannelMacro(t, mergeFunction) {
     publish,
     success,
   };
-  const nextRelease1 = {
-    name: 'v2.0.0',
-    type: 'major',
-    version: '2.0.0',
-    channel: undefined,
-    gitTag: 'v2.0.0',
-    gitHead: commits[1].hash,
-  };
   const nextRelease2 = {
     name: 'v2.0.1',
     type: 'patch',
@@ -806,15 +798,11 @@ async function addChannelMacro(t, mergeFunction) {
   const result = await semanticRelease(options, {cwd, env: {}, stdout: {write: () => {}}, stderr: {write: () => {}}});
 
   t.deepEqual(result.releases, [
-    {...nextRelease1, ...release1, notes, pluginName: '[Function: functionStub]'},
-    {...nextRelease1, notes, pluginName: '[Function: functionStub]'},
     {...nextRelease2, ...release1, notes, pluginName: '[Function: functionStub]'},
     {...nextRelease2, notes, pluginName: '[Function: functionStub]'},
   ]);
 
   // Verify the tag has been created on the local and remote repo and reference
-  t.is(await gitTagHead(nextRelease1.gitTag, {cwd}), nextRelease1.gitHead);
-  t.is(await gitRemoteTagHead(repositoryUrl, nextRelease1.gitTag, {cwd}), nextRelease1.gitHead);
   t.is(await gitTagHead(nextRelease2.gitTag, {cwd}), nextRelease2.gitHead);
   t.is(await gitRemoteTagHead(repositoryUrl, nextRelease2.gitTag, {cwd}), nextRelease2.gitHead);
 }
@@ -1490,15 +1478,6 @@ test('Throws "EINVALIDMAINTENANCEMERGE" if merge an out of range release in a ma
     fail,
   };
 
-  const nextRelease = {
-    type: 'patch',
-    version: '1.1.1',
-    channel: '1.1.x',
-    gitTag: 'v1.1.1@1.1.x',
-    name: 'v1.1.1',
-    gitHead: commits[2].hash,
-  };
-
   const semanticRelease = proxyquire('..', {
     './lib/logger': t.context.logger,
     'env-ci': () => ({isCi: true, branch: '1.1.x', isPr: false}),
@@ -1509,13 +1488,11 @@ test('Throws "EINVALIDMAINTENANCEMERGE" if merge an out of range release in a ma
     )),
   ];
 
-  t.is(addChannel.callCount, 1);
-  t.deepEqual(addChannel.args[0][1].nextRelease, {...nextRelease, notes});
+  t.is(addChannel.callCount, 0);
 
   t.is(publish.callCount, 0);
 
-  t.is(success.callCount, 1);
-  t.deepEqual(success.args[0][1].releases, [{...nextRelease, notes, pluginName: '[Function: functionStub]'}]);
+  t.is(success.callCount, 0);
 
   t.is(fail.callCount, 1);
   t.deepEqual(fail.args[0][1].errors, errors);
