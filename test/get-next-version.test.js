@@ -13,7 +13,7 @@ test('Increase version for patch release', t => {
     getNextVersion({
       branch: {name: 'master', type: 'release'},
       nextRelease: {type: 'patch'},
-      lastRelease: {version: '1.0.0'},
+      lastRelease: {version: '1.0.0', channels: [undefined]},
       logger: t.context.logger,
     }),
     '1.0.1'
@@ -25,7 +25,7 @@ test('Increase version for minor release', t => {
     getNextVersion({
       branch: {name: 'master', type: 'release'},
       nextRelease: {type: 'minor'},
-      lastRelease: {version: '1.0.0'},
+      lastRelease: {version: '1.0.0', channels: [undefined]},
       logger: t.context.logger,
     }),
     '1.1.0'
@@ -37,7 +37,7 @@ test('Increase version for major release', t => {
     getNextVersion({
       branch: {name: 'master', type: 'release'},
       nextRelease: {type: 'major'},
-      lastRelease: {version: '1.0.0'},
+      lastRelease: {version: '1.0.0', channels: [undefined]},
       logger: t.context.logger,
     }),
     '2.0.0'
@@ -61,7 +61,7 @@ test('Increase version for patch release on prerelease branch', t => {
     getNextVersion({
       branch: {name: 'beta', type: 'prerelease', prerelease: 'beta'},
       nextRelease: {type: 'patch'},
-      lastRelease: {version: '1.0.0'},
+      lastRelease: {version: '1.0.0', channels: [undefined]},
       logger: t.context.logger,
     }),
     '1.0.1-beta.1'
@@ -71,7 +71,7 @@ test('Increase version for patch release on prerelease branch', t => {
     getNextVersion({
       branch: {name: 'beta', type: 'prerelease', prerelease: 'beta'},
       nextRelease: {type: 'patch'},
-      lastRelease: {version: '1.0.0-beta.1'},
+      lastRelease: {version: '1.0.0-beta.1', channels: [undefined]},
       logger: t.context.logger,
     }),
     '1.0.0-beta.2'
@@ -81,7 +81,7 @@ test('Increase version for patch release on prerelease branch', t => {
     getNextVersion({
       branch: {name: 'alpha', type: 'prerelease', prerelease: 'alpha'},
       nextRelease: {type: 'patch', channel: 'alpha'},
-      lastRelease: {version: '1.0.0-beta.1', channel: 'beta'},
+      lastRelease: {version: '1.0.0-beta.1', channels: ['beta']},
       logger: t.context.logger,
     }),
     '1.0.1-alpha.1'
@@ -93,7 +93,7 @@ test('Increase version for minor release on prerelease branch', t => {
     getNextVersion({
       branch: {name: 'beta', type: 'prerelease', prerelease: 'beta'},
       nextRelease: {type: 'minor'},
-      lastRelease: {version: '1.0.0'},
+      lastRelease: {version: '1.0.0', channels: [undefined]},
       logger: t.context.logger,
     }),
     '1.1.0-beta.1'
@@ -103,7 +103,7 @@ test('Increase version for minor release on prerelease branch', t => {
     getNextVersion({
       branch: {name: 'beta', type: 'prerelease', prerelease: 'beta'},
       nextRelease: {type: 'minor'},
-      lastRelease: {version: '1.0.0-beta.1'},
+      lastRelease: {version: '1.0.0-beta.1', channels: [undefined]},
       logger: t.context.logger,
     }),
     '1.0.0-beta.2'
@@ -113,7 +113,7 @@ test('Increase version for minor release on prerelease branch', t => {
     getNextVersion({
       branch: {name: 'alpha', type: 'prerelease', prerelease: 'alpha'},
       nextRelease: {type: 'minor', channel: 'alpha'},
-      lastRelease: {version: '1.0.0-beta.1', channel: 'beta'},
+      lastRelease: {version: '1.0.0-beta.1', channels: ['beta']},
       logger: t.context.logger,
     }),
     '1.1.0-alpha.1'
@@ -125,7 +125,7 @@ test('Increase version for major release on prerelease branch', t => {
     getNextVersion({
       branch: {name: 'beta', type: 'prerelease', prerelease: 'beta'},
       nextRelease: {type: 'major'},
-      lastRelease: {version: '1.0.0'},
+      lastRelease: {version: '1.0.0', channels: [undefined]},
       logger: t.context.logger,
     }),
     '2.0.0-beta.1'
@@ -135,7 +135,7 @@ test('Increase version for major release on prerelease branch', t => {
     getNextVersion({
       branch: {name: 'beta', type: 'prerelease', prerelease: 'beta'},
       nextRelease: {type: 'major'},
-      lastRelease: {version: '1.0.0-beta.1'},
+      lastRelease: {version: '1.0.0-beta.1', channels: [undefined]},
       logger: t.context.logger,
     }),
     '1.0.0-beta.2'
@@ -145,7 +145,7 @@ test('Increase version for major release on prerelease branch', t => {
     getNextVersion({
       branch: {name: 'alpha', type: 'prerelease', prerelease: 'alpha'},
       nextRelease: {type: 'major', channel: 'alpha'},
-      lastRelease: {version: '1.0.0-beta.1', channel: 'beta'},
+      lastRelease: {version: '1.0.0-beta.1', channels: ['beta']},
       logger: t.context.logger,
     }),
     '2.0.0-alpha.1'

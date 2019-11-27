@@ -15,7 +15,7 @@ test('Get the highest non-prerelease valid tag', t => {
     options: {tagFormat: `v\${version}`},
   });
 
-  t.deepEqual(result, {version: '2.0.0', gitTag: 'v2.0.0', name: 'v2.0.0', gitHead: 'v2.0.0', channel: undefined});
+  t.deepEqual(result, {version: '2.0.0', gitTag: 'v2.0.0', name: 'v2.0.0', gitHead: 'v2.0.0', channels: undefined});
 });
 
 test('Get the highest prerelease valid tag, ignoring other tags from other prerelease channels', t => {
@@ -25,9 +25,14 @@ test('Get the highest prerelease valid tag, ignoring other tags from other prere
       prerelease: 'beta',
       channel: 'beta',
       tags: [
-        {version: '1.0.0-beta.1', gitTag: 'v1.0.0-beta.1@beta', gitHead: 'v1.0.0-beta.1@beta', channel: 'beta'},
-        {version: '1.0.0-beta.2', gitTag: 'v1.0.0-beta.2@beta', gitHead: 'v1.0.0-beta.2@beta', channel: 'beta'},
-        {version: '1.0.0-alpha.1', gitTag: 'v1.0.0-alpha.1@alpha', gitHead: 'v1.0.0-alpha.1@alpha', channel: 'alpha'},
+        {version: '1.0.0-beta.1', gitTag: 'v1.0.0-beta.1@beta', gitHead: 'v1.0.0-beta.1@beta', channels: ['beta']},
+        {version: '1.0.0-beta.2', gitTag: 'v1.0.0-beta.2@beta', gitHead: 'v1.0.0-beta.2@beta', channels: ['beta']},
+        {
+          version: '1.0.0-alpha.1',
+          gitTag: 'v1.0.0-alpha.1@alpha',
+          gitHead: 'v1.0.0-alpha.1@alpha',
+          channels: ['alpha'],
+        },
       ],
       type: 'prerelease',
     },
@@ -39,7 +44,7 @@ test('Get the highest prerelease valid tag, ignoring other tags from other prere
     gitTag: 'v1.0.0-beta.2@beta',
     name: 'v1.0.0-beta.2',
     gitHead: 'v1.0.0-beta.2@beta',
-    channel: 'beta',
+    channels: ['beta'],
   });
 });
 
@@ -76,5 +81,5 @@ test('Get the highest non-prerelease valid tag before a certain version', t => {
     {before: '2.1.0'}
   );
 
-  t.deepEqual(result, {version: '2.0.0', gitTag: 'v2.0.0', name: 'v2.0.0', gitHead: 'v2.0.0', channel: undefined});
+  t.deepEqual(result, {version: '2.0.0', gitTag: 'v2.0.0', name: 'v2.0.0', gitHead: 'v2.0.0', channels: undefined});
 });

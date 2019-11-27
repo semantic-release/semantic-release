@@ -3,7 +3,6 @@ const marked = require('marked');
 const TerminalRenderer = require('marked-terminal');
 const envCi = require('env-ci');
 const hookStd = require('hook-std');
-const pEachSeries = require('p-each-series');
 const semver = require('semver');
 const AggregateError = require('aggregate-error');
 const pkg = require('./package.json');
@@ -13,7 +12,7 @@ const verify = require('./lib/verify');
 const getNextVersion = require('./lib/get-next-version');
 const getCommits = require('./lib/get-commits');
 const getLastRelease = require('./lib/get-last-release');
-const getReleasesToAdd = require('./lib/get-releases-to-add');
+const getReleaseToAdd = require('./lib/get-release-to-add');
 const {extractErrors, makeTag} = require('./lib/utils');
 const getGitAuthUrl = require('./lib/get-git-auth-url');
 const getBranches = require('./lib/branches');
@@ -24,7 +23,7 @@ const {COMMIT_NAME, COMMIT_EMAIL} = require('./lib/definitions/constants');
 
 marked.setOptions({renderer: new TerminalRenderer()});
 
-/* eslint complexity: ["warn", 25] */
+/* eslint complexity: off */
 async function run(context, plugins) {
   const {cwd, env, options, logger} = context;
   const {isCi, branch: ciBranch, isPr} = envCi({env, cwd});
@@ -92,35 +91,37 @@ async function run(context, plugins) {
 
   await plugins.verifyConditions(context);
 
-  const releasesToAdd = getReleasesToAdd(context);
   const errors = [];
   context.releases = [];
+  const releaseToAdd = getReleaseToAdd(context);
 
-  await pEachSeries(releasesToAdd, async ({lastRelease, currentRelease, nextRelease}) => {
+  if (releaseToAdd) {
+    const {lastRelease, currentRelease, nextRelease} = releaseToAdd;
+
     nextRelease.gitHead = await getTagHead(nextRelease.gitHead, {cwd, env});
     currentRelease.gitHead = await getTagHead(currentRelease.gitHead, {cwd, env});
     if (context.branch.mergeRange && !semver.satisfies(nextRelease.version, context.branch.mergeRange)) {
       errors.push(getError('EINVALIDMAINTENANCEMERGE', {...context, nextRelease}));
-      return;
+    } else {
+      const commits = await getCommits({...context, lastRelease, nextRelease});
+      nextRelease.notes = await plugins.generateNotes({...context, commits, lastRelease, nextRelease});
+
+      await tag(nextRelease.gitTag, nextRelease.gitHead, {cwd, env});
+      await push(options.repositoryUrl, {cwd, env});
+      logger.success(`Created tag ${nextRelease.gitTag}`);
+
+      context.branch.tags.push({
+        version: nextRelease.version,
+        channel: nextRelease.channel,
+        gitTag: nextRelease.gitTag,
+        gitHead: nextRelease.gitHead,
+      });
+
+      const releases = await plugins.addChannel({...context, commits, lastRelease, currentRelease, nextRelease});
+      context.releases.push(...releases);
+      await plugins.success({...context, lastRelease, commits, nextRelease, releases});
     }
-
-    const commits = await getCommits({...context, lastRelease, nextRelease});
-    nextRelease.notes = await plugins.generateNotes({...context, commits, lastRelease, nextRelease});
-
-    logger.log('Create tag %s', nextRelease.gitTag);
-    await tag(nextRelease.gitTag, nextRelease.gitHead, {cwd, env});
-    await push(options.repositoryUrl, {cwd, env});
-    context.branch.tags.push({
-      version: nextRelease.version,
-      channel: nextRelease.channel,
-      gitTag: nextRelease.gitTag,
-      gitHead: nextRelease.gitHead,
-    });
-
-    const releases = await plugins.addChannel({...context, commits, lastRelease, currentRelease, nextRelease});
-    context.releases.push(...releases);
-    await plugins.success({...context, lastRelease, commits, nextRelease, releases});
-  });
+  }
 
   if (errors.length > 0) {
     throw new AggregateError(errors);

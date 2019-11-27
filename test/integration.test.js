@@ -269,7 +269,7 @@ test('Release patch, minor and major versions', async t => {
   const updateReleaseMock = await mockServer.mock(
     `/repos/${owner}/${packageName}/releases/${releaseId}`,
     {
-      body: {tag_name: `v${version}`, name: `v${version}`, prerelease: false},
+      body: {name: `v${version}`, prerelease: false},
       headers: [{name: 'Authorization', values: [`token ${env.GH_TOKEN}`]}],
     },
     {body: {html_url: `release-url/${version}`}, method: 'PATCH'}
