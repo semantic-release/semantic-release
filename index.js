@@ -185,7 +185,9 @@ async function run(context, plugins) {
 
   await plugins.success({...context, releases});
 
-  logger.success(`Published release ${nextRelease.version}`);
+  logger.success(
+    `Published release ${nextRelease.version} on ${nextRelease.channel ? nextRelease.channel : 'default'} channel`
+  );
 
   if (options.dryRun) {
     logger.log(`Release note for version ${nextRelease.version}:`);
