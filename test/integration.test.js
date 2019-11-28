@@ -16,6 +16,7 @@ import {
   gitPush,
   gitCheckout,
   merge,
+  gitGetNote,
 } from './helpers/git-utils';
 import {npmView} from './helpers/npm-utils';
 import gitbox from './helpers/gitbox';
@@ -220,7 +221,7 @@ test('Release patch, minor and major versions', async t => {
   createReleaseMock = await mockServer.mock(
     `/repos/${owner}/${packageName}/releases`,
     {
-      body: {tag_name: `v${version}@next`, name: `v${version}`},
+      body: {tag_name: `v${version}`, name: `v${version}`},
       headers: [{name: 'Authorization', values: [`token ${env.GH_TOKEN}`]}],
     },
     {body: {html_url: `release-url/${version}`}}
@@ -246,8 +247,9 @@ test('Release patch, minor and major versions', async t => {
   } = await npmView(packageName, testEnv));
   head = await gitHead({cwd});
   t.is(releasedVersion, version);
-  t.is(await gitTagHead(`v${version}@next`, {cwd}), head);
-  t.is(await gitRemoteTagHead(authUrl, `v${version}@next`, {cwd}), head);
+  t.is(await gitGetNote(`v${version}`, {cwd}), '{"channels":["next"]}');
+  t.is(await gitTagHead(`v${version}`, {cwd}), head);
+  t.is(await gitRemoteTagHead(authUrl, `v${version}`, {cwd}), head);
   t.log(`+ released ${releasedVersion} on @next`);
 
   await mockServer.verify(verifyMock);
@@ -262,7 +264,7 @@ test('Release patch, minor and major versions', async t => {
     {body: {permissions: {push: true}}, method: 'GET'}
   );
   const getReleaseMock = await mockServer.mock(
-    `/repos/${owner}/${packageName}/releases/tags/v2.0.0@next`,
+    `/repos/${owner}/${packageName}/releases/tags/v2.0.0`,
     {headers: [{name: 'Authorization', values: [`token ${env.GH_TOKEN}`]}]},
     {body: {id: releaseId}, method: 'GET'}
   );
@@ -292,11 +294,9 @@ test('Release patch, minor and major versions', async t => {
     'dist-tags': {latest: releasedVersion},
   } = await npmView(packageName, testEnv));
   t.is(releasedVersion, version);
-  t.is(await gitTagHead(`v${version}`, {cwd}), await gitTagHead(`v${version}@next`, {cwd}));
-  t.is(
-    await gitRemoteTagHead(authUrl, `v${version}`, {cwd}),
-    await gitRemoteTagHead(authUrl, `v${version}@next`, {cwd})
-  );
+  t.is(await gitGetNote(`v${version}`, {cwd}), '{"channels":["next",null]}');
+  t.is(await gitTagHead(`v${version}`, {cwd}), await gitTagHead(`v${version}`, {cwd}));
+  t.is(await gitRemoteTagHead(authUrl, `v${version}`, {cwd}), await gitRemoteTagHead(authUrl, `v${version}`, {cwd}));
   t.log(`+ added ${releasedVersion}`);
 
   await mockServer.verify(verifyMock);

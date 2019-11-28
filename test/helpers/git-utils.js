@@ -4,6 +4,7 @@ import fileUrl from 'file-url';
 import pEachSeries from 'p-each-series';
 import gitLogParser from 'git-log-parser';
 import getStream from 'get-stream';
+import {GIT_NOTE_REF} from '../../lib/definitions/constants';
 
 /**
  * Commit message informations.
@@ -257,4 +258,25 @@ export async function mergeFf(ref, execaOpts) {
  */
 export async function rebase(ref, execaOpts) {
   await execa('git', ['rebase', ref], execaOpts);
+}
+
+/**
+ * Add a note to a Git reference.
+ *
+ * @param {String} note The note to add.
+ * @param {String} ref The ref to add the note to.
+ * @param {Object} [execaOpts] Options to pass to `execa`.
+ */
+export async function gitAddNote(note, ref, execaOpts) {
+  await execa('git', ['notes', '--ref', GIT_NOTE_REF, 'add', '-m', note, ref], execaOpts);
+}
+
+/**
+ * Get the note associated with a Git reference.
+ *
+ * @param {String} ref The ref to get the note from.
+ * @param {Object} [execaOpts] Options to pass to `execa`.
+ */
+export async function gitGetNote(ref, execaOpts) {
+  return (await execa('git', ['notes', '--ref', GIT_NOTE_REF, 'show', ref], execaOpts)).stdout;
 }
