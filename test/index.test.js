@@ -98,6 +98,7 @@ test('Plugins are called with expected values', async t => {
       accept: ['patch', 'minor'],
       tags: [{channels: ['next'], gitTag: 'v1.0.0@next', version: '1.0.0'}],
       type: 'release',
+      main: true,
     },
     {
       channel: 'next',
@@ -106,6 +107,7 @@ test('Plugins are called with expected values', async t => {
       accept: ['patch', 'minor', 'major'],
       tags: [{channels: ['next'], gitTag: 'v1.0.0@next', version: '1.0.0'}],
       type: 'release',
+      main: false,
     },
   ];
   const branch = branches[0];

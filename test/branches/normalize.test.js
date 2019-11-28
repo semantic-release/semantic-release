@@ -155,16 +155,26 @@ test('Release branches - initial state', t => {
   ];
 
   t.deepEqual(
-    normalize.release({release}).map(({type, name, range, accept, channel}) => ({type, name, range, accept, channel})),
+    normalize
+      .release({release})
+      .map(({type, name, range, accept, channel, main}) => ({type, name, range, accept, channel, main})),
     [
-      {type: 'release', name: 'master', range: '>=1.0.0 <1.1.0', accept: ['patch'], channel: undefined},
-      {type: 'release', name: 'next', range: '>=1.1.0 <2.0.0', accept: ['patch', 'minor'], channel: 'next'},
+      {type: 'release', name: 'master', range: '>=1.0.0 <1.1.0', accept: ['patch'], channel: undefined, main: true},
+      {
+        type: 'release',
+        name: 'next',
+        range: '>=1.1.0 <2.0.0',
+        accept: ['patch', 'minor'],
+        channel: 'next',
+        main: false,
+      },
       {
         type: 'release',
         name: 'next-major',
         range: '>=2.0.0',
         accept: ['patch', 'minor', 'major'],
         channel: 'next-major',
+        main: false,
       },
     ]
   );
@@ -178,16 +188,26 @@ test('Release branches - 3 release branches', t => {
   ];
 
   t.deepEqual(
-    normalize.release({release}).map(({type, name, range, accept, channel}) => ({type, name, range, accept, channel})),
+    normalize
+      .release({release})
+      .map(({type, name, range, accept, channel, main}) => ({type, name, range, accept, channel, main})),
     [
-      {type: 'release', name: 'master', range: '>=1.0.2 <1.1.0', accept: ['patch'], channel: undefined},
-      {type: 'release', name: 'next', range: '>=1.2.0 <2.0.0', accept: ['patch', 'minor'], channel: 'next'},
+      {type: 'release', name: 'master', range: '>=1.0.2 <1.1.0', accept: ['patch'], channel: undefined, main: true},
+      {
+        type: 'release',
+        name: 'next',
+        range: '>=1.2.0 <2.0.0',
+        accept: ['patch', 'minor'],
+        channel: 'next',
+        main: false,
+      },
       {
         type: 'release',
         name: 'next-major',
         range: '>=2.1.0',
         accept: ['patch', 'minor', 'major'],
         channel: 'next-major',
+        main: false,
       },
     ]
   );
@@ -200,10 +220,26 @@ test('Release branches - 2 release branches', t => {
   ];
 
   t.deepEqual(
-    normalize.release({release}).map(({type, name, range, accept, channel}) => ({type, name, range, accept, channel})),
+    normalize
+      .release({release})
+      .map(({type, name, range, accept, channel, main}) => ({type, name, range, accept, channel, main})),
     [
-      {type: 'release', name: 'master', range: '>=1.2.0 <2.0.0', accept: ['patch', 'minor'], channel: undefined},
-      {type: 'release', name: 'next', range: '>=2.1.0', accept: ['patch', 'minor', 'major'], channel: 'next'},
+      {
+        type: 'release',
+        name: 'master',
+        range: '>=1.2.0 <2.0.0',
+        accept: ['patch', 'minor'],
+        channel: undefined,
+        main: true,
+      },
+      {
+        type: 'release',
+        name: 'next',
+        range: '>=2.1.0',
+        accept: ['patch', 'minor', 'major'],
+        channel: 'next',
+        main: false,
+      },
     ]
   );
 });
@@ -225,16 +261,19 @@ test('Release branches - cap ranges to first release only present on following b
   ];
 
   t.deepEqual(
-    normalize.release({release}).map(({type, name, range, accept, channel}) => ({type, name, range, accept, channel})),
+    normalize
+      .release({release})
+      .map(({type, name, range, accept, channel, main}) => ({type, name, range, accept, channel, main})),
     [
-      {type: 'release', name: 'master', range: '>=2.0.0 <2.1.0', accept: ['patch'], channel: undefined},
-      {type: 'release', name: 'next', range: '>=2.1.0 <2.2.0', accept: ['patch'], channel: 'next'},
+      {type: 'release', name: 'master', range: '>=2.0.0 <2.1.0', accept: ['patch'], channel: undefined, main: true},
+      {type: 'release', name: 'next', range: '>=2.1.0 <2.2.0', accept: ['patch'], channel: 'next', main: false},
       {
         type: 'release',
         name: 'next-major',
         range: '>=2.2.0',
         accept: ['patch', 'minor', 'major'],
         channel: 'next-major',
+        main: false,
       },
     ]
   );
@@ -247,10 +286,26 @@ test('Release branches - Handle missing previous tags in branch history', t => {
   ];
 
   t.deepEqual(
-    normalize.release({release}).map(({type, name, range, accept, channel}) => ({type, name, range, accept, channel})),
+    normalize
+      .release({release})
+      .map(({type, name, range, accept, channel, main}) => ({type, name, range, accept, channel, main})),
     [
-      {type: 'release', name: 'master', range: '>=2.0.0 <3.0.0', accept: ['patch', 'minor'], channel: undefined},
-      {type: 'release', name: 'next', range: '>=3.0.0', accept: ['patch', 'minor', 'major'], channel: 'next'},
+      {
+        type: 'release',
+        name: 'master',
+        range: '>=2.0.0 <3.0.0',
+        accept: ['patch', 'minor'],
+        channel: undefined,
+        main: true,
+      },
+      {
+        type: 'release',
+        name: 'next',
+        range: '>=3.0.0',
+        accept: ['patch', 'minor', 'major'],
+        channel: 'next',
+        main: false,
+      },
     ]
   );
 });
@@ -263,16 +318,26 @@ test('Release branches - enforce release gaps after downstream merge', t => {
   ];
 
   t.deepEqual(
-    normalize.release({release}).map(({type, name, range, accept, channel}) => ({type, name, range, accept, channel})),
+    normalize
+      .release({release})
+      .map(({type, name, range, accept, channel, main}) => ({type, name, range, accept, channel, main})),
     [
-      {type: 'release', name: 'master', range: '>=2.0.0 <2.1.0', accept: ['patch'], channel: undefined},
-      {type: 'release', name: 'next', range: '>=2.1.0 <3.0.0', accept: ['patch', 'minor'], channel: 'next'},
+      {type: 'release', name: 'master', range: '>=2.0.0 <2.1.0', accept: ['patch'], channel: undefined, main: true},
+      {
+        type: 'release',
+        name: 'next',
+        range: '>=2.1.0 <3.0.0',
+        accept: ['patch', 'minor'],
+        channel: 'next',
+        main: false,
+      },
       {
         type: 'release',
         name: 'next-major',
         range: '>=3.0.0',
         accept: ['patch', 'minor', 'major'],
         channel: 'next-major',
+        main: false,
       },
     ]
   );
@@ -286,16 +351,26 @@ test('Release branches - limit releases on 2nd and 3rd branche based on 1st bran
   ];
 
   t.deepEqual(
-    normalize.release({release}).map(({type, name, range, accept, channel}) => ({type, name, range, accept, channel})),
+    normalize
+      .release({release})
+      .map(({type, name, range, accept, channel, main}) => ({type, name, range, accept, channel, main})),
     [
-      {type: 'release', name: 'master', range: '>=3.0.0 <3.1.0', accept: ['patch'], channel: undefined},
-      {type: 'release', name: 'next', range: '>=3.1.0 <4.0.0', accept: ['patch', 'minor'], channel: 'next'},
+      {type: 'release', name: 'master', range: '>=3.0.0 <3.1.0', accept: ['patch'], channel: undefined, main: true},
+      {
+        type: 'release',
+        name: 'next',
+        range: '>=3.1.0 <4.0.0',
+        accept: ['patch', 'minor'],
+        channel: 'next',
+        main: false,
+      },
       {
         type: 'release',
         name: 'next-major',
         range: '>=4.0.0',
         accept: ['patch', 'minor', 'major'],
         channel: 'next-major',
+        main: false,
       },
     ]
   );
