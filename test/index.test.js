@@ -19,6 +19,8 @@ import {
   merge,
   mergeFf,
   rebase,
+  gitAddNote,
+  gitGetNote,
 } from './helpers/git-utils';
 
 const requireNoCache = proxyquire.noPreserveCache();
@@ -45,7 +47,8 @@ test('Plugins are called with expected values', async t => {
   // Add commits to the master branch
   let commits = await gitCommits(['First'], {cwd});
   // Create the tag corresponding to version 1.0.0
-  await gitTagVersion('v1.0.0@next', undefined, {cwd});
+  await gitTagVersion('v1.0.0', undefined, {cwd});
+  await gitAddNote(JSON.stringify({channels: ['next']}), 'v1.0.0', {cwd});
   commits = (await gitCommits(['Second'], {cwd})).concat(commits);
   await gitCheckout('next', true, {cwd});
   await gitPush(repositoryUrl, 'next', {cwd});
@@ -55,7 +58,7 @@ test('Plugins are called with expected values', async t => {
   const lastRelease = {
     version: '1.0.0',
     gitHead: commits[commits.length - 1].hash,
-    gitTag: 'v1.0.0@next',
+    gitTag: 'v1.0.0',
     name: 'v1.0.0',
     channels: ['next'],
   };
@@ -65,7 +68,7 @@ test('Plugins are called with expected values', async t => {
     version: '1.1.0',
     gitHead: await getGitHead({cwd}),
     gitTag: 'v1.1.0',
-    channel: undefined,
+    channel: null,
   };
   const notes1 = 'Release notes 1';
   const notes2 = 'Release notes 2';
@@ -96,7 +99,7 @@ test('Plugins are called with expected values', async t => {
       name: 'master',
       range: '>=1.0.0 <2.0.0',
       accept: ['patch', 'minor'],
-      tags: [{channels: ['next'], gitTag: 'v1.0.0@next', version: '1.0.0'}],
+      tags: [{channels: ['next'], gitTag: 'v1.0.0', version: '1.0.0'}],
       type: 'release',
       main: true,
     },
@@ -105,7 +108,7 @@ test('Plugins are called with expected values', async t => {
       name: 'next',
       range: '>=2.0.0',
       accept: ['patch', 'minor', 'major'],
-      tags: [{channels: ['next'], gitTag: 'v1.0.0@next', version: '1.0.0'}],
+      tags: [{channels: ['next'], gitTag: 'v1.0.0', version: '1.0.0'}],
       type: 'release',
       main: false,
     },
@@ -130,7 +133,7 @@ test('Plugins are called with expected values', async t => {
       ...release1,
       type: 'major',
       version: '1.0.0',
-      channel: undefined,
+      channel: null,
       gitTag: 'v1.0.0',
       notes: `${notes1}\n\n${notes2}\n\n${notes3}`,
       pluginName: '[Function: functionStub]',
@@ -181,7 +184,7 @@ test('Plugins are called with expected values', async t => {
     ...omit(lastRelease, 'channels'),
     type: 'major',
     version: '1.0.0',
-    channel: undefined,
+    channel: null,
     gitTag: 'v1.0.0',
     name: 'v1.0.0',
   });
@@ -198,7 +201,7 @@ test('Plugins are called with expected values', async t => {
     ...omit(lastRelease, 'channels'),
     type: 'major',
     version: '1.0.0',
-    channel: undefined,
+    channel: null,
     gitTag: 'v1.0.0',
     name: 'v1.0.0',
     notes: notes1,
@@ -216,7 +219,7 @@ test('Plugins are called with expected values', async t => {
     ...omit(lastRelease, 'channels'),
     type: 'major',
     version: '1.0.0',
-    channel: undefined,
+    channel: null,
     gitTag: 'v1.0.0',
     name: 'v1.0.0',
     notes: `${notes1}\n\n${notes2}`,
@@ -224,7 +227,7 @@ test('Plugins are called with expected values', async t => {
 
   branch.tags.push({
     version: '1.0.0',
-    channel: undefined,
+    channel: null,
     gitTag: 'v1.0.0',
     gitHead: commits[commits.length - 1].hash,
   });
@@ -241,7 +244,7 @@ test('Plugins are called with expected values', async t => {
     ...omit(lastRelease, 'channels'),
     type: 'major',
     version: '1.0.0',
-    channel: undefined,
+    channel: null,
     gitTag: 'v1.0.0',
     name: 'v1.0.0',
     notes: `${notes1}\n\n${notes2}\n\n${notes3}`,
@@ -335,7 +338,7 @@ test('Plugins are called with expected values', async t => {
     ...omit(lastRelease, 'channels'),
     type: 'major',
     version: '1.0.0',
-    channel: undefined,
+    channel: null,
     gitTag: 'v1.0.0',
     name: 'v1.0.0',
     notes: `${notes1}\n\n${notes2}\n\n${notes3}`,
@@ -435,7 +438,7 @@ test('Use new gitHead, and recreate release notes if a prepare plugin create a c
     version: '2.0.0',
     gitHead: await getGitHead({cwd}),
     gitTag: 'v2.0.0',
-    channel: undefined,
+    channel: null,
   };
   const notes = 'Release notes';
 
@@ -494,15 +497,16 @@ test('Use new gitHead, and recreate release notes if a prepare plugin create a c
 
 test('Make a new release when a commit is forward-ported to an upper branch', async t => {
   const {cwd, repositoryUrl} = await gitRepo(true);
-  const commits = await gitCommits(['feat: initial release'], {cwd});
+  await gitCommits(['feat: initial release'], {cwd});
   await gitTagVersion('v1.0.0', undefined, {cwd});
-  await gitTagVersion('v1.0.0@1.0.x', undefined, {cwd});
+  await gitAddNote(JSON.stringify({channels: [null, '1.0.x']}), 'v1.0.0', {cwd});
   await gitCheckout('1.0.x', true, {cwd});
-  commits.push(...(await gitCommits(['fix: fix on maintenance version 1.0.x'], {cwd})));
-  await gitTagVersion('v1.0.1@1.0.x', undefined, {cwd});
+  await gitCommits(['fix: fix on maintenance version 1.0.x'], {cwd});
+  await gitTagVersion('v1.0.1', undefined, {cwd});
+  await gitAddNote(JSON.stringify({channels: ['1.0.x']}), 'v1.0.1', {cwd});
   await gitPush('origin', '1.0.x', {cwd});
   await gitCheckout('master', false, {cwd});
-  commits.push(...(await gitCommits(['feat: new feature on master'], {cwd})));
+  await gitCommits(['feat: new feature on master'], {cwd});
   await gitTagVersion('v1.1.0', undefined, {cwd});
   await merge('1.0.x', {cwd});
   await gitPush('origin', 'master', {cwd});
@@ -568,7 +572,8 @@ test('Publish a pre-release version', async t => {
 
   t.is(releases.length, 1);
   t.is(releases[0].version, '1.1.0-beta.1');
-  t.is(releases[0].gitTag, 'v1.1.0-beta.1@beta');
+  t.is(releases[0].gitTag, 'v1.1.0-beta.1');
+  t.is(await gitGetNote('v1.1.0-beta.1', {cwd}), '{"channels":["beta"]}');
 
   await gitCommits(['fix: a fix'], {cwd});
   ({releases} = await semanticRelease(options, {
@@ -580,7 +585,8 @@ test('Publish a pre-release version', async t => {
 
   t.is(releases.length, 1);
   t.is(releases[0].version, '1.1.0-beta.2');
-  t.is(releases[0].gitTag, 'v1.1.0-beta.2@beta');
+  t.is(releases[0].gitTag, 'v1.1.0-beta.2');
+  t.is(await gitGetNote('v1.1.0-beta.2', {cwd}), '{"channels":["beta"]}');
 });
 
 test('Publish releases from different branch on the same channel', async t => {
@@ -696,14 +702,16 @@ test('Publish pre-releases the same channel as regular releases', async t => {
 
 test('Do not add pre-releases to a different channel', async t => {
   const {cwd, repositoryUrl} = await gitRepo(true);
-  const commits = await gitCommits(['feat: initial release'], {cwd});
+  await gitCommits(['feat: initial release'], {cwd});
   await gitTagVersion('v1.0.0', undefined, {cwd});
-  await gitTagVersion('v1.0.0@beta', undefined, {cwd});
+  await gitAddNote(JSON.stringify({channels: [null, 'beta']}), 'v1.0.0', {cwd});
   await gitCheckout('beta', true, {cwd});
-  commits.push(...(await gitCommits(['feat: breaking change/n/nBREAKING CHANGE: break something'], {cwd})));
-  await gitTagVersion('v2.0.0-beta.1@beta', undefined, {cwd});
-  commits.push(...(await gitCommits(['fix: a fix'], {cwd})));
-  await gitTagVersion('v2.0.0-beta.2@beta', undefined, {cwd});
+  await gitCommits(['feat: breaking change/n/nBREAKING CHANGE: break something'], {cwd});
+  await gitTagVersion('v2.0.0-beta.1', undefined, {cwd});
+  await gitAddNote(JSON.stringify({channels: ['beta']}), 'v2.0.0-beta.1', {cwd});
+  await gitCommits(['fix: a fix'], {cwd});
+  await gitTagVersion('v2.0.0-beta.2', undefined, {cwd});
+  await gitAddNote(JSON.stringify({channels: ['beta']}), 'v2.0.0-beta.2', {cwd});
   await gitPush('origin', 'beta', {cwd});
   await gitCheckout('master', false, {cwd});
   await merge('beta', {cwd});
@@ -748,14 +756,18 @@ async function addChannelMacro(t, mergeFunction) {
   const {cwd, repositoryUrl} = await gitRepo(true);
   const commits = await gitCommits(['feat: initial release'], {cwd});
   await gitTagVersion('v1.0.0', undefined, {cwd});
-  await gitTagVersion('v1.0.0@next', undefined, {cwd});
+  await gitAddNote(JSON.stringify({channels: [null, 'next']}), 'v1.0.0', {cwd});
   await gitCheckout('next', true, {cwd});
   commits.push(...(await gitCommits(['feat: breaking change/n/nBREAKING CHANGE: break something'], {cwd})));
-  await gitTagVersion('v2.0.0@next', undefined, {cwd});
+  await gitTagVersion('v2.0.0', undefined, {cwd});
+  await gitAddNote(JSON.stringify({channels: ['next']}), 'v2.0.0', {cwd});
+
   commits.push(...(await gitCommits(['fix: a fix'], {cwd})));
-  await gitTagVersion('v2.0.1@next', undefined, {cwd});
+  await gitTagVersion('v2.0.1', undefined, {cwd});
+  await gitAddNote(JSON.stringify({channels: ['next']}), 'v2.0.1', {cwd});
   commits.push(...(await gitCommits(['feat: a feature'], {cwd})));
-  await gitTagVersion('v2.1.0@next', undefined, {cwd});
+  await gitTagVersion('v2.1.0', undefined, {cwd});
+  await gitAddNote(JSON.stringify({channels: ['next']}), 'v2.1.0', {cwd});
   await gitPush('origin', 'next', {cwd});
   await gitCheckout('master', false, {cwd});
   // Merge all commits but last one from next to master
@@ -788,7 +800,7 @@ async function addChannelMacro(t, mergeFunction) {
     name: 'v2.0.1',
     type: 'patch',
     version: '2.0.1',
-    channel: undefined,
+    channel: null,
     gitTag: 'v2.0.1',
     gitHead: commits[2].hash,
   };
@@ -832,7 +844,7 @@ test('Call all "success" plugins even if one errors out', async t => {
     version: '2.0.0',
     gitHead: await getGitHead({cwd}),
     gitTag: 'v2.0.0',
-    channel: undefined,
+    channel: null,
   };
   const notes = 'Release notes';
   const verifyConditions1 = stub().resolves();
@@ -967,9 +979,11 @@ test('Dry-run skips addChannel, prepare, publish and success', async t => {
   const {cwd, repositoryUrl} = await gitRepo(true);
   await gitCommits(['First'], {cwd});
   await gitTagVersion('v1.0.0', undefined, {cwd});
-  await gitTagVersion('v1.0.0@next', undefined, {cwd});
-  await gitTagVersion('v1.1.0@next', undefined, {cwd});
+  await gitAddNote(JSON.stringify({channels: [null, 'next']}), 'v1.0.0', {cwd});
   await gitCommits(['Second'], {cwd});
+  await gitTagVersion('v1.1.0', undefined, {cwd});
+  await gitAddNote(JSON.stringify({channels: ['next']}), 'v1.1.0', {cwd});
+
   await gitPush(repositoryUrl, 'master', {cwd});
   await gitCheckout('next', true, {cwd});
   await gitPush('origin', 'next', {cwd});
@@ -1249,8 +1263,10 @@ test('Accept "undefined" value returned by "generateNotes" and "false" by "publi
   const {cwd, repositoryUrl} = await gitRepo(true);
   await gitCommits(['First'], {cwd});
   await gitTagVersion('v1.0.0', undefined, {cwd});
-  await gitTagVersion('v1.0.0@next', undefined, {cwd});
-  await gitTagVersion('v1.1.0@next', undefined, {cwd});
+  await gitAddNote(JSON.stringify({channels: [null, 'next']}), 'v1.0.0', {cwd});
+  await gitCommits(['Second'], {cwd});
+  await gitTagVersion('v1.1.0', undefined, {cwd});
+  await gitAddNote(JSON.stringify({channels: ['next']}), 'v1.1.0', {cwd});
   await gitPush(repositoryUrl, 'master', {cwd});
   await gitCheckout('next', true, {cwd});
   await gitPush('origin', 'next', {cwd});
@@ -1262,7 +1278,7 @@ test('Accept "undefined" value returned by "generateNotes" and "false" by "publi
     version: '1.2.0',
     gitHead: await getGitHead({cwd}),
     gitTag: 'v1.2.0',
-    channel: undefined,
+    channel: null,
   };
   const analyzeCommits = stub().resolves(nextRelease.type);
   const verifyRelease = stub().resolves();
@@ -1335,16 +1351,16 @@ test('Returns false if triggered by a PR', async t => {
 
 test('Throws "EINVALIDNEXTVERSION" if next release is out of range of the current maintenance branch', async t => {
   const {cwd, repositoryUrl} = await gitRepo(true);
-  const commits = await gitCommits(['feat: initial commit'], {cwd});
+  await gitCommits(['feat: initial commit'], {cwd});
   await gitTagVersion('v1.0.0', undefined, {cwd});
-  await gitTagVersion('v1.0.0@1.x', undefined, {cwd});
+  await gitAddNote(JSON.stringify({channels: [null, '1.x']}), 'v1.0.0', {cwd});
   await gitCheckout('1.x', true, {cwd});
   await gitPush('origin', '1.x', {cwd});
   await gitCheckout('master', false, {cwd});
-  commits.push(...(await gitCommits(['feat: new feature on master'], {cwd})));
+  await gitCommits(['feat: new feature on master'], {cwd});
   await gitTagVersion('v1.1.0', undefined, {cwd});
   await gitCheckout('1.x', false, {cwd});
-  commits.push(...(await gitCommits(['feat: feature on maintenance version 1.x'], {cwd})));
+  await gitCommits(['feat: feature on maintenance version 1.x'], {cwd});
   await gitPush('origin', 'master', {cwd});
 
   const verifyConditions = stub().resolves();
@@ -1386,16 +1402,17 @@ test('Throws "EINVALIDNEXTVERSION" if next release is out of range of the curren
 
 test('Throws "EINVALIDNEXTVERSION" if next release is out of range of the current release branch', async t => {
   const {cwd, repositoryUrl} = await gitRepo(true);
-  const commits = await gitCommits(['feat: initial commit'], {cwd});
+  await gitCommits(['feat: initial commit'], {cwd});
   await gitTagVersion('v1.0.0', undefined, {cwd});
   await gitCheckout('next', true, {cwd});
-  commits.push(...(await gitCommits(['feat: new feature on next'], {cwd})));
-  await gitTagVersion('v1.1.0@next', undefined, {cwd});
+  await gitCommits(['feat: new feature on next'], {cwd});
+  await gitTagVersion('v1.1.0', undefined, {cwd});
+  await gitAddNote(JSON.stringify({channels: ['next']}), 'v1.1.0', {cwd});
   await gitPush('origin', 'next', {cwd});
   await gitCheckout('next-major', true, {cwd});
   await gitPush('origin', 'next-major', {cwd});
   await gitCheckout('master', false, {cwd});
-  commits.push(...(await gitCommits(['feat: new feature on master', 'fix: new fix on master'], {cwd})));
+  await gitCommits(['feat: new feature on master', 'fix: new fix on master'], {cwd});
   await gitPush('origin', 'master', {cwd});
 
   const verifyConditions = stub().resolves();
@@ -1437,18 +1454,18 @@ test('Throws "EINVALIDNEXTVERSION" if next release is out of range of the curren
 
 test('Throws "EINVALIDMAINTENANCEMERGE" if merge an out of range release in a maintenance branch', async t => {
   const {cwd, repositoryUrl} = await gitRepo(true);
-  const commits = await gitCommits(['First'], {cwd});
+  await gitCommits(['First'], {cwd});
   await gitTagVersion('v1.0.0', undefined, {cwd});
-  await gitTagVersion('v1.0.0@1.1.x', undefined, {cwd});
-  commits.push(...(await gitCommits(['Second'], {cwd})));
+  await gitAddNote(JSON.stringify({channels: [null, '1.1.x']}), 'v1.0.0', {cwd});
+  await gitCommits(['Second'], {cwd});
   await gitTagVersion('v1.1.0', undefined, {cwd});
-  await gitTagVersion('v1.1.0@1.1.x', undefined, {cwd});
+  await gitAddNote(JSON.stringify({channels: [null, '1.1.x']}), 'v1.1.0', {cwd});
   await gitCheckout('1.1.x', 'master', {cwd});
   await gitPush('origin', '1.1.x', {cwd});
   await gitCheckout('master', false, {cwd});
-  commits.push(...(await gitCommits(['Third'], {cwd})));
+  await gitCommits(['Third'], {cwd});
   await gitTagVersion('v1.1.1', undefined, {cwd});
-  commits.push(...(await gitCommits(['Fourth'], {cwd})));
+  await gitCommits(['Fourth'], {cwd});
   await gitTagVersion('v1.2.0', undefined, {cwd});
   await gitPush('origin', 'master', {cwd});
   await gitCheckout('1.1.x', false, {cwd});

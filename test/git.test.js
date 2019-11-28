@@ -14,6 +14,9 @@ import {
   isGitRepo,
   verifyTagName,
   isBranchUpToDate,
+  getNote,
+  addNote,
+  fetchNotes,
 } from '../lib/git';
 import {
   gitRepo,
@@ -27,6 +30,8 @@ import {
   gitRemoteTagHead,
   gitPush,
   gitDetachedHead,
+  gitAddNote,
+  gitGetNote,
 } from './helpers/git-utils';
 
 test('Get the last commit sha', async t => {
@@ -275,4 +280,92 @@ test('Return "true" if local repository is ahead', async t => {
   await gitCommits(['Second'], {cwd});
 
   t.true(await isBranchUpToDate(repositoryUrl, 'master', {cwd}));
+});
+
+test('Get a commit note', async t => {
+  // Create a git repository, set the current working directory at the root of the repo
+  const {cwd} = await gitRepo();
+  // Add commits to the master branch
+  const commits = await gitCommits(['First'], {cwd});
+
+  await gitAddNote(JSON.stringify({note: 'note'}), commits[0].hash, {cwd});
+
+  t.deepEqual(await getNote(commits[0].hash, {cwd}), {note: 'note'});
+});
+
+test('Return empty object if there is no commit note', async t => {
+  // Create a git repository, set the current working directory at the root of the repo
+  const {cwd} = await gitRepo();
+  // Add commits to the master branch
+  const commits = await gitCommits(['First'], {cwd});
+
+  t.deepEqual(await getNote(commits[0].hash, {cwd}), {});
+});
+
+test('Throw error if a commit note in invalid', async t => {
+  // Create a git repository, set the current working directory at the root of the repo
+  const {cwd} = await gitRepo();
+  // Add commits to the master branch
+  const commits = await gitCommits(['First'], {cwd});
+
+  await gitAddNote('non-json note', commits[0].hash, {cwd});
+
+  await t.throwsAsync(getNote(commits[0].hash, {cwd}));
+});
+
+test('Add a commit note', async t => {
+  // Create a git repository, set the current working directory at the root of the repo
+  const {cwd} = await gitRepo();
+  // Add commits to the master branch
+  const commits = await gitCommits(['First'], {cwd});
+
+  await addNote({note: 'note'}, commits[0].hash, {cwd});
+
+  t.is(await gitGetNote(commits[0].hash, {cwd}), '{"note":"note"}');
+});
+
+test('Overwrite a commit note', async t => {
+  // Create a git repository, set the current working directory at the root of the repo
+  const {cwd} = await gitRepo();
+  // Add commits to the master branch
+  const commits = await gitCommits(['First'], {cwd});
+
+  await addNote({note: 'note'}, commits[0].hash, {cwd});
+  await addNote({note: 'note2'}, commits[0].hash, {cwd});
+
+  t.is(await gitGetNote(commits[0].hash, {cwd}), '{"note":"note2"}');
+});
+
+test('Unshallow and fetch repository with notes', async t => {
+  // Create a git repository, set the current working directory at the root of the repo
+  let {cwd, repositoryUrl} = await gitRepo();
+  // Add commits to the master branch
+  const commits = await gitCommits(['First', 'Second'], {cwd});
+  await gitAddNote(JSON.stringify({note: 'note'}), commits[0].hash, {cwd});
+  // Create a shallow clone with only 1 commit
+  cwd = await gitShallowClone(repositoryUrl);
+
+  // Verify the shallow clone doesn't contains the note
+  await t.throwsAsync(gitGetNote(commits[0].hash, {cwd}));
+
+  await fetch(repositoryUrl, 'master', {cwd});
+  await fetchNotes(repositoryUrl, {cwd});
+
+  // Verify the shallow clone contains the note
+  t.is(await gitGetNote(commits[0].hash, {cwd}), '{"note":"note"}');
+});
+
+test('Fetch all notes on a detached head repository', async t => {
+  let {cwd, repositoryUrl} = await gitRepo();
+
+  await gitCommits(['First'], {cwd});
+  const [commit] = await gitCommits(['Second'], {cwd});
+  await gitPush(repositoryUrl, 'master', {cwd});
+  await gitAddNote(JSON.stringify({note: 'note'}), commit.hash, {cwd});
+  cwd = await gitDetachedHead(repositoryUrl, commit.hash);
+
+  await fetch(repositoryUrl, 'master', {cwd});
+  await fetchNotes(repositoryUrl, {cwd});
+
+  t.is(await gitGetNote(commit.hash, {cwd}), '{"note":"note"}');
 });
