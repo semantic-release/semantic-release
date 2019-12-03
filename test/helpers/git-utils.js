@@ -166,6 +166,17 @@ export async function gitDetachedHead(repositoryUrl, head) {
   return cwd;
 }
 
+export async function gitDetachedHeadFromBranch(repositoryUrl, branch, head) {
+  const cwd = tempy.directory();
+
+  await execa('git', ['init'], {cwd});
+  await execa('git', ['remote', 'add', 'origin', repositoryUrl], {cwd});
+  await execa('git', ['fetch', '--force', repositoryUrl, `${branch}:remotes/origin/${branch}`], {cwd});
+  await execa('git', ['reset', '--hard', head], {cwd});
+  await execa('git', ['checkout', '-q', '-B', branch], {cwd});
+  return cwd;
+}
+
 /**
  * Add a new Git configuration.
  *
