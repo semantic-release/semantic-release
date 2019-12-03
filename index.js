@@ -53,7 +53,7 @@ async function run(context, plugins) {
   await verify(context);
 
   options.repositoryUrl = await getGitAuthUrl(context);
-  context.branches = await getBranches(options.repositoryUrl, context);
+  context.branches = await getBranches(options.repositoryUrl, ciBranch, context);
   context.branch = context.branches.find(({name}) => name === ciBranch);
 
   if (!context.branch) {

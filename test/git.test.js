@@ -30,6 +30,7 @@ import {
   gitRemoteTagHead,
   gitPush,
   gitDetachedHead,
+  gitDetachedHeadFromBranch,
   gitAddNote,
   gitGetNote,
 } from './helpers/git-utils';
@@ -63,7 +64,7 @@ test('Unshallow and fetch repository', async t => {
   // Verify the shallow clone contains only one commit
   t.is((await gitGetCommits(undefined, {cwd})).length, 1);
 
-  await fetch(repositoryUrl, 'master', {cwd});
+  await fetch(repositoryUrl, 'master', 'master', {cwd});
 
   // Verify the shallow clone contains all the commits
   t.is((await gitGetCommits(undefined, {cwd})).length, 2);
@@ -78,8 +79,8 @@ test('Do not throw error when unshallow a complete repository', async t => {
   await gitCommits(['Second'], {cwd});
   await gitPush(repositoryUrl, 'second-branch', {cwd});
 
-  await t.notThrowsAsync(fetch(repositoryUrl, 'master', {cwd}));
-  await t.notThrowsAsync(fetch(repositoryUrl, 'second-branch', {cwd}));
+  await t.notThrowsAsync(fetch(repositoryUrl, 'master', 'master', {cwd}));
+  await t.notThrowsAsync(fetch(repositoryUrl, 'second-branch', 'master', {cwd}));
 });
 
 test('Fetch all tags on a detached head repository', async t => {
@@ -94,9 +95,34 @@ test('Fetch all tags on a detached head repository', async t => {
   await gitPush(repositoryUrl, 'master', {cwd});
   cwd = await gitDetachedHead(repositoryUrl, commit.hash);
 
-  await fetch(repositoryUrl, 'master', {cwd});
+  await fetch(repositoryUrl, 'master', 'master', {cwd});
 
   t.deepEqual((await getTags('master', {cwd})).sort(), ['v1.0.0', 'v1.0.1', 'v1.1.0'].sort());
+});
+
+test('Fetch all tags on a repository with a detached head from branch', async t => {
+  let {cwd, repositoryUrl} = await gitRepo();
+
+  await gitCommits(['First'], {cwd});
+  await gitTagVersion('v1.0.0', undefined, {cwd});
+  await gitCommits(['Second'], {cwd});
+  await gitTagVersion('v1.0.1', undefined, {cwd});
+  const [commit] = await gitCommits(['Third'], {cwd});
+  await gitTagVersion('v1.1.0', undefined, {cwd});
+  await gitPush(repositoryUrl, 'master', {cwd});
+  await gitCheckout('other-branch', true, {cwd});
+  await gitPush(repositoryUrl, 'other-branch', {cwd});
+  await gitCheckout('master', false, {cwd});
+  await gitCommits(['Fourth'], {cwd});
+  await gitTagVersion('v2.0.0', undefined, {cwd});
+  await gitPush(repositoryUrl, 'master', {cwd});
+  cwd = await gitDetachedHeadFromBranch(repositoryUrl, 'other-branch', commit.hash);
+
+  await fetch(repositoryUrl, 'master', 'other-branch', {cwd});
+  await fetch(repositoryUrl, 'other-branch', 'other-branch', {cwd});
+
+  t.deepEqual((await getTags('other-branch', {cwd})).sort(), ['v1.0.0', 'v1.0.1', 'v1.1.0'].sort());
+  t.deepEqual((await getTags('master', {cwd})).sort(), ['v1.0.0', 'v1.0.1', 'v1.1.0', 'v2.0.0'].sort());
 });
 
 test('Verify if the commit `sha` is in the direct history of the current branch', async t => {
