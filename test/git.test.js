@@ -374,7 +374,7 @@ test('Unshallow and fetch repository with notes', async t => {
   // Verify the shallow clone doesn't contains the note
   await t.throwsAsync(gitGetNote(commits[0].hash, {cwd}));
 
-  await fetch(repositoryUrl, 'master', {cwd});
+  await fetch(repositoryUrl, 'master', 'master', {cwd});
   await fetchNotes(repositoryUrl, {cwd});
 
   // Verify the shallow clone contains the note
@@ -390,7 +390,7 @@ test('Fetch all notes on a detached head repository', async t => {
   await gitAddNote(JSON.stringify({note: 'note'}), commit.hash, {cwd});
   cwd = await gitDetachedHead(repositoryUrl, commit.hash);
 
-  await fetch(repositoryUrl, 'master', {cwd});
+  await fetch(repositoryUrl, 'master', 'master', {cwd});
   await fetchNotes(repositoryUrl, {cwd});
 
   t.is(await gitGetNote(commit.hash, {cwd}), '{"note":"note"}');
