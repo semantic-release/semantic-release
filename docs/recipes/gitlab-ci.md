@@ -2,7 +2,9 @@
 
 ## Environment variables
 
-The [Authentication](../usage/ci-configuration.md#authentication) environment variables can be configured with [Secret variables](https://docs.gitlab.com/ce/ci/variables/README.html#secret-variables).
+The [Authentication](../usage/ci-configuration.md#authentication) environment variables can be configured with [Protected variables](https://docs.gitlab.com/ce/ci/variables/README.html#protected-environment-variables).
+
+**Note**: Make sure to configure your release branch as [protected](https://docs.gitlab.com/ce/user/project/protected_branches.html) in order for the CI/CD build to access the protected variables.
 
 ## Node project configuration
 

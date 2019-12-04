@@ -28,7 +28,7 @@
     "@semantic-release/npm": "^6.0.0-beta",
     "@semantic-release/release-notes-generator": "^7.1.2",
     "aggregate-error": "^3.0.0",
-    "cosmiconfig": "^5.0.1",
+    "cosmiconfig": "^6.0.0",
     "debug": "^4.0.0",
     "env-ci": "^4.0.0",
     "execa": "^3.2.0",
@@ -49,7 +49,7 @@
     "semver": "^6.0.0",
     "semver-diff": "^3.1.1",
     "signale": "^1.2.1",
-    "yargs": "^14.0.0"
+    "yargs": "^15.0.1"
   },
   "devDependencies": {
     "ava": "^2.0.0",
