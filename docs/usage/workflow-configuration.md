@@ -100,7 +100,7 @@ For example the configuration `['master', {name: 'pre/rc', prerelease: '${name.r
 
 ### Release branches
 
-A release branch is the base type of branch used by **semantic-release** that allows to publish releases with a [semantic version](https://semver.org), optionally on a specific distribution channel. Distribution channels (for example [npm dist-tags](https://docs.npmjs.com/cli/dist-tag) or [Chrome release channels](https://www.chromium.org/getting-involved/dev-channel)) are a way to distribute new releases only to a subset of users in order to get early feedback. Later on those releases can be added to the general distribution channel to be made available to all users.
+A release branch is the base type of branch used by **semantic-release** that allows to publish releases with a [semantic version](https://semver.org), optionally on a specific distribution channel. Distribution channels (for example [npm dist-tags](https://docs.npmjs.com/cli/dist-tag) or [Chrome release channels](https://www.chromium.org/getting-involved/dev-channel)) are a way to distribute new releases only to a subset of users in order to get early feedback. Later on, those releases can be added to the general distribution channel to be made available to all users.
 
 **semantic-release** will automatically add releases to the corresponding distribution channel when code is [merged from a release branch to another](#merging-into-a-release-branch).
 
@@ -112,20 +112,17 @@ See [publishing on distribution channels recipe](../recipes/distribution-channel
 
 #### Pushing to a release branch
 
-With the configuration `"branches": ["master", "next"]`, if the last release published from `master` is `1.0.0` then:
+With the configuration `"branches": ["master", "next"]`, if the last release published from `master` is `1.0.0` and the last one from `next` is `2.0.0` then:
 - Only versions in range `1.x.x` can be published from `master`, so only `fix` and `feat` commits can be pushed to `master`
-- Only versions in range `>=2.0.0` release can be published from `next`, so a `BREAKING CHANGE` commit must be pushed first on `next` and can be followed by any type of commits
+- Once `next` get merged into `master` the release `2.0.0` will be made available on the channel associated with `master` and both `master` and `next` will accept any commit type
 
-With the configuration `"branches": ["master", "next", "next-major"]`, if the last release published from `master` is `1.0.0` then:
-- Only versions in range `1.0.x` can be published from `master`, so only `fix` commits can be pushed to `master`
-- Only versions in range `>=1.1.0` can be published from `next`, so a `feat` commit must be pushed first on `next` and can be followed by `fix` and `feat` commits
-- Only versions in range `>=2.0.0` release can be published from `next`, so a `BREAKING CHANGE` commit must be pushed first on `next-major` and can be followed by any type of commits
-
-Those verifications prevent situations such as:
-1. Create a `feat` commit on `next` which triggers the release of version `1.0.0` on channel `next`
+This verification prevent scenario such as:
+1. Create a `feat` commit on `next` which triggers the release of version `1.0.0` on the `next` channel
 2. Merge `next` into `master` which adds `1.0.0` on the default channel
-3. Push a `fix` commit to `master` which triggers the release of version `1.0.1` on the default channel
-4. Push a `fix` commit to `next` which would attempt to release the version `1.0.1` on channel `next` and fails as this version already exists
+3. Create a `feat` commit on `next` which triggers the release of version `1.1.0` on the `next` channel
+4. Create a `feat` commit on `master` which would attempt to release the version `1.1.0` on the default channel
+
+In step 4 **semantic-release** will throw an `EINVALIDNEXTVERSION` error to prevent the attempt at releasing version `1.1.0` which was already released on step 3 with a different codebase. The error will indicate that the commit should be created on `next` instead. Alternatively if the `next` branch is merged into `master`, the version `1.1.0` will be made available on the default channel and the `feat` commit would be allowed on `master` to release `1.2.0`.
 
 #### Merging into a release branch
 

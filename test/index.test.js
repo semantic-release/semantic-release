@@ -97,8 +97,8 @@ test('Plugins are called with expected values', async t => {
     {
       channel: undefined,
       name: 'master',
-      range: '>=1.0.0 <2.0.0',
-      accept: ['patch', 'minor'],
+      range: '>=1.0.0',
+      accept: ['patch', 'minor', 'major'],
       tags: [{channels: ['next'], gitTag: 'v1.0.0', version: '1.0.0'}],
       type: 'release',
       main: true,
@@ -106,7 +106,7 @@ test('Plugins are called with expected values', async t => {
     {
       channel: 'next',
       name: 'next',
-      range: '>=2.0.0',
+      range: '>=1.0.0',
       accept: ['patch', 'minor', 'major'],
       tags: [{channels: ['next'], gitTag: 'v1.0.0', version: '1.0.0'}],
       type: 'release',

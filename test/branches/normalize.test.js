@@ -159,19 +159,26 @@ test('Release branches - initial state', t => {
       .release({release})
       .map(({type, name, range, accept, channel, main}) => ({type, name, range, accept, channel, main})),
     [
-      {type: 'release', name: 'master', range: '>=1.0.0 <1.1.0', accept: ['patch'], channel: undefined, main: true},
+      {
+        type: 'release',
+        name: 'master',
+        range: '>=1.0.0',
+        accept: ['patch', 'minor', 'major'],
+        channel: undefined,
+        main: true,
+      },
       {
         type: 'release',
         name: 'next',
-        range: '>=1.1.0 <2.0.0',
-        accept: ['patch', 'minor'],
+        range: '>=1.0.0',
+        accept: ['patch', 'minor', 'major'],
         channel: 'next',
         main: false,
       },
       {
         type: 'release',
         name: 'next-major',
-        range: '>=2.0.0',
+        range: '>=1.0.0',
         accept: ['patch', 'minor', 'major'],
         channel: 'next-major',
         main: false,
@@ -293,15 +300,15 @@ test('Release branches - Handle missing previous tags in branch history', t => {
       {
         type: 'release',
         name: 'master',
-        range: '>=2.0.0 <3.0.0',
-        accept: ['patch', 'minor'],
+        range: '>=2.0.0',
+        accept: ['patch', 'minor', 'major'],
         channel: undefined,
         main: true,
       },
       {
         type: 'release',
         name: 'next',
-        range: '>=3.0.0',
+        range: '>=2.0.0',
         accept: ['patch', 'minor', 'major'],
         channel: 'next',
         main: false,
@@ -310,40 +317,7 @@ test('Release branches - Handle missing previous tags in branch history', t => {
   );
 });
 
-test('Release branches - enforce release gaps after downstream merge', t => {
-  const release = [
-    {name: 'master', tags: toTags(['1.0.0', '1.1.0', '2.0.0'])},
-    {name: 'next', tags: toTags(['1.0.0', '1.1.0', '2.0.0'])},
-    {name: 'next-major', tags: toTags(['1.0.0', '1.1.0', '2.0.0'])},
-  ];
-
-  t.deepEqual(
-    normalize
-      .release({release})
-      .map(({type, name, range, accept, channel, main}) => ({type, name, range, accept, channel, main})),
-    [
-      {type: 'release', name: 'master', range: '>=2.0.0 <2.1.0', accept: ['patch'], channel: undefined, main: true},
-      {
-        type: 'release',
-        name: 'next',
-        range: '>=2.1.0 <3.0.0',
-        accept: ['patch', 'minor'],
-        channel: 'next',
-        main: false,
-      },
-      {
-        type: 'release',
-        name: 'next-major',
-        range: '>=3.0.0',
-        accept: ['patch', 'minor', 'major'],
-        channel: 'next-major',
-        main: false,
-      },
-    ]
-  );
-});
-
-test('Release branches - limit releases on 2nd and 3rd branche based on 1st branch last release', t => {
+test('Release branches - limit releases on 2nd and 3rd branch based on 1st branch last release', t => {
   const release = [
     {name: 'master', tags: toTags(['1.0.0', '1.1.0', '2.0.0', '3.0.0'])},
     {name: 'next', tags: toTags(['1.0.0', '1.1.0'])},
@@ -355,19 +329,26 @@ test('Release branches - limit releases on 2nd and 3rd branche based on 1st bran
       .release({release})
       .map(({type, name, range, accept, channel, main}) => ({type, name, range, accept, channel, main})),
     [
-      {type: 'release', name: 'master', range: '>=3.0.0 <3.1.0', accept: ['patch'], channel: undefined, main: true},
+      {
+        type: 'release',
+        name: 'master',
+        range: '>=3.0.0',
+        accept: ['patch', 'minor', 'major'],
+        channel: undefined,
+        main: true,
+      },
       {
         type: 'release',
         name: 'next',
-        range: '>=3.1.0 <4.0.0',
-        accept: ['patch', 'minor'],
+        range: '>=3.0.0',
+        accept: ['patch', 'minor', 'major'],
         channel: 'next',
         main: false,
       },
       {
         type: 'release',
         name: 'next-major',
-        range: '>=4.0.0',
+        range: '>=3.0.0',
         accept: ['patch', 'minor', 'major'],
         channel: 'next-major',
         main: false,
