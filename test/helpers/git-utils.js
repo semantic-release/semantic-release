@@ -213,7 +213,7 @@ export async function gitRemoteTagHead(repositoryUrl, tagName, execaOpts) {
   return (await execa('git', ['ls-remote', '--tags', repositoryUrl, tagName], execaOpts)).stdout
     .split('\n')
     .filter(tag => Boolean(tag))
-    .map(tag => tag.match(/^(\S+)/)[1])[0];
+    .map(tag => tag.match(/^(?<tag>\S+)/)[1])[0];
 }
 
 /**

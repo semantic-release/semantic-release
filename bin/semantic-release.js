@@ -35,7 +35,7 @@ execa('git', ['--version'])
     process.exit(1);
   });
 
-// Node 8+ from this point on
+// Node 10+ from this point on
 require('../cli')()
   .then(exitCode => {
     process.exitCode = exitCode;
