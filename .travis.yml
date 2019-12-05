@@ -5,8 +5,7 @@ services:
 
 node_js:
   - 12
-  - 10
-  - 8.16
+  - 10.13
 
 # Trigger a push build on release and greenkeeper branches + PRs build on every branches
 # Avoid double build on PRs (See https://github.com/travis-ci/travis-ci/issues/1147)
