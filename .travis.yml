@@ -1,33 +1,11 @@
-language: node_js
+version: ~> 1.0
 
 services:
   - docker
 
-node_js:
-  - 12
-  - 10
-  - 8.16
-
-# Trigger a push build on master and greenkeeper branches + PRs build on every branches
-# Avoid double build on PRs (See https://github.com/travis-ci/travis-ci/issues/1147)
-branches:
-  only:
-    - master
-    - /^greenkeeper.*$/
-
-# Retry install on fail to avoid failing a build on network/disk/external errors
-install:
-  - travis_retry npm install
-
-script:
-  - npm run test
-
-after_success:
-  - npm run codecov
-
-jobs:
-  include:
-    - stage: release
-      node_js: lts/*
-      script:
-        - npm run semantic-release
+import:
+  - .travis/node.yml
+  - .travis/node-versions.yml
+  - .travis/semantic-release.yml
+  - .travis/greenkeeper.yml
+  - .travis/codecov.yml
