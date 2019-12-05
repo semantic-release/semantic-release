@@ -1,0 +1,11 @@
+language: node_js
+
+cache:
+  npm: false
+
+# Retry install on fail to avoid failing a build on network/disk/external errors
+install:
+  - travis_retry npm install
+
+script:
+  - npm run test
