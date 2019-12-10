@@ -785,7 +785,14 @@ async function addChannelMacro(t, mergeFunction) {
   const publish = stub().resolves();
   const success = stub().resolves();
 
-  const config = {branches: [{name: 'master'}, {name: 'next'}], repositoryUrl, tagFormat: `v\${version}`};
+  const config = {
+    branches: [
+      {name: 'master', channel: 'latest'},
+      {name: 'next', channel: 'next'},
+    ],
+    repositoryUrl,
+    tagFormat: `v\${version}`,
+  };
   const options = {
     ...config,
     verifyConditions,
@@ -796,11 +803,11 @@ async function addChannelMacro(t, mergeFunction) {
     publish,
     success,
   };
-  const nextRelease2 = {
+  const nextRelease = {
     name: 'v2.0.1',
     type: 'patch',
     version: '2.0.1',
-    channel: null,
+    channel: 'latest',
     gitTag: 'v2.0.1',
     gitHead: commits[2].hash,
   };
@@ -812,13 +819,13 @@ async function addChannelMacro(t, mergeFunction) {
   const result = await semanticRelease(options, {cwd, env: {}, stdout: {write: () => {}}, stderr: {write: () => {}}});
 
   t.deepEqual(result.releases, [
-    {...nextRelease2, ...release1, notes, pluginName: '[Function: functionStub]'},
-    {...nextRelease2, notes, pluginName: '[Function: functionStub]'},
+    {...nextRelease, ...release1, notes, pluginName: '[Function: functionStub]'},
+    {...nextRelease, notes, pluginName: '[Function: functionStub]'},
   ]);
 
   // Verify the tag has been created on the local and remote repo and reference
-  t.is(await gitTagHead(nextRelease2.gitTag, {cwd}), nextRelease2.gitHead);
-  t.is(await gitRemoteTagHead(repositoryUrl, nextRelease2.gitTag, {cwd}), nextRelease2.gitHead);
+  t.is(await gitTagHead(nextRelease.gitTag, {cwd}), nextRelease.gitHead);
+  t.is(await gitRemoteTagHead(repositoryUrl, nextRelease.gitTag, {cwd}), nextRelease.gitHead);
 }
 
 addChannelMacro.title = providedTitle => `Add version to a channel after a merge (${providedTitle})`;
