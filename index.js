@@ -132,7 +132,7 @@ async function run(context, plugins) {
     throw new AggregateError(errors);
   }
 
-  context.lastRelease = await getLastRelease(context);
+  context.lastRelease = getLastRelease(context);
   if (context.lastRelease.gitHead) {
     context.lastRelease.gitHead = await getTagHead(context.lastRelease.gitHead, {cwd, env});
   }
