@@ -112,7 +112,11 @@ async function run(context, plugins) {
         await addNote({channels: [...currentRelease.channels, nextRelease.channel]}, nextRelease.gitHead, {cwd, env});
         await push(options.repositoryUrl, {cwd, env});
         await pushNotes(options.repositoryUrl, {cwd, env});
-        logger.success(`Add channel ${nextRelease.channel} to tag ${nextRelease.gitTag}`);
+        logger.success(
+          `Add ${nextRelease.channel ? `channel ${nextRelease.channel}` : 'default channel'} to tag ${
+            nextRelease.gitTag
+          }`
+        );
       }
 
       context.branch.tags.push({
