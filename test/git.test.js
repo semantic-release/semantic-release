@@ -2,7 +2,6 @@ import test from 'ava';
 import tempy from 'tempy';
 import {
   getTagHead,
-  isRefInHistory,
   isRefExists,
   fetch,
   getGitHead,
@@ -123,23 +122,6 @@ test('Fetch all tags on a repository with a detached head from branch', async t 
 
   t.deepEqual((await getTags('other-branch', {cwd})).sort(), ['v1.0.0', 'v1.0.1', 'v1.1.0'].sort());
   t.deepEqual((await getTags('master', {cwd})).sort(), ['v1.0.0', 'v1.0.1', 'v1.1.0', 'v2.0.0'].sort());
-});
-
-test('Verify if the commit `sha` is in the direct history of the current branch', async t => {
-  // Create a git repository, set the current working directory at the root of the repo
-  const {cwd} = await gitRepo();
-  // Add commits to the master branch
-  const commits = await gitCommits(['First'], {cwd});
-  // Create the new branch 'other-branch' from master
-  await gitCheckout('other-branch', true, {cwd});
-  // Add commits to the 'other-branch' branch
-  const otherCommits = await gitCommits(['Second'], {cwd});
-  await gitCheckout('master', false, {cwd});
-
-  t.true(await isRefInHistory(commits[0].hash, 'master', {cwd}));
-  t.falsy(await isRefInHistory(otherCommits[0].hash, 'master', {cwd}));
-  t.falsy(await isRefInHistory(otherCommits[0].hash, 'missing-branch', {cwd}));
-  await t.throwsAsync(isRefInHistory('non-existant-sha', 'master', {cwd}));
 });
 
 test('Verify if a branch exists', async t => {
@@ -299,13 +281,16 @@ test('Return falsy if repository is not up to date', async t => {
   t.falsy(await isBranchUpToDate(repositoryUrl, 'master', {cwd}));
 });
 
-test('Return "true" if local repository is ahead', async t => {
-  const {cwd, repositoryUrl} = await gitRepo(true);
-  await gitCommits(['First'], {cwd});
-  await gitPush(repositoryUrl, 'master', {cwd});
-  await gitCommits(['Second'], {cwd});
+test('Return falsy if detached head repository is not up to date', async t => {
+  let {cwd, repositoryUrl} = await gitRepo();
 
-  t.true(await isBranchUpToDate(repositoryUrl, 'master', {cwd}));
+  const [commit] = await gitCommits(['First'], {cwd});
+  await gitCommits(['Second'], {cwd});
+  await gitPush(repositoryUrl, 'master', {cwd});
+  cwd = await gitDetachedHead(repositoryUrl, commit.hash);
+  await fetch(repositoryUrl, 'master', 'master', {cwd});
+
+  t.falsy(await isBranchUpToDate(repositoryUrl, 'master', {cwd}));
 });
 
 test('Get a commit note', async t => {
