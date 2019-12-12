@@ -40,7 +40,7 @@
     "hook-std": "^2.0.0",
     "hosted-git-info": "^3.0.0",
     "lodash": "^4.17.15",
-    "marked": "^0.7.0",
+    "marked": "^0.8.0",
     "marked-terminal": "^3.2.0",
     "p-locate": "^4.0.0",
     "p-reduce": "^2.0.0",
