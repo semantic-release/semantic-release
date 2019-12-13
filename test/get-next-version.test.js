@@ -258,3 +258,20 @@ test('Increase version for release on prerelease branch based on highest commit 
     '2.0.0-beta.1'
   );
 });
+
+test('Increase version for release on prerelease branch when there is no regular releases on other branches', t => {
+  t.is(
+    getNextVersion({
+      branch: {
+        name: 'beta',
+        type: 'prerelease',
+        prerelease: 'beta',
+        tags: [{gitTag: 'v1.0.0-beta.1', version: '1.0.0-beta.1', channels: ['beta']}],
+      },
+      nextRelease: {type: 'minor', channel: 'beta'},
+      lastRelease: {version: 'v1.0.0-beta.1', channels: ['beta']},
+      logger: t.context.logger,
+    }),
+    '1.0.0-beta.2'
+  );
+});
