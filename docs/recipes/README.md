@@ -4,6 +4,7 @@
 - [CircleCI 2.0 workflows](circleci-workflows.md)
 - [Travis CI](travis.md)
 - [GitLab CI](gitlab-ci.md)
+- [Azure Pipelines](azure-pipelines.md)
 
 ## Git hosted services
 - [Git authentication with SSH keys](git-auth-ssh-keys.md)
