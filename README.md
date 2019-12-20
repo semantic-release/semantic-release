@@ -19,8 +19,8 @@
   <a href="https://www.npmjs.com/package/semantic-release-plus">
     <img alt="npm next version" src="https://img.shields.io/npm/v/semantic-release-plus/next.svg">
   </a>
-  <a href="https://www.npmjs.com/package/semantic-release">
-    <img alt="npm beta version" src="https://img.shields.io/npm/v/semantic-release/beta.svg">
+  <a href="https://www.npmjs.com/package/semantic-release-plus">
+    <img alt="npm beta version" src="https://img.shields.io/npm/v/semantic-release-plus/beta.svg">
   </a>
 </p>
 
