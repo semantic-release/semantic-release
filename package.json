@@ -61,7 +61,7 @@
     "got": "9.6.0",
     "js-yaml": "3.13.1",
     "mockserver-client": "5.8.0",
-    "nock": "11.7.0",
+    "nock": "11.7.2",
     "nyc": "14.1.1",
     "p-retry": "4.2.0",
     "prettier": "1.19.1",
