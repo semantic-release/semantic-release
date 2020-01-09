@@ -22,10 +22,10 @@
     "Pierre Vanduynslager (https://twitter.com/@pvdlg_)"
   ],
   "dependencies": {
-    "@semantic-release/commit-analyzer": "^7.0.0-beta",
+    "@semantic-release/commit-analyzer": "^7.0.0",
     "@semantic-release/error": "^2.2.0",
-    "@semantic-release/github": "^5.6.0-beta",
-    "@semantic-release/npm": "^6.0.0-beta",
+    "@semantic-release/github": "^6.0.0",
+    "@semantic-release/npm": "^6.0.0",
     "@semantic-release/release-notes-generator": "^7.1.2",
     "aggregate-error": "^3.0.0",
     "cosmiconfig": "^6.0.0",
