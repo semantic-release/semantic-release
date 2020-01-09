@@ -3,7 +3,7 @@ import getStream from 'get-stream';
 import pRetry from 'p-retry';
 import {initBareRepo, gitShallowClone} from './git-utils';
 
-const IMAGE = 'pvdlg/docker-gitbox';
+const IMAGE = 'pvdlg/docker-gitbox:latest';
 const SERVER_PORT = 80;
 const HOST_PORT = 2080;
 const SERVER_HOST = 'localhost';

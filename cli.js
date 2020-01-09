@@ -19,7 +19,7 @@ module.exports = async () => {
 Usage:
   semantic-release [options] [plugins]`);
     })
-    .option('b', {alias: 'branch', describe: 'Git branch to release from', type: 'string', group: 'Options'})
+    .option('b', {alias: 'branches', describe: 'Git branches to release from', ...stringList, group: 'Options'})
     .option('r', {alias: 'repository-url', describe: 'Git repository URL', type: 'string', group: 'Options'})
     .option('t', {alias: 'tag-format', describe: 'Git tag format', type: 'string', group: 'Options'})
     .option('p', {alias: 'plugins', describe: 'Plugins', ...stringList, group: 'Options'})

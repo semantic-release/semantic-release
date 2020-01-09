@@ -2,16 +2,20 @@ import test from 'ava';
 import tempy from 'tempy';
 import {
   getTagHead,
-  isRefInHistory,
+  isRefExists,
   fetch,
   getGitHead,
   repoUrl,
   tag,
   push,
   getTags,
+  getBranches,
   isGitRepo,
   verifyTagName,
   isBranchUpToDate,
+  getNote,
+  addNote,
+  fetchNotes,
 } from '../lib/git';
 import {
   gitRepo,
@@ -25,6 +29,9 @@ import {
   gitRemoteTagHead,
   gitPush,
   gitDetachedHead,
+  gitDetachedHeadFromBranch,
+  gitAddNote,
+  gitGetNote,
 } from './helpers/git-utils';
 
 test('Get the last commit sha', async t => {
@@ -56,7 +63,7 @@ test('Unshallow and fetch repository', async t => {
   // Verify the shallow clone contains only one commit
   t.is((await gitGetCommits(undefined, {cwd})).length, 1);
 
-  await fetch(repositoryUrl, {cwd});
+  await fetch(repositoryUrl, 'master', 'master', {cwd});
 
   // Verify the shallow clone contains all the commits
   t.is((await gitGetCommits(undefined, {cwd})).length, 2);
@@ -64,10 +71,15 @@ test('Unshallow and fetch repository', async t => {
 
 test('Do not throw error when unshallow a complete repository', async t => {
   // Create a git repository, set the current working directory at the root of the repo
-  const {cwd, repositoryUrl} = await gitRepo();
-  // Add commits to the master branch
+  const {cwd, repositoryUrl} = await gitRepo(true);
   await gitCommits(['First'], {cwd});
-  await t.notThrowsAsync(fetch(repositoryUrl, {cwd}));
+  await gitPush(repositoryUrl, 'master', {cwd});
+  await gitCheckout('second-branch', true, {cwd});
+  await gitCommits(['Second'], {cwd});
+  await gitPush(repositoryUrl, 'second-branch', {cwd});
+
+  await t.notThrowsAsync(fetch(repositoryUrl, 'master', 'master', {cwd}));
+  await t.notThrowsAsync(fetch(repositoryUrl, 'second-branch', 'master', {cwd}));
 });
 
 test('Fetch all tags on a detached head repository', async t => {
@@ -82,28 +94,66 @@ test('Fetch all tags on a detached head repository', async t => {
   await gitPush(repositoryUrl, 'master', {cwd});
   cwd = await gitDetachedHead(repositoryUrl, commit.hash);
 
-  await fetch(repositoryUrl, {cwd});
+  await fetch(repositoryUrl, 'master', 'master', {cwd});
 
-  t.deepEqual((await getTags({cwd})).sort(), ['v1.0.0', 'v1.0.1', 'v1.1.0'].sort());
+  t.deepEqual((await getTags('master', {cwd})).sort(), ['v1.0.0', 'v1.0.1', 'v1.1.0'].sort());
 });
 
-test('Verify if the commit `sha` is in the direct history of the current branch', async t => {
+test('Fetch all tags on a repository with a detached head from branch', async t => {
+  let {cwd, repositoryUrl} = await gitRepo();
+
+  await gitCommits(['First'], {cwd});
+  await gitTagVersion('v1.0.0', undefined, {cwd});
+  await gitCommits(['Second'], {cwd});
+  await gitTagVersion('v1.0.1', undefined, {cwd});
+  const [commit] = await gitCommits(['Third'], {cwd});
+  await gitTagVersion('v1.1.0', undefined, {cwd});
+  await gitPush(repositoryUrl, 'master', {cwd});
+  await gitCheckout('other-branch', true, {cwd});
+  await gitPush(repositoryUrl, 'other-branch', {cwd});
+  await gitCheckout('master', false, {cwd});
+  await gitCommits(['Fourth'], {cwd});
+  await gitTagVersion('v2.0.0', undefined, {cwd});
+  await gitPush(repositoryUrl, 'master', {cwd});
+  cwd = await gitDetachedHeadFromBranch(repositoryUrl, 'other-branch', commit.hash);
+
+  await fetch(repositoryUrl, 'master', 'other-branch', {cwd});
+  await fetch(repositoryUrl, 'other-branch', 'other-branch', {cwd});
+
+  t.deepEqual((await getTags('other-branch', {cwd})).sort(), ['v1.0.0', 'v1.0.1', 'v1.1.0'].sort());
+  t.deepEqual((await getTags('master', {cwd})).sort(), ['v1.0.0', 'v1.0.1', 'v1.1.0', 'v2.0.0'].sort());
+});
+
+test('Verify if a branch exists', async t => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
   // Add commits to the master branch
-  const commits = await gitCommits(['First'], {cwd});
+  await gitCommits(['First'], {cwd});
   // Create the new branch 'other-branch' from master
   await gitCheckout('other-branch', true, {cwd});
   // Add commits to the 'other-branch' branch
-  const otherCommits = await gitCommits(['Second'], {cwd});
-  await gitCheckout('master', false, {cwd});
+  await gitCommits(['Second'], {cwd});
 
-  t.true(await isRefInHistory(commits[0].hash, {cwd}));
-  t.falsy(await isRefInHistory(otherCommits[0].hash, {cwd}));
-  await t.throwsAsync(isRefInHistory('non-existant-sha', {cwd}));
+  t.true(await isRefExists('master', {cwd}));
+  t.true(await isRefExists('other-branch', {cwd}));
+  t.falsy(await isRefExists('next', {cwd}));
 });
 
-test('Get the commit sha for a given tag or falsy if the tag does not exists', async t => {
+test('Get all branches', async t => {
+  const {cwd, repositoryUrl} = await gitRepo(true);
+  await gitCommits(['First'], {cwd});
+  await gitPush(repositoryUrl, 'master', {cwd});
+  await gitCheckout('second-branch', true, {cwd});
+  await gitCommits(['Second'], {cwd});
+  await gitPush(repositoryUrl, 'second-branch', {cwd});
+  await gitCheckout('third-branch', true, {cwd});
+  await gitCommits(['Third'], {cwd});
+  await gitPush(repositoryUrl, 'third-branch', {cwd});
+
+  t.deepEqual((await getBranches(repositoryUrl, {cwd})).sort(), ['master', 'second-branch', 'third-branch'].sort());
+});
+
+test('Get the commit sha for a given tag', async t => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
   // Add commits to the master branch
@@ -112,7 +162,6 @@ test('Get the commit sha for a given tag or falsy if the tag does not exists', a
   await gitTagVersion('v1.0.0', undefined, {cwd});
 
   t.is(await getTagHead('v1.0.0', {cwd}), commits[0].hash);
-  t.falsy(await getTagHead('missing_tag', {cwd}));
 });
 
 test('Return git remote repository url from config', async t => {
@@ -146,7 +195,7 @@ test('Add tag on head commit', async t => {
   const {cwd} = await gitRepo();
   const commits = await gitCommits(['Test commit'], {cwd});
 
-  await tag('tag_name', {cwd});
+  await tag('tag_name', 'HEAD', {cwd});
 
   await t.is(await gitCommitTag(commits[0].hash, {cwd}), 'tag_name');
 });
@@ -156,13 +205,13 @@ test('Push tag to remote repository', async t => {
   const {cwd, repositoryUrl} = await gitRepo(true);
   const commits = await gitCommits(['Test commit'], {cwd});
 
-  await tag('tag_name', {cwd});
+  await tag('tag_name', 'HEAD', {cwd});
   await push(repositoryUrl, {cwd});
 
   t.is(await gitRemoteTagHead(repositoryUrl, 'tag_name', {cwd}), commits[0].hash);
 });
 
-test('Push tag to remote repository with remote branch ahaed', async t => {
+test('Push tag to remote repository with remote branch ahead', async t => {
   const {cwd, repositoryUrl} = await gitRepo(true);
   const commits = await gitCommits(['First'], {cwd});
   await gitPush(repositoryUrl, 'master', {cwd});
@@ -170,7 +219,7 @@ test('Push tag to remote repository with remote branch ahaed', async t => {
   await gitCommits(['Second'], {cwd: tmpRepo});
   await gitPush('origin', 'master', {cwd: tmpRepo});
 
-  await tag('tag_name', {cwd});
+  await tag('tag_name', 'HEAD', {cwd});
   await push(repositoryUrl, {cwd});
 
   t.is(await gitRemoteTagHead(repositoryUrl, 'tag_name', {cwd}), commits[0].hash);
@@ -206,7 +255,7 @@ test('Return falsy for invalid tag names', async t => {
 test('Throws error if obtaining the tags fails', async t => {
   const cwd = tempy.directory();
 
-  await t.throwsAsync(getTags({cwd}));
+  await t.throwsAsync(getTags('master', {cwd}));
 });
 
 test('Return "true" if repository is up to date', async t => {
@@ -232,11 +281,102 @@ test('Return falsy if repository is not up to date', async t => {
   t.falsy(await isBranchUpToDate(repositoryUrl, 'master', {cwd}));
 });
 
-test('Return "true" if local repository is ahead', async t => {
-  const {cwd, repositoryUrl} = await gitRepo(true);
-  await gitCommits(['First'], {cwd});
-  await gitPush(repositoryUrl, 'master', {cwd});
-  await gitCommits(['Second'], {cwd});
+test('Return falsy if detached head repository is not up to date', async t => {
+  let {cwd, repositoryUrl} = await gitRepo();
 
-  t.true(await isBranchUpToDate(repositoryUrl, 'master', {cwd}));
+  const [commit] = await gitCommits(['First'], {cwd});
+  await gitCommits(['Second'], {cwd});
+  await gitPush(repositoryUrl, 'master', {cwd});
+  cwd = await gitDetachedHead(repositoryUrl, commit.hash);
+  await fetch(repositoryUrl, 'master', 'master', {cwd});
+
+  t.falsy(await isBranchUpToDate(repositoryUrl, 'master', {cwd}));
+});
+
+test('Get a commit note', async t => {
+  // Create a git repository, set the current working directory at the root of the repo
+  const {cwd} = await gitRepo();
+  // Add commits to the master branch
+  const commits = await gitCommits(['First'], {cwd});
+
+  await gitAddNote(JSON.stringify({note: 'note'}), commits[0].hash, {cwd});
+
+  t.deepEqual(await getNote(commits[0].hash, {cwd}), {note: 'note'});
+});
+
+test('Return empty object if there is no commit note', async t => {
+  // Create a git repository, set the current working directory at the root of the repo
+  const {cwd} = await gitRepo();
+  // Add commits to the master branch
+  const commits = await gitCommits(['First'], {cwd});
+
+  t.deepEqual(await getNote(commits[0].hash, {cwd}), {});
+});
+
+test('Throw error if a commit note in invalid', async t => {
+  // Create a git repository, set the current working directory at the root of the repo
+  const {cwd} = await gitRepo();
+  // Add commits to the master branch
+  const commits = await gitCommits(['First'], {cwd});
+
+  await gitAddNote('non-json note', commits[0].hash, {cwd});
+
+  await t.throwsAsync(getNote(commits[0].hash, {cwd}));
+});
+
+test('Add a commit note', async t => {
+  // Create a git repository, set the current working directory at the root of the repo
+  const {cwd} = await gitRepo();
+  // Add commits to the master branch
+  const commits = await gitCommits(['First'], {cwd});
+
+  await addNote({note: 'note'}, commits[0].hash, {cwd});
+
+  t.is(await gitGetNote(commits[0].hash, {cwd}), '{"note":"note"}');
+});
+
+test('Overwrite a commit note', async t => {
+  // Create a git repository, set the current working directory at the root of the repo
+  const {cwd} = await gitRepo();
+  // Add commits to the master branch
+  const commits = await gitCommits(['First'], {cwd});
+
+  await addNote({note: 'note'}, commits[0].hash, {cwd});
+  await addNote({note: 'note2'}, commits[0].hash, {cwd});
+
+  t.is(await gitGetNote(commits[0].hash, {cwd}), '{"note":"note2"}');
+});
+
+test('Unshallow and fetch repository with notes', async t => {
+  // Create a git repository, set the current working directory at the root of the repo
+  let {cwd, repositoryUrl} = await gitRepo();
+  // Add commits to the master branch
+  const commits = await gitCommits(['First', 'Second'], {cwd});
+  await gitAddNote(JSON.stringify({note: 'note'}), commits[0].hash, {cwd});
+  // Create a shallow clone with only 1 commit
+  cwd = await gitShallowClone(repositoryUrl);
+
+  // Verify the shallow clone doesn't contains the note
+  await t.throwsAsync(gitGetNote(commits[0].hash, {cwd}));
+
+  await fetch(repositoryUrl, 'master', 'master', {cwd});
+  await fetchNotes(repositoryUrl, {cwd});
+
+  // Verify the shallow clone contains the note
+  t.is(await gitGetNote(commits[0].hash, {cwd}), '{"note":"note"}');
+});
+
+test('Fetch all notes on a detached head repository', async t => {
+  let {cwd, repositoryUrl} = await gitRepo();
+
+  await gitCommits(['First'], {cwd});
+  const [commit] = await gitCommits(['Second'], {cwd});
+  await gitPush(repositoryUrl, 'master', {cwd});
+  await gitAddNote(JSON.stringify({note: 'note'}), commit.hash, {cwd});
+  cwd = await gitDetachedHead(repositoryUrl, commit.hash);
+
+  await fetch(repositoryUrl, 'master', 'master', {cwd});
+  await fetchNotes(repositoryUrl, {cwd});
+
+  t.is(await gitGetNote(commit.hash, {cwd}), '{"note":"note"}');
 });

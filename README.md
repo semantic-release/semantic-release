@@ -24,6 +24,9 @@
   <a href="https://www.npmjs.com/package/semantic-release">
     <img alt="npm next version" src="https://img.shields.io/npm/v/semantic-release/next.svg">
   </a>
+  <a href="https://www.npmjs.com/package/semantic-release">
+    <img alt="npm beta version" src="https://img.shields.io/npm/v/semantic-release/beta.svg">
+  </a>
 </p>
 
 **semantic-release** automates the whole package release workflow including: determining the next version number, generating the release notes and publishing the package.
@@ -39,6 +42,7 @@ This removes the immediate connection between human emotions and version numbers
 - New features and fixes are immediately available to users
 - Notify maintainers and users of new releases
 - Use formalized commit message convention to document changes in the codebase
+- Publish on different distribution channels (such as [npm dist-tags](https://docs.npmjs.com/cli/dist-tag)) based on git merges
 - Integrate with your [continuous integration workflow](docs/recipes/README.md#ci-configurations)
 - Avoid potential errors associated with manual releases
 - Support any [package managers and languages](docs/recipes/README.md#package-managers-and-languages) via [plugins](docs/usage/plugins.md)
@@ -68,11 +72,12 @@ Here is an example of the release type that will be done based on a commit messa
 
 ### Triggering a release
 
-For each new commits added to the release branch (i.e. `master`) with `git push` or by merging a pull request or merging from another branch, a CI build is triggered and runs the `semantic-release` command to make a release if there are codebase changes since the last release that affect the package functionalities.
+For each new commits added to one of the release branches (for example `master`, `next`, `beta`), with `git push` or by merging a pull request or merging from another branch, a CI build is triggered and runs the `semantic-release` command to make a release if there are codebase changes since the last release that affect the package functionalities.
 
-If you need more control over the timing of releases you have a couple of options:
-- Publish releases on a distribution channel (for example npm’s [dist-tags](https://docs.npmjs.com/cli/dist-tag)). This way you can keep control over what your users end up using by default, and you can decide when to make an automatically released version available to the stable channel, and promote it.
-- Develop on a `dev` branch and merge it to the release branch (i.e. `master`) once you are ready to publish. **semantic-release** will run only on pushes to the release branch.
+**semantic-release** offers various ways to control the timing, the content and the audience of published releases. See example workflows in the following recipes:
+- [Using distribution channels](docs/recipes/distribution-channels.md#publishing-on-distribution-channels)
+- [Maintenance releases](docs/recipes/maintenance-releases.md#publishing-maintenance-releases)
+- [Pre-releases](docs/recipes/pre-releases.md#publishing-pre-releases)
 
 ### Release steps
 
@@ -90,6 +95,14 @@ After running the tests, the command `semantic-release` will execute the followi
 | Publish           | Publish the release.                                                                                                            |
 | Notify            | Notify of new releases or errors.                                                                                               |
 
+## Requirements
+
+In order to use **semantic-release** you need:
+- To host your code in a [Git repository](https://git-scm.com)
+- Use a Continuous Integration service that allows you to [securely set up credentials](docs/usage/ci-configuration.md#authentication)
+- Git CLI version [2.7.1 or higher](docs/support/FAQ.md#why-does-semantic-release-require-git-version--271) installed in your Continuous Integration environment
+- [Node.js](https://nodejs.org) version [8.16.0 or higher](docs/support/FAQ.md#why-does-semantic-release-require-node-version--816) installed in your Continuous Integration environment
+
 ## Documentation
 
 - Usage
@@ -98,14 +111,16 @@ After running the tests, the command `semantic-release` will execute the followi
   - [CI Configuration](docs/usage/ci-configuration.md#ci-configuration)
   - [Configuration](docs/usage/configuration.md#configuration)
   - [Plugins](docs/usage/plugins.md)
+  - [Workflow configuration](docs/usage/workflow-configuration.md)
   - [Shareable configurations](docs/usage/shareable-configurations.md)
 - Extending
   - [Plugins](docs/extending/plugins-list.md)
   - [Shareable configuration](docs/extending/shareable-configurations-list.md)
 - Recipes
-  - [CI configurations](docs/recipes/README.md#ci-configurations)
-  - [Git hosted services](docs/recipes/README.md#git-hosted-services)
-  - [Package managers and languages](docs/recipes/README.md#package-managers-and-languages)
+  - [CI configurations](docs/recipes/README.md)
+  - [Git hosted services](docs/recipes/README.md)
+  - [Release workflow](docs/recipes/README.md)
+  - [Package managers and languages](docs/recipes/README.md)
 - Developer guide
   - [JavaScript API](docs/developer-guide/js-api.md)
   - [Plugins development](docs/developer-guide/plugin.md)

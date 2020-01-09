@@ -22,10 +22,10 @@
     "Pierre Vanduynslager (https://twitter.com/@pvdlg_)"
   ],
   "dependencies": {
-    "@semantic-release/commit-analyzer": "^6.1.0",
+    "@semantic-release/commit-analyzer": "^7.0.0-beta",
     "@semantic-release/error": "^2.2.0",
-    "@semantic-release/github": "^5.1.0",
-    "@semantic-release/npm": "^5.0.5",
+    "@semantic-release/github": "^5.6.0-beta",
+    "@semantic-release/npm": "^6.0.0-beta",
     "@semantic-release/release-notes-generator": "^7.1.2",
     "aggregate-error": "^3.0.0",
     "cosmiconfig": "^6.0.0",
@@ -41,11 +41,13 @@
     "lodash": "^4.17.15",
     "marked": "^0.7.0",
     "marked-terminal": "^3.2.0",
-    "p-locate": "^4.0.0",
+    "micromatch": "^4.0.2",
+    "p-each-series": "^2.1.0",
     "p-reduce": "^2.0.0",
     "read-pkg-up": "^7.0.0",
     "resolve-from": "^5.0.0",
     "semver": "^6.0.0",
+    "semver-diff": "^3.1.1",
     "signale": "^1.2.1",
     "yargs": "^15.0.1"
   },
@@ -70,7 +72,7 @@
     "xo": "^0.25.0"
   },
   "engines": {
-    "node": ">=8.16"
+    "node": ">=10.13"
   },
   "files": [
     "bin",
@@ -111,7 +113,7 @@
     "trailingComma": "es5"
   },
   "publishConfig": {
-    "tag": "next"
+    "access": "public"
   },
   "repository": {
     "type": "git",

@@ -9,4 +9,9 @@
 ## Git hosted services
 - [Git authentication with SSH keys](git-auth-ssh-keys.md)
 
+## Release workflow
+- [Publishing on distribution channels](distribution-channels.md)
+- [Publishing maintenance releases](maintenance-releases.md)
+- [Publishing pre-releases](pre-releases.md)
+
 ## Package managers and languages
