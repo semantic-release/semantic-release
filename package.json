@@ -20,7 +20,7 @@
   "contributors": [
     "Gregor Martynus (https://twitter.com/gr2m)",
     "Pierre Vanduynslager (https://twitter.com/@pvdlg_)",
-    "Justin Dietz (joamos.dev@gmail.com)"
+    "Justin Dietz (https://twitter.com/@skigeek)"
   ],
   "dependencies": {
     "@semantic-release/commit-analyzer": "^7.0.0-beta",
