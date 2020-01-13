@@ -45,10 +45,10 @@ async function start() {
 
   // Create user
   await got(`http://${SERVER_HOST}:${SERVER_PORT}/_users/org.couchdb.user:${NPM_USERNAME}`, {
-    json: true,
-    auth: `${COUCHDB_USER}:${COUCHDB_PASSWORD}`,
+    username: COUCHDB_USER,
+    password: COUCHDB_PASSWORD,
     method: 'PUT',
-    body: {
+    json: {
       _id: `org.couchdb.user:${NPM_USERNAME}`,
       name: NPM_USERNAME,
       roles: [],
