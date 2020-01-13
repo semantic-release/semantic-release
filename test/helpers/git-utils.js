@@ -1,9 +1,10 @@
 import tempy from 'tempy';
 import execa from 'execa';
 import fileUrl from 'file-url';
-import pReduce from 'p-reduce';
+import pEachSeries from 'p-each-series';
 import gitLogParser from 'git-log-parser';
 import getStream from 'get-stream';
+import {GIT_NOTE_REF} from '../../lib/definitions/constants';
 
 /**
  * Commit message informations.
@@ -69,10 +70,9 @@ export async function initBareRepo(repositoryUrl, branch = 'master') {
  * @returns {Array<Commit>} The created commits, in reverse order (to match `git log` order).
  */
 export async function gitCommits(messages, execaOpts) {
-  await pReduce(
+  await pEachSeries(
     messages,
-    async (_, message) =>
-      (await execa('git', ['commit', '-m', message, '--allow-empty', '--no-gpg-sign'], execaOpts)).stdout
+    async message => (await execa('git', ['commit', '-m', message, '--allow-empty', '--no-gpg-sign'], execaOpts)).stdout
   );
   return (await gitGetCommits(undefined, execaOpts)).slice(0, messages.length);
 }
@@ -166,6 +166,17 @@ export async function gitDetachedHead(repositoryUrl, head) {
   return cwd;
 }
 
+export async function gitDetachedHeadFromBranch(repositoryUrl, branch, head) {
+  const cwd = tempy.directory();
+
+  await execa('git', ['init'], {cwd});
+  await execa('git', ['remote', 'add', 'origin', repositoryUrl], {cwd});
+  await execa('git', ['fetch', '--force', repositoryUrl, `${branch}:remotes/origin/${branch}`], {cwd});
+  await execa('git', ['reset', '--hard', head], {cwd});
+  await execa('git', ['checkout', '-q', '-B', branch], {cwd});
+  return cwd;
+}
+
 /**
  * Add a new Git configuration.
  *
@@ -202,7 +213,7 @@ export async function gitRemoteTagHead(repositoryUrl, tagName, execaOpts) {
   return (await execa('git', ['ls-remote', '--tags', repositoryUrl, tagName], execaOpts)).stdout
     .split('\n')
     .filter(tag => Boolean(tag))
-    .map(tag => tag.match(/^(\S+)/)[1])[0];
+    .map(tag => tag.match(/^(?<tag>\S+)/)[1])[0];
 }
 
 /**
@@ -228,4 +239,55 @@ export async function gitCommitTag(gitHead, execaOpts) {
  */
 export async function gitPush(repositoryUrl, branch, execaOpts) {
   await execa('git', ['push', '--tags', repositoryUrl, `HEAD:${branch}`], execaOpts);
+}
+
+/**
+ * Merge a branch into the current one with `git merge`.
+ *
+ * @param {String} ref The ref to merge.
+ * @param {Object} [execaOpts] Options to pass to `execa`.
+ */
+export async function merge(ref, execaOpts) {
+  await execa('git', ['merge', '--no-ff', ref], execaOpts);
+}
+
+/**
+ * Merge a branch into the current one with `git merge --ff`.
+ *
+ * @param {String} ref The ref to merge.
+ * @param {Object} [execaOpts] Options to pass to `execa`.
+ */
+export async function mergeFf(ref, execaOpts) {
+  await execa('git', ['merge', '--ff', ref], execaOpts);
+}
+
+/**
+ * Merge a branch into the current one with `git rebase`.
+ *
+ * @param {String} ref The ref to merge.
+ * @param {Object} [execaOpts] Options to pass to `execa`.
+ */
+export async function rebase(ref, execaOpts) {
+  await execa('git', ['rebase', ref], execaOpts);
+}
+
+/**
+ * Add a note to a Git reference.
+ *
+ * @param {String} note The note to add.
+ * @param {String} ref The ref to add the note to.
+ * @param {Object} [execaOpts] Options to pass to `execa`.
+ */
+export async function gitAddNote(note, ref, execaOpts) {
+  await execa('git', ['notes', '--ref', GIT_NOTE_REF, 'add', '-m', note, ref], execaOpts);
+}
+
+/**
+ * Get the note associated with a Git reference.
+ *
+ * @param {String} ref The ref to get the note from.
+ * @param {Object} [execaOpts] Options to pass to `execa`.
+ */
+export async function gitGetNote(ref, execaOpts) {
+  return (await execa('git', ['notes', '--ref', GIT_NOTE_REF, 'show', ref], execaOpts)).stdout;
 }

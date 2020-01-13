@@ -33,6 +33,16 @@ test('The "publish" plugin output, if defined, must be an object or "false"', t 
   t.true(plugins.publish.outputValidator(false));
 });
 
+test('The "addChannel" plugin output, if defined, must be an object', t => {
+  t.false(plugins.addChannel.outputValidator(1));
+  t.false(plugins.addChannel.outputValidator('string'));
+
+  t.true(plugins.addChannel.outputValidator({}));
+  t.true(plugins.addChannel.outputValidator());
+  t.true(plugins.addChannel.outputValidator(null));
+  t.true(plugins.addChannel.outputValidator(''));
+});
+
 test('The "generateNotes" plugins output are concatenated with separator and sensitive data is hidden', t => {
   const env = {MY_TOKEN: 'secret token'};
   t.is(plugins.generateNotes.postprocess(['note 1', 'note 2'], {env}), `note 1${RELEASE_NOTES_SEPARATOR}note 2`);

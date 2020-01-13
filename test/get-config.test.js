@@ -6,7 +6,7 @@ import {omit} from 'lodash';
 import proxyquire from 'proxyquire';
 import {stub} from 'sinon';
 import yaml from 'js-yaml';
-import {gitRepo, gitCommits, gitShallowClone, gitAddConfig} from './helpers/git-utils';
+import {gitRepo, gitTagVersion, gitCommits, gitShallowClone, gitAddConfig} from './helpers/git-utils';
 
 const DEFAULT_PLUGINS = [
   '@semantic-release/commit-analyzer',
@@ -23,8 +23,10 @@ test.beforeEach(t => {
 test('Default values, reading repositoryUrl from package.json', async t => {
   const pkg = {repository: 'https://host.null/owner/package.git'};
   // Create a git repository, set the current working directory at the root of the repo
-  const {cwd} = await gitRepo();
+  const {cwd} = await gitRepo(true);
   await gitCommits(['First'], {cwd});
+  await gitTagVersion('v1.0.0', undefined, {cwd});
+  await gitTagVersion('v1.1.0', undefined, {cwd});
   // Add remote.origin.url config
   await gitAddConfig('remote.origin.url', 'git@host.null:owner/repo.git', {cwd});
   // Create package.json in repository root
@@ -33,21 +35,35 @@ test('Default values, reading repositoryUrl from package.json', async t => {
   const {options: result} = await t.context.getConfig({cwd});
 
   // Verify the default options are set
-  t.is(result.branch, 'master');
+  t.deepEqual(result.branches, [
+    '+([0-9])?(.{+([0-9]),x}).x',
+    'master',
+    'next',
+    'next-major',
+    {name: 'beta', prerelease: true},
+    {name: 'alpha', prerelease: true},
+  ]);
   t.is(result.repositoryUrl, 'https://host.null/owner/package.git');
   t.is(result.tagFormat, `v\${version}`);
 });
 
 test('Default values, reading repositoryUrl from repo if not set in package.json', async t => {
   // Create a git repository, set the current working directory at the root of the repo
-  const {cwd} = await gitRepo();
+  const {cwd} = await gitRepo(true);
   // Add remote.origin.url config
   await gitAddConfig('remote.origin.url', 'https://host.null/owner/module.git', {cwd});
 
   const {options: result} = await t.context.getConfig({cwd});
 
   // Verify the default options are set
-  t.is(result.branch, 'master');
+  t.deepEqual(result.branches, [
+    '+([0-9])?(.{+([0-9]),x}).x',
+    'master',
+    'next',
+    'next-major',
+    {name: 'beta', prerelease: true},
+    {name: 'alpha', prerelease: true},
+  ]);
   t.is(result.repositoryUrl, 'https://host.null/owner/module.git');
   t.is(result.tagFormat, `v\${version}`);
 });
@@ -62,7 +78,14 @@ test('Default values, reading repositoryUrl (http url) from package.json if not 
   const {options: result} = await t.context.getConfig({cwd});
 
   // Verify the default options are set
-  t.is(result.branch, 'master');
+  t.deepEqual(result.branches, [
+    '+([0-9])?(.{+([0-9]),x}).x',
+    'master',
+    'next',
+    'next-major',
+    {name: 'beta', prerelease: true},
+    {name: 'alpha', prerelease: true},
+  ]);
   t.is(result.repositoryUrl, 'https://host.null/owner/module.git');
   t.is(result.tagFormat, `v\${version}`);
 });
@@ -85,7 +108,7 @@ test('Read options from package.json', async t => {
   const options = {
     analyzeCommits: {path: 'analyzeCommits', param: 'analyzeCommits_param'},
     generateNotes: 'generateNotes',
-    branch: 'test_branch',
+    branches: ['test_branch'],
     repositoryUrl: 'https://host.null/owner/module.git',
     tagFormat: `v\${version}`,
     plugins: false,
@@ -95,10 +118,11 @@ test('Read options from package.json', async t => {
 
   const {options: result} = await t.context.getConfig({cwd});
 
+  const expected = {...options, branches: ['test_branch']};
   // Verify the options contains the plugin config from package.json
-  t.deepEqual(result, options);
+  t.deepEqual(result, expected);
   // Verify the plugins module is called with the plugin options from package.json
-  t.deepEqual(t.context.plugins.args[0][0], {cwd, options});
+  t.deepEqual(t.context.plugins.args[0][0], {options: expected, cwd});
 });
 
 test('Read options from .releaserc.yml', async t => {
@@ -106,7 +130,7 @@ test('Read options from .releaserc.yml', async t => {
   const {cwd} = await gitRepo();
   const options = {
     analyzeCommits: {path: 'analyzeCommits', param: 'analyzeCommits_param'},
-    branch: 'test_branch',
+    branches: ['test_branch'],
     repositoryUrl: 'https://host.null/owner/module.git',
     tagFormat: `v\${version}`,
     plugins: false,
@@ -116,10 +140,11 @@ test('Read options from .releaserc.yml', async t => {
 
   const {options: result} = await t.context.getConfig({cwd});
 
+  const expected = {...options, branches: ['test_branch']};
   // Verify the options contains the plugin config from package.json
-  t.deepEqual(result, options);
+  t.deepEqual(result, expected);
   // Verify the plugins module is called with the plugin options from package.json
-  t.deepEqual(t.context.plugins.args[0][0], {cwd, options});
+  t.deepEqual(t.context.plugins.args[0][0], {options: expected, cwd});
 });
 
 test('Read options from .releaserc.json', async t => {
@@ -127,7 +152,7 @@ test('Read options from .releaserc.json', async t => {
   const {cwd} = await gitRepo();
   const options = {
     analyzeCommits: {path: 'analyzeCommits', param: 'analyzeCommits_param'},
-    branch: 'test_branch',
+    branches: ['test_branch'],
     repositoryUrl: 'https://host.null/owner/module.git',
     tagFormat: `v\${version}`,
     plugins: false,
@@ -137,10 +162,11 @@ test('Read options from .releaserc.json', async t => {
 
   const {options: result} = await t.context.getConfig({cwd});
 
+  const expected = {...options, branches: ['test_branch']};
   // Verify the options contains the plugin config from package.json
-  t.deepEqual(result, options);
+  t.deepEqual(result, expected);
   // Verify the plugins module is called with the plugin options from package.json
-  t.deepEqual(t.context.plugins.args[0][0], {cwd, options});
+  t.deepEqual(t.context.plugins.args[0][0], {options: expected, cwd});
 });
 
 test('Read options from .releaserc.js', async t => {
@@ -148,7 +174,7 @@ test('Read options from .releaserc.js', async t => {
   const {cwd} = await gitRepo();
   const options = {
     analyzeCommits: {path: 'analyzeCommits', param: 'analyzeCommits_param'},
-    branch: 'test_branch',
+    branches: ['test_branch'],
     repositoryUrl: 'https://host.null/owner/module.git',
     tagFormat: `v\${version}`,
     plugins: false,
@@ -158,10 +184,11 @@ test('Read options from .releaserc.js', async t => {
 
   const {options: result} = await t.context.getConfig({cwd});
 
+  const expected = {...options, branches: ['test_branch']};
   // Verify the options contains the plugin config from package.json
-  t.deepEqual(result, options);
+  t.deepEqual(result, expected);
   // Verify the plugins module is called with the plugin options from package.json
-  t.deepEqual(t.context.plugins.args[0][0], {cwd, options});
+  t.deepEqual(t.context.plugins.args[0][0], {options: expected, cwd});
 });
 
 test('Read options from release.config.js', async t => {
@@ -169,7 +196,7 @@ test('Read options from release.config.js', async t => {
   const {cwd} = await gitRepo();
   const options = {
     analyzeCommits: {path: 'analyzeCommits', param: 'analyzeCommits_param'},
-    branch: 'test_branch',
+    branches: ['test_branch'],
     repositoryUrl: 'https://host.null/owner/module.git',
     tagFormat: `v\${version}`,
     plugins: false,
@@ -179,10 +206,11 @@ test('Read options from release.config.js', async t => {
 
   const {options: result} = await t.context.getConfig({cwd});
 
+  const expected = {...options, branches: ['test_branch']};
   // Verify the options contains the plugin config from package.json
-  t.deepEqual(result, options);
+  t.deepEqual(result, expected);
   // Verify the plugins module is called with the plugin options from package.json
-  t.deepEqual(t.context.plugins.args[0][0], {cwd, options});
+  t.deepEqual(t.context.plugins.args[0][0], {options: expected, cwd});
 });
 
 test('Prioritise CLI/API parameters over file configuration and git repo', async t => {
@@ -193,11 +221,11 @@ test('Prioritise CLI/API parameters over file configuration and git repo', async
   cwd = await gitShallowClone(repositoryUrl);
   const pkgOptions = {
     analyzeCommits: {path: 'analyzeCommits', param: 'analyzeCommits_pkg'},
-    branch: 'branch_pkg',
+    branches: ['branch_pkg'],
   };
   const options = {
     analyzeCommits: {path: 'analyzeCommits', param: 'analyzeCommits_cli'},
-    branch: 'branch_cli',
+    branches: ['branch_cli'],
     repositoryUrl: 'http://cli-url.com/owner/package',
     tagFormat: `cli\${version}`,
     plugins: false,
@@ -208,10 +236,11 @@ test('Prioritise CLI/API parameters over file configuration and git repo', async
 
   const result = await t.context.getConfig({cwd}, options);
 
+  const expected = {...options, branches: ['branch_cli']};
   // Verify the options contains the plugin config from CLI/API
-  t.deepEqual(result.options, options);
+  t.deepEqual(result.options, expected);
   // Verify the plugins module is called with the plugin options from CLI/API
-  t.deepEqual(t.context.plugins.args[0][0], {cwd, options});
+  t.deepEqual(t.context.plugins.args[0][0], {options: expected, cwd});
 });
 
 test('Read configuration from file path in "extends"', async t => {
@@ -221,7 +250,7 @@ test('Read configuration from file path in "extends"', async t => {
   const options = {
     analyzeCommits: {path: 'analyzeCommits', param: 'analyzeCommits_param'},
     generateNotes: 'generateNotes',
-    branch: 'test_branch',
+    branches: ['test_branch'],
     repositoryUrl: 'https://host.null/owner/module.git',
     tagFormat: `v\${version}`,
     plugins: ['plugin-1', ['plugin-2', {plugin2Opt: 'value'}]],
@@ -232,10 +261,11 @@ test('Read configuration from file path in "extends"', async t => {
 
   const {options: result} = await t.context.getConfig({cwd});
 
+  const expected = {...options, branches: ['test_branch']};
   // Verify the options contains the plugin config from shareable.json
-  t.deepEqual(result, options);
+  t.deepEqual(result, expected);
   // Verify the plugins module is called with the plugin options from shareable.json
-  t.deepEqual(t.context.plugins.args[0][0], {cwd, options});
+  t.deepEqual(t.context.plugins.args[0][0], {options: expected, cwd});
   t.deepEqual(t.context.plugins.args[0][1], {
     analyzeCommits: './shareable.json',
     generateNotes: './shareable.json',
@@ -251,7 +281,7 @@ test('Read configuration from module path in "extends"', async t => {
   const options = {
     analyzeCommits: {path: 'analyzeCommits', param: 'analyzeCommits_param'},
     generateNotes: 'generateNotes',
-    branch: 'test_branch',
+    branches: ['test_branch'],
     repositoryUrl: 'https://host.null/owner/module.git',
     tagFormat: `v\${version}`,
     plugins: false,
@@ -260,12 +290,13 @@ test('Read configuration from module path in "extends"', async t => {
   await outputJson(path.resolve(cwd, 'package.json'), {release: pkgOptions});
   await outputJson(path.resolve(cwd, 'node_modules/shareable/index.json'), options);
 
-  const {options: results} = await t.context.getConfig({cwd});
+  const {options: result} = await t.context.getConfig({cwd});
 
+  const expected = {...options, branches: ['test_branch']};
   // Verify the options contains the plugin config from shareable.json
-  t.deepEqual(results, options);
+  t.deepEqual(result, expected);
   // Verify the plugins module is called with the plugin options from shareable.json
-  t.deepEqual(t.context.plugins.args[0][0], {cwd, options});
+  t.deepEqual(t.context.plugins.args[0][0], {options: expected, cwd});
   t.deepEqual(t.context.plugins.args[0][1], {
     analyzeCommits: 'shareable',
     generateNotes: 'shareable',
@@ -279,14 +310,14 @@ test('Read configuration from an array of paths in "extends"', async t => {
   const options1 = {
     verifyRelease: 'verifyRelease1',
     analyzeCommits: {path: 'analyzeCommits1', param: 'analyzeCommits_param1'},
-    branch: 'test_branch',
+    branches: ['test_branch'],
     repositoryUrl: 'https://host.null/owner/module.git',
   };
   const options2 = {
     verifyRelease: 'verifyRelease2',
     generateNotes: 'generateNotes2',
     analyzeCommits: {path: 'analyzeCommits2', param: 'analyzeCommits_param2'},
-    branch: 'test_branch',
+    branches: ['test_branch'],
     tagFormat: `v\${version}`,
     plugins: false,
   };
@@ -295,12 +326,13 @@ test('Read configuration from an array of paths in "extends"', async t => {
   await outputJson(path.resolve(cwd, 'shareable1.json'), options1);
   await outputJson(path.resolve(cwd, 'shareable2.json'), options2);
 
-  const {options: results} = await t.context.getConfig({cwd});
+  const {options: result} = await t.context.getConfig({cwd});
 
+  const expected = {...options1, ...options2, branches: ['test_branch']};
   // Verify the options contains the plugin config from shareable1.json and shareable2.json
-  t.deepEqual(results, {...options1, ...options2});
+  t.deepEqual(result, expected);
   // Verify the plugins module is called with the plugin options from shareable1.json and shareable2.json
-  t.deepEqual(t.context.plugins.args[0][0], {cwd, options: {...options1, ...options2}});
+  t.deepEqual(t.context.plugins.args[0][0], {options: expected, cwd});
   t.deepEqual(t.context.plugins.args[0][1], {
     verifyRelease1: './shareable1.json',
     verifyRelease2: './shareable2.json',
@@ -315,7 +347,7 @@ test('Prioritize configuration from config file over "extends"', async t => {
   const {cwd} = await gitRepo();
   const pkgOptions = {
     extends: './shareable.json',
-    branch: 'test_pkg',
+    branches: ['test_pkg'],
     generateNotes: 'generateNotes',
     publish: [{path: 'publishPkg', param: 'publishPkg_param'}],
   };
@@ -323,7 +355,7 @@ test('Prioritize configuration from config file over "extends"', async t => {
     analyzeCommits: 'analyzeCommits',
     generateNotes: 'generateNotesShareable',
     publish: [{path: 'publishShareable', param: 'publishShareable_param'}],
-    branch: 'test_branch',
+    branches: ['test_branch'],
     repositoryUrl: 'https://host.null/owner/module.git',
     tagFormat: `v\${version}`,
     plugins: false,
@@ -332,12 +364,13 @@ test('Prioritize configuration from config file over "extends"', async t => {
   await outputJson(path.resolve(cwd, 'package.json'), {release: pkgOptions});
   await outputJson(path.resolve(cwd, 'shareable.json'), options1);
 
-  const {options} = await t.context.getConfig({cwd});
+  const {options: result} = await t.context.getConfig({cwd});
 
+  const expected = omit({...options1, ...pkgOptions, branches: ['test_pkg']}, 'extends');
   // Verify the options contains the plugin config from package.json and shareable.json
-  t.deepEqual(options, omit({...options1, ...pkgOptions}, 'extends'));
+  t.deepEqual(result, expected);
   // Verify the plugins module is called with the plugin options from package.json and shareable.json
-  t.deepEqual(t.context.plugins.args[0][0], {cwd, options: omit({...options, ...pkgOptions}, 'extends')});
+  t.deepEqual(t.context.plugins.args[0][0], {options: expected, cwd});
   t.deepEqual(t.context.plugins.args[0][1], {
     analyzeCommits: './shareable.json',
     generateNotesShareable: './shareable.json',
@@ -350,13 +383,13 @@ test('Prioritize configuration from cli/API options over "extends"', async t => 
   const {cwd} = await gitRepo();
   const cliOptions = {
     extends: './shareable2.json',
-    branch: 'branch_opts',
+    branches: ['branch_opts'],
     publish: [{path: 'publishOpts', param: 'publishOpts_param'}],
     repositoryUrl: 'https://host.null/owner/module.git',
   };
   const pkgOptions = {
     extends: './shareable1.json',
-    branch: 'branch_pkg',
+    branches: ['branch_pkg'],
     generateNotes: 'generateNotes',
     publish: [{path: 'publishPkg', param: 'publishPkg_param'}],
   };
@@ -364,13 +397,13 @@ test('Prioritize configuration from cli/API options over "extends"', async t => 
     analyzeCommits: 'analyzeCommits1',
     generateNotes: 'generateNotesShareable1',
     publish: [{path: 'publishShareable', param: 'publishShareable_param1'}],
-    branch: 'test_branch1',
+    branches: ['test_branch1'],
     repositoryUrl: 'https://host.null/owner/module.git',
   };
   const options2 = {
     analyzeCommits: 'analyzeCommits2',
     publish: [{path: 'publishShareable', param: 'publishShareable_param2'}],
-    branch: 'test_branch2',
+    branches: ['test_branch2'],
     tagFormat: `v\${version}`,
     plugins: false,
   };
@@ -379,15 +412,13 @@ test('Prioritize configuration from cli/API options over "extends"', async t => 
   await outputJson(path.resolve(cwd, 'shareable1.json'), options1);
   await outputJson(path.resolve(cwd, 'shareable2.json'), options2);
 
-  const {options} = await t.context.getConfig({cwd}, cliOptions);
+  const {options: result} = await t.context.getConfig({cwd}, cliOptions);
 
+  const expected = omit({...options2, ...pkgOptions, ...cliOptions, branches: ['branch_opts']}, 'extends');
   // Verify the options contains the plugin config from package.json and shareable2.json
-  t.deepEqual(options, omit({...options2, ...pkgOptions, ...cliOptions}, 'extends'));
+  t.deepEqual(result, expected);
   // Verify the plugins module is called with the plugin options from package.json and shareable2.json
-  t.deepEqual(t.context.plugins.args[0][0], {
-    cwd,
-    options: omit({...options2, ...pkgOptions, ...cliOptions}, 'extends'),
-  });
+  t.deepEqual(t.context.plugins.args[0][0], {options: expected, cwd});
 });
 
 test('Allow to unset properties defined in shareable config with "null"', async t => {
@@ -396,7 +427,7 @@ test('Allow to unset properties defined in shareable config with "null"', async 
   const pkgOptions = {
     extends: './shareable.json',
     analyzeCommits: null,
-    branch: 'test_branch',
+    branches: ['test_branch'],
     repositoryUrl: 'https://host.null/owner/module.git',
     plugins: null,
   };
@@ -427,6 +458,7 @@ test('Allow to unset properties defined in shareable config with "null"', async 
     },
     cwd,
   });
+
   t.deepEqual(t.context.plugins.args[0][1], {
     generateNotes: './shareable.json',
     analyzeCommits: './shareable.json',
@@ -440,7 +472,7 @@ test('Allow to unset properties defined in shareable config with "undefined"', a
   const pkgOptions = {
     extends: './shareable.json',
     analyzeCommits: undefined,
-    branch: 'test_branch',
+    branches: ['test_branch'],
     repositoryUrl: 'https://host.null/owner/module.git',
   };
   const options1 = {
@@ -453,18 +485,17 @@ test('Allow to unset properties defined in shareable config with "undefined"', a
   await writeFile(path.resolve(cwd, 'release.config.js'), `module.exports = ${format(pkgOptions)}`);
   await outputJson(path.resolve(cwd, 'shareable.json'), options1);
 
-  const {options} = await t.context.getConfig({cwd});
+  const {options: result} = await t.context.getConfig({cwd});
 
+  const expected = {
+    ...omit(options1, 'analyzeCommits'),
+    ...omit(pkgOptions, ['extends', 'analyzeCommits']),
+    branches: ['test_branch'],
+  };
   // Verify the options contains the plugin config from shareable.json
-  t.deepEqual(options, {...omit(options1, 'analyzeCommits'), ...omit(pkgOptions, ['extends', 'analyzeCommits'])});
+  t.deepEqual(result, expected);
   // Verify the plugins module is called with the plugin options from shareable.json
-  t.deepEqual(t.context.plugins.args[0][0], {
-    options: {
-      ...omit(options1, 'analyzeCommits'),
-      ...omit(pkgOptions, ['extends', 'analyzeCommits']),
-    },
-    cwd,
-  });
+  t.deepEqual(t.context.plugins.args[0][0], {options: expected, cwd});
   t.deepEqual(t.context.plugins.args[0][1], {
     generateNotes: './shareable.json',
     analyzeCommits: './shareable.json',

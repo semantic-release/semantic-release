@@ -38,7 +38,7 @@ Yes with the [dry-run options](../usage/configuration.md#dryrun) which prints to
 
 ## Can I use semantic-release with Yarn?
 
-If you are using a [local](../usage/installation.md#local-installation) **semantic-release** installation and run multiple CI jobs with different versions, the `yarn install` command will fail on jobs running with Node < 8 as **semantic-release** requires [Node >= 8.16](#why-does-semantic-release-require-node-version--816) and specifies it in its `package.json`s [`engines`](https://docs.npmjs.com/files/package.json#engines) key.
+If you are using a [local](../usage/installation.md#local-installation) **semantic-release** installation and run multiple CI jobs with different versions, the `yarn install` command will fail on jobs running with Node < 8 as **semantic-release** requires [Node >= 10.13](#why-does-semantic-release-require-node-version--1013) and specifies it in its `package.json`s [`engines`](https://docs.npmjs.com/files/package.json#engines) key.
 
 The recommended solution is to use the [Yarn](https://yarnpkg.com) [--ignore-engines](https://yarnpkg.com/en/docs/cli/install#toc-yarn-install-ignore-engines) option to install the project dependencies on the CI environment, so Yarn will ignore the **semantic-release**'s `engines` key:
 
@@ -48,7 +48,7 @@ $ yarn install --ignore-engines
 
 **Note**: Several CI services use Yarn by default if your repository contains a `yarn.lock` file. So you should override the install step to specify `yarn install --ignore-engines`.
 
-Alternatively you can use a [global](../usage/installation.md#global-installation) **semantic-release** installation and make sure to install and run the `semantic-release` command only in a CI jobs running with Node >= 8.16.
+Alternatively you can use a [global](../usage/installation.md#global-installation) **semantic-release** installation and make sure to install and run the `semantic-release` command only in a CI jobs running with Node >= 10.13.
 
 If your CI environment provides [nvm](https://github.com/creationix/nvm) you can switch to Node 8 before installing and running the `semantic-release` command:
 
@@ -73,7 +73,7 @@ Yes, **semantic-release** is a Node CLI application but it can be used to publis
 To publish a non-Node package (without a `package.json`) you would need to:
 - Use a [global](../usage/installation.md#global-installation) **semantic-release** installation
 - Set **semantic-release** [options](../usage/configuration.md#options) via [CLI arguments or rc file](../usage/configuration.md#configuration)
-- Make sure your CI job executing the `semantic-release` command has access to [Node >= 8.16](#why-does-semantic-release-require-node-version--816) to execute the `semantic-release` command
+- Make sure your CI job executing the `semantic-release` command has access to [Node >= 10.13](#why-does-semantic-release-require-node-version--1013) to execute the `semantic-release` command
 
 See the [CI configuration recipes](../recipes/README.md#ci-configurations) for more details on specific CI environments.
 
@@ -222,7 +222,7 @@ If you need more control over the timing of releases, see [Triggering a release]
 
 This is not supported by **semantic-release** as it's not considered a good practice, mostly because [Semantic Versioning](https://semver.org) rules applies differently to major version zero.
 
-In early development phase when your package is not ready for production yet we recommend to publish releases on a distribution channel (for example npm’s [dist-tags](https://docs.npmjs.com/cli/dist-tag)) or to develop on a `dev` branch and merge it to `master` periodically. See [Triggering a release](../../README.md#triggering-a-release) for more details on those solutions.
+If your project is under heavy development, with frequent breaking changes, and is not production ready yet we recommend [publishing pre-releases](../recipes/pre-releases.md#publishing-pre-releases).
 
 See [“Introduction to SemVer” - Irina Gebauer](https://blog.greenkeeper.io/introduction-to-semver-d272990c44f2) for more details on [Semantic Versioning](https://semver.org) and the recommendation to start at version `1.0.0`.
 
@@ -232,11 +232,15 @@ See [“Introduction to SemVer” - Irina Gebauer](https://blog.greenkeeper.io/i
 
 In addition the [verify conditions step](../../README.md#release-steps) verifies that all necessary conditions for proceeding with a release are met, and a new release will be performed [only if all your tests pass](../usage/ci-configuration.md#run-semantic-release-only-after-all-tests-succeeded).
 
-## Why does semantic-release require Node version >= 8.16?
+## Why does semantic-release require Node version >= 10.13?
 
-**semantic-release** is written using the latest [ECMAScript 2017](https://www.ecma-international.org/publications/standards/Ecma-262.htm) features, without transpilation which **requires Node version 8.16 or higher**.
+**semantic-release** is written using the latest [ECMAScript 2017](https://www.ecma-international.org/publications/standards/Ecma-262.htm) features, without transpilation which **requires Node version 10.13 or higher**.
 
 See [Node version requirement](./node-version.md#node-version-requirement) for more details and solutions.
+
+## Why does semantic-release require Git version >= 2.7.1?
+
+**semantic-release** uses Git CLI commands to read information about the repository such as branches, commit history and tags. Certain commands and options (such as [the `--merged` option of the `git tag` command](https://git-scm.com/docs/git-tag/2.7.0#git-tag---no-mergedltcommitgt) or bug fixes related to `git ls-files`) used by **semantic-release** are only available in Git version 2.7.1 and higher.
 
 ## What is npx?
 
