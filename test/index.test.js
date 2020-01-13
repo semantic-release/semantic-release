@@ -126,6 +126,7 @@ test('Plugins are called with expected values', async t => {
     publish: [publish, pluginNoop],
     success,
   };
+  const envCi = {branch: 'master', isCi: true, isPr: false};
 
   const releases = [
     {
@@ -144,7 +145,7 @@ test('Plugins are called with expected values', async t => {
 
   const semanticRelease = requireNoCache('..', {
     './lib/get-logger': () => t.context.logger,
-    'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
+    'env-ci': () => envCi,
   });
   const result = await semanticRelease(options, {
     cwd,
@@ -167,6 +168,7 @@ test('Plugins are called with expected values', async t => {
   t.deepEqual(verifyConditions2.args[0][1].branch, branch);
   t.deepEqual(verifyConditions2.args[0][1].branches, branches);
   t.deepEqual(verifyConditions2.args[0][1].logger, t.context.logger);
+  t.deepEqual(verifyConditions2.args[0][1].envCi, envCi);
 
   t.is(generateNotes1.callCount, 2);
   t.is(generateNotes2.callCount, 2);
@@ -261,6 +263,7 @@ test('Plugins are called with expected values', async t => {
   t.deepEqual(analyzeCommits.args[0][1].lastRelease, lastRelease);
   t.deepEqual(analyzeCommits.args[0][1].commits[0].hash, commits[0].hash);
   t.deepEqual(analyzeCommits.args[0][1].commits[0].message, commits[0].message);
+  t.deepEqual(analyzeCommits.args[0][1].envCi, envCi);
 
   t.is(verifyRelease.callCount, 1);
   t.deepEqual(verifyRelease.args[0][0], config);
@@ -272,6 +275,7 @@ test('Plugins are called with expected values', async t => {
   t.deepEqual(verifyRelease.args[0][1].commits[0].hash, commits[0].hash);
   t.deepEqual(verifyRelease.args[0][1].commits[0].message, commits[0].message);
   t.deepEqual(verifyRelease.args[0][1].nextRelease, nextRelease);
+  t.deepEqual(verifyRelease.args[0][1].envCi, envCi);
 
   t.deepEqual(generateNotes1.args[1][0], config);
   t.deepEqual(generateNotes1.args[1][1].options, options);
@@ -313,6 +317,7 @@ test('Plugins are called with expected values', async t => {
   t.deepEqual(prepare.args[0][1].commits[0].hash, commits[0].hash);
   t.deepEqual(prepare.args[0][1].commits[0].message, commits[0].message);
   t.deepEqual(prepare.args[0][1].nextRelease, {...nextRelease, notes: `${notes1}\n\n${notes2}\n\n${notes3}`});
+  t.deepEqual(prepare.args[0][1].envCi, envCi);
 
   t.is(publish.callCount, 1);
   t.deepEqual(publish.args[0][0], config);
@@ -331,6 +336,7 @@ test('Plugins are called with expected values', async t => {
   t.deepEqual(success.args[0][1].branch, branch);
   t.deepEqual(success.args[0][1].branches, branches);
   t.deepEqual(success.args[0][1].logger, t.context.logger);
+
   t.deepEqual(success.args[0][1].lastRelease, {});
   t.deepEqual(success.args[0][1].commits[0].hash, commits[1].hash);
   t.deepEqual(success.args[0][1].commits[0].message, commits[1].message);
@@ -355,6 +361,7 @@ test('Plugins are called with expected values', async t => {
   t.deepEqual(success.args[1][1].commits[0].message, commits[0].message);
   t.deepEqual(success.args[1][1].nextRelease, {...nextRelease, notes: `${notes1}\n\n${notes2}\n\n${notes3}`});
   t.deepEqual(success.args[1][1].releases, [releases[1], releases[2]]);
+
 
   t.deepEqual(result, {
     lastRelease,

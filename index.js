@@ -26,7 +26,7 @@ marked.setOptions({renderer: new TerminalRenderer()});
 /* eslint complexity: off */
 async function run(context, plugins) {
   const {cwd, env, options, logger} = context;
-  const {isCi, branch: ciBranch, isPr} = envCi({env, cwd});
+  const {isCi, branch: ciBranch, isPr} = context.envCi;
 
   if (!isCi && !options.dryRun && !options.noCi) {
     logger.warn('This run was not triggered in a known CI environment, running in dry-run mode.');
@@ -241,7 +241,13 @@ module.exports = async (opts = {}, {cwd = process.cwd(), env = process.env, stdo
     {silent: false, streams: [process.stdout, process.stderr, stdout, stderr].filter(Boolean)},
     hideSensitive(env)
   );
-  const context = {cwd, env, stdout: stdout || process.stdout, stderr: stderr || process.stderr};
+  const context = {
+    cwd,
+    env,
+    stdout: stdout || process.stdout,
+    stderr: stderr || process.stderr,
+    envCi: envCi({env, cwd}),
+  };
   context.logger = getLogger(context);
   context.logger.log(`Running ${pkg.name} version ${pkg.version}`);
   try {
