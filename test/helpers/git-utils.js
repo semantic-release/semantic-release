@@ -110,6 +110,16 @@ export async function gitCheckout(branch, create, execaOpts) {
 }
 
 /**
+ * Fetch current git repository.
+ *
+ * @param {String} repositoryUrl The repository remote URL.
+ * @param {Object} [execaOpts] Options to pass to `execa`.
+ */
+export async function gitFetch(repositoryUrl, execaOpts) {
+  await execa('git', ['fetch', repositoryUrl], execaOpts);
+}
+
+/**
  * Get the HEAD sha.
  *
  * @param {Object} [execaOpts] Options to pass to `execa`.
