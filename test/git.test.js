@@ -32,6 +32,7 @@ import {
   gitDetachedHeadFromBranch,
   gitAddNote,
   gitGetNote,
+  gitFetch,
 } from './helpers/git-utils';
 
 test('Get the last commit sha', async t => {
@@ -99,7 +100,7 @@ test('Fetch all tags on a detached head repository', async t => {
   t.deepEqual((await getTags('master', {cwd})).sort(), ['v1.0.0', 'v1.0.1', 'v1.1.0'].sort());
 });
 
-test('Fetch all tags on a repository with a detached head from branch', async t => {
+test('Fetch all tags on a repository with a detached head from branch (CircleCI)', async t => {
   let {cwd, repositoryUrl} = await gitRepo();
 
   await gitCommits(['First'], {cwd});
@@ -122,6 +123,34 @@ test('Fetch all tags on a repository with a detached head from branch', async t 
 
   t.deepEqual((await getTags('other-branch', {cwd})).sort(), ['v1.0.0', 'v1.0.1', 'v1.1.0'].sort());
   t.deepEqual((await getTags('master', {cwd})).sort(), ['v1.0.0', 'v1.0.1', 'v1.1.0', 'v2.0.0'].sort());
+});
+
+test('Fetch all tags on a detached head repository with outdated cached repo (GitLab CI)', async t => {
+  const {cwd, repositoryUrl} = await gitRepo();
+
+  await gitCommits(['First'], {cwd});
+  await gitTagVersion('v1.0.0', undefined, {cwd});
+  await gitCommits(['Second'], {cwd});
+  await gitTagVersion('v1.0.1', undefined, {cwd});
+  let [commit] = await gitCommits(['Third'], {cwd});
+  await gitTagVersion('v1.1.0', undefined, {cwd});
+  await gitPush(repositoryUrl, 'master', {cwd});
+
+  // Create a clone (as first CI run would)
+  const cloneCwd = await gitShallowClone(repositoryUrl);
+  await gitFetch(repositoryUrl, {cwd: cloneCwd});
+  await gitCheckout(commit.hash, false, {cwd: cloneCwd});
+
+  // Push tag to remote
+  [commit] = await gitCommits(['Fourth'], {cwd});
+  await gitTagVersion('v1.2.0', undefined, {cwd});
+  await gitPush(repositoryUrl, 'master', {cwd});
+
+  // Fetch on the cached repo and make detached head, leaving master outdated
+  await fetch(repositoryUrl, 'master', 'master', {cwd: cloneCwd});
+  await gitCheckout(commit.hash, false, {cwd: cloneCwd});
+
+  t.deepEqual((await getTags('master', {cwd: cloneCwd})).sort(), ['v1.0.0', 'v1.0.1', 'v1.1.0', 'v1.2.0'].sort());
 });
 
 test('Verify if a branch exists', async t => {
