@@ -1,7 +1,7 @@
 import test from 'ava';
 import {stub} from 'sinon';
 import getCommits from '../lib/get-commits';
-import {gitRepo, gitCommits, gitDetachedHead} from './helpers/git-utils';
+import {gitRepo, gitCommits, gitDetachedHead, gitCheckout, gitMerge} from './helpers/git-utils';
 
 test.beforeEach(t => {
   // Stub the logger functions
@@ -40,6 +40,62 @@ test('Get all commits since gitHead (from lastRelease)', async t => {
   // Verify the commits created and retrieved by the module are identical
   t.is(result.length, 2);
   t.deepEqual(result, commits.slice(0, 2));
+});
+
+/*
+Use case: If we have a release branch `release-1` which has been merged into
+master and on the master branch we want semantic-release to consider only the
+commits which are exclusive to the `master` branch since 'A', then the output
+should only include the commits B, C, merged, E and F.
+
+Git history:
+-----------------------------
+
+A-B-C-merged-E-F....(master*)
+ \   /
+  P-Q...........(release-1.0)
+
+-----------------------------
+*/
+test('Get all commits exclusive to a branch', async t => {
+  // Create a git repository, set the current working directory at the root of
+  // the repo
+  const {cwd} = await gitRepo();
+
+  // Add commits to the master branch
+  const commits = await gitCommits(['A', 'B', 'C'], {cwd});
+  const firstCommit = commits[commits.length - 1];
+
+  // Checkout 1st commit
+  await gitCheckout(firstCommit.hash, false, {cwd});
+
+  // Create and check out release branch. Add commits
+  await gitCheckout('release-1.0', true, {cwd});
+  await gitCommits(['P', 'Q'], {cwd});
+
+  // Checkout master and merge the release branch
+  t.context.logger.log(cwd);
+  await gitCheckout('master', false, {cwd});
+  await gitMerge('release-1.0', {cwd});
+
+  // Add commits to the master branch
+  await gitCommits(['E', 'F'], {cwd});
+
+  // Retrieve the commits with the commits module, since commit 'A'
+  const result = await getCommits(
+    {
+      cwd,
+      lastRelease: {gitHead: firstCommit.hash},
+      logger: t.context.logger,
+    },
+    'release-1.0..master'
+  );
+
+  // Verify the module retrieved only the commits B, C, merged, E & F
+  t.deepEqual(
+    result.map(c => c.message),
+    ['B', 'C', 'merged', 'E', 'F'].reverse()
+  );
 });
 
 test('Get all commits since gitHead (from lastRelease) on a detached head repo', async t => {

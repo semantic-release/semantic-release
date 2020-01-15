@@ -131,6 +131,10 @@ export async function gitTagVersion(tagName, sha, execaOpts) {
   await execa('git', sha ? ['tag', '-f', tagName, sha] : ['tag', tagName], execaOpts);
 }
 
+export async function gitMerge(branchName, execaOpts) {
+  await execa('git', ['merge', branchName, '-m', 'merged'], execaOpts);
+}
+
 /**
  * Create a shallow clone of a git repository and change the current working directory to the cloned repository root.
  * The shallow will contain a limited number of commit and no tags.
