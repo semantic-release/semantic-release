@@ -65,8 +65,8 @@ For each [release step](../../README.md#release-steps) the plugins that implemen
 With this configuration **semantic-release** will:
 - execute the `verifyConditions` implementation of `@semantic-release/npm` then `@semantic-release/git`
 - execute the `analyzeCommits` implementation of `@semantic-release/commit-analyzer`
-- execute the `prepare` implementation of `@semantic-release/npm` then `@semantic-release/git`
 - execute the `generateNotes` implementation of `@semantic-release/release-notes-generator`
+- execute the `prepare` implementation of `@semantic-release/npm` then `@semantic-release/git`
 - execute the `publish` implementation of `@semantic-release/npm`
 
 ## Plugin options configuration
