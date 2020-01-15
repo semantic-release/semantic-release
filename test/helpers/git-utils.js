@@ -7,7 +7,7 @@ import getStream from 'get-stream';
 import {GIT_NOTE_REF} from '../../lib/definitions/constants';
 
 /**
- * Commit message informations.
+ * Commit message information.
  *
  * @typedef {Object} Commit
  * @property {String} branch The commit branch.
@@ -16,20 +16,33 @@ import {GIT_NOTE_REF} from '../../lib/definitions/constants';
  */
 
 /**
+ * Initialize git repository
+ * If `withRemote` is `true`, creates a bare repository and initialize it.
+ * If `withRemote` is `false`, creates a regular repository and initialize it.
+ *
+ * @param {Boolean} withRemote `true` to create a shallow clone of a bare repository.
+ * @return {String} The path of the repository
+ */
+export async function initGit(withRemote) {
+  const cwd = tempy.directory();
+
+  await execa('git', ['init', ...(withRemote ? ['--bare'] : [])], {cwd});
+  const repositoryUrl = fileUrl(cwd);
+  return {cwd, repositoryUrl};
+}
+
+/**
  * Create a temporary git repository.
- * If `withRemote` is `true`, creates a bare repository, initialize it and create a shallow clone. Change the current working directory to the clone root.
- * If `withRemote` is `false`, creates a regular repository and initialize it. Change the current working directory to the repository root.
+ * If `withRemote` is `true`, creates a shallow clone. Change the current working directory to the clone root.
+ * If `withRemote` is `false`, just change the current working directory to the repository root.
+ *
  *
  * @param {Boolean} withRemote `true` to create a shallow clone of a bare repository.
  * @param {String} [branch='master'] The branch to initialize.
  * @return {String} The path of the clone if `withRemote` is `true`, the path of the repository otherwise.
  */
 export async function gitRepo(withRemote, branch = 'master') {
-  let cwd = tempy.directory();
-
-  await execa('git', ['init', ...(withRemote ? ['--bare'] : [])], {cwd});
-
-  const repositoryUrl = fileUrl(cwd);
+  let {cwd, repositoryUrl} = await initGit(withRemote);
   if (withRemote) {
     await initBareRepo(repositoryUrl, branch);
     cwd = await gitShallowClone(repositoryUrl, branch);

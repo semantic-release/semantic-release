@@ -33,6 +33,7 @@ import {
   gitAddNote,
   gitGetNote,
   gitFetch,
+  initGit,
 } from './helpers/git-utils';
 
 test('Get the last commit sha', async t => {
@@ -180,6 +181,11 @@ test('Get all branches', async t => {
   await gitPush(repositoryUrl, 'third-branch', {cwd});
 
   t.deepEqual((await getBranches(repositoryUrl, {cwd})).sort(), ['master', 'second-branch', 'third-branch'].sort());
+});
+
+test('Return empty array if there are no branches', async t => {
+  const {cwd, repositoryUrl} = await initGit(true);
+  t.deepEqual(await getBranches(repositoryUrl, {cwd}), []);
 });
 
 test('Get the commit sha for a given tag', async t => {
