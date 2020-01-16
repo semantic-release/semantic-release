@@ -86,7 +86,7 @@ async function run(context, plugins) {
   await fetch(options.repositoryUrl, {cwd, env});
 
   context.lastRelease = await getLastRelease(context);
-  context.commits = await getCommits(context);
+  context.commits = await getCommits(context, options.gitlogarg);
 
   const nextRelease = {type: await plugins.analyzeCommits(context), gitHead: await getGitHead({cwd, env})};
 

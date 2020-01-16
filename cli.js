@@ -24,6 +24,7 @@ Usage:
     .option('t', {alias: 'tag-format', describe: 'Git tag format', type: 'string', group: 'Options'})
     .option('p', {alias: 'plugins', describe: 'Plugins', ...stringList, group: 'Options'})
     .option('e', {alias: 'extends', describe: 'Shareable configurations', ...stringList, group: 'Options'})
+    .option('gitlogarg', {describe: 'Override git log parsing argument', type: 'string', group: 'Options'})
     .option('ci', {describe: 'Toggle CI verifications', type: 'boolean', group: 'Options'})
     .option('verify-conditions', {...stringList, group: 'Plugins'})
     .option('analyze-commits', {type: 'string', group: 'Plugins'})
