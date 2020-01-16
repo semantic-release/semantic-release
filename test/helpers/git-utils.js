@@ -131,6 +131,12 @@ export async function gitTagVersion(tagName, sha, execaOpts) {
   await execa('git', sha ? ['tag', '-f', tagName, sha] : ['tag', tagName], execaOpts);
 }
 
+/**
+ * Merge branches in the current git repository
+ *
+ * @param {String} branchName The branch name to merge into the current branch
+ * @param {Object} [execaOpts] Options to pass to `execa`.
+ */
 export async function gitMerge(branchName, execaOpts) {
   await execa('git', ['merge', branchName, '-m', 'merged'], execaOpts);
 }
