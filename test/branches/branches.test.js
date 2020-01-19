@@ -1,7 +1,7 @@
-import test from 'ava';
-import {union} from 'lodash';
-import semver from 'semver';
-import proxyquire from 'proxyquire';
+const test = require('ava');
+const {union} = require('lodash');
+const semver = require('semver');
+const proxyquire = require('proxyquire');
 
 const getBranch = (branches, branch) => branches.find(({name}) => name === branch);
 const release = (branches, name, version) => getBranch(branches, name).tags.push({version});
@@ -135,7 +135,7 @@ test('Enforce ranges with branching release workflow', async t => {
   t.is(
     getBranch(result, '1.0.x').range,
     '>=1.0.1 <1.0.2',
-    'Cannot release on 1.0.x before 1.0.x version from master are merged'
+    'Cannot release on 1.0.x before 1.0.x version = require(master are merged'
   );
   t.is(getBranch(result, '1.x').range, '>=1.1.0 <1.0.2', 'Cannot release on 1.x before >= 2.0.0 is released on master');
 

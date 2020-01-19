@@ -1,6 +1,6 @@
-import test from 'ava';
-import tempy from 'tempy';
-import {
+const test = require('ava');
+const tempy = require('tempy');
+const {
   getTagHead,
   isRefExists,
   fetch,
@@ -16,8 +16,8 @@ import {
   getNote,
   addNote,
   fetchNotes,
-} from '../lib/git';
-import {
+} = require('../lib/git');
+const {
   gitRepo,
   gitCommits,
   gitCheckout,
@@ -34,7 +34,7 @@ import {
   gitGetNote,
   gitFetch,
   initGit,
-} from './helpers/git-utils';
+} = require('./helpers/git-utils');
 
 test('Get the last commit sha', async t => {
   // Create a git repository, set the current working directory at the root of the repo
@@ -51,7 +51,7 @@ test('Throw error if the last commit sha cannot be found', async t => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
 
-  await t.throwsAsync(getGitHead({cwd}), Error);
+  await t.throwsAsync(getGitHead({cwd}));
 });
 
 test('Unshallow and fetch repository', async t => {

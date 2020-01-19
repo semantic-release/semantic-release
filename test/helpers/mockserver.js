@@ -1,8 +1,8 @@
-import Docker from 'dockerode';
-import getStream from 'get-stream';
-import got from 'got';
-import pRetry from 'p-retry';
-import {mockServerClient} from 'mockserver-client';
+const Docker = require('dockerode');
+const getStream = require('get-stream');
+const got = require('got');
+const pRetry = require('p-retry');
+const {mockServerClient} = require('mockserver-client');
 
 const IMAGE = 'jamesdbloom/mockserver:latest';
 const MOCK_SERVER_PORT = 1080;
@@ -100,4 +100,4 @@ function verify(expectation) {
   return client.verify(expectation);
 }
 
-export default {start, stop, mock, verify, url};
+module.exports = {start, stop, mock, verify, url};

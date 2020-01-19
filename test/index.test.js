@@ -1,13 +1,13 @@
-import test from 'ava';
-import {escapeRegExp, isString, sortBy, omit} from 'lodash';
-import proxyquire from 'proxyquire';
-import {spy, stub} from 'sinon';
-import {WritableStreamBuffer} from 'stream-buffers';
-import AggregateError from 'aggregate-error';
-import SemanticReleaseError from '@semantic-release/error';
-import {COMMIT_NAME, COMMIT_EMAIL, SECRET_REPLACEMENT} from '../lib/definitions/constants';
-import {
-  gitHead as getGitHead,
+const test = require('ava');
+const {escapeRegExp, isString, sortBy, omit} = require('lodash');
+const proxyquire = require('proxyquire');
+const {spy, stub} = require('sinon');
+const {WritableStreamBuffer} = require('stream-buffers');
+const AggregateError = require('aggregate-error');
+const SemanticReleaseError = require('@semantic-release/error');
+const {COMMIT_NAME, COMMIT_EMAIL, SECRET_REPLACEMENT} = require('../lib/definitions/constants');
+const {
+  gitHead: getGitHead,
   gitCheckout,
   gitTagHead,
   gitRepo,
@@ -21,7 +21,7 @@ import {
   rebase,
   gitAddNote,
   gitGetNote,
-} from './helpers/git-utils';
+} = require('./helpers/git-utils');
 
 const requireNoCache = proxyquire.noPreserveCache();
 const pluginNoop = require.resolve('./fixtures/plugin-noop');
@@ -1807,7 +1807,7 @@ test('Throw an Error if plugin returns an unexpected value', async t => {
   });
   const error = await t.throwsAsync(
     semanticRelease(options, {cwd, env: {}, stdout: new WritableStreamBuffer(), stderr: new WritableStreamBuffer()}),
-    Error
+    {instanceOf: SemanticReleaseError}
   );
   t.regex(error.details, /string/);
 });
@@ -1836,8 +1836,7 @@ test('Hide sensitive information passed to "fail" plugin', async t => {
     'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
   });
   await t.throwsAsync(
-    semanticRelease(options, {cwd, env, stdout: new WritableStreamBuffer(), stderr: new WritableStreamBuffer()}),
-    Error
+    semanticRelease(options, {cwd, env, stdout: new WritableStreamBuffer(), stderr: new WritableStreamBuffer()})
   );
 
   const error = fail.args[0][1].errors[0];
