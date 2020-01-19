@@ -1,7 +1,7 @@
-import test from 'ava';
-import {noop} from 'lodash';
-import {stub} from 'sinon';
-import normalize from '../../lib/plugins/normalize';
+const test = require('ava');
+const {noop} = require('lodash');
+const {stub} = require('sinon');
+const normalize = require('../../lib/plugins/normalize');
 
 const cwd = process.cwd();
 
@@ -268,11 +268,9 @@ test('Throws an error if the plugin return an object without the expected plugin
 });
 
 test('Throws an error if the plugin is not found', t => {
-  const error = t.throws(
-    () => normalize({cwd, options: {}, logger: t.context.logger}, 'inexistantPlugin', 'non-existing-path', {}),
-    Error
-  );
-
-  t.regex(error.message, /Cannot find module 'non-existing-path'/);
-  t.is(error.code, 'MODULE_NOT_FOUND');
+  t.throws(() => normalize({cwd, options: {}, logger: t.context.logger}, 'inexistantPlugin', 'non-existing-path', {}), {
+    message: /Cannot find module 'non-existing-path'/,
+    code: 'MODULE_NOT_FOUND',
+    instanceOf: Error,
+  });
 });

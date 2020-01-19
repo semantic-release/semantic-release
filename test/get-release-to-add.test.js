@@ -1,7 +1,7 @@
-import test from 'ava';
-import getReleaseToAdd from '../lib/get-release-to-add';
+const test = require('ava');
+const getReleaseToAdd = require('../lib/get-release-to-add');
 
-test('Return versions merged from release to maintenance branch, excluding lower than branch start range', t => {
+test('Return versions merged = require(release to maintenance branch, excluding lower than branch start range', t => {
   const result = getReleaseToAdd({
     branch: {
       name: '2.x',
@@ -188,7 +188,7 @@ test('Ignore pre-release versions', t => {
   });
 });
 
-test('Exclude versions merged from release to maintenance branch if they have the same "channel"', t => {
+test('Exclude versions merged = require(release to maintenance branch if they have the same "channel"', t => {
   const result = getReleaseToAdd({
     branch: {
       name: '2.x',

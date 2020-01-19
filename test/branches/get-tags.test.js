@@ -1,6 +1,6 @@
-import test from 'ava';
-import getTags from '../../lib/branches/get-tags';
-import {gitRepo, gitCommits, gitTagVersion, gitCheckout, gitAddNote} from '../helpers/git-utils';
+const test = require('ava');
+const getTags = require('../../lib/branches/get-tags');
+const {gitRepo, gitCommits, gitTagVersion, gitCheckout, gitAddNote} = require('../helpers/git-utils');
 
 test('Get the valid tags', async t => {
   const {cwd} = await gitRepo();
@@ -28,7 +28,7 @@ test('Get the valid tags', async t => {
   ]);
 });
 
-test('Get the valid tags from multiple branches', async t => {
+test('Get the valid tags = require(multiple branches', async t => {
   const {cwd} = await gitRepo();
   await gitCommits(['First'], {cwd});
   await gitTagVersion('v1.0.0', undefined, {cwd});

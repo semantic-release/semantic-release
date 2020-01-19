@@ -1,13 +1,13 @@
-import path from 'path';
-import proxyquire from 'proxyquire';
-import test from 'ava';
-import {escapeRegExp} from 'lodash';
-import {writeJson, readJson} from 'fs-extra';
-import execa from 'execa';
-import {WritableStreamBuffer} from 'stream-buffers';
-import delay from 'delay';
-import {SECRET_REPLACEMENT} from '../lib/definitions/constants';
-import {
+const path = require('path');
+const test = require('ava');
+const proxyquire = require('proxyquire');
+const {escapeRegExp} = require('lodash');
+const {writeJson, readJson} = require('fs-extra');
+const execa = require('execa');
+const {WritableStreamBuffer} = require('stream-buffers');
+const delay = require('delay');
+const {SECRET_REPLACEMENT} = require('../lib/definitions/constants');
+const {
   gitHead,
   gitTagHead,
   gitRepo,
@@ -17,11 +17,11 @@ import {
   gitCheckout,
   merge,
   gitGetNote,
-} from './helpers/git-utils';
-import {npmView} from './helpers/npm-utils';
-import gitbox from './helpers/gitbox';
-import mockServer from './helpers/mockserver';
-import npmRegistry from './helpers/npm-registry';
+} = require('./helpers/git-utils');
+const {npmView} = require('./helpers/npm-utils');
+const gitbox = require('./helpers/gitbox');
+const mockServer = require('./helpers/mockserver');
+const npmRegistry = require('./helpers/npm-registry');
 
 /* eslint camelcase: ["error", {properties: "never"}] */
 
