@@ -76,7 +76,7 @@ The branches on which releases should happen. By default **semantic-release** wi
 
 **Note**: Once **semantic-release** is configured, any user with the permission to push commits on one of those branches will be able to publish a release. It is recommended to protect those branches, for example with [GitHub protected branches](https://help.github.com/articles/about-protected-branches).
 
-**Note**: The prerelease can't be named with `/`. For example `{ "name": "debug/*", "prerelease": true }` won't work. You have to manually remove `/` (example: `{ "name": "debug/*", "prerelease": '${name.replace(/\//, "-")}' }`)
+**Note**: The prerelease can't be named with `/` because it doesn't follow the [Semver spec](https://semver.org/). For example `{ "name": "debug/*", "prerelease": true }` won't work. You have to manually change all invalid characters (`/` in this case) to something else (example: `{ "name": "debug/*", "prerelease": '${name.replace(/\//, "-")}' }`)
 
 See [Workflow configuration](workflow-configuration.md#workflow-configuration) for more details.
 
