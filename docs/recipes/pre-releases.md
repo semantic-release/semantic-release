@@ -169,7 +169,7 @@ The Git history of the repository is now:
 
 We can now start to work on a new future major release, version `4.0.0`, on the `@beta` distribution channel.
 
-To do so we fist need to update the `beta` branch with all the changes from `master` (the commits `fix: a fix`). As `beta` and `master` branches have diverged, this merge might require to resolve conflicts.
+To do so we first need to update the `beta` branch with all the changes from `master` (the commits `fix: a fix`). As `beta` and `master` branches have diverged, this merge might require to resolve conflicts.
 
 We can now commit our new feature on `beta`. When pushing that commit, **semantic-release** will publish the pre-release version `3.1.0-beta.1` on the dist-tag `@beta`. That allow us to run integration tests by installing our module with `npm install example-module@beta`. Other users installing with `npm install example-module` will still receive the version `3.0.0`.
 
