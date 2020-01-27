@@ -8,9 +8,9 @@ See our [Node Support Policy](node-support-policy.md) for our long-term promise 
 
 ## Recommended solution
 
-### Run at least one CI job with Node >= 10.13
+### Run at least one CI job with Node >= 10.18
 
-The recommended approach is to run the `semantic-release` command from a CI job running on Node 10.13 or higher. This can either be a job used by your project to test on Node >= 10.13 or a dedicated job for the release steps.
+The recommended approach is to run the `semantic-release` command from a CI job running on Node 10.18 or higher. This can either be a job used by your project to test on Node >= 10.18 or a dedicated job for the release steps.
 
 See [CI configuration](../usage/ci-configuration.md) and [CI configuration recipes](../recipes/README.md#ci-configurations) for more details.
 
