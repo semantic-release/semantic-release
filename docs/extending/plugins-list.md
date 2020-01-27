@@ -95,3 +95,7 @@
   - `verifyConditions`: Checks the project.clj is syntactically valid.
   - `prepare`: Update the project.clj version and package the output jar file.
   - `publish`: Publish the jar (and generated Maven metadata) to a maven repository (or clojars).
+- [@saithodev/semantic-release-gitea](https://github.com/saitho/semantic-release-gitea)
+  - `verifyConditions`: Verify the presence and the validity of the authentication and the assets option configuration.
+  - `publish`: Publish a Gitea release, optionally uploading file assets.
+  - `addChannel`: Update a Gitea release's pre-release field.
