@@ -1,6 +1,6 @@
-import test from 'ava';
-import tempy from 'tempy';
-import {
+const test = require('ava');
+const tempy = require('tempy');
+const {
   getTagHead,
   isRefExists,
   fetch,
@@ -16,8 +16,8 @@ import {
   getNote,
   addNote,
   fetchNotes,
-} from '../lib/git';
-import {
+} = require('../lib/git');
+const {
   gitRepo,
   gitCommits,
   gitCheckout,
@@ -33,7 +33,8 @@ import {
   gitAddNote,
   gitGetNote,
   gitFetch,
-} from './helpers/git-utils';
+  initGit,
+} = require('./helpers/git-utils');
 
 test('Get the last commit sha', async t => {
   // Create a git repository, set the current working directory at the root of the repo
@@ -50,7 +51,7 @@ test('Throw error if the last commit sha cannot be found', async t => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
 
-  await t.throwsAsync(getGitHead({cwd}), Error);
+  await t.throwsAsync(getGitHead({cwd}));
 });
 
 test('Unshallow and fetch repository', async t => {
@@ -180,6 +181,11 @@ test('Get all branches', async t => {
   await gitPush(repositoryUrl, 'third-branch', {cwd});
 
   t.deepEqual((await getBranches(repositoryUrl, {cwd})).sort(), ['master', 'second-branch', 'third-branch'].sort());
+});
+
+test('Return empty array if there are no branches', async t => {
+  const {cwd, repositoryUrl} = await initGit(true);
+  t.deepEqual(await getBranches(repositoryUrl, {cwd}), []);
 });
 
 test('Get the commit sha for a given tag', async t => {

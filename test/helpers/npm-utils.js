@@ -1,5 +1,7 @@
-import execa from 'execa';
+const execa = require('execa');
 
-export async function npmView(packageName, env) {
+async function npmView(packageName, env) {
   return JSON.parse((await execa('npm', ['view', packageName, '--json'], {env})).stdout);
 }
+
+module.exports = {npmView};

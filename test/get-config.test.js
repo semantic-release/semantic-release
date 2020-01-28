@@ -1,12 +1,12 @@
-import path from 'path';
-import {format} from 'util';
-import test from 'ava';
-import {writeFile, outputJson} from 'fs-extra';
-import {omit} from 'lodash';
-import proxyquire from 'proxyquire';
-import {stub} from 'sinon';
-import yaml from 'js-yaml';
-import {gitRepo, gitTagVersion, gitCommits, gitShallowClone, gitAddConfig} from './helpers/git-utils';
+const path = require('path');
+const {format} = require('util');
+const test = require('ava');
+const {writeFile, outputJson} = require('fs-extra');
+const {omit} = require('lodash');
+const proxyquire = require('proxyquire');
+const {stub} = require('sinon');
+const yaml = require('js-yaml');
+const {gitRepo, gitTagVersion, gitCommits, gitShallowClone, gitAddConfig} = require('./helpers/git-utils');
 
 const DEFAULT_PLUGINS = [
   '@semantic-release/commit-analyzer',
@@ -511,8 +511,8 @@ test('Throw an Error if one of the shareable config cannot be found', async t =>
   await outputJson(path.resolve(cwd, 'package.json'), {release: pkhOptions});
   await outputJson(path.resolve(cwd, 'shareable1.json'), options1);
 
-  const error = await t.throwsAsync(t.context.getConfig({cwd}), Error);
-
-  t.regex(error.message, /Cannot find module 'non-existing-path'/);
-  t.is(error.code, 'MODULE_NOT_FOUND');
+  await t.throwsAsync(t.context.getConfig({cwd}), {
+    message: /Cannot find module 'non-existing-path'/,
+    code: 'MODULE_NOT_FOUND',
+  });
 });

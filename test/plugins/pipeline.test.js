@@ -1,7 +1,7 @@
-import test from 'ava';
-import {stub} from 'sinon';
-import AggregateError from 'aggregate-error';
-import pipeline from '../../lib/plugins/pipeline';
+const test = require('ava');
+const {stub} = require('sinon');
+const AggregateError = require('aggregate-error');
+const pipeline = require('../../lib/plugins/pipeline');
 
 test('Execute each function in series passing the same input', async t => {
   const step1 = stub().resolves(1);
@@ -98,7 +98,10 @@ test('Stop execution and throw error if a step rejects', async t => {
   const step2 = stub().rejects(new Error('test error'));
   const step3 = stub().resolves(3);
 
-  const error = await t.throwsAsync(pipeline([step1, step2, step3])(0), Error);
+  const error = await t.throwsAsync(pipeline([step1, step2, step3])(0), {
+    instanceOf: Error,
+    message: 'test error',
+  });
   t.is(error.message, 'test error');
   t.true(step1.calledWith(0));
   t.true(step2.calledWith(0));

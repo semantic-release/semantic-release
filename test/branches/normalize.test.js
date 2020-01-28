@@ -1,5 +1,5 @@
-import test from 'ava';
-import normalize from '../../lib/branches/normalize';
+const test = require('ava');
+const normalize = require('../../lib/branches/normalize');
 
 const toTags = versions => versions.map(version => ({version}));
 

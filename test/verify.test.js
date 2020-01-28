@@ -1,7 +1,7 @@
-import test from 'ava';
-import tempy from 'tempy';
-import verify from '../lib/verify';
-import {gitRepo} from './helpers/git-utils';
+const test = require('ava');
+const tempy = require('tempy');
+const verify = require('../lib/verify');
+const {gitRepo} = require('./helpers/git-utils');
 
 test('Throw a AggregateError', async t => {
   const {cwd} = await gitRepo();
