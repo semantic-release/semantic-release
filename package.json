@@ -20,7 +20,7 @@
     "Pierre Vanduynslager (https://twitter.com/@pvdlg_)"
   ],
   "dependencies": {
-    "@semantic-release/commit-analyzer": "^7.0.0",
+    "@semantic-release/commit-analyzer": "^8.0.0",
     "@semantic-release/error": "^2.2.0",
     "@semantic-release/github": "^7.0.0",
     "@semantic-release/npm": "^7.0.0",
