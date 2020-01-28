@@ -28,7 +28,7 @@ test('Get the valid tags', async t => {
   ]);
 });
 
-test('Get the valid tags = require(multiple branches', async t => {
+test('Get the valid tags from multiple branches', async t => {
   const {cwd} = await gitRepo();
   await gitCommits(['First'], {cwd});
   await gitTagVersion('v1.0.0', undefined, {cwd});

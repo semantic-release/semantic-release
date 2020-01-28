@@ -18,7 +18,7 @@ test('Get the highest non-prerelease valid tag', t => {
   t.deepEqual(result, {version: '2.0.0', gitTag: 'v2.0.0', name: 'v2.0.0', gitHead: 'v2.0.0', channels: undefined});
 });
 
-test('Get the highest prerelease valid tag, ignoring other tags = require(other prerelease channels', t => {
+test('Get the highest prerelease valid tag, ignoring other tags from other prerelease channels', t => {
   const result = getLastRelease({
     branch: {
       name: 'beta',
