@@ -1,5 +1,5 @@
-import test from 'ava';
-import getReleaseToAdd from '../lib/get-release-to-add';
+const test = require('ava');
+const getReleaseToAdd = require('../lib/get-release-to-add');
 
 test('Return versions merged from release to maintenance branch, excluding lower than branch start range', t => {
   const result = getReleaseToAdd({

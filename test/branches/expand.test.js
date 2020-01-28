@@ -1,6 +1,6 @@
-import test from 'ava';
-import expand from '../../lib/branches/expand';
-import {gitRepo, gitCommits, gitCheckout, gitPush} from '../helpers/git-utils';
+const test = require('ava');
+const expand = require('../../lib/branches/expand');
+const {gitRepo, gitCommits, gitCheckout, gitPush} = require('../helpers/git-utils');
 
 test('Expand branches defined with globs', async t => {
   const {cwd, repositoryUrl} = await gitRepo(true);

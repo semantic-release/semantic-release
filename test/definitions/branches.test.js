@@ -1,5 +1,5 @@
-import test from 'ava';
-import {maintenance, prerelease, release} from '../../lib/definitions/branches';
+const test = require('ava');
+const {maintenance, prerelease, release} = require('../../lib/definitions/branches');
 
 test('A "maintenance" branch is identified by having a "range" property or a "name" formatted like "N.x", "N.x.x" or "N.N.x"', t => {
   t.true(maintenance.filter({name: '1.x.x'}));

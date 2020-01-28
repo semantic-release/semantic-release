@@ -1,5 +1,5 @@
-import test from 'ava';
-import {validatePlugin, validateStep, loadPlugin, parseConfig} from '../../lib/plugins/utils';
+const test = require('ava');
+const {validatePlugin, validateStep, loadPlugin, parseConfig} = require('../../lib/plugins/utils');
 
 test('validatePlugin', t => {
   const path = 'plugin-module';

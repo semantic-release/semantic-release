@@ -1,6 +1,6 @@
-import test from 'ava';
-import getAuthUrl from '../lib/get-git-auth-url';
-import {gitRepo} from './helpers/git-utils';
+const test = require('ava');
+const getAuthUrl = require('../lib/get-git-auth-url');
+const {gitRepo} = require('./helpers/git-utils');
 
 const env = {GIT_ASKPASS: 'echo', GIT_TERMINAL_PROMPT: 0};
 
