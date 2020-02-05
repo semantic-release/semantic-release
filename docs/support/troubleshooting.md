@@ -55,13 +55,13 @@ $ git tag -d <tag name>
 $ git push origin :refs/tags/<tag name>
 ```
 
-## release not found in prereleases branch (e.g. `beta`) after rebase on `master`
+## release not found release branch after `git push --force`
 
-**semantic-release** is using [git notes](https://git-scm.com/docs/git-notes) to store information about which releases happened in which branch. Git notes are attached to commits. After git history rewrite due to a rebase, the git notes created by **semantic-release** are lost.
+**semantic-release** is using [git notes](https://git-scm.com/docs/git-notes) to store information about which releases happened in which branch. Git notes are attached to commits. After git history rewrite due to a `git push --force`, the git notes created by **semantic-release** are lost.
 
 To recover from that situation, do the following:
 
 1. Delete the tag(s) for the release(s) that have been lost from the git history. You can delete each tag from remote using `git push origin :[TAG NAME]`, e.g. `git push origin :v2.0.0-beta.1`. You can delete tags locally using `git tag -d [TAG NAME]`, e.g. `git tag -d v2.0.0-beta.1`.
 2. Re-create the tags locally: `git tag [TAG NAME] [COMMIT HASH]`, where `[COMMIT HASH]` is the new commit that created the release for the lost tag. E.g. `git tag v2.0.0-beta.1 abcdef0`
-3. Re-create the git notes for each release tag, e.g. `git notes --ref semantic-release add -f -m '{"channels":["beta"]}' v3.0.0-beta.1`
+3. Re-create the git notes for each release tag, e.g. `git notes --ref semantic-release add -f -m '{"channels":["beta"]}' v3.0.0-beta.1`. Add all channels where the version was added. If it's only the default channel (usually `master`), then set it to an empty array: `'{"channels":[]}'`
 4. Push the local notes: `git push --force origin refs/notes/semantic-release`. The `--force` is needed after the rebase. Be careful.
