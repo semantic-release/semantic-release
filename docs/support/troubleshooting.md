@@ -59,6 +59,10 @@ $ git push origin :refs/tags/<tag name>
 
 **semantic-release** is using [git notes](https://git-scm.com/docs/git-notes) to store information about which releases happened in which branch. Git notes are attached to commits. After git history rewrite due to a `git push --force`, the git notes created by **semantic-release** are lost.
 
+**semantic-release** is using both [git tags](https://git-scm.com/docs/git-tag) and [git notes](https://git-scm.com/docs/git-notes) to store information about which releases happened in which branch.
+
+After a git history rewrite due to a `git push --force`, the git tags and notes referencing the commits that were rewritten are lost.
+
 To recover from that situation, do the following:
 
 1. Delete the tag(s) for the release(s) that have been lost from the git history. You can delete each tag from remote using `git push origin :[TAG NAME]`, e.g. `git push origin :v2.0.0-beta.1`. You can delete tags locally using `git tag -d [TAG NAME]`, e.g. `git tag -d v2.0.0-beta.1`.
