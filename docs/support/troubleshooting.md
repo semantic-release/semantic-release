@@ -57,8 +57,6 @@ $ git push origin :refs/tags/<tag name>
 
 ## release not found release branch after `git push --force`
 
-**semantic-release** is using [git notes](https://git-scm.com/docs/git-notes) to store information about which releases happened in which branch. Git notes are attached to commits. After git history rewrite due to a `git push --force`, the git notes created by **semantic-release** are lost.
-
 **semantic-release** is using both [git tags](https://git-scm.com/docs/git-tag) and [git notes](https://git-scm.com/docs/git-notes) to store information about which releases happened in which branch.
 
 After a git history rewrite due to a `git push --force`, the git tags and notes referencing the commits that were rewritten are lost.
