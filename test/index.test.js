@@ -1941,3 +1941,51 @@ test('Get all commits including the ones not in the shallow clone', async t => {
 
   t.is(analyzeCommits.args[0][1].commits.length, 3);
 });
+
+test('Allow plugins to set environment variables', async t => {
+  const {cwd, repositoryUrl} = await gitRepo(true);
+  await gitCommits(['First'], {cwd});
+  await gitTagVersion('v1.0.0', undefined, {cwd});
+  await gitCommits(['Second'], {cwd});
+  await gitPush(repositoryUrl, 'master', {cwd});
+
+  const nextRelease = {type: 'major', version: '2.0.0', gitHead: await getGitHead({cwd}), gitTag: 'v2.0.0'};
+  const verifyConditions = stub().resolves();
+  const analyzeCommits = stub().resolves(nextRelease.type);
+  const verifyRelease = stub().resolves();
+  const generateNotes = stub().resolves();
+  const prepare = stub().resolves();
+  const publish1 = async (_, context) => {
+    context.env.TEST_VAR = 'test-value';
+  };
+
+  const publish2 = stub().resolves();
+  const success = stub().resolves();
+  const env = {...process.env};
+  const config = {branch: 'master', repositoryUrl};
+  const options = {
+    ...config,
+    plugins: false,
+    verifyConditions,
+    analyzeCommits,
+    verifyRelease,
+    generateNotes,
+    prepare,
+    publish: [publish1, publish2],
+    success,
+  };
+
+  const semanticRelease = requireNoCache('..', {
+    './lib/get-logger': () => t.context.logger,
+    'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
+  });
+  await semanticRelease(options, {
+    cwd,
+    env,
+    stdout: new WritableStreamBuffer(),
+    stderr: new WritableStreamBuffer(),
+  });
+
+  t.is(publish2.args[0][1].env.TEST_VAR, 'test-value');
+  t.is(env.TEST_VAR, 'test-value');
+});
