@@ -131,3 +131,6 @@ yarn.lock
 
 # Gitbook
 _book
+
+# Mockserver
+CertificateAuthorityCertificate.pem

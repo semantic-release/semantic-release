@@ -1,7 +1,7 @@
-import test from 'ava';
-import {stub} from 'sinon';
-import AggregateError from 'aggregate-error';
-import pipeline from '../../lib/plugins/pipeline';
+const test = require('ava');
+const {stub} = require('sinon');
+const AggregateError = require('aggregate-error');
+const pipeline = require('../../lib/plugins/pipeline');
 
 test('Execute each function in series passing the same input', async t => {
   const step1 = stub().resolves(1);
@@ -47,7 +47,12 @@ test('Execute each function in series passing the "lastResult" and "result" to "
   const result = await pipeline([step1, step2, step3, step4], {settleAll: false, getNextInput})(5);
 
   t.deepEqual(result, [1, 2, 3, 4]);
-  t.deepEqual(getNextInput.args, [[5, 1], [5, 2], [5, 3], [5, 4]]);
+  t.deepEqual(getNextInput.args, [
+    [5, 1],
+    [5, 2],
+    [5, 3],
+    [5, 4],
+  ]);
 });
 
 test('Execute each function in series calling "transform" to modify the results', async t => {
@@ -61,7 +66,12 @@ test('Execute each function in series calling "transform" to modify the results'
   const result = await pipeline([step1, step2, step3, step4], {getNextInput, transform})(5);
 
   t.deepEqual(result, [1 + 1, 2 + 1, 3 + 1, 4 + 1]);
-  t.deepEqual(getNextInput.args, [[5, 1 + 1], [5, 2 + 1], [5, 3 + 1], [5, 4 + 1]]);
+  t.deepEqual(getNextInput.args, [
+    [5, 1 + 1],
+    [5, 2 + 1],
+    [5, 3 + 1],
+    [5, 4 + 1],
+  ]);
 });
 
 test('Execute each function in series calling "transform" to modify the results with "settleAll"', async t => {
@@ -75,7 +85,12 @@ test('Execute each function in series calling "transform" to modify the results 
   const result = await pipeline([step1, step2, step3, step4], {settleAll: true, getNextInput, transform})(5);
 
   t.deepEqual(result, [1 + 1, 2 + 1, 3 + 1, 4 + 1]);
-  t.deepEqual(getNextInput.args, [[5, 1 + 1], [5, 2 + 1], [5, 3 + 1], [5, 4 + 1]]);
+  t.deepEqual(getNextInput.args, [
+    [5, 1 + 1],
+    [5, 2 + 1],
+    [5, 3 + 1],
+    [5, 4 + 1],
+  ]);
 });
 
 test('Stop execution and throw error if a step rejects', async t => {
@@ -83,7 +98,10 @@ test('Stop execution and throw error if a step rejects', async t => {
   const step2 = stub().rejects(new Error('test error'));
   const step3 = stub().resolves(3);
 
-  const error = await t.throwsAsync(pipeline([step1, step2, step3])(0), Error);
+  const error = await t.throwsAsync(pipeline([step1, step2, step3])(0), {
+    instanceOf: Error,
+    message: 'test error',
+  });
   t.is(error.message, 'test error');
   t.true(step1.calledWith(0));
   t.true(step2.calledWith(0));

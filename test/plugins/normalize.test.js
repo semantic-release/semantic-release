@@ -1,7 +1,7 @@
-import test from 'ava';
-import {noop} from 'lodash';
-import {stub} from 'sinon';
-import normalize from '../../lib/plugins/normalize';
+const test = require('ava');
+const {noop} = require('lodash');
+const {stub} = require('sinon');
+const normalize = require('../../lib/plugins/normalize');
 
 const cwd = process.cwd();
 
@@ -152,6 +152,24 @@ test('Wrap "publish" plugin in a function that validate the output of the plugin
   t.regex(error.details, /2/);
 });
 
+test('Wrap "addChannel" plugin in a function that validate the output of the plugin', async t => {
+  const addChannel = stub().resolves(2);
+  const plugin = normalize(
+    {cwd, options: {}, stderr: t.context.stderr, logger: t.context.logger},
+    'addChannel',
+    addChannel,
+    {}
+  );
+
+  const error = await t.throwsAsync(plugin({options: {}}));
+
+  t.is(error.code, 'EADDCHANNELOUTPUT');
+  t.is(error.name, 'SemanticReleaseError');
+  t.truthy(error.message);
+  t.truthy(error.details);
+  t.regex(error.details, /2/);
+});
+
 test('Plugin is called with "pluginConfig" (with object definition) and input', async t => {
   const pluginFunction = stub().resolves();
   const pluginConf = {path: pluginFunction, conf: 'confValue'};
@@ -250,11 +268,9 @@ test('Throws an error if the plugin return an object without the expected plugin
 });
 
 test('Throws an error if the plugin is not found', t => {
-  const error = t.throws(
-    () => normalize({cwd, options: {}, logger: t.context.logger}, 'inexistantPlugin', 'non-existing-path', {}),
-    Error
-  );
-
-  t.regex(error.message, /Cannot find module 'non-existing-path'/);
-  t.is(error.code, 'MODULE_NOT_FOUND');
+  t.throws(() => normalize({cwd, options: {}, logger: t.context.logger}, 'inexistantPlugin', 'non-existing-path', {}), {
+    message: /Cannot find module 'non-existing-path'/,
+    code: 'MODULE_NOT_FOUND',
+    instanceOf: Error,
+  });
 });

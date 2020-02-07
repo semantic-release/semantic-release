@@ -2,13 +2,15 @@
 
 ## Environment variables
 
-The [Authentication](../usage/ci-configuration.md#authentication) environment variables can be configured with [Secret variables](https://docs.gitlab.com/ce/ci/variables/README.html#secret-variables).
+The [Authentication](../usage/ci-configuration.md#authentication) environment variables can be configured with [Protected variables](https://docs.gitlab.com/ce/ci/variables/README.html#protected-environment-variables).
+
+**Note**: Make sure to configure your release branch as [protected](https://docs.gitlab.com/ce/user/project/protected_branches.html) in order for the CI/CD build to access the protected variables.
 
 ## Node project configuration
 
 GitLab CI supports [Pipelines](https://docs.gitlab.com/ee/ci/pipelines.html) allowing to test on multiple Node versions and publishing a release only when all test pass.
 
-**Note**: The publish pipeline must run a [Node >= 8 version](../support/FAQ.md#why-does-semantic-release-require-node-version--83).
+**Note**: The publish pipeline must run a [Node >= 10.18 version](../support/FAQ.md#why-does-semantic-release-require-node-version--1018).
 
 ### `.gitlab-ci.yml` configuration for Node projects
 

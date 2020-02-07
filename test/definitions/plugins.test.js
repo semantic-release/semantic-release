@@ -1,6 +1,6 @@
-import test from 'ava';
-import plugins from '../../lib/definitions/plugins';
-import {RELEASE_NOTES_SEPARATOR, SECRET_REPLACEMENT} from '../../lib/definitions/constants';
+const test = require('ava');
+const plugins = require('../../lib/definitions/plugins');
+const {RELEASE_NOTES_SEPARATOR, SECRET_REPLACEMENT} = require('../../lib/definitions/constants');
 
 test('The "analyzeCommits" plugin output must be either undefined or a valid semver release type', t => {
   t.false(plugins.analyzeCommits.outputValidator('invalid'));
@@ -31,6 +31,16 @@ test('The "publish" plugin output, if defined, must be an object or "false"', t 
   t.true(plugins.publish.outputValidator(null));
   t.true(plugins.publish.outputValidator(''));
   t.true(plugins.publish.outputValidator(false));
+});
+
+test('The "addChannel" plugin output, if defined, must be an object', t => {
+  t.false(plugins.addChannel.outputValidator(1));
+  t.false(plugins.addChannel.outputValidator('string'));
+
+  t.true(plugins.addChannel.outputValidator({}));
+  t.true(plugins.addChannel.outputValidator());
+  t.true(plugins.addChannel.outputValidator(null));
+  t.true(plugins.addChannel.outputValidator(''));
 });
 
 test('The "generateNotes" plugins output are concatenated with separator and sensitive data is hidden', t => {

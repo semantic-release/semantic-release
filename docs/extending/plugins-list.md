@@ -65,10 +65,10 @@
   - `verifyConditions`: Verify the presence of the authentication (set via environment variables)
   - `prepare`: Write the correct version to the `manifest.json` and creates a zip file of the whole dist folder
   - `publish`: Uploads the generated zip file to the webstore, and publish the item
-- [semantic-release-firefox](https://github.com/felixfbecker/semantic-release-firefox)
-  - `verifyConditions`: Verify the presence of the authentication (set via environment variables)
-  - `prepare`: Write the correct version to the `manifest.json`, creates a `xpi` file of the dist folder and a zip of the sources
-  - `publish`: Submit the generated archives to the webstore for review, and publish the item including release notes
+- [semantic-release-firefox-add-on](https://github.com/tophat/semantic-release-firefox-add-on)
+  - `verifyConditions`: Verify that all required options are present and authentication is set via environment variables
+  - `prepare`: Write the correct version to the `manifest.json`
+  - `publish`: Creates an unsigned `.xpi` file, and submits it to the Mozilla Add On store for signing. Once the package is signed, downloads the signed `.xpi` to a local directory
 - [semantic-release-gerrit](https://github.com/pascalMN/semantic-release-gerrit)
   - `generateNotes`: Generate release notes with Gerrit reviews URL
 - [semantic-release-expo](https://github.com/bycedric/semantic-release-expo)
@@ -91,3 +91,11 @@
 - [semantic-release-github-pages](https://github.com/qiwi/semantic-release-gh-pages-plugin)
   - `verifyConditions`: Verify the presence of the auth token set via environment variables.
   - `publish`: Pushes commit to the documentation branch.
+- [leiningen-semantic-release](https://github.com/NoxHarmonium/leiningen-semantic-release)
+  - `verifyConditions`: Checks the project.clj is syntactically valid.
+  - `prepare`: Update the project.clj version and package the output jar file.
+  - `publish`: Publish the jar (and generated Maven metadata) to a maven repository (or clojars).
+- [@saithodev/semantic-release-gitea](https://github.com/saitho/semantic-release-gitea)
+  - `verifyConditions`: Verify the presence and the validity of the authentication and the assets option configuration.
+  - `publish`: Publish a Gitea release, optionally uploading file assets.
+  - `addChannel`: Update a Gitea release's pre-release field.

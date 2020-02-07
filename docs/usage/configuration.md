@@ -1,7 +1,7 @@
 # Configuration
 
 **semantic-release** configuration consists of:
-- Git repository ([URL](#repositoryurl) and options [release branch](#branch) and [tag format](#tagformat))
+- Git repository ([URL](#repositoryurl) and options [release branches](#branches) and [tag format](#tagformat))
 - Plugins [declaration](#plugins) and options
 - Run mode ([debug](#debug), [dry run](#dryrun) and [local (no CI)](#ci))
 
@@ -24,7 +24,7 @@ The following three examples are the same.
 ```json
 {
   "release": {
-    "branch": "next"
+    "branches": ["master", "next"]
   }
 }
 ```
@@ -32,7 +32,7 @@ The following three examples are the same.
 - Via `.releaserc` file:
 ```json
 {
-  "branch": "next"
+  "branches": ["master", "next"]
 }
 ```
 
@@ -58,13 +58,25 @@ List of modules or file paths containing a [shareable configuration](shareable-c
 
 **Note**: Options defined via CLI arguments or in the configuration file will take precedence over the ones defined in any shareable configuration.
 
-### branch
+### branches
 
-Type: `String`<br>
-Default: `master`<br>
-CLI arguments: `-b`, `--branch`
+Type: `Array`, `String`, `Object`<br>
+Default: `['+([0-9])?(.{+([0-9]),x}).x', 'master', 'next', 'next-major', {name: 'beta', prerelease: true}, {name: 'alpha', prerelease: true}]`<br>
+CLI arguments: `--branches`
 
-The branch on which releases should happen.
+The branches on which releases should happen. By default **semantic-release** will release:
+- regular releases to the default distribution channel from the branch `master`
+- regular releases to a distribution channel matching the branch name from any existing branch with a name matching a maintenance release range (`N.N.x` or `N.x.x` or `N.x` with `N` being a number)
+- regular releases to the `next` distribution channel from the branch `next` if it exists
+- regular releases  to the `next-major` distribution channel from the branch `next-major` if it exists
+- prereleases to the `beta` distribution channel from the branch `beta` if it exists
+- prereleases to the `alpha` distribution channel from the branch `alpha` if it exists
+
+**Note**: If your repository does not have a release branch, then **semantic-release** will fail with an `ERELEASEBRANCHES` error message. If you are using the default configuration, you can fix this error by pushing a `master` branch.
+
+**Note**: Once **semantic-release** is configured, any user with the permission to push commits on one of those branches will be able to publish a release. It is recommended to protect those branches, for example with [GitHub protected branches](https://help.github.com/articles/about-protected-branches).
+
+See [Workflow configuration](workflow-configuration.md#workflow-configuration) for more details.
 
 ### repositoryUrl
 
@@ -138,7 +150,7 @@ Output debugging information. This can also be enabled by setting the `DEBUG` en
 ## Existing version tags
 
 **semantic-release** uses [Git tags](https://git-scm.com/book/en/v2/Git-Basics-Tagging) to determine the commits added since the last release.
-If a release has been published before setting up **semantic-release** you must make sure the most recent commit included in the last published release is in the [release branch](#branch) history and is tagged with the version released, formatted according to the [tag format](#tagformat) configured (defaults to `vx.y.z`).
+If a release has been published before setting up **semantic-release** you must make sure the most recent commit included in the last published release is in the [release branches](#branches) history and is tagged with the version released, formatted according to the [tag format](#tagformat) configured (defaults to `vx.y.z`).
 
 If the previous releases were published with [`npm publish`](https://docs.npmjs.com/cli/publish) this should already be the case.
 

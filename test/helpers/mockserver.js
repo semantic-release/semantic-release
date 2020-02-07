@@ -1,8 +1,8 @@
-import Docker from 'dockerode';
-import getStream from 'get-stream';
-import got from 'got';
-import pRetry from 'p-retry';
-import {mockServerClient} from 'mockserver-client';
+const Docker = require('dockerode');
+const getStream = require('get-stream');
+const got = require('got');
+const pRetry = require('p-retry');
+const {mockServerClient} = require('mockserver-client');
 
 const IMAGE = 'jamesdbloom/mockserver:latest';
 const MOCK_SERVER_PORT = 1080;
@@ -30,7 +30,7 @@ async function start() {
       minTimeout: 1000,
       factor: 2,
     });
-  } catch (error) {
+  } catch (_) {
     throw new Error(`Couldn't start mock-server after 2 min`);
   }
 }
@@ -100,4 +100,4 @@ function verify(expectation) {
   return client.verify(expectation);
 }
 
-export default {start, stop, mock, verify, url};
+module.exports = {start, stop, mock, verify, url};
