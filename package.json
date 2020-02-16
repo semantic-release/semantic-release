@@ -60,7 +60,7 @@
     "got": "^10.5.2",
     "js-yaml": "^3.10.0",
     "mockserver-client": "^5.1.1",
-    "nock": "^11.1.0",
+    "nock": "^12.0.0",
     "nyc": "^15.0.0",
     "p-retry": "^4.0.0",
     "proxyquire": "^2.0.0",
