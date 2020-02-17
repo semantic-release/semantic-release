@@ -66,7 +66,9 @@ async function run(context, plugins) {
   }
 
   logger[options.dryRun ? 'warn' : 'success'](
-    `Run automated release from branch ${ciBranch}${options.dryRun ? ' in dry-run mode' : ''}`
+    `Run automated release from branch ${ciBranch} on repository ${options.repositoryUrl}${
+      options.dryRun ? ' in dry-run mode' : ''
+    }`
   );
 
   try {
