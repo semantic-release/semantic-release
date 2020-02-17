@@ -75,7 +75,7 @@ async function run(context, plugins) {
     } catch (error) {
       if (!(await isBranchUpToDate(options.repositoryUrl, context.branch.name, {cwd, env}))) {
         logger.log(
-          `The local branch ${context.branch.name} is behind the remote one, therefore a new version won't be published.`
+          `The local branch ${context.branch.name} is behind the remote ${options.repositoryUrl}, therefore a new version won't be published.`
         );
         return false;
       }
