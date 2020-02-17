@@ -38,7 +38,7 @@ The following three examples are the same.
 
 - Via CLI argument:
 ```bash
-$ semantic-release --branch next
+$ semantic-release --branches next
 ```
 
 **Note**: CLI arguments take precedence over options configured in the configuration file.
