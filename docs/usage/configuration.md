@@ -43,7 +43,7 @@ The following four examples are the same.
 - Via CLI argument:
 
 ```bash
-$ semantic-release --branch next
+$ semantic-release --branches next
 ```
 
 - via `release.config.js` file:

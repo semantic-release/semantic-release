@@ -82,7 +82,7 @@ test('Get all commits between lastRelease.gitHead and a shas', async t => {
 
   // Verify the commits created and retrieved by the module are identical
   t.is(result.length, 1);
-  t.deepEqual(result, commits.slice(1, commits.length - 1));
+  t.deepEqual(result, commits.slice(1, -1));
 });
 
 test('Return empty array if lastRelease.gitHead is the last commit', async t => {
