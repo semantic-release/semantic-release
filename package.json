@@ -56,7 +56,7 @@
     "delay": "^4.0.0",
     "dockerode": "^3.0.0",
     "file-url": "^3.0.0",
-    "fs-extra": "^8.0.0",
+    "fs-extra": "^9.0.0",
     "got": "^10.5.2",
     "js-yaml": "^3.10.0",
     "mockserver-client": "^5.1.1",
