@@ -60,7 +60,7 @@
     "fs-extra": "8.1.0",
     "got": "10.6.0",
     "js-yaml": "3.13.1",
-    "mockserver-client": "5.9.0",
+    "mockserver-client": "5.10.0",
     "nock": "11.9.1",
     "nyc": "15.0.0",
     "p-retry": "4.2.0",
