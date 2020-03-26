@@ -250,9 +250,9 @@ test('Push tag to remote repository with remote branch ahead', async t => {
   const {cwd, repositoryUrl} = await gitRepo(true);
   const commits = await gitCommits(['First'], {cwd});
   await gitPush(repositoryUrl, 'master', {cwd});
-  const tmpRepo = await gitShallowClone(repositoryUrl);
-  await gitCommits(['Second'], {cwd: tmpRepo});
-  await gitPush('origin', 'master', {cwd: tmpRepo});
+  const temporaryRepo = await gitShallowClone(repositoryUrl);
+  await gitCommits(['Second'], {cwd: temporaryRepo});
+  await gitPush('origin', 'master', {cwd: temporaryRepo});
 
   await tag('tag_name', 'HEAD', {cwd});
   await push(repositoryUrl, {cwd});
@@ -309,9 +309,9 @@ test('Return falsy if repository is not up to date', async t => {
 
   t.true(await isBranchUpToDate(repositoryUrl, 'master', {cwd}));
 
-  const tmpRepo = await gitShallowClone(repositoryUrl);
-  await gitCommits(['Third'], {cwd: tmpRepo});
-  await gitPush('origin', 'master', {cwd: tmpRepo});
+  const temporaryRepo = await gitShallowClone(repositoryUrl);
+  await gitCommits(['Third'], {cwd: temporaryRepo});
+  await gitPush('origin', 'master', {cwd: temporaryRepo});
 
   t.falsy(await isBranchUpToDate(repositoryUrl, 'master', {cwd}));
 });

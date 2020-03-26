@@ -7,11 +7,11 @@ const {SECRET_REPLACEMENT} = require('../lib/definitions/constants');
 test.beforeEach(t => {
   t.context.logs = '';
   t.context.errors = '';
-  t.context.stdout = stub(process.stdout, 'write').callsFake(val => {
-    t.context.logs += val.toString();
+  t.context.stdout = stub(process.stdout, 'write').callsFake(value => {
+    t.context.logs += value.toString();
   });
-  t.context.stderr = stub(process.stderr, 'write').callsFake(val => {
-    t.context.errors += val.toString();
+  t.context.stderr = stub(process.stderr, 'write').callsFake(value => {
+    t.context.errors += value.toString();
   });
 });
 
