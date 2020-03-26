@@ -238,7 +238,7 @@ async function callFail(context, plugins, err) {
   }
 }
 
-module.exports = async (opts = {}, {cwd = process.cwd(), env = process.env, stdout, stderr} = {}) => {
+module.exports = async (cliOptions = {}, {cwd = process.cwd(), env = process.env, stdout, stderr} = {}) => {
   const {unhook} = hookStd(
     {silent: false, streams: [process.stdout, process.stderr, stdout, stderr].filter(Boolean)},
     hideSensitive(env)
@@ -253,7 +253,7 @@ module.exports = async (opts = {}, {cwd = process.cwd(), env = process.env, stdo
   context.logger = getLogger(context);
   context.logger.log(`Running ${pkg.name} version ${pkg.version}`);
   try {
-    const {plugins, options} = await getConfig(context, opts);
+    const {plugins, options} = await getConfig(context, cliOptions);
     context.options = options;
     try {
       const result = await run(context, plugins);

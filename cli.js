@@ -41,18 +41,18 @@ Usage:
     .exitProcess(false);
 
   try {
-    const {help, version, ...opts} = cli.parse(argv.slice(2));
+    const {help, version, ...options} = cli.parse(argv.slice(2));
 
     if (Boolean(help) || Boolean(version)) {
       return 0;
     }
 
-    if (opts.debug) {
+    if (options.debug) {
       // Debug must be enabled before other requires in order to work
       require('debug').enable('semantic-release:*');
     }
 
-    await require('.')(opts);
+    await require('.')(options);
     return 0;
   } catch (error) {
     if (error.name !== 'YError') {
