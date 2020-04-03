@@ -62,7 +62,7 @@
     "js-yaml": "3.13.1",
     "mockserver-client": "5.10.0",
     "nock": "11.9.1",
-    "nyc": "15.0.0",
+    "nyc": "15.0.1",
     "p-retry": "4.2.0",
     "prettier": "1.19.1",
     "proxyquire": "2.1.3",
