@@ -161,7 +161,7 @@ test('Execute each function in series passing a transformed input even if a step
   const step2 = stub().rejects(error2);
   const step3 = stub().rejects(error3);
   const step4 = stub().resolves(4);
-  const getNextInput = (prevResult, result) => prevResult + result;
+  const getNextInput = (previousResult, result) => previousResult + result;
 
   const errors = await t.throwsAsync(pipeline([step1, step2, step3, step4], {settleAll: true, getNextInput})(0));
 

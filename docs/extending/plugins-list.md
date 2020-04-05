@@ -99,3 +99,5 @@
   - `verifyConditions`: Verify the presence and the validity of the authentication and the assets option configuration.
   - `publish`: Publish a Gitea release, optionally uploading file assets.
   - `addChannel`: Update a Gitea release's pre-release field.
+- [@google/semantic-release-replace-plugin](https://github.com/google/semantic-release-replace-plugin)
+  - `prepare`: Replace version strings in files using regex and glob.
