@@ -5,15 +5,15 @@ const hideSensitive = require('./lib/hide-sensitive');
 const stringList = {
   type: 'string',
   array: true,
-  coerce: values =>
+  coerce: (values) =>
     values.length === 1 && values[0].trim() === 'false'
       ? []
-      : values.reduce((values, value) => values.concat(value.split(',').map(value => value.trim())), []),
+      : values.reduce((values, value) => values.concat(value.split(',').map((value) => value.trim())), []),
 };
 
 module.exports = async () => {
   const cli = require('yargs')
-    .command('$0', 'Run automated package publishing', yargs => {
+    .command('$0', 'Run automated package publishing', (yargs) => {
       yargs.demandCommand(0, 0).usage(`Run automated package publishing
 
 Usage:

@@ -26,7 +26,7 @@ const {
 const requireNoCache = proxyquire.noPreserveCache();
 const pluginNoop = require.resolve('./fixtures/plugin-noop');
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   // Stub the logger functions
   t.context.log = spy();
   t.context.error = spy();
@@ -41,7 +41,7 @@ test.beforeEach(t => {
   };
 });
 
-test('Plugins are called with expected values', async t => {
+test('Plugins are called with expected values', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd, repositoryUrl} = await gitRepo(true);
   // Add commits to the master branch
@@ -390,7 +390,7 @@ test('Plugins are called with expected values', async t => {
   t.is(env.GIT_COMMITTER_EMAIL, COMMIT_EMAIL);
 });
 
-test('Use custom tag format', async t => {
+test('Use custom tag format', async (t) => {
   const {cwd, repositoryUrl} = await gitRepo(true);
   await gitCommits(['First'], {cwd});
   await gitTagVersion('test-1.0.0', undefined, {cwd});
@@ -437,7 +437,7 @@ test('Use custom tag format', async t => {
   t.is(await gitRemoteTagHead(repositoryUrl, nextRelease.gitTag, {cwd}), nextRelease.gitHead);
 });
 
-test('Use new gitHead, and recreate release notes if a prepare plugin create a commit', async t => {
+test('Use new gitHead, and recreate release notes if a prepare plugin create a commit', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd, repositoryUrl} = await gitRepo(true);
   // Add commits to the master branch
@@ -511,7 +511,7 @@ test('Use new gitHead, and recreate release notes if a prepare plugin create a c
   t.is(await gitRemoteTagHead(repositoryUrl, nextRelease.gitTag, {cwd}), commits[0].hash);
 });
 
-test('Make a new release when a commit is forward-ported to an upper branch', async t => {
+test('Make a new release when a commit is forward-ported to an upper branch', async (t) => {
   const {cwd, repositoryUrl} = await gitRepo(true);
   await gitCommits(['feat: initial release'], {cwd});
   await gitTagVersion('v1.0.0', undefined, {cwd});
@@ -558,7 +558,7 @@ test('Make a new release when a commit is forward-ported to an upper branch', as
   t.is(success.callCount, 1);
 });
 
-test('Publish a pre-release version', async t => {
+test('Publish a pre-release version', async (t) => {
   const {cwd, repositoryUrl} = await gitRepo(true);
   await gitCommits(['feat: initial commit'], {cwd});
   await gitTagVersion('v1.0.0', undefined, {cwd});
@@ -605,7 +605,7 @@ test('Publish a pre-release version', async t => {
   t.is(await gitGetNote('v1.1.0-beta.2', {cwd}), '{"channels":["beta"]}');
 });
 
-test('Publish releases from different branch on the same channel', async t => {
+test('Publish releases from different branch on the same channel', async (t) => {
   const {cwd, repositoryUrl} = await gitRepo(true);
   await gitCommits(['feat: initial commit'], {cwd});
   await gitTagVersion('v1.0.0', undefined, {cwd});
@@ -668,7 +668,7 @@ test('Publish releases from different branch on the same channel', async t => {
   t.is(addChannel.callCount, 0);
 });
 
-test('Publish pre-releases the same channel as regular releases', async t => {
+test('Publish pre-releases the same channel as regular releases', async (t) => {
   const {cwd, repositoryUrl} = await gitRepo(true);
   await gitCommits(['feat: initial commit'], {cwd});
   await gitTagVersion('v1.0.0', undefined, {cwd});
@@ -716,7 +716,7 @@ test('Publish pre-releases the same channel as regular releases', async t => {
   t.is(releases[0].gitTag, 'v1.1.0-beta.2');
 });
 
-test('Do not add pre-releases to a different channel', async t => {
+test('Do not add pre-releases to a different channel', async (t) => {
   const {cwd, repositoryUrl} = await gitRepo(true);
   await gitCommits(['feat: initial release'], {cwd});
   await gitTagVersion('v1.0.0', undefined, {cwd});
@@ -844,13 +844,13 @@ async function addChannelMacro(t, mergeFunction) {
   t.is(await gitRemoteTagHead(repositoryUrl, nextRelease.gitTag, {cwd}), nextRelease.gitHead);
 }
 
-addChannelMacro.title = providedTitle => `Add version to a channel after a merge (${providedTitle})`;
+addChannelMacro.title = (providedTitle) => `Add version to a channel after a merge (${providedTitle})`;
 
 test('fast-forward', addChannelMacro, mergeFf);
 test('non fast-forward', addChannelMacro, merge);
 test('rebase', addChannelMacro, rebase);
 
-test('Call all "success" plugins even if one errors out', async t => {
+test('Call all "success" plugins even if one errors out', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd, repositoryUrl} = await gitRepo(true);
   // Add commits to the master branch
@@ -916,7 +916,7 @@ test('Call all "success" plugins even if one errors out', async t => {
   ]);
 });
 
-test('Log all "verifyConditions" errors', async t => {
+test('Log all "verifyConditions" errors', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd, repositoryUrl} = await gitRepo(true);
   // Add commits to the master branch
@@ -957,7 +957,7 @@ test('Log all "verifyConditions" errors', async t => {
   t.deepEqual(fail.args[0][1].errors, [error2, error3]);
 });
 
-test('Log all "verifyRelease" errors', async t => {
+test('Log all "verifyRelease" errors', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd, repositoryUrl} = await gitRepo(true);
   // Add commits to the master branch
@@ -998,7 +998,7 @@ test('Log all "verifyRelease" errors', async t => {
   t.deepEqual(fail.args[0][1].errors, [error1, error2]);
 });
 
-test('Dry-run skips addChannel, prepare, publish and success', async t => {
+test('Dry-run skips addChannel, prepare, publish and success', async (t) => {
   const {cwd, repositoryUrl} = await gitRepo(true);
   await gitCommits(['First'], {cwd});
   await gitTagVersion('v1.0.0', undefined, {cwd});
@@ -1064,7 +1064,7 @@ test('Dry-run skips addChannel, prepare, publish and success', async t => {
   t.true(t.context.warn.calledWith(`Skip step "success" of plugin "[Function: ${success.name}]" in dry-run mode`));
 });
 
-test('Dry-run skips fail', async t => {
+test('Dry-run skips fail', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd, repositoryUrl} = await gitRepo(true);
   // Add commits to the master branch
@@ -1104,7 +1104,7 @@ test('Dry-run skips fail', async t => {
   t.true(t.context.warn.calledWith(`Skip step "fail" of plugin "[Function: ${fail.name}]" in dry-run mode`));
 });
 
-test('Force a dry-run if not on a CI and "noCi" is not explicitly set', async t => {
+test('Force a dry-run if not on a CI and "noCi" is not explicitly set', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd, repositoryUrl} = await gitRepo(true);
   // Add commits to the master branch
@@ -1169,7 +1169,7 @@ test('Force a dry-run if not on a CI and "noCi" is not explicitly set', async t 
   t.is(success.callCount, 0);
 });
 
-test('Dry-run does not print changelog if "generateNotes" return "undefined"', async t => {
+test('Dry-run does not print changelog if "generateNotes" return "undefined"', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd, repositoryUrl} = await gitRepo(true);
   // Add commits to the master branch
@@ -1213,7 +1213,7 @@ test('Dry-run does not print changelog if "generateNotes" return "undefined"', a
   t.deepEqual(t.context.log.args[t.context.log.args.length - 1], ['Release note for version 2.0.0:']);
 });
 
-test('Allow local releases with "noCi" option', async t => {
+test('Allow local releases with "noCi" option', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd, repositoryUrl} = await gitRepo(true);
   // Add commits to the master branch
@@ -1282,7 +1282,7 @@ test('Allow local releases with "noCi" option', async t => {
   t.is(success.callCount, 1);
 });
 
-test('Accept "undefined" value returned by "generateNotes" and "false" by "publish" and "addChannel"', async t => {
+test('Accept "undefined" value returned by "generateNotes" and "false" by "publish" and "addChannel"', async (t) => {
   const {cwd, repositoryUrl} = await gitRepo(true);
   await gitCommits(['First'], {cwd});
   await gitTagVersion('v1.0.0', undefined, {cwd});
@@ -1351,7 +1351,7 @@ test('Accept "undefined" value returned by "generateNotes" and "false" by "publi
   t.deepEqual(success.args[1][1].releases, [{pluginName: '[Function: functionStub]'}]);
 });
 
-test('Returns false if triggered by a PR', async t => {
+test('Returns false if triggered by a PR', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd, repositoryUrl} = await gitRepo(true);
 
@@ -1372,7 +1372,7 @@ test('Returns false if triggered by a PR', async t => {
   );
 });
 
-test('Throws "EINVALIDNEXTVERSION" if next release is out of range of the current maintenance branch', async t => {
+test('Throws "EINVALIDNEXTVERSION" if next release is out of range of the current maintenance branch', async (t) => {
   const {cwd, repositoryUrl} = await gitRepo(true);
   await gitCommits(['feat: initial commit'], {cwd});
   await gitTagVersion('v1.0.0', undefined, {cwd});
@@ -1423,7 +1423,7 @@ test('Throws "EINVALIDNEXTVERSION" if next release is out of range of the curren
   t.regex(error.details, /A valid branch could be `master`./);
 });
 
-test('Throws "EINVALIDNEXTVERSION" if next release is out of range of the current release branch', async t => {
+test('Throws "EINVALIDNEXTVERSION" if next release is out of range of the current release branch', async (t) => {
   const {cwd, repositoryUrl} = await gitRepo(true);
   await gitCommits(['feat: initial commit'], {cwd});
   await gitTagVersion('v1.0.0', undefined, {cwd});
@@ -1475,7 +1475,7 @@ test('Throws "EINVALIDNEXTVERSION" if next release is out of range of the curren
   t.regex(error.details, /A valid branch could be `next` or `next-major`./);
 });
 
-test('Throws "EINVALIDMAINTENANCEMERGE" if merge an out of range release in a maintenance branch', async t => {
+test('Throws "EINVALIDMAINTENANCEMERGE" if merge an out of range release in a maintenance branch', async (t) => {
   const {cwd, repositoryUrl} = await gitRepo(true);
   await gitCommits(['First'], {cwd});
   await gitTagVersion('v1.0.0', undefined, {cwd});
@@ -1545,7 +1545,7 @@ test('Throws "EINVALIDMAINTENANCEMERGE" if merge an out of range release in a ma
   t.truthy(errors[0].details);
 });
 
-test('Returns false value if triggered on an outdated clone', async t => {
+test('Returns false value if triggered on an outdated clone', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   let {cwd, repositoryUrl} = await gitRepo(true);
   const repoDir = cwd;
@@ -1573,7 +1573,7 @@ test('Returns false value if triggered on an outdated clone', async t => {
   ]);
 });
 
-test('Returns false if not running from the configured branch', async t => {
+test('Returns false if not running from the configured branch', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd, repositoryUrl} = await gitRepo(true);
   const options = {
@@ -1609,7 +1609,7 @@ test('Returns false if not running from the configured branch', async t => {
   );
 });
 
-test('Returns false if there is no relevant changes', async t => {
+test('Returns false if there is no relevant changes', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd, repositoryUrl} = await gitRepo(true);
   // Add commits to the master branch
@@ -1658,7 +1658,7 @@ test('Returns false if there is no relevant changes', async t => {
   );
 });
 
-test('Exclude commits with [skip release] or [release skip] from analysis', async t => {
+test('Exclude commits with [skip release] or [release skip] from analysis', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd, repositoryUrl} = await gitRepo(true);
   // Add commits to the master branch
@@ -1707,7 +1707,7 @@ test('Exclude commits with [skip release] or [release skip] from analysis', asyn
   t.deepEqual(analyzeCommits.args[0][1].commits[0], commits[commits.length - 1]);
 });
 
-test('Log both plugins errors and errors thrown by "fail" plugin', async t => {
+test('Log both plugins errors and errors thrown by "fail" plugin', async (t) => {
   const {cwd, repositoryUrl} = await gitRepo(true);
   const pluginError = new SemanticReleaseError('Plugin error', 'ERR');
   const failError1 = new Error('Fail error 1');
@@ -1733,7 +1733,7 @@ test('Log both plugins errors and errors thrown by "fail" plugin', async t => {
   t.is(t.context.error.args[t.context.error.args.length - 2][1], failError2);
 });
 
-test('Call "fail" only if a plugin returns a SemanticReleaseError', async t => {
+test('Call "fail" only if a plugin returns a SemanticReleaseError', async (t) => {
   const {cwd, repositoryUrl} = await gitRepo(true);
   const pluginError = new Error('Plugin error');
   const fail = stub().resolves();
@@ -1757,7 +1757,7 @@ test('Call "fail" only if a plugin returns a SemanticReleaseError', async t => {
   t.is(t.context.error.args[t.context.error.args.length - 1][1], pluginError);
 });
 
-test('Throw SemanticReleaseError if repositoryUrl is not set and cannot be found from repo config', async t => {
+test('Throw SemanticReleaseError if repositoryUrl is not set and cannot be found from repo config', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
 
@@ -1778,7 +1778,7 @@ test('Throw SemanticReleaseError if repositoryUrl is not set and cannot be found
   t.truthy(errors[0].details);
 });
 
-test('Throw an Error if plugin returns an unexpected value', async t => {
+test('Throw an Error if plugin returns an unexpected value', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd, repositoryUrl} = await gitRepo(true);
   // Add commits to the master branch
@@ -1812,7 +1812,7 @@ test('Throw an Error if plugin returns an unexpected value', async t => {
   t.regex(error.details, /string/);
 });
 
-test('Hide sensitive information passed to "fail" plugin', async t => {
+test('Hide sensitive information passed to "fail" plugin', async (t) => {
   const {cwd, repositoryUrl} = await gitRepo(true);
 
   const fail = stub().resolves();
@@ -1844,14 +1844,14 @@ test('Hide sensitive information passed to "fail" plugin', async t => {
   t.is(error.message, `Message: Exposing token ${SECRET_REPLACEMENT}`);
   t.is(error.details, `Details: Exposing token ${SECRET_REPLACEMENT}`);
 
-  Object.getOwnPropertyNames(error).forEach(prop => {
+  Object.getOwnPropertyNames(error).forEach((prop) => {
     if (isString(error[prop])) {
       t.notRegex(error[prop], new RegExp(escapeRegExp(env.MY_TOKEN)));
     }
   });
 });
 
-test('Hide sensitive information passed to "success" plugin', async t => {
+test('Hide sensitive information passed to "success" plugin', async (t) => {
   const {cwd, repositoryUrl} = await gitRepo(true);
   await gitCommits(['feat: initial release'], {cwd});
   await gitTagVersion('v1.0.0', undefined, {cwd});
@@ -1887,14 +1887,14 @@ test('Hide sensitive information passed to "success" plugin', async t => {
   t.is(release.name, `Name: Exposing token ${SECRET_REPLACEMENT}`);
   t.is(release.url, `URL: Exposing token ${SECRET_REPLACEMENT}`);
 
-  Object.getOwnPropertyNames(release).forEach(prop => {
+  Object.getOwnPropertyNames(release).forEach((prop) => {
     if (isString(release[prop])) {
       t.notRegex(release[prop], new RegExp(escapeRegExp(env.MY_TOKEN)));
     }
   });
 });
 
-test('Get all commits including the ones not in the shallow clone', async t => {
+test('Get all commits including the ones not in the shallow clone', async (t) => {
   let {cwd, repositoryUrl} = await gitRepo(true);
   await gitTagVersion('v1.0.0', undefined, {cwd});
   await gitCommits(['First', 'Second', 'Third'], {cwd});

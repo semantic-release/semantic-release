@@ -2,7 +2,7 @@ const test = require('ava');
 const getTags = require('../../lib/branches/get-tags');
 const {gitRepo, gitCommits, gitTagVersion, gitCheckout, gitAddNote} = require('../helpers/git-utils');
 
-test('Get the valid tags', async t => {
+test('Get the valid tags', async (t) => {
   const {cwd} = await gitRepo();
   const commits = await gitCommits(['First'], {cwd});
   await gitTagVersion('foo', undefined, {cwd});
@@ -28,7 +28,7 @@ test('Get the valid tags', async t => {
   ]);
 });
 
-test('Get the valid tags from multiple branches', async t => {
+test('Get the valid tags from multiple branches', async (t) => {
   const {cwd} = await gitRepo();
   await gitCommits(['First'], {cwd});
   await gitTagVersion('v1.0.0', undefined, {cwd});
@@ -71,7 +71,7 @@ test('Get the valid tags from multiple branches', async t => {
   ]);
 });
 
-test('Return branches with and empty tags array if no valid tag is found', async t => {
+test('Return branches with and empty tags array if no valid tag is found', async (t) => {
   const {cwd} = await gitRepo();
   await gitCommits(['First'], {cwd});
   await gitTagVersion('foo', undefined, {cwd});
@@ -85,7 +85,7 @@ test('Return branches with and empty tags array if no valid tag is found', async
   t.deepEqual(result, [{name: 'master', tags: []}]);
 });
 
-test('Return branches with and empty tags array if no valid tag is found in history of configured branches', async t => {
+test('Return branches with and empty tags array if no valid tag is found in history of configured branches', async (t) => {
   const {cwd} = await gitRepo();
   await gitCommits(['First'], {cwd});
   await gitCheckout('next', true, {cwd});
@@ -108,7 +108,7 @@ test('Return branches with and empty tags array if no valid tag is found in hist
   ]);
 });
 
-test('Get the highest valid tag corresponding to the "tagFormat"', async t => {
+test('Get the highest valid tag corresponding to the "tagFormat"', async (t) => {
   const {cwd} = await gitRepo();
   await gitCommits(['First'], {cwd});
 

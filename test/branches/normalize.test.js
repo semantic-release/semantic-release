@@ -1,9 +1,9 @@
 const test = require('ava');
 const normalize = require('../../lib/branches/normalize');
 
-const toTags = versions => versions.map(version => ({version}));
+const toTags = (versions) => versions.map((version) => ({version}));
 
-test('Maintenance branches - initial state', t => {
+test('Maintenance branches - initial state', (t) => {
   const maintenance = [
     {name: '1.x', channel: '1.x', tags: []},
     {name: '1.1.x', tags: []},
@@ -48,7 +48,7 @@ test('Maintenance branches - initial state', t => {
   );
 });
 
-test('Maintenance branches - cap range to first release present on default branch and not in any Maintenance one', t => {
+test('Maintenance branches - cap range to first release present on default branch and not in any Maintenance one', (t) => {
   const maintenance = [
     {name: '1.x', tags: toTags(['1.0.0', '1.1.0', '1.1.1', '1.2.0', '1.2.1', '1.3.0', '1.4.0', '1.5.0'])},
     {name: 'name', range: '1.1.x', tags: toTags(['1.0.0', '1.0.1', '1.1.0', '1.1.1'])},
@@ -110,7 +110,7 @@ test('Maintenance branches - cap range to first release present on default branc
   );
 });
 
-test('Maintenance branches - cap range to default branch last release if all release are also present on maintenance branch', t => {
+test('Maintenance branches - cap range to default branch last release if all release are also present on maintenance branch', (t) => {
   const maintenance = [
     {name: '1.x', tags: toTags(['1.0.0', '1.2.0', '1.3.0'])},
     {name: '2.x.x', tags: toTags(['1.0.0', '1.2.0', '1.3.0', '2.0.0'])},
@@ -147,7 +147,7 @@ test('Maintenance branches - cap range to default branch last release if all rel
   );
 });
 
-test('Release branches - initial state', t => {
+test('Release branches - initial state', (t) => {
   const release = [
     {name: 'master', tags: []},
     {name: 'next', channel: 'next', tags: []},
@@ -187,7 +187,7 @@ test('Release branches - initial state', t => {
   );
 });
 
-test('Release branches - 3 release branches', t => {
+test('Release branches - 3 release branches', (t) => {
   const release = [
     {name: 'master', tags: toTags(['1.0.0', '1.0.1', '1.0.2'])},
     {name: 'next', tags: toTags(['1.0.0', '1.0.1', '1.0.2', '1.1.0', '1.2.0'])},
@@ -220,7 +220,7 @@ test('Release branches - 3 release branches', t => {
   );
 });
 
-test('Release branches - 2 release branches', t => {
+test('Release branches - 2 release branches', (t) => {
   const release = [
     {name: 'master', tags: toTags(['1.0.0', '1.0.1', '1.1.0', '1.1.1', '1.2.0'])},
     {name: 'next', tags: toTags(['1.0.0', '1.0.1', '1.1.0', '1.1.1', '1.2.0', '2.0.0', '2.0.1', '2.1.0'])},
@@ -251,7 +251,7 @@ test('Release branches - 2 release branches', t => {
   );
 });
 
-test('Release branches - 1 release branches', t => {
+test('Release branches - 1 release branches', (t) => {
   const release = [{name: 'master', tags: toTags(['1.0.0', '1.1.0', '1.1.1', '1.2.0'])}];
 
   t.deepEqual(
@@ -260,7 +260,7 @@ test('Release branches - 1 release branches', t => {
   );
 });
 
-test('Release branches - cap ranges to first release only present on following branch', t => {
+test('Release branches - cap ranges to first release only present on following branch', (t) => {
   const release = [
     {name: 'master', tags: toTags(['1.0.0', '1.1.0', '1.2.0', '2.0.0'])},
     {name: 'next', tags: toTags(['1.0.0', '1.1.0', '1.2.0', '2.0.0', '2.1.0'])},
@@ -286,7 +286,7 @@ test('Release branches - cap ranges to first release only present on following b
   );
 });
 
-test('Release branches - Handle missing previous tags in branch history', t => {
+test('Release branches - Handle missing previous tags in branch history', (t) => {
   const release = [
     {name: 'master', tags: toTags(['1.0.0', '2.0.0'])},
     {name: 'next', tags: toTags(['1.0.0', '1.1.0', '1.1.1', '1.2.0', '2.0.0'])},
@@ -317,7 +317,7 @@ test('Release branches - Handle missing previous tags in branch history', t => {
   );
 });
 
-test('Release branches - limit releases on 2nd and 3rd branch based on 1st branch last release', t => {
+test('Release branches - limit releases on 2nd and 3rd branch based on 1st branch last release', (t) => {
   const release = [
     {name: 'master', tags: toTags(['1.0.0', '1.1.0', '2.0.0', '3.0.0'])},
     {name: 'next', tags: toTags(['1.0.0', '1.1.0'])},
@@ -357,7 +357,7 @@ test('Release branches - limit releases on 2nd and 3rd branch based on 1st branc
   );
 });
 
-test('Prerelease branches', t => {
+test('Prerelease branches', (t) => {
   const prerelease = [
     {name: 'beta', channel: 'beta', prerelease: true, tags: []},
     {name: 'alpha', prerelease: 'preview', tags: []},
@@ -372,7 +372,7 @@ test('Prerelease branches', t => {
   );
 });
 
-test('Allow to set channel to "false" to prevent default', t => {
+test('Allow to set channel to "false" to prevent default', (t) => {
   const maintenance = [{name: '1.x', channel: false, tags: []}];
   const release = [
     {name: 'master', channel: false, tags: []},

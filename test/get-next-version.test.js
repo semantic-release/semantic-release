@@ -2,13 +2,13 @@ const test = require('ava');
 const {stub} = require('sinon');
 const getNextVersion = require('../lib/get-next-version');
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   // Stub the logger functions
   t.context.log = stub();
   t.context.logger = {log: t.context.log};
 });
 
-test('Increase version for patch release', t => {
+test('Increase version for patch release', (t) => {
   t.is(
     getNextVersion({
       branch: {name: 'master', type: 'release', tags: [{gitTag: 'v1.0.0', version: '1.0.0', channels: [null]}]},
@@ -20,7 +20,7 @@ test('Increase version for patch release', t => {
   );
 });
 
-test('Increase version for minor release', t => {
+test('Increase version for minor release', (t) => {
   t.is(
     getNextVersion({
       branch: {name: 'master', type: 'release', tags: [{gitTag: 'v1.0.0', version: '1.0.0', channels: [null]}]},
@@ -32,7 +32,7 @@ test('Increase version for minor release', t => {
   );
 });
 
-test('Increase version for major release', t => {
+test('Increase version for major release', (t) => {
   t.is(
     getNextVersion({
       branch: {name: 'master', type: 'release', tags: [{gitTag: 'v1.0.0', version: '1.0.0', channels: [null]}]},
@@ -44,7 +44,7 @@ test('Increase version for major release', t => {
   );
 });
 
-test('Return 1.0.0 if there is no previous release', t => {
+test('Return 1.0.0 if there is no previous release', (t) => {
   t.is(
     getNextVersion({
       branch: {name: 'master', type: 'release', tags: []},
@@ -56,7 +56,7 @@ test('Return 1.0.0 if there is no previous release', t => {
   );
 });
 
-test('Increase version for patch release on prerelease branch', t => {
+test('Increase version for patch release on prerelease branch', (t) => {
   t.is(
     getNextVersion({
       branch: {
@@ -106,7 +106,7 @@ test('Increase version for patch release on prerelease branch', t => {
   );
 });
 
-test('Increase version for minor release on prerelease branch', t => {
+test('Increase version for minor release on prerelease branch', (t) => {
   t.is(
     getNextVersion({
       branch: {
@@ -156,7 +156,7 @@ test('Increase version for minor release on prerelease branch', t => {
   );
 });
 
-test('Increase version for major release on prerelease branch', t => {
+test('Increase version for major release on prerelease branch', (t) => {
   t.is(
     getNextVersion({
       branch: {
@@ -206,7 +206,7 @@ test('Increase version for major release on prerelease branch', t => {
   );
 });
 
-test('Return 1.0.0 if there is no previous release on prerelease branch', t => {
+test('Return 1.0.0 if there is no previous release on prerelease branch', (t) => {
   t.is(
     getNextVersion({
       branch: {name: 'beta', type: 'prerelease', prerelease: 'beta', tags: []},
@@ -218,7 +218,7 @@ test('Return 1.0.0 if there is no previous release on prerelease branch', t => {
   );
 });
 
-test('Increase version for release on prerelease branch after previous commits were merged to release branch', t => {
+test('Increase version for release on prerelease branch after previous commits were merged to release branch', (t) => {
   t.is(
     getNextVersion({
       branch: {
@@ -239,7 +239,7 @@ test('Increase version for release on prerelease branch after previous commits w
   );
 });
 
-test('Increase version for release on prerelease branch based on highest commit type since last regular release', t => {
+test('Increase version for release on prerelease branch based on highest commit type since last regular release', (t) => {
   t.is(
     getNextVersion({
       branch: {
@@ -259,7 +259,7 @@ test('Increase version for release on prerelease branch based on highest commit 
   );
 });
 
-test('Increase version for release on prerelease branch when there is no regular releases on other branches', t => {
+test('Increase version for release on prerelease branch when there is no regular releases on other branches', (t) => {
   t.is(
     getNextVersion({
       branch: {

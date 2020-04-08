@@ -214,7 +214,7 @@ async function run(context, plugins) {
 }
 
 function logErrors({logger, stderr}, err) {
-  const errors = extractErrors(err).sort(error => (error.semanticRelease ? -1 : 0));
+  const errors = extractErrors(err).sort((error) => (error.semanticRelease ? -1 : 0));
   for (const error of errors) {
     if (error.semanticRelease) {
       logger.error(`${error.code} ${error.message}`);
@@ -228,7 +228,7 @@ function logErrors({logger, stderr}, err) {
 }
 
 async function callFail(context, plugins, err) {
-  const errors = extractErrors(err).filter(err => err.semanticRelease);
+  const errors = extractErrors(err).filter((err) => err.semanticRelease);
   if (errors.length > 0) {
     try {
       await plugins.fail({...context, errors});

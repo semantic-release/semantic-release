@@ -36,7 +36,7 @@ const {
   initGit,
 } = require('./helpers/git-utils');
 
-test('Get the last commit sha', async t => {
+test('Get the last commit sha', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
   // Add commits to the master branch
@@ -47,14 +47,14 @@ test('Get the last commit sha', async t => {
   t.is(result, commits[0].hash);
 });
 
-test('Throw error if the last commit sha cannot be found', async t => {
+test('Throw error if the last commit sha cannot be found', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
 
   await t.throwsAsync(getGitHead({cwd}));
 });
 
-test('Unshallow and fetch repository', async t => {
+test('Unshallow and fetch repository', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   let {cwd, repositoryUrl} = await gitRepo();
   // Add commits to the master branch
@@ -71,7 +71,7 @@ test('Unshallow and fetch repository', async t => {
   t.is((await gitGetCommits(undefined, {cwd})).length, 2);
 });
 
-test('Do not throw error when unshallow a complete repository', async t => {
+test('Do not throw error when unshallow a complete repository', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd, repositoryUrl} = await gitRepo(true);
   await gitCommits(['First'], {cwd});
@@ -84,7 +84,7 @@ test('Do not throw error when unshallow a complete repository', async t => {
   await t.notThrowsAsync(fetch(repositoryUrl, 'second-branch', 'master', {cwd}));
 });
 
-test('Fetch all tags on a detached head repository', async t => {
+test('Fetch all tags on a detached head repository', async (t) => {
   let {cwd, repositoryUrl} = await gitRepo();
 
   await gitCommits(['First'], {cwd});
@@ -101,7 +101,7 @@ test('Fetch all tags on a detached head repository', async t => {
   t.deepEqual((await getTags('master', {cwd})).sort(), ['v1.0.0', 'v1.0.1', 'v1.1.0'].sort());
 });
 
-test('Fetch all tags on a repository with a detached head from branch (CircleCI)', async t => {
+test('Fetch all tags on a repository with a detached head from branch (CircleCI)', async (t) => {
   let {cwd, repositoryUrl} = await gitRepo();
 
   await gitCommits(['First'], {cwd});
@@ -126,7 +126,7 @@ test('Fetch all tags on a repository with a detached head from branch (CircleCI)
   t.deepEqual((await getTags('master', {cwd})).sort(), ['v1.0.0', 'v1.0.1', 'v1.1.0', 'v2.0.0'].sort());
 });
 
-test('Fetch all tags on a detached head repository with outdated cached repo (GitLab CI)', async t => {
+test('Fetch all tags on a detached head repository with outdated cached repo (GitLab CI)', async (t) => {
   const {cwd, repositoryUrl} = await gitRepo();
 
   await gitCommits(['First'], {cwd});
@@ -154,7 +154,7 @@ test('Fetch all tags on a detached head repository with outdated cached repo (Gi
   t.deepEqual((await getTags('master', {cwd: cloneCwd})).sort(), ['v1.0.0', 'v1.0.1', 'v1.1.0', 'v1.2.0'].sort());
 });
 
-test('Verify if a branch exists', async t => {
+test('Verify if a branch exists', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
   // Add commits to the master branch
@@ -169,7 +169,7 @@ test('Verify if a branch exists', async t => {
   t.falsy(await isRefExists('next', {cwd}));
 });
 
-test('Get all branches', async t => {
+test('Get all branches', async (t) => {
   const {cwd, repositoryUrl} = await gitRepo(true);
   await gitCommits(['First'], {cwd});
   await gitPush(repositoryUrl, 'master', {cwd});
@@ -183,12 +183,12 @@ test('Get all branches', async t => {
   t.deepEqual((await getBranches(repositoryUrl, {cwd})).sort(), ['master', 'second-branch', 'third-branch'].sort());
 });
 
-test('Return empty array if there are no branches', async t => {
+test('Return empty array if there are no branches', async (t) => {
   const {cwd, repositoryUrl} = await initGit(true);
   t.deepEqual(await getBranches(repositoryUrl, {cwd}), []);
 });
 
-test('Get the commit sha for a given tag', async t => {
+test('Get the commit sha for a given tag', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
   // Add commits to the master branch
@@ -199,7 +199,7 @@ test('Get the commit sha for a given tag', async t => {
   t.is(await getTagHead('v1.0.0', {cwd}), commits[0].hash);
 });
 
-test('Return git remote repository url from config', async t => {
+test('Return git remote repository url from config', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
   // Add remote.origin.url config
@@ -208,7 +208,7 @@ test('Return git remote repository url from config', async t => {
   t.is(await repoUrl({cwd}), 'git@hostname.com:owner/package.git');
 });
 
-test('Return git remote repository url set while cloning', async t => {
+test('Return git remote repository url set while cloning', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   let {cwd, repositoryUrl} = await gitRepo();
   await gitCommits(['First'], {cwd});
@@ -218,14 +218,14 @@ test('Return git remote repository url set while cloning', async t => {
   t.is(await repoUrl({cwd}), repositoryUrl);
 });
 
-test('Return falsy if git repository url is not set', async t => {
+test('Return falsy if git repository url is not set', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
 
   t.falsy(await repoUrl({cwd}));
 });
 
-test('Add tag on head commit', async t => {
+test('Add tag on head commit', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
   const commits = await gitCommits(['Test commit'], {cwd});
@@ -235,7 +235,7 @@ test('Add tag on head commit', async t => {
   await t.is(await gitCommitTag(commits[0].hash, {cwd}), 'tag_name');
 });
 
-test('Push tag to remote repository', async t => {
+test('Push tag to remote repository', async (t) => {
   // Create a git repository with a remote, set the current working directory at the root of the repo
   const {cwd, repositoryUrl} = await gitRepo(true);
   const commits = await gitCommits(['Test commit'], {cwd});
@@ -246,7 +246,7 @@ test('Push tag to remote repository', async t => {
   t.is(await gitRemoteTagHead(repositoryUrl, 'tag_name', {cwd}), commits[0].hash);
 });
 
-test('Push tag to remote repository with remote branch ahead', async t => {
+test('Push tag to remote repository with remote branch ahead', async (t) => {
   const {cwd, repositoryUrl} = await gitRepo(true);
   const commits = await gitCommits(['First'], {cwd});
   await gitPush(repositoryUrl, 'master', {cwd});
@@ -260,40 +260,40 @@ test('Push tag to remote repository with remote branch ahead', async t => {
   t.is(await gitRemoteTagHead(repositoryUrl, 'tag_name', {cwd}), commits[0].hash);
 });
 
-test('Return "true" if in a Git repository', async t => {
+test('Return "true" if in a Git repository', async (t) => {
   // Create a git repository with a remote, set the current working directory at the root of the repo
   const {cwd} = await gitRepo(true);
 
   t.true(await isGitRepo({cwd}));
 });
 
-test('Return falsy if not in a Git repository', async t => {
+test('Return falsy if not in a Git repository', async (t) => {
   const cwd = tempy.directory();
 
   t.falsy(await isGitRepo({cwd}));
 });
 
-test('Return "true" for valid tag names', async t => {
+test('Return "true" for valid tag names', async (t) => {
   t.true(await verifyTagName('1.0.0'));
   t.true(await verifyTagName('v1.0.0'));
   t.true(await verifyTagName('tag_name'));
   t.true(await verifyTagName('tag/name'));
 });
 
-test('Return falsy for invalid tag names', async t => {
+test('Return falsy for invalid tag names', async (t) => {
   t.falsy(await verifyTagName('?1.0.0'));
   t.falsy(await verifyTagName('*1.0.0'));
   t.falsy(await verifyTagName('[1.0.0]'));
   t.falsy(await verifyTagName('1.0.0..'));
 });
 
-test('Throws error if obtaining the tags fails', async t => {
+test('Throws error if obtaining the tags fails', async (t) => {
   const cwd = tempy.directory();
 
   await t.throwsAsync(getTags('master', {cwd}));
 });
 
-test('Return "true" if repository is up to date', async t => {
+test('Return "true" if repository is up to date', async (t) => {
   const {cwd, repositoryUrl} = await gitRepo(true);
   await gitCommits(['First'], {cwd});
   await gitPush(repositoryUrl, 'master', {cwd});
@@ -301,7 +301,7 @@ test('Return "true" if repository is up to date', async t => {
   t.true(await isBranchUpToDate(repositoryUrl, 'master', {cwd}));
 });
 
-test('Return falsy if repository is not up to date', async t => {
+test('Return falsy if repository is not up to date', async (t) => {
   const {cwd, repositoryUrl} = await gitRepo(true);
   await gitCommits(['First'], {cwd});
   await gitCommits(['Second'], {cwd});
@@ -316,7 +316,7 @@ test('Return falsy if repository is not up to date', async t => {
   t.falsy(await isBranchUpToDate(repositoryUrl, 'master', {cwd}));
 });
 
-test('Return falsy if detached head repository is not up to date', async t => {
+test('Return falsy if detached head repository is not up to date', async (t) => {
   let {cwd, repositoryUrl} = await gitRepo();
 
   const [commit] = await gitCommits(['First'], {cwd});
@@ -328,7 +328,7 @@ test('Return falsy if detached head repository is not up to date', async t => {
   t.falsy(await isBranchUpToDate(repositoryUrl, 'master', {cwd}));
 });
 
-test('Get a commit note', async t => {
+test('Get a commit note', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
   // Add commits to the master branch
@@ -339,7 +339,7 @@ test('Get a commit note', async t => {
   t.deepEqual(await getNote(commits[0].hash, {cwd}), {note: 'note'});
 });
 
-test('Return empty object if there is no commit note', async t => {
+test('Return empty object if there is no commit note', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
   // Add commits to the master branch
@@ -348,7 +348,7 @@ test('Return empty object if there is no commit note', async t => {
   t.deepEqual(await getNote(commits[0].hash, {cwd}), {});
 });
 
-test('Throw error if a commit note in invalid', async t => {
+test('Throw error if a commit note in invalid', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
   // Add commits to the master branch
@@ -359,7 +359,7 @@ test('Throw error if a commit note in invalid', async t => {
   await t.throwsAsync(getNote(commits[0].hash, {cwd}));
 });
 
-test('Add a commit note', async t => {
+test('Add a commit note', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
   // Add commits to the master branch
@@ -370,7 +370,7 @@ test('Add a commit note', async t => {
   t.is(await gitGetNote(commits[0].hash, {cwd}), '{"note":"note"}');
 });
 
-test('Overwrite a commit note', async t => {
+test('Overwrite a commit note', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
   // Add commits to the master branch
@@ -382,7 +382,7 @@ test('Overwrite a commit note', async t => {
   t.is(await gitGetNote(commits[0].hash, {cwd}), '{"note":"note2"}');
 });
 
-test('Unshallow and fetch repository with notes', async t => {
+test('Unshallow and fetch repository with notes', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   let {cwd, repositoryUrl} = await gitRepo();
   // Add commits to the master branch
@@ -401,7 +401,7 @@ test('Unshallow and fetch repository with notes', async t => {
   t.is(await gitGetNote(commits[0].hash, {cwd}), '{"note":"note"}');
 });
 
-test('Fetch all notes on a detached head repository', async t => {
+test('Fetch all notes on a detached head repository', async (t) => {
   let {cwd, repositoryUrl} = await gitRepo();
 
   await gitCommits(['First'], {cwd});

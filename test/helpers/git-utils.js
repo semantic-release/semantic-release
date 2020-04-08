@@ -85,7 +85,7 @@ async function initBareRepo(repositoryUrl, branch = 'master') {
 async function gitCommits(messages, execaOptions) {
   await pEachSeries(
     messages,
-    async message =>
+    async (message) =>
       (await execa('git', ['commit', '-m', message, '--allow-empty', '--no-gpg-sign'], execaOptions)).stdout
   );
   return (await gitGetCommits(undefined, execaOptions)).slice(0, messages.length);
@@ -108,7 +108,7 @@ async function gitGetCommits(from, execaOptions) {
         {...execaOptions, env: {...process.env, ...execaOptions.env}}
       )
     )
-  ).map(commit => {
+  ).map((commit) => {
     commit.message = commit.message.trim();
     commit.gitTags = commit.gitTags.trim();
     return commit;
@@ -239,8 +239,8 @@ async function gitTagHead(tagName, execaOptions) {
 async function gitRemoteTagHead(repositoryUrl, tagName, execaOptions) {
   return (await execa('git', ['ls-remote', '--tags', repositoryUrl, tagName], execaOptions)).stdout
     .split('\n')
-    .filter(tag => Boolean(tag))
-    .map(tag => tag.match(/^(?<tag>\S+)/)[1])[0];
+    .filter((tag) => Boolean(tag))
+    .map((tag) => tag.match(/^(?<tag>\S+)/)[1])[0];
 }
 
 /**
