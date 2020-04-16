@@ -191,7 +191,7 @@ Yes, every commits that contains `[skip release]` or `[release skip]` in their m
 
 ## How can I change the type of commits that trigger a release?
 
-By default **semantic-release** uses the [Angular Commit Message Conventions](https://github.com/angular/angular.js/blob/master/DEVELOPERS.md#-git-commit-guidelines) and triggers releases based on the following rules:
+By default **semantic-release** uses the [Angular Commit Message Conventions](https://github.com/angular/angular/blob/master/CONTRIBUTING.md#commit) and triggers releases based on the following rules:
 
 | Commit                      | Release type               |
 |-----------------------------|----------------------------|
