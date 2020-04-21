@@ -15,12 +15,12 @@ const DEFAULT_PLUGINS = [
   '@semantic-release/github',
 ];
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   t.context.plugins = stub().returns({});
   t.context.getConfig = proxyquire('../lib/get-config', {'./plugins': t.context.plugins});
 });
 
-test('Default values, reading repositoryUrl from package.json', async t => {
+test('Default values, reading repositoryUrl from package.json', async (t) => {
   const pkg = {repository: 'https://host.null/owner/package.git'};
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo(true);
@@ -47,7 +47,7 @@ test('Default values, reading repositoryUrl from package.json', async t => {
   t.is(result.tagFormat, `v\${version}`);
 });
 
-test('Default values, reading repositoryUrl from repo if not set in package.json', async t => {
+test('Default values, reading repositoryUrl from repo if not set in package.json', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo(true);
   // Add remote.origin.url config
@@ -68,7 +68,7 @@ test('Default values, reading repositoryUrl from repo if not set in package.json
   t.is(result.tagFormat, `v\${version}`);
 });
 
-test('Default values, reading repositoryUrl (http url) from package.json if not set in repo', async t => {
+test('Default values, reading repositoryUrl (http url) from package.json if not set in repo', async (t) => {
   const pkg = {repository: 'https://host.null/owner/module.git'};
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
@@ -90,7 +90,7 @@ test('Default values, reading repositoryUrl (http url) from package.json if not 
   t.is(result.tagFormat, `v\${version}`);
 });
 
-test('Convert "ci" option to "noCi"', async t => {
+test('Convert "ci" option to "noCi"', async (t) => {
   const pkg = {repository: 'https://host.null/owner/module.git', release: {ci: false}};
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
@@ -102,7 +102,7 @@ test('Convert "ci" option to "noCi"', async t => {
   t.is(result.noCi, true);
 });
 
-test('Read options from package.json', async t => {
+test('Read options from package.json', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
   const options = {
@@ -125,7 +125,7 @@ test('Read options from package.json', async t => {
   t.deepEqual(t.context.plugins.args[0][0], {options: expected, cwd});
 });
 
-test('Read options from .releaserc.yml', async t => {
+test('Read options from .releaserc.yml', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
   const options = {
@@ -147,7 +147,7 @@ test('Read options from .releaserc.yml', async t => {
   t.deepEqual(t.context.plugins.args[0][0], {options: expected, cwd});
 });
 
-test('Read options from .releaserc.json', async t => {
+test('Read options from .releaserc.json', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
   const options = {
@@ -169,7 +169,7 @@ test('Read options from .releaserc.json', async t => {
   t.deepEqual(t.context.plugins.args[0][0], {options: expected, cwd});
 });
 
-test('Read options from .releaserc.js', async t => {
+test('Read options from .releaserc.js', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
   const options = {
@@ -191,7 +191,7 @@ test('Read options from .releaserc.js', async t => {
   t.deepEqual(t.context.plugins.args[0][0], {options: expected, cwd});
 });
 
-test('Read options from release.config.js', async t => {
+test('Read options from release.config.js', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
   const options = {
@@ -213,7 +213,7 @@ test('Read options from release.config.js', async t => {
   t.deepEqual(t.context.plugins.args[0][0], {options: expected, cwd});
 });
 
-test('Prioritise CLI/API parameters over file configuration and git repo', async t => {
+test('Prioritise CLI/API parameters over file configuration and git repo', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   let {cwd, repositoryUrl} = await gitRepo();
   await gitCommits(['First'], {cwd});
@@ -243,7 +243,7 @@ test('Prioritise CLI/API parameters over file configuration and git repo', async
   t.deepEqual(t.context.plugins.args[0][0], {options: expected, cwd});
 });
 
-test('Read configuration from file path in "extends"', async t => {
+test('Read configuration from file path in "extends"', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
   const pkgOptions = {extends: './shareable.json'};
@@ -274,7 +274,7 @@ test('Read configuration from file path in "extends"', async t => {
   });
 });
 
-test('Read configuration from module path in "extends"', async t => {
+test('Read configuration from module path in "extends"', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
   const pkgOptions = {extends: 'shareable'};
@@ -303,7 +303,7 @@ test('Read configuration from module path in "extends"', async t => {
   });
 });
 
-test('Read configuration from an array of paths in "extends"', async t => {
+test('Read configuration from an array of paths in "extends"', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
   const pkgOptions = {extends: ['./shareable1.json', './shareable2.json']};
@@ -342,7 +342,7 @@ test('Read configuration from an array of paths in "extends"', async t => {
   });
 });
 
-test('Prioritize configuration from config file over "extends"', async t => {
+test('Prioritize configuration from config file over "extends"', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
   const pkgOptions = {
@@ -378,7 +378,7 @@ test('Prioritize configuration from config file over "extends"', async t => {
   });
 });
 
-test('Prioritize configuration from cli/API options over "extends"', async t => {
+test('Prioritize configuration from cli/API options over "extends"', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
   const cliOptions = {
@@ -421,7 +421,7 @@ test('Prioritize configuration from cli/API options over "extends"', async t => 
   t.deepEqual(t.context.plugins.args[0][0], {options: expected, cwd});
 });
 
-test('Allow to unset properties defined in shareable config with "null"', async t => {
+test('Allow to unset properties defined in shareable config with "null"', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
   const pkgOptions = {
@@ -466,7 +466,7 @@ test('Allow to unset properties defined in shareable config with "null"', async 
   });
 });
 
-test('Allow to unset properties defined in shareable config with "undefined"', async t => {
+test('Allow to unset properties defined in shareable config with "undefined"', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
   const pkgOptions = {
@@ -502,7 +502,7 @@ test('Allow to unset properties defined in shareable config with "undefined"', a
   });
 });
 
-test('Throw an Error if one of the shareable config cannot be found', async t => {
+test('Throw an Error if one of the shareable config cannot be found', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
   const pkhOptions = {extends: ['./shareable1.json', 'non-existing-path']};

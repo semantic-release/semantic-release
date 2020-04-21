@@ -2,7 +2,7 @@ const test = require('ava');
 const plugins = require('../../lib/definitions/plugins');
 const {RELEASE_NOTES_SEPARATOR, SECRET_REPLACEMENT} = require('../../lib/definitions/constants');
 
-test('The "analyzeCommits" plugin output must be either undefined or a valid semver release type', t => {
+test('The "analyzeCommits" plugin output must be either undefined or a valid semver release type', (t) => {
   t.false(plugins.analyzeCommits.outputValidator('invalid'));
   t.false(plugins.analyzeCommits.outputValidator(1));
   t.false(plugins.analyzeCommits.outputValidator({}));
@@ -12,7 +12,7 @@ test('The "analyzeCommits" plugin output must be either undefined or a valid sem
   t.true(plugins.analyzeCommits.outputValidator('major'));
 });
 
-test('The "generateNotes" plugin output, if defined, must be a string', t => {
+test('The "generateNotes" plugin output, if defined, must be a string', (t) => {
   t.false(plugins.generateNotes.outputValidator(1));
   t.false(plugins.generateNotes.outputValidator({}));
 
@@ -22,7 +22,7 @@ test('The "generateNotes" plugin output, if defined, must be a string', t => {
   t.true(plugins.generateNotes.outputValidator('string'));
 });
 
-test('The "publish" plugin output, if defined, must be an object or "false"', t => {
+test('The "publish" plugin output, if defined, must be an object or "false"', (t) => {
   t.false(plugins.publish.outputValidator(1));
   t.false(plugins.publish.outputValidator('string'));
 
@@ -33,7 +33,7 @@ test('The "publish" plugin output, if defined, must be an object or "false"', t 
   t.true(plugins.publish.outputValidator(false));
 });
 
-test('The "addChannel" plugin output, if defined, must be an object', t => {
+test('The "addChannel" plugin output, if defined, must be an object', (t) => {
   t.false(plugins.addChannel.outputValidator(1));
   t.false(plugins.addChannel.outputValidator('string'));
 
@@ -43,7 +43,7 @@ test('The "addChannel" plugin output, if defined, must be an object', t => {
   t.true(plugins.addChannel.outputValidator(''));
 });
 
-test('The "generateNotes" plugins output are concatenated with separator and sensitive data is hidden', t => {
+test('The "generateNotes" plugins output are concatenated with separator and sensitive data is hidden', (t) => {
   const env = {MY_TOKEN: 'secret token'};
   t.is(plugins.generateNotes.postprocess(['note 1', 'note 2'], {env}), `note 1${RELEASE_NOTES_SEPARATOR}note 2`);
   t.is(plugins.generateNotes.postprocess(['', 'note'], {env}), 'note');
@@ -63,7 +63,7 @@ test('The "generateNotes" plugins output are concatenated with separator and sen
   );
 });
 
-test('The "analyzeCommits" plugins output are reduced to the highest release type', t => {
+test('The "analyzeCommits" plugins output are reduced to the highest release type', (t) => {
   t.is(plugins.analyzeCommits.postprocess(['major', 'minor']), 'major');
   t.is(plugins.analyzeCommits.postprocess(['', 'minor']), 'minor');
   t.is(plugins.analyzeCommits.postprocess([undefined, 'patch']), 'patch');

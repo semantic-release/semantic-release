@@ -1,7 +1,7 @@
 const test = require('ava');
 const getReleaseToAdd = require('../lib/get-release-to-add');
 
-test('Return versions merged from release to maintenance branch, excluding lower than branch start range', t => {
+test('Return versions merged from release to maintenance branch, excluding lower than branch start range', (t) => {
   const result = getReleaseToAdd({
     branch: {
       name: '2.x',
@@ -42,7 +42,7 @@ test('Return versions merged from release to maintenance branch, excluding lower
   });
 });
 
-test('Return versions merged between release branches', t => {
+test('Return versions merged between release branches', (t) => {
   const result = getReleaseToAdd({
     branch: {
       name: 'master',
@@ -83,7 +83,7 @@ test('Return versions merged between release branches', t => {
   });
 });
 
-test('Return releases sorted by ascending order', t => {
+test('Return releases sorted by ascending order', (t) => {
   const result = getReleaseToAdd({
     branch: {
       name: 'master',
@@ -118,7 +118,7 @@ test('Return releases sorted by ascending order', t => {
   });
 });
 
-test('No lastRelease', t => {
+test('No lastRelease', (t) => {
   const result = getReleaseToAdd({
     branch: {
       name: 'master',
@@ -149,7 +149,7 @@ test('No lastRelease', t => {
   });
 });
 
-test('Ignore pre-release versions', t => {
+test('Ignore pre-release versions', (t) => {
   const result = getReleaseToAdd({
     branch: {
       name: 'master',
@@ -188,7 +188,7 @@ test('Ignore pre-release versions', t => {
   });
 });
 
-test('Exclude versions merged from release to maintenance branch if they have the same "channel"', t => {
+test('Exclude versions merged from release to maintenance branch if they have the same "channel"', (t) => {
   const result = getReleaseToAdd({
     branch: {
       name: '2.x',
@@ -214,7 +214,7 @@ test('Exclude versions merged from release to maintenance branch if they have th
   t.is(result, undefined);
 });
 
-test('Exclude versions merged between release branches if they have the same "channel"', t => {
+test('Exclude versions merged between release branches if they have the same "channel"', (t) => {
   const result = getReleaseToAdd({
     branch: {
       name: 'master',
@@ -236,7 +236,7 @@ test('Exclude versions merged between release branches if they have the same "ch
   t.is(result, undefined);
 });
 
-test('Exclude versions merged between release branches if they all have "channel" set to "false"', t => {
+test('Exclude versions merged between release branches if they all have "channel" set to "false"', (t) => {
   const result = getReleaseToAdd({
     branch: {
       name: 'master',
@@ -258,7 +258,7 @@ test('Exclude versions merged between release branches if they all have "channel
   t.is(result, undefined);
 });
 
-test('Exclude versions number less than the latest version already released on that branch', t => {
+test('Exclude versions number less than the latest version already released on that branch', (t) => {
   const result = getReleaseToAdd({
     branch: {
       name: '2.x',

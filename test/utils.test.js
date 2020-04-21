@@ -17,14 +17,14 @@ const {
   isSameChannel,
 } = require('../lib/utils');
 
-test('extractErrors', t => {
+test('extractErrors', (t) => {
   const errors = [new Error('Error 1'), new Error('Error 2')];
 
   t.deepEqual(extractErrors(new AggregateError(errors)), errors);
   t.deepEqual(extractErrors(errors[0]), [errors[0]]);
 });
 
-test('tagsToVersions', t => {
+test('tagsToVersions', (t) => {
   t.deepEqual(tagsToVersions([{version: '1.0.0'}, {version: '1.1.0'}, {version: '1.2.0'}]), [
     '1.0.0',
     '1.1.0',
@@ -32,7 +32,7 @@ test('tagsToVersions', t => {
   ]);
 });
 
-test('isMajorRange', t => {
+test('isMajorRange', (t) => {
   t.false(isMajorRange('1.1.x'));
   t.false(isMajorRange('1.11.x'));
   t.false(isMajorRange('11.1.x'));
@@ -48,7 +48,7 @@ test('isMajorRange', t => {
   t.true(isMajorRange('1.X'));
 });
 
-test('isMaintenanceRange', t => {
+test('isMaintenanceRange', (t) => {
   t.true(isMaintenanceRange('1.1.x'));
   t.true(isMaintenanceRange('11.1.x'));
   t.true(isMaintenanceRange('11.11.x'));
@@ -69,7 +69,7 @@ test('isMaintenanceRange', t => {
   t.false(isMaintenanceRange('^1.0.0'));
 });
 
-test('getUpperBound', t => {
+test('getUpperBound', (t) => {
   t.is(getUpperBound('1.x.x'), '2.0.0');
   t.is(getUpperBound('1.X.X'), '2.0.0');
   t.is(getUpperBound('10.x.x'), '11.0.0');
@@ -84,7 +84,7 @@ test('getUpperBound', t => {
   t.is(getUpperBound('foo'), undefined);
 });
 
-test('getLowerBound', t => {
+test('getLowerBound', (t) => {
   t.is(getLowerBound('1.x.x'), '1.0.0');
   t.is(getLowerBound('1.X.X'), '1.0.0');
   t.is(getLowerBound('10.x.x'), '10.0.0');
@@ -99,7 +99,7 @@ test('getLowerBound', t => {
   t.is(getLowerBound('foo'), undefined);
 });
 
-test('highest', t => {
+test('highest', (t) => {
   t.is(highest('1.0.0', '2.0.0'), '2.0.0');
   t.is(highest('1.1.1', '1.1.0'), '1.1.1');
   t.is(highest(null, '1.0.0'), '1.0.0');
@@ -107,14 +107,14 @@ test('highest', t => {
   t.is(highest(), undefined);
 });
 
-test('lowest', t => {
+test('lowest', (t) => {
   t.is(lowest('1.0.0', '2.0.0'), '1.0.0');
   t.is(lowest('1.1.1', '1.1.0'), '1.1.0');
   t.is(lowest(null, '1.0.0'), '1.0.0');
   t.is(lowest(), undefined);
 });
 
-test.serial('getLatestVersion', t => {
+test.serial('getLatestVersion', (t) => {
   t.is(getLatestVersion(['1.2.3-alpha.3', '1.2.0', '1.0.1', '1.0.0-alpha.1']), '1.2.0');
   t.is(getLatestVersion(['1.2.3-alpha.3', '1.2.3-alpha.2']), undefined);
 
@@ -127,7 +127,7 @@ test.serial('getLatestVersion', t => {
   t.is(getLatestVersion([]), undefined);
 });
 
-test.serial('getEarliestVersion', t => {
+test.serial('getEarliestVersion', (t) => {
   t.is(getEarliestVersion(['1.2.3-alpha.3', '1.2.0', '1.0.0', '1.0.1-alpha.1']), '1.0.0');
   t.is(getEarliestVersion(['1.2.3-alpha.3', '1.2.3-alpha.2']), undefined);
 
@@ -143,7 +143,7 @@ test.serial('getEarliestVersion', t => {
   t.is(getEarliestVersion([]), undefined);
 });
 
-test('getFirstVersion', t => {
+test('getFirstVersion', (t) => {
   t.is(getFirstVersion(['1.2.0', '1.0.0', '1.3.0', '1.1.0', '1.4.0'], []), '1.0.0');
   t.is(
     getFirstVersion(
@@ -167,16 +167,16 @@ test('getFirstVersion', t => {
   );
 });
 
-test('getRange', t => {
+test('getRange', (t) => {
   t.is(getRange('1.0.0', '1.1.0'), '>=1.0.0 <1.1.0');
   t.is(getRange('1.0.0'), '>=1.0.0');
 });
 
-test('makeTag', t => {
+test('makeTag', (t) => {
   t.is(makeTag(`v\${version}`, '1.0.0'), 'v1.0.0');
 });
 
-test('isSameChannel', t => {
+test('isSameChannel', (t) => {
   t.true(isSameChannel('next', 'next'));
   t.true(isSameChannel(null, undefined));
   t.true(isSameChannel(false, undefined));
