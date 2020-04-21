@@ -1,7 +1,7 @@
 const test = require('ava');
 const {validatePlugin, validateStep, loadPlugin, parseConfig} = require('../../lib/plugins/utils');
 
-test('validatePlugin', t => {
+test('validatePlugin', (t) => {
   const path = 'plugin-module';
   const options = {option1: 'value1', option2: 'value2'};
 
@@ -25,7 +25,7 @@ test('validatePlugin', t => {
   t.false(validatePlugin({path: 1}), 'Object definition, wrong path');
 });
 
-test('validateStep: optional plugin configuration', t => {
+test('validateStep: optional plugin configuration', (t) => {
   const type = {multiple: true, required: false};
 
   // Empty config
@@ -107,7 +107,7 @@ test('validateStep: optional plugin configuration', t => {
   );
 });
 
-test('validateStep: required plugin configuration', t => {
+test('validateStep: required plugin configuration', (t) => {
   const type = {required: true};
 
   // Empty config
@@ -189,7 +189,7 @@ test('validateStep: required plugin configuration', t => {
   );
 });
 
-test('loadPlugin', t => {
+test('loadPlugin', (t) => {
   const cwd = process.cwd();
   const func = () => {};
 
@@ -202,7 +202,7 @@ test('loadPlugin', t => {
   t.is(func, loadPlugin({cwd}, func, {}), 'Defined as a function');
 });
 
-test('parseConfig', t => {
+test('parseConfig', (t) => {
   const path = 'plugin-module';
   const options = {option1: 'value1', option2: 'value2'};
 

@@ -8,14 +8,14 @@ const getPlugins = require('../../lib/plugins');
 // Save the current working diretory
 const cwd = process.cwd();
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   // Stub the logger functions
   t.context.log = stub();
   t.context.success = stub();
   t.context.logger = {log: t.context.log, success: t.context.success, scope: () => t.context.logger};
 });
 
-test('Export default plugins', t => {
+test('Export default plugins', (t) => {
   const plugins = getPlugins({cwd, options: {}, logger: t.context.logger}, {});
 
   // Verify the module returns a function for each plugin
@@ -29,7 +29,7 @@ test('Export default plugins', t => {
   t.is(typeof plugins.fail, 'function');
 });
 
-test('Export plugins based on steps config', t => {
+test('Export plugins based on steps config', (t) => {
   const plugins = getPlugins(
     {
       cwd,
@@ -55,7 +55,7 @@ test('Export plugins based on steps config', t => {
   t.is(typeof plugins.fail, 'function');
 });
 
-test('Export plugins based on "plugins" config (array)', async t => {
+test('Export plugins based on "plugins" config (array)', async (t) => {
   const plugin1 = {verifyConditions: stub(), publish: stub()};
   const plugin2 = {verifyConditions: stub(), verifyRelease: stub()};
   const plugins = getPlugins(
@@ -84,7 +84,7 @@ test('Export plugins based on "plugins" config (array)', async t => {
   t.is(typeof plugins.fail, 'function');
 });
 
-test('Export plugins based on "plugins" config (single definition)', async t => {
+test('Export plugins based on "plugins" config (single definition)', async (t) => {
   const plugin1 = {verifyConditions: stub(), publish: stub()};
   const plugins = getPlugins({cwd, logger: t.context.logger, options: {plugins: plugin1}}, {});
 
@@ -105,7 +105,7 @@ test('Export plugins based on "plugins" config (single definition)', async t => 
   t.is(typeof plugins.fail, 'function');
 });
 
-test('Merge global options, "plugins" options and step options', async t => {
+test('Merge global options, "plugins" options and step options', async (t) => {
   const plugin1 = [{verifyConditions: stub(), publish: stub()}, {pluginOpt1: 'plugin1'}];
   const plugin2 = [{verifyConditions: stub()}, {pluginOpt2: 'plugin2'}];
   const plugin3 = [stub(), {pluginOpt3: 'plugin3'}];
@@ -129,7 +129,7 @@ test('Merge global options, "plugins" options and step options', async t => {
   t.deepEqual(plugin3[0].args[0][0], {globalOpt: 'global', pluginOpt3: 'plugin3'});
 });
 
-test('Unknown steps of plugins configured in "plugins" are ignored', t => {
+test('Unknown steps of plugins configured in "plugins" are ignored', (t) => {
   const plugin1 = {verifyConditions: () => {}, unknown: () => {}};
   const plugins = getPlugins({cwd, logger: t.context.logger, options: {plugins: [plugin1]}}, {});
 
@@ -137,7 +137,7 @@ test('Unknown steps of plugins configured in "plugins" are ignored', t => {
   t.is(plugins.unknown, undefined);
 });
 
-test('Export plugins loaded from the dependency of a shareable config module', async t => {
+test('Export plugins loaded from the dependency of a shareable config module', async (t) => {
   const cwd = tempy.directory();
   await copy(
     './test/fixtures/plugin-noop.js',
@@ -170,7 +170,7 @@ test('Export plugins loaded from the dependency of a shareable config module', a
   t.is(typeof plugins.fail, 'function');
 });
 
-test('Export plugins loaded from the dependency of a shareable config file', async t => {
+test('Export plugins loaded from the dependency of a shareable config file', async (t) => {
   const cwd = tempy.directory();
   await copy('./test/fixtures/plugin-noop.js', path.resolve(cwd, 'plugin/plugin-noop.js'));
   await outputFile(path.resolve(cwd, 'shareable-config.js'), '');
@@ -200,7 +200,7 @@ test('Export plugins loaded from the dependency of a shareable config file', asy
   t.is(typeof plugins.fail, 'function');
 });
 
-test('Use default when only options are passed for a single plugin', t => {
+test('Use default when only options are passed for a single plugin', (t) => {
   const analyzeCommits = {};
   const generateNotes = {};
   const publish = {};
@@ -234,7 +234,7 @@ test('Use default when only options are passed for a single plugin', t => {
   t.falsy(fail.path);
 });
 
-test('Merge global options with plugin options', async t => {
+test('Merge global options with plugin options', async (t) => {
   const plugins = getPlugins(
     {
       cwd,
@@ -253,7 +253,7 @@ test('Merge global options with plugin options', async t => {
   t.deepEqual(result.pluginConfig, {localOpt: 'local', globalOpt: 'global', otherOpt: 'locally-defined'});
 });
 
-test('Throw an error for each invalid plugin configuration', t => {
+test('Throw an error for each invalid plugin configuration', (t) => {
   const errors = [
     ...t.throws(() =>
       getPlugins(
@@ -283,7 +283,7 @@ test('Throw an error for each invalid plugin configuration', t => {
   t.is(errors[3].code, 'EPLUGINCONF');
 });
 
-test('Throw EPLUGINSCONF error if the "plugins" option contains an old plugin definition (returns a function)', t => {
+test('Throw EPLUGINSCONF error if the "plugins" option contains an old plugin definition (returns a function)', (t) => {
   const errors = [
     ...t.throws(() =>
       getPlugins(
@@ -303,7 +303,7 @@ test('Throw EPLUGINSCONF error if the "plugins" option contains an old plugin de
   t.is(errors[1].code, 'EPLUGINSCONF');
 });
 
-test('Throw EPLUGINSCONF error for each invalid definition if the "plugins" option', t => {
+test('Throw EPLUGINSCONF error for each invalid definition if the "plugins" option', (t) => {
   const errors = [
     ...t.throws(() =>
       getPlugins({cwd, logger: t.context.logger, options: {plugins: [1, {path: 1}, [() => {}, {}, {}]]}}, {})

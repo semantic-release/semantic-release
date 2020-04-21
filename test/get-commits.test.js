@@ -3,14 +3,14 @@ const {stub} = require('sinon');
 const getCommits = require('../lib/get-commits');
 const {gitRepo, gitCommits, gitDetachedHead} = require('./helpers/git-utils');
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   // Stub the logger functions
   t.context.log = stub();
   t.context.error = stub();
   t.context.logger = {log: t.context.log, error: t.context.error};
 });
 
-test('Get all commits when there is no last release', async t => {
+test('Get all commits when there is no last release', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
   // Add commits to the master branch
@@ -24,7 +24,7 @@ test('Get all commits when there is no last release', async t => {
   t.deepEqual(result, commits);
 });
 
-test('Get all commits since gitHead (from lastRelease)', async t => {
+test('Get all commits since gitHead (from lastRelease)', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
   // Add commits to the master branch
@@ -42,7 +42,7 @@ test('Get all commits since gitHead (from lastRelease)', async t => {
   t.deepEqual(result, commits.slice(0, 2));
 });
 
-test('Get all commits since gitHead (from lastRelease) on a detached head repo', async t => {
+test('Get all commits since gitHead (from lastRelease) on a detached head repo', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   let {cwd, repositoryUrl} = await gitRepo();
   // Add commits to the master branch
@@ -66,7 +66,7 @@ test('Get all commits since gitHead (from lastRelease) on a detached head repo',
   t.truthy(result[0].committer.name);
 });
 
-test('Get all commits between lastRelease.gitHead and a shas', async t => {
+test('Get all commits between lastRelease.gitHead and a shas', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
   // Add commits to the master branch
@@ -85,7 +85,7 @@ test('Get all commits between lastRelease.gitHead and a shas', async t => {
   t.deepEqual(result, commits.slice(1, -1));
 });
 
-test('Return empty array if lastRelease.gitHead is the last commit', async t => {
+test('Return empty array if lastRelease.gitHead is the last commit', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
   // Add commits to the master branch
@@ -102,7 +102,7 @@ test('Return empty array if lastRelease.gitHead is the last commit', async t => 
   t.deepEqual(result, []);
 });
 
-test('Return empty array if there is no commits', async t => {
+test('Return empty array if there is no commits', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
 
