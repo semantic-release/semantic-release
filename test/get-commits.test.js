@@ -113,7 +113,7 @@ test('Return empty array if there is no commits', async (t) => {
   t.deepEqual(result, []);
 });
 
-test('Get all commits under a path when there is no last release ', async t => {
+test('Get all commits under a path when there is no last release ', async (t) => {
   /**
    * FIXME: to be able to properly test this we will need to mock the git
    * repository differently so that we can add files to a commit during test
