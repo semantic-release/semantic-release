@@ -37,7 +37,7 @@
     "hook-std": "^2.0.0",
     "hosted-git-info": "^3.0.0",
     "lodash": "^4.17.15",
-    "marked": "^0.8.0",
+    "marked": "^1.0.0",
     "marked-terminal": "^4.0.0",
     "micromatch": "^4.0.2",
     "p-each-series": "^2.1.0",
