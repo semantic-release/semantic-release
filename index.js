@@ -17,7 +17,17 @@ const {extractErrors, makeTag} = require('./lib/utils');
 const getGitAuthUrl = require('./lib/get-git-auth-url');
 const getBranches = require('./lib/branches');
 const getLogger = require('./lib/get-logger');
-const {verifyAuth, isBranchUpToDate, getGitHead, tag, push, pushNotes, getTagHead, addNote} = require('./lib/git');
+const {
+  verifyAuth,
+  isBranchUpToDate,
+  getGitHead,
+  tag,
+  push,
+  pushNotes,
+  getTagHead,
+  addNote,
+  getNote,
+} = require('./lib/git');
 const getError = require('./lib/get-error');
 const {COMMIT_NAME, COMMIT_EMAIL} = require('./lib/definitions/constants');
 
@@ -167,6 +177,9 @@ async function run(context, plugins) {
   nextRelease.version = getNextVersion(context);
   nextRelease.gitTag = makeTag(options.tagFormat, nextRelease.version);
   nextRelease.name = nextRelease.gitTag;
+  const channels = context.branch.channel
+    ? [nextRelease.channel, ...((await getNote(nextRelease.gitHead, {cwd, env})).channels || [])]
+    : [nextRelease.channel];
 
   if (context.branch.type !== 'prerelease' && !semver.satisfies(nextRelease.version, context.branch.range)) {
     throw getError('EINVALIDNEXTVERSION', {
@@ -188,7 +201,7 @@ async function run(context, plugins) {
   } else {
     // Create the tag before calling the publish plugins as some require the tag to exists
     await tag(nextRelease.gitTag, nextRelease.gitHead, {cwd, env});
-    await addNote({channels: [nextRelease.channel]}, nextRelease.gitHead, {cwd, env});
+    await addNote({channels}, nextRelease.gitHead, {cwd, env});
     await push(options.repositoryUrl, {cwd, env});
     await pushNotes(options.repositoryUrl, {cwd, env});
     logger.success(`Created tag ${nextRelease.gitTag}`);

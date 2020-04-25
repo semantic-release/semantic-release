@@ -605,6 +605,69 @@ test('Publish a pre-release version', async (t) => {
   t.is(await gitGetNote('v1.1.0-beta.2', {cwd}), '{"channels":["beta"]}');
 });
 
+test('Publish alpha and beta pre-releases', async (t) => {
+  const {cwd, repositoryUrl} = await gitRepo(true);
+  await gitCommits(['feat: initial commit'], {cwd});
+  await gitTagVersion('v1.0.0', undefined, {cwd});
+  await gitPush(repositoryUrl, 'master', {cwd});
+  await gitCheckout('beta', true, {cwd});
+  await gitCommits(['feat: a feature'], {cwd});
+  await gitPush(repositoryUrl, 'beta', {cwd});
+
+  const config = {
+    branches: ['master', {name: 'beta', prerelease: true}, {name: 'alpha', prerelease: true}],
+    repositoryUrl,
+  };
+  const options = {
+    ...config,
+    verifyConditions: stub().resolves(),
+    verifyRelease: stub().resolves(),
+    generateNotes: stub().resolves(''),
+    addChannel: false,
+    prepare: stub().resolves(),
+    publish: stub().resolves(),
+    success: stub().resolves(),
+    fail: stub().resolves(),
+  };
+
+  const semanticReleaseBeta = requireNoCache('..', {
+    './lib/get-logger': () => t.context.logger,
+    'env-ci': () => ({isCi: true, branch: 'beta', isPr: false}),
+  });
+  const {releases} = await semanticReleaseBeta(options, {
+    cwd,
+    env: {},
+    stdout: {write: () => {}},
+    stderr: {write: () => {}},
+  });
+
+  t.is(releases.length, 1);
+  t.is(releases[0].version, '1.1.0-beta.1');
+  t.is(releases[0].gitTag, 'v1.1.0-beta.1');
+  t.is(await gitGetNote('v1.1.0-beta.1', {cwd}), '{"channels":["beta"]}');
+
+  await gitCheckout('alpha', true, {cwd});
+  await gitPush(repositoryUrl, 'alpha', {cwd});
+
+  const semanticReleaseAlpha = requireNoCache('..', {
+    './lib/get-logger': () => t.context.logger,
+    'env-ci': () => ({isCi: true, branch: 'alpha', isPr: false}),
+  });
+
+  const alphaReleases = await semanticReleaseAlpha(options, {
+    cwd,
+    env: {},
+    stdout: {write: () => {}},
+    stderr: {write: () => {}},
+  });
+
+  t.is(alphaReleases.releases.length, 1);
+  t.is(alphaReleases.releases[0].version, '1.1.0-alpha.1');
+  t.is(alphaReleases.releases[0].gitTag, 'v1.1.0-alpha.1');
+  t.is(await gitGetNote('v1.1.0-beta.1', {cwd}), '{"channels":["alpha","beta"]}');
+  t.is(await gitGetNote('v1.1.0-alpha.1', {cwd}), '{"channels":["alpha","beta"]}');
+});
+
 test('Publish releases from different branch on the same channel', async (t) => {
   const {cwd, repositoryUrl} = await gitRepo(true);
   await gitCommits(['feat: initial commit'], {cwd});
