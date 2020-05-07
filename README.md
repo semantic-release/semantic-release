@@ -24,6 +24,9 @@
   <a href="https://www.npmjs.com/package/semantic-release">
     <img alt="npm next version" src="https://img.shields.io/npm/v/semantic-release/next.svg">
   </a>
+  <a href="https://www.npmjs.com/package/semantic-release">
+    <img alt="npm beta version" src="https://img.shields.io/npm/v/semantic-release/beta.svg">
+  </a>
 </p>
 
 **semantic-release** automates the whole package release workflow including: determining the next version number, generating the release notes and publishing the package.
@@ -39,10 +42,11 @@ This removes the immediate connection between human emotions and version numbers
 - New features and fixes are immediately available to users
 - Notify maintainers and users of new releases
 - Use formalized commit message convention to document changes in the codebase
-- Integrate with your [continuous integration workflow](docs/03-recipes/README.md#ci-configurations)
+- Publish on different distribution channels (such as [npm dist-tags](https://docs.npmjs.com/cli/dist-tag)) based on git merges
+- Integrate with your [continuous integration workflow](docs/recipes/README.md#ci-configurations)
 - Avoid potential errors associated with manual releases
-- Support any [package managers and languages](docs/03-recipes/README.md#package-managers-and-languages) via [plugins](docs/01-usage/plugins.md)
-- Simple and reusable configuration via [shareable configurations](docs/01-usage/shareable-configurations.md)
+- Support any [package managers and languages](docs/recipes/README.md#package-managers-and-languages) via [plugins](docs/usage/plugins.md)
+- Simple and reusable configuration via [shareable configurations](docs/usage/shareable-configurations.md)
 
 ## How does it work?
 
@@ -50,9 +54,9 @@ This removes the immediate connection between human emotions and version numbers
 
 **semantic-release** uses the commit messages to determine the type of changes in the codebase. Following formalized conventions for commit messages, **semantic-release** automatically determines the next [semantic version](https://semver.org) number, generates a changelog and publishes the release.
 
-By default **semantic-release** uses [Angular Commit Message Conventions](https://github.com/angular/angular.js/blob/master/DEVELOPERS.md#-git-commit-guidelines). The commit message format can be changed with the [`preset` or `config` options](docs/01-usage/configuration.md#options) of the [@semantic-release/commit-analyzer](https://github.com/semantic-release/commit-analyzer#options) and [@semantic-release/release-notes-generator](https://github.com/semantic-release/release-notes-generator#options) plugins.
+By default **semantic-release** uses [Angular Commit Message Conventions](https://github.com/angular/angular.js/blob/master/DEVELOPERS.md#-git-commit-guidelines). The commit message format can be changed with the [`preset` or `config` options](docs/usage/configuration.md#options) of the [@semantic-release/commit-analyzer](https://github.com/semantic-release/commit-analyzer#options) and [@semantic-release/release-notes-generator](https://github.com/semantic-release/release-notes-generator#options) plugins.
 
-Tools such as [commitizen](https://github.com/commitizen/cz-cli), [commitlint](https://github.com/conventional-changelog/commitlint) or [semantic-git-commit-cli](https://github.com/JPeer264/node-semantic-git-commit-cli) can be used to help contributors and enforce valid commit messages.
+Tools such as [commitizen](https://github.com/commitizen/cz-cli) or [commitlint](https://github.com/conventional-changelog/commitlint) can be used to help contributors and enforce valid commit messages.
 
 Here is an example of the release type that will be done based on a commit messages:
 
@@ -68,58 +72,65 @@ Here is an example of the release type that will be done based on a commit messa
 
 ### Triggering a release
 
-For each new commits added to the release branch (i.e. `master`) with `git push` or by merging a pull request or merging from another branch, a CI build is triggered and runs the `semantic-release` command to make a release if there are codebase changes since the last release that affect the package functionalities.
+For each new commits added to one of the release branches (for example `master`, `next`, `beta`), with `git push` or by merging a pull request or merging from another branch, a CI build is triggered and runs the `semantic-release` command to make a release if there are codebase changes since the last release that affect the package functionalities.
 
-If you need more control over the timing of releases you have a couple of options:
-- Publish releases on a distribution channel (for example npm’s [dist-tags](https://docs.npmjs.com/cli/dist-tag)). This way you can keep control over what your users end up using by default, and you can decide when to make an automatically released version available to the stable channel, and promote it. **NOTE**: `16.0.0-beta` of semantic-release, includes new features to automate the release of different branches to different npm distribution tags. The corresponding documentation can be found [on the beta branch of this repo](https://github.com/semantic-release/semantic-release/blob/beta/docs/recipes/distribution-channels.md#publishing-on-distribution-channels).
-- Develop on a `dev` branch and merge it to the release branch (i.e. `master`) once you are ready to publish. **semantic-release** will run only on pushes to the release branch.
+**semantic-release** offers various ways to control the timing, the content and the audience of published releases. See example workflows in the following recipes:
+- [Using distribution channels](docs/recipes/distribution-channels.md#publishing-on-distribution-channels)
+- [Maintenance releases](docs/recipes/maintenance-releases.md#publishing-maintenance-releases)
+- [Pre-releases](docs/recipes/pre-releases.md#publishing-pre-releases)
 
 ### Release steps
 
 After running the tests, the command `semantic-release` will execute the following steps:
 
-| Step              | Step Hook            | Description                                                                                                                     |
-|-------------------|----------------------|---------------------------------------------------------------------------------------------------------------------------------|
-| Verify Conditions | `verifyConditions`   | Verify all the conditions to proceed with the release.                                                                          |
-| Get last release  | N/A                  | Obtain the commit corresponding to the last release by analyzing [Git tags](https://git-scm.com/book/en/v2/Git-Basics-Tagging). |
-| Analyze commits   | N/A                  | Determine the type of release based on the commits added since the last release.                                                |
-| Verify release    | `verifyRelease`      | Verify the release conformity.                                                                                                  |
-| Generate notes    | `generateNotes`      | Generate release notes for the commits added since the last release.                                                            |
-| Create Git tag    | N/A                  | Create a Git tag corresponding to the new release version.                                                                      |
-| Prepare           | `prepare`            | Prepare the release.                                                                                                            |
-| Publish           | `publish`            | Publish the release.                                                                                                            |
-| Notify            | `success`, `failure` | Notify of new releases or errors.                                                                                               |
+| Step              | Description                                                                                                                     |
+|-------------------|---------------------------------------------------------------------------------------------------------------------------------|
+| Verify Conditions | Verify all the conditions to proceed with the release.                                                                          |
+| Get last release  | Obtain the commit corresponding to the last release by analyzing [Git tags](https://git-scm.com/book/en/v2/Git-Basics-Tagging). |
+| Analyze commits   | Determine the type of release based on the commits added since the last release.                                                |
+| Verify release    | Verify the release conformity.                                                                                                  |
+| Generate notes    | Generate release notes for the commits added since the last release.                                                            |
+| Create Git tag    | Create a Git tag corresponding to the new release version.                                                                      |
+| Prepare           | Prepare the release.                                                                                                            |
+| Publish           | Publish the release.                                                                                                            |
+| Notify            | Notify of new releases or errors.                                                                                               |
+
+## Requirements
+
+In order to use **semantic-release** you need:
+- To host your code in a [Git repository](https://git-scm.com)
+- Use a Continuous Integration service that allows you to [securely set up credentials](docs/usage/ci-configuration.md#authentication)
+- Git CLI version [2.7.1 or higher](docs/support/FAQ.md#why-does-semantic-release-require-git-version--271) installed in your Continuous Integration environment
+- [Node.js](https://nodejs.org) version [10.18 or higher](docs/support/FAQ.md#why-does-semantic-release-require-node-version--1018) installed in your Continuous Integration environment
 
 ## Documentation
 
 - Usage
-  - [Getting started](docs/01-usage/getting-started.md)
-  - [Installation](docs/01-usage/installation.md#installation)
-  - [CI Configuration](docs/01-usage/ci-configuration.md#ci-configuration)
-  - [Configuration](docs/01-usage/configuration.md#configuration)
-  - [Plugins](docs/01-usage/plugins.md)
-  - [Shareable configurations](docs/01-usage/shareable-configurations.md)
+  - [Getting started](docs/usage/getting-started.md#getting-started)
+  - [Installation](docs/usage/installation.md#installation)
+  - [CI Configuration](docs/usage/ci-configuration.md#ci-configuration)
+  - [Configuration](docs/usage/configuration.md#configuration)
+  - [Plugins](docs/usage/plugins.md)
+  - [Workflow configuration](docs/usage/workflow-configuration.md)
+  - [Shareable configurations](docs/usage/shareable-configurations.md)
 - Extending
-  - [Available plugins](docs/02-extending/plugins-list.md)
-  - [Available shareable configuration](docs/02-extending/shareable-configurations-list.md)
+  - [Plugins](docs/extending/plugins-list.md)
+  - [Shareable configuration](docs/extending/shareable-configurations-list.md)
 - Recipes
-  - [CI pipelines recipes](docs/03-recipes/ci-pipelines-recipes.md)
-    - [CircleCI 2.0 workflows](docs/03-recipes/circleci-workflows.md)
-    - [Travis CI](docs/03-recipes/travis.md)
-    - [GitLab CI](docs/03-recipes/gitlab-ci.md)
-  - [Git hosted services](docs/03-recipes/git-hosted-services.md)
-    - [Git authentication with SSH keys](docs/03-recipes/git-auth-ssh-keys.md)
-  - [Package managers and languages](docs/03-recipes/package-managers-and-languages.md)
+  - [CI configurations](docs/recipes/README.md)
+  - [Git hosted services](docs/recipes/README.md)
+  - [Release workflow](docs/recipes/README.md)
+  - [Package managers and languages](docs/recipes/README.md)
 - Developer guide
-  - [JavaScript API](docs/04-developer-guide/js-api.md)
-  - [Plugin development](docs/04-developer-guide/plugin.md)
-  - [Shareable configuration development](docs/04-developer-guide/shareable-configuration.md)
+  - [JavaScript API](docs/developer-guide/js-api.md)
+  - [Plugins development](docs/developer-guide/plugin.md)
+  - [Shareable configuration development](docs/developer-guide/shareable-configuration.md)
 - Support
-  - [Resources](docs/05-support/resources.md)
-  - [Frequently Asked Questions](docs/05-support/FAQ.md)
-  - [Troubleshooting](docs/05-support/troubleshooting.md)
-  - [Node version requirement](docs/05-support/node-version.md)
-  - [Node Support Policy](docs/05-support/node-support-policy.md)
+  - [Resources](docs/support/resources.md)
+  - [Frequently Asked Questions](docs/support/FAQ.md)
+  - [Troubleshooting](docs/support/troubleshooting.md)
+  - [Node version requirement](docs/support/node-version.md)
+  - [Node Support Policy](docs/support/node-support-policy.md)
 
 ## Get help
 

@@ -1,0 +1,2 @@
+after_success:
+  - npm run codecov
