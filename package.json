@@ -53,7 +53,7 @@
   "devDependencies": {
     "ava": "3.8.2",
     "clear-module": "4.1.1",
-    "codecov": "3.6.5",
+    "codecov": "3.7.0",
     "delay": "4.3.0",
     "dockerode": "3.2.0",
     "file-url": "3.0.0",
