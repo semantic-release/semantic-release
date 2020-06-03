@@ -1,8 +1,8 @@
-import Docker from 'dockerode';
-import getStream from 'get-stream';
-import got from 'got';
-import delay from 'delay';
-import pRetry from 'p-retry';
+const Docker = require('dockerode');
+const getStream = require('get-stream');
+const got = require('got');
+const delay = require('delay');
+const pRetry = require('p-retry');
 
 const IMAGE = 'semanticrelease/npm-registry-docker:latest';
 const SERVER_PORT = 15986;
@@ -39,16 +39,16 @@ async function start() {
       minTimeout: 1000,
       factor: 2,
     });
-  } catch (error) {
+  } catch (_) {
     throw new Error(`Couldn't start npm-registry-docker after 2 min`);
   }
 
   // Create user
   await got(`http://${SERVER_HOST}:${SERVER_PORT}/_users/org.couchdb.user:${NPM_USERNAME}`, {
-    json: true,
-    auth: `${COUCHDB_USER}:${COUCHDB_PASSWORD}`,
+    username: COUCHDB_USER,
+    password: COUCHDB_PASSWORD,
     method: 'PUT',
-    body: {
+    json: {
       _id: `org.couchdb.user:${NPM_USERNAME}`,
       name: NPM_USERNAME,
       roles: [],
@@ -76,4 +76,4 @@ async function stop() {
   await container.remove();
 }
 
-export default {start, stop, authEnv, url};
+module.exports = {start, stop, authEnv, url};

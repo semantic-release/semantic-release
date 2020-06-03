@@ -92,4 +92,6 @@ jobs:
           # Use nvm to install and use the Node LTS version (nvm is installed on all Travis images)
           - nvm install lts/*
           - npx semantic-release
+        on:
+          all_branches: true
 ```

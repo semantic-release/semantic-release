@@ -11,3 +11,11 @@
   - Publishes the same tarball to [npm](https://github.com/semantic-release/npm).
   - Commits the version change in `package.json`.
   - Creates or updates a [changelog](https://github.com/semantic-release/changelog) file.
+- [semantic-release-npm-github-publish](https://github.com/oleg-koval/semantic-release-npm-github-publish)
+  - Based on [angular preset](https://github.com/conventional-changelog/conventional-changelog/tree/master/packages/conventional-changelog-angular).
+  - Adds more keywords for the `chore` **PATCH** release.
+  - Generates or updates a [changelog](https://github.com/semantic-release/changelog) file including all **PATCH** keywords (not included in default angular package).
+  - Updates GitHub release with release-notes.
+  - Bumps a version in package.json.
+  - Publishes the new version to [NPM](https://npmjs.org).
+  

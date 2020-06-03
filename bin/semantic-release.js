@@ -10,7 +10,7 @@ var execa = require('execa');
 var findVersions = require('find-versions');
 var pkg = require('../package.json');
 
-var MIN_GIT_VERSION = '2.0.0';
+var MIN_GIT_VERSION = '2.7.1';
 
 if (!semver.satisfies(process.version, pkg.engines.node)) {
   console.error(
@@ -29,15 +29,15 @@ execa('git', ['--version'])
       process.exit(1);
     }
   })
-  .catch(error => {
+  .catch((error) => {
     console.error(`[semantic-release]: Git version ${MIN_GIT_VERSION} is required. No git binary found.`);
     console.error(error);
     process.exit(1);
   });
 
-// Node 8+ from this point on
+// Node 10+ from this point on
 require('../cli')()
-  .then(exitCode => {
+  .then((exitCode) => {
     process.exitCode = exitCode;
   })
   .catch(() => {
