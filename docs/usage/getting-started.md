@@ -10,10 +10,8 @@ In order to use **semantic-release** you must follow these steps:
 Alternatively those steps can be easily done with the [**semantic-release** interactive CLI](https://github.com/semantic-release/cli):
 
 ```bash
-npm install -g semantic-release-cli
-
 cd your-module
-semantic-release-cli setup
+npx semantic-release-cli setup
 ```
 
 ![dialogue](../../media/semantic-release-cli.png)
