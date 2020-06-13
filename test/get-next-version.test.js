@@ -275,3 +275,55 @@ test('Increase version for release on prerelease branch when there is no regular
     '1.0.0-beta.2'
   );
 });
+
+test('Increase version for patch release (unstable)', (t) => {
+  t.is(
+    getNextVersion({
+      branch: {name: 'master', type: 'release', tags: [{gitTag: 'v0.1.0', version: '0.1.0', channels: [null]}]},
+      nextRelease: {type: 'patch'},
+      lastRelease: {version: '0.1.0', channels: [null]},
+      logger: t.context.logger,
+      options: {unstable: true},
+    }),
+    '0.1.1'
+  );
+});
+
+test('Increase version for minor release (unstable)', (t) => {
+  t.is(
+    getNextVersion({
+      branch: {name: 'master', type: 'release', tags: [{gitTag: 'v0.1.0', version: '0.1.0', channels: [null]}]},
+      nextRelease: {type: 'minor'},
+      lastRelease: {version: '0.1.0', channels: [null]},
+      logger: t.context.logger,
+      options: {unstable: true},
+    }),
+    '0.1.1'
+  );
+});
+
+test('Increase version for major release (unstable)', (t) => {
+  t.is(
+    getNextVersion({
+      branch: {name: 'master', type: 'release', tags: [{gitTag: 'v0.1.0', version: '0.1.0', channels: [null]}]},
+      nextRelease: {type: 'major'},
+      lastRelease: {version: '0.1.0', channels: [null]},
+      logger: t.context.logger,
+      options: {unstable: true},
+    }),
+    '0.2.0'
+  );
+});
+
+test('Return 0.1.0 if there is no previous release (unstable)', (t) => {
+  t.is(
+    getNextVersion({
+      branch: {name: 'master', type: 'release', tags: []},
+      nextRelease: {type: 'minor'},
+      lastRelease: {},
+      logger: t.context.logger,
+      options: {unstable: true},
+    }),
+    '0.1.0'
+  );
+});
