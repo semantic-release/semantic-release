@@ -51,7 +51,7 @@
     "yargs": "^15.0.1"
   },
   "devDependencies": {
-    "ava": "3.8.2",
+    "ava": "3.9.0",
     "clear-module": "4.1.1",
     "codecov": "3.7.0",
     "delay": "4.3.0",
