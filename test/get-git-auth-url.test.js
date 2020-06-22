@@ -299,6 +299,34 @@ test('Return the "https" formatted URL if "gitCredentials" is defined with "BITB
   );
 });
 
+test('Return the "https" formatted URL if "gitCredentials" is defined with "BB_TOKEN_BASIC_AUTH"', async (t) => {
+  const {cwd} = await gitRepo();
+
+  t.is(
+    await getAuthUrl({
+      cwd,
+      env: {...env, BB_TOKEN_BASIC_AUTH: 'username:token'},
+      branch: {name: 'master'},
+      options: {repositoryUrl: 'git@host.null:owner/repo.git'},
+    }),
+    'https://username:token@host.null/owner/repo.git'
+  );
+});
+
+test('Return the "https" formatted URL if "gitCredentials" is defined with "BITBUCKET_TOKEN_BASIC_AUTH"', async (t) => {
+  const {cwd} = await gitRepo();
+
+  t.is(
+    await getAuthUrl({
+      cwd,
+      env: {...env, BITBUCKET_TOKEN_BASIC_AUTH: 'username:token'},
+      branch: {name: 'master'},
+      options: {repositoryUrl: 'git@host.null:owner/repo.git'},
+    }),
+    'https://username:token@host.null/owner/repo.git'
+  );
+});
+
 test('Return the "https" formatted URL if "GITHUB_ACTION" is set', async (t) => {
   const {cwd} = await gitRepo();
 
