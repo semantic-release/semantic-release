@@ -50,7 +50,8 @@ async function gitRepo(withRemote, branch = 'master') {
     await gitCheckout(branch, true, {cwd});
   }
 
-  await execa('git', ['config', 'commit.gpgsign', false], {cwd});
+  await execa('git', ['config', 'commit.gpgsign', true], {cwd});
+  await execa('git', ['config', 'tag.gpgsign', true], {cwd});
 
   return {cwd, repositoryUrl};
 }
@@ -155,7 +156,7 @@ async function gitHead(execaOptions) {
  * @param {Object} [execaOpts] Options to pass to `execa`.
  */
 async function gitTagVersion(tagName, sha, execaOptions) {
-  await execa('git', sha ? ['tag', '-f', tagName, sha] : ['tag', tagName], execaOptions);
+  await execa('git', sha ? ['tag', '-f', tagName, sha] : ['tag', tagName, '--no-sign'], execaOptions);
 }
 
 /**
@@ -275,7 +276,7 @@ async function gitPush(repositoryUrl, branch, execaOptions) {
  * @param {Object} [execaOpts] Options to pass to `execa`.
  */
 async function merge(ref, execaOptions) {
-  await execa('git', ['merge', '--no-ff', ref], execaOptions);
+  await execa('git', ['merge', '--no-ff', ref, '--no-gpg-sign'], execaOptions);
 }
 
 /**
@@ -285,7 +286,7 @@ async function merge(ref, execaOptions) {
  * @param {Object} [execaOpts] Options to pass to `execa`.
  */
 async function mergeFf(ref, execaOptions) {
-  await execa('git', ['merge', '--ff', ref], execaOptions);
+  await execa('git', ['merge', '--ff', ref, '--no-gpg-sign'], execaOptions);
 }
 
 /**
