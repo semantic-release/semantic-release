@@ -58,7 +58,7 @@
     "dockerode": "3.2.0",
     "file-url": "3.0.0",
     "fs-extra": "9.0.1",
-    "got": "11.4.0",
+    "got": "11.5.0",
     "js-yaml": "3.14.0",
     "mockserver-client": "5.10.0",
     "nock": "13.0.2",
