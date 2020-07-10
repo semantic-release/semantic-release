@@ -1258,7 +1258,7 @@ test('Allow local releases with "noCi" option', async (t) => {
 
   const semanticRelease = requireNoCache('..', {
     './lib/get-logger': () => t.context.logger,
-    'env-ci': () => ({isCi: false, branch: 'master', isPr: false}),
+    'env-ci': () => ({isCi: false, branch: 'master', isPr: true, prBranch: 'refs/pull/4/merge'}),
   });
   t.truthy(
     await semanticRelease(options, {
