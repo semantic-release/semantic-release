@@ -67,7 +67,4 @@ To trigger a release, call (with a [Personal Access Tokens](https://help.github.
 $ curl -v -H "Accept: application/vnd.github.everest-preview+json" -H "Authorization: token ${GITHUB_TOKEN}" https://api.github.com/repos/[org-name-or-username]/[repository]/dispatches -d '{ "event_type": "semantic-release" }'
 ```
 
-If you'd like to use a GitHub app to manage this instead of creating a personal access token, you could consider using a project like:
-
-* [Actions Panel](https://www.actionspanel.app/) - A declaratively configured way for triggering GitHub Actions
-* [Action Button](https://github-action-button.web.app/#details) - A simple badge based mechanism for triggering GitHub Actions
+If you'd like to use a GitHub app to manage this instead of creating a personal access token, check github's [Manual Triggers](https://github.blog/changelog/2020-07-06-github-actions-manual-triggers-with-workflow_dispatch/)
