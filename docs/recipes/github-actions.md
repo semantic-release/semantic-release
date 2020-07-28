@@ -54,7 +54,7 @@ To keep `package.json` updated in the `master` branch, [`@semantic-release/git`]
 You can use [Manual Triggers](https://github.blog/changelog/2020-07-06-github-actions-manual-triggers-with-workflow_dispatch/) for GitHub Actions.
 
 ### Using HTTP:
-Use [`repository_dispatch`](https://help.github.com/en/articles/events-that-trigger-workflows#external-events-repository_dispatch) event to have control on when to generate a release by making an HTTP request, e.g.:
+Use [`repository_dispatch`](https://docs.github.com/en/actions/reference/events-that-trigger-workflows#repository_dispatch) event to have control on when to generate a release by making an HTTP request, e.g.:
 
 ```yaml
 name: Release
