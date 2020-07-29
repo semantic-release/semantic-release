@@ -116,7 +116,9 @@ Type: `Boolean`<br>
 Default: `false` if running in a CI environment, `true` otherwise<br>
 CLI arguments: `-d`, `--dry-run`
 
-Dry-run mode, skip publishing, print next version and release notes.
+The objective of the dry-run mode is to get a preview of the pending release. Dry-run mode skips the following steps: prepare, publish, success and fail. In addition to this it prints the next version and release notes to the console.
+
+**Note**: The Dry-run mode verifies the repository push permission, even though nothing will be pushed. The verification is done to help user to figure out potential configuration issues.
 
 ### ci
 
