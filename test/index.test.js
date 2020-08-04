@@ -1321,7 +1321,7 @@ test('Allow local releases with "noCi" option', async (t) => {
 
   const semanticRelease = requireNoCache('..', {
     './lib/get-logger': () => t.context.logger,
-    'env-ci': () => ({isCi: false, branch: 'master', isPr: true}),
+    'env-ci': () => ({isCi: false, branch: 'master', isPr: false}),
   });
   t.truthy(
     await semanticRelease(options, {
@@ -1420,7 +1420,7 @@ test('Returns false if triggered by a PR', async (t) => {
 
   const semanticRelease = requireNoCache('..', {
     './lib/get-logger': () => t.context.logger,
-    'env-ci': () => ({isCi: true, branch: 'master', isPr: true}),
+    'env-ci': () => ({isCi: true, branch: 'master', prBranch: 'patch-1', isPr: true}),
   });
 
   t.false(
