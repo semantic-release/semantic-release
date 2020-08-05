@@ -140,7 +140,7 @@ A maintenance branch is characterized by a range which defines the versions that
 
 Maintenance branches are always considered lower than [release branches](#release-branches) and similarly to them, when a commit that would create a version conflict is pushed, **semantic-release** will not perform the release and will throw an `EINVALIDNEXTVERSION` error, listing the problematic commits and the valid branches on which to move them.
 
-**semantic-release** will automatically add releases to the corresponding distribution channel when code is [merged from a release or maintenance branch to another maintenance branch](#merging-into-a-maintenance-branch), however only version version within the branch `range` can be merged. Ia merged version is outside the maintenance branch `range` **semantic-release** will not add to the corresponding channel and will throw an `EINVALIDMAINTENANCEMERGE` error.
+**semantic-release** will automatically add releases to the corresponding distribution channel when code is [merged from a release or maintenance branch to another maintenance branch](#merging-into-a-maintenance-branch), however only versions within the branch `range` can be merged. If a merged version is outside the maintenance branch `range`, **semantic-release** will not add to the corresponding channel and will throw an `EINVALIDMAINTENANCEMERGE` error.
 
 See [publishing maintenance releases recipe](../recipes/maintenance-releases.md) for a detailed example.
 

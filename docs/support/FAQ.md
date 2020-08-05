@@ -2,11 +2,13 @@
 
 ## Why is the `package.json`’s version not updated in my repository?
 
-**semantic-release** takes care of updating the `package.json`’s version before publishing to [npm](https://www.npmjs.com).
+[`@semantic-release/npm`](https://github.com/semantic-release/npm) takes care of updating the `package.json`’s version before publishing to [npm](https://www.npmjs.com).
 
 By default, only the published package will contain the version, which is the only place where it is *really* required, but the updated `package.json` will not be pushed to the Git repository
 
 However, the [`@semantic-release/git`](https://github.com/semantic-release/git) plugin can be used to push the updated `package.json` as well as other files to the Git repository.
+
+If you wish to only update the `package.json` and push via Git you can set the project to `"private": true,` within your `package.json` to prevent publishing to [npm](https://www.npmjs.com). This can be useful for using **semantic-release** with a non-node project.
 
 ## How can I use a npm build script that requires the `package.json`’s version ?
 

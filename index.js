@@ -26,7 +26,8 @@ marked.setOptions({renderer: new TerminalRenderer()});
 /* eslint complexity: off */
 async function run(context, plugins) {
   const {cwd, env, options, logger} = context;
-  const {isCi, branch: ciBranch, isPr} = context.envCi;
+  const {isCi, branch, prBranch, isPr} = context.envCi;
+  const ciBranch = isPr ? prBranch : branch;
 
   if (!isCi && !options.dryRun && !options.noCi) {
     logger.warn('This run was not triggered in a known CI environment, running in dry-run mode.');
