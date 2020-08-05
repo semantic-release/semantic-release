@@ -15,4 +15,8 @@
 - [Publishing maintenance releases](maintenance-releases.md)
 - [Publishing pre-releases](pre-releases.md)
 
+## Utility
+- [Get expected next version](expected-next-version.md)
+
+
 ## Package managers and languages
