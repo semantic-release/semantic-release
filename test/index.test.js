@@ -1941,3 +1941,68 @@ test('Get all commits including the ones not in the shallow clone', async (t) =>
 
   t.is(analyzeCommits.args[0][1].commits.length, 3);
 });
+
+test('skipTag skips adding tags', async (t) => {
+  const {cwd, repositoryUrl} = await gitRepo(true);
+  await gitCommits(['First'], {cwd});
+  await gitTagVersion('v1.0.0', undefined, {cwd});
+  await gitAddNote(JSON.stringify({channels: [null, 'next']}), 'v1.0.0', {cwd});
+  await gitCommits(['Second'], {cwd});
+  await gitTagVersion('v1.1.0', undefined, {cwd});
+  await gitAddNote(JSON.stringify({channels: ['next']}), 'v1.1.0', {cwd});
+
+  await gitPush(repositoryUrl, 'master', {cwd});
+  await gitCheckout('next', true, {cwd});
+  await gitPush('origin', 'next', {cwd});
+
+  const verifyConditions = stub().resolves();
+  const analyzeCommits = stub().resolves('minor');
+  const verifyRelease = stub().resolves();
+  const generateNotes = stub().resolves();
+  const addChannel = stub().resolves();
+  const prepare = stub().resolves();
+  const publish = stub().resolves();
+  const success = stub().resolves();
+
+  const options = {
+    skipTag: true,
+    branches: ['master', 'next'],
+    repositoryUrl,
+    verifyConditions,
+    analyzeCommits,
+    verifyRelease,
+    generateNotes,
+    addChannel,
+    prepare,
+    publish,
+    success,
+  };
+
+  const nextRelease = {
+    gitTag: 'v1.1.0',
+  };
+
+  const semanticRelease = requireNoCache('..', {
+    './lib/get-logger': () => t.context.logger,
+    'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
+  });
+  t.truthy(
+    await semanticRelease(options, {
+      cwd,
+      env: {},
+      stdout: new WritableStreamBuffer(),
+      stderr: new WritableStreamBuffer(),
+    })
+  );
+
+  t.not(t.context.warn.args[0][0], 'This run was not triggered in a known CI environment, running in dry-run mode.');
+  t.is(t.context.warn.args[0][0], `Skip ${nextRelease.gitTag} tag creation in dry-run / skip-tag mode`);
+  t.is(verifyConditions.callCount, 1);
+  t.is(analyzeCommits.callCount, 1);
+  t.is(verifyRelease.callCount, 1);
+  t.is(generateNotes.callCount, 2);
+  t.is(addChannel.callCount, 1);
+  t.is(prepare.callCount, 1);
+  t.is(publish.callCount, 1);
+  t.is(success.callCount, 2);
+});
