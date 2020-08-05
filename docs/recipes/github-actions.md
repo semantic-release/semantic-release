@@ -50,7 +50,11 @@ To keep `package.json` updated in the `master` branch, [`@semantic-release/git`]
 
 ## Trigger semantic-release on demand
 
-There is a way to trigger semantic-relase on demand. Use [`repository_dispatch`](https://help.github.com/en/articles/events-that-trigger-workflows#external-events-repository_dispatch) event to have control on when to generate a release by making an HTTP request, e.g.:
+### Using GUI:
+You can use [Manual Triggers](https://github.blog/changelog/2020-07-06-github-actions-manual-triggers-with-workflow_dispatch/) for GitHub Actions.
+
+### Using HTTP:
+Use [`repository_dispatch`](https://docs.github.com/en/actions/reference/events-that-trigger-workflows#repository_dispatch) event to have control on when to generate a release by making an HTTP request, e.g.:
 
 ```yaml
 name: Release
@@ -67,6 +71,7 @@ To trigger a release, call (with a [Personal Access Tokens](https://help.github.
 $ curl -v -H "Accept: application/vnd.github.everest-preview+json" -H "Authorization: token ${GITHUB_TOKEN}" https://api.github.com/repos/[org-name-or-username]/[repository]/dispatches -d '{ "event_type": "semantic-release" }'
 ```
 
+### Using 3rd party apps:
 If you'd like to use a GitHub app to manage this instead of creating a personal access token, you could consider using a project like:
 
 * [Actions Panel](https://www.actionspanel.app/) - A declaratively configured way for triggering GitHub Actions

@@ -74,7 +74,7 @@ The branches on which releases should happen. By default **semantic-release** wi
 
 **Note**: If your repository does not have a release branch, then **semantic-release** will fail with an `ERELEASEBRANCHES` error message. If you are using the default configuration, you can fix this error by pushing a `master` branch.
 
-**Note**: Once **semantic-release** is configured, any user with the permission to push commits on one of those branches will be able to publish a release. It is recommended to protect those branches, for example with [GitHub protected branches](https://help.github.com/articles/about-protected-branches).
+**Note**: Once **semantic-release** is configured, any user with the permission to push commits on one of those branches will be able to publish a release. It is recommended to protect those branches, for example with [GitHub protected branches](https://docs.github.com/github/administering-a-repository/about-protected-branches).
 
 See [Workflow configuration](workflow-configuration.md#workflow-configuration) for more details.
 
@@ -116,7 +116,9 @@ Type: `Boolean`<br>
 Default: `false` if running in a CI environment, `true` otherwise<br>
 CLI arguments: `-d`, `--dry-run`
 
-Dry-run mode, skip publishing, print next version and release notes.
+The objective of the dry-run mode is to get a preview of the pending release. Dry-run mode skips the following steps: prepare, publish, success and fail. In addition to this it prints the next version and release notes to the console.
+
+**Note**: The Dry-run mode verifies the repository push permission, even though nothing will be pushed. The verification is done to help user to figure out potential configuration issues.
 
 ### ci
 
