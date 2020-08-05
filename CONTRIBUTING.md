@@ -249,3 +249,11 @@ $ npm run test
 All the [semantic-release](https://github.com/semantic-release) repositories use [Commitizen](https://github.com/commitizen/cz-cli) to help you create [valid commit messages](#commit-message-guidelines).
 
 After staging your changes with `git add`, run `npm run cm` to start the interactive commit message CLI.
+
+### Merging Upstream
+Make sure you have an upstream remote added `git remote add upstream https://github.com/semantic-release/semantic-release.git`
+
+1. `git checkout -b merge-upstream`
+2. `git pull upstream master`
+3. resolve any conflicts
+4. push changes to origin
