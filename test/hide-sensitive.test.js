@@ -19,6 +19,11 @@ test('Replace multiple occurences of sensitive environment variable values', (t)
   );
 });
 
+test('Replace sensitive environment variable matching specific regex for "private"', (t) => {
+  const env = {privateKey: 'secret', GOPRIVATE: 'host.com'};
+  t.is(hideSensitive(env)(`https://host.com?token=${env.privateKey}`), `https://host.com?token=${SECRET_REPLACEMENT}`);
+});
+
 test('Escape regexp special characters', (t) => {
   const env = {SOME_CREDENTIALS: 'p$^{.+}\\w[a-z]o.*rd'};
   t.is(
@@ -45,6 +50,11 @@ test('Exclude empty environment variables from the regexp', (t) => {
 
 test('Exclude empty environment variables from the regexp if there is only empty ones', (t) => {
   t.is(hideSensitive({SOME_PASSWORD: '', SOME_TOKEN: ' \n '})(`https://host.com?token=`), 'https://host.com?token=');
+});
+
+test('Exclude nonsensitive GOPRIVATE environment variable for Golang projects from the regexp', (t) => {
+  const env = {GOPRIVATE: 'host.com'};
+  t.is(hideSensitive(env)(`https://host.com?token=`), 'https://host.com?token=');
 });
 
 test('Exclude environment variables with value shorter than SECRET_MIN_SIZE from the regexp', (t) => {
