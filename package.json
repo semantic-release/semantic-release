@@ -61,7 +61,7 @@
     "got": "11.5.2",
     "js-yaml": "3.14.0",
     "mockserver-client": "5.11.1",
-    "nock": "13.0.3",
+    "nock": "13.0.4",
     "nyc": "15.1.0",
     "p-retry": "4.2.0",
     "proxyquire": "2.1.3",
