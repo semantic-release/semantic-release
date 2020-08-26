@@ -19,3 +19,6 @@ npx semantic-release-cli setup
 See the [semantic-release-cli](https://github.com/semantic-release/cli#what-it-does) documentation for more details.
 
 **Note**: only a limited number of options, CI services and plugins are currently supported by `semantic-release-cli`.
+
+---
+[Installation ->](installation.md#installation)

@@ -59,3 +59,6 @@ A `package.json` is required only for [local](../usage/installation.md#local-ins
   }
 }
 ```
+
+---
+[<- GitHub Actions](github-actions.md) | [Git authentication with SSH keys ->](git-auth-ssh-keys.md)

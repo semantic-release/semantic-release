@@ -67,3 +67,6 @@ To recover from that situation, do the following:
 2. Re-create the tags locally: `git tag [TAG NAME] [COMMIT HASH]`, where `[COMMIT HASH]` is the new commit that created the release for the lost tag. E.g. `git tag v2.0.0-beta.1 abcdef0`
 3. Re-create the git notes for each release tag, e.g. `git notes --ref semantic-release add -f -m '{"channels":["beta"]}' v3.0.0-beta.1`. If the release was also published in the default channel (usually `master`), then set the first channel to `null`, e.g. `git notes --ref semantic-release add -f -m '{"channels":[null, "beta"]}'
 4. Push the local notes: `git push --force origin refs/notes/semantic-release`. The `--force` is needed after the rebase. Be careful.
+
+---
+[<- Frequently Asked Questions](FAQ.md) | [Node version requirement ->](node-version.md)

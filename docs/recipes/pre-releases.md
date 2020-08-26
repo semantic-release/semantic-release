@@ -194,3 +194,6 @@ The Git history of the repository is now:
 |  *  | Merge branch master into beta
 |  *  | feat: new feature # => v3.1.0-beta.1 on @beta
 ```
+
+---
+[<- Publishing maintenance releases](maintenance-releases.md) | [JavaScript API ->](../developer-guide/js-api.md)

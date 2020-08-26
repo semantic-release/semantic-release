@@ -11,3 +11,6 @@ As each Node LTS version reaches its end-of-life we will remove that version fro
 We will accept code that allows this package to run on newer, non-LTS, versions of Node. Furthermore, we will attempt to ensure our own changes work on the latest version of Node. To help in that commitment, our continuous integration setup runs against all LTS versions of Node in addition the most recent Node release; called current.
 
 JavaScript package managers should allow you to install this package with any version of Node, with, at most, a warning if your version of Node does not fall within the range specified by our node engines property. If you encounter issues installing this package, please report the issue to your package manager.
+
+---
+[<- Node version requirement](node-version.md)

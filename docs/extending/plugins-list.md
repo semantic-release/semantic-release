@@ -105,3 +105,6 @@
   - `verifyConditions`: Locate and validate a `.gemspec` file, locate and validate a `lib/**/version.rb` file, verify the presence of the `GEM_HOST_API_KEY` environment variable, and create a credentials file with the API key.
   - `prepare`: Update the version in the `lib/**/version.rb` version file and [build](https://guides.rubygems.org/command-reference/#gem-build) the gem.
   - `publish`: [Push the Ruby gem](https://guides.rubygems.org/command-reference/#gem-push) to the gem server. 
+
+---
+[<- Shareable configurations](../usage/shareable-configurations.md) | [Shareable configuration list ->](shareable-configurations-list.md)

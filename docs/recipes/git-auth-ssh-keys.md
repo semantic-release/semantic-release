@@ -161,3 +161,6 @@ $ git add git_deploy_key.enc .circleci/config.yml
 $ git commit -m "ci(circle): Add the encrypted private ssh key"
 $ git push
 ```
+
+---
+[<- Jenkins CI](jenkins-ci.md) | [Publishing on distribution channels ->](distribution-channels.md)

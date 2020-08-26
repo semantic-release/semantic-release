@@ -92,3 +92,6 @@ Global plugin configuration can be defined at the root of the **semantic-release
 With this configuration:
 - All plugins will receive the `preset` option, which will be used by both `@semantic-release/commit-analyzer` and `@semantic-release/release-notes-generator` (and ignored by `@semantic-release/github` and `@semantic-release/git`)
 - The `@semantic-release/github` plugin will receive the `assets` options (`@semantic-release/git` will not receive it and therefore will use it's default value for that option)
+
+---
+[<- Configuration](configuration.md#configuration) | [Workflow configuration ->](workflow-configuration.md)

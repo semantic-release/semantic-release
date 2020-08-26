@@ -78,3 +78,6 @@ If you'd like to use a GitHub app to manage this instead of creating a personal 
 
 * [Actions Panel](https://www.actionspanel.app/) - A declaratively configured way for triggering GitHub Actions
 * [Action Button](https://github-action-button.web.app/#details) - A simple badge based mechanism for triggering GitHub Actions
+
+---
+[<- GitLab CI](gitlab-ci.md) | [Jenkins CI ->](jenkins-ci.md)

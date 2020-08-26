@@ -174,3 +174,6 @@ $ git tag --contains 1234567
 $ git tag v1.1.0 1234567
 $ git push origin v1.1.0
 ```
+
+---
+[<- CI Configuration](ci-configuration.md#ci-configuration) | [Plugins ->](plugins.md)

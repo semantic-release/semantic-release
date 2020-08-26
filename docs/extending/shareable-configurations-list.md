@@ -19,3 +19,5 @@
   - Bumps a version in package.json.
   - Publishes the new version to [NPM](https://npmjs.org).
   
+---
+[<- Plugins list](plugins-list.md) | [CircleCI 2.0 workflows ->](../recipes/circleci-workflows.md)

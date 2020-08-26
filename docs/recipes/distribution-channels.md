@@ -114,3 +114,6 @@ The Git history of the repository is now:
 ```
 
 We can now continue to push new fixes and features on `master`, or a new breaking change on `next` as we did before.
+
+---
+[<- Git authentication with SSH keys](git-auth-ssh-keys.md) | [Publishing maintenance releases ->](maintenance-releases.md)

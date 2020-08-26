@@ -154,3 +154,6 @@ The Git history of the repository is now:
 |  |  |
 |  *  | fix: another fix # => v1.1.2 on @1.x
 ```
+
+---
+[<- Publishing on distribution channels](distribution-channels.md) | [Publishing pre-releases ->](pre-releases.md)

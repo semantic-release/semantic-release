@@ -47,3 +47,6 @@ The authentication token/credentials have to be made available in the CI service
 See [CI configuration recipes](../recipes/README.md#ci-configurations) for more details on how to configure environment variables in your CI service.
 
 **Note**: The environment variables `GH_TOKEN`, `GITHUB_TOKEN`, `GL_TOKEN` and `GITLAB_TOKEN` can be used for both the Git authentication and the API authentication required by [@semantic-release/github](https://github.com/semantic-release/github) and [@semantic-release/gitlab](https://github.com/semantic-release/gitlab).
+
+---
+[<- Installation](installation.md#installation) | [Configuration ->](configuration.md#configuration)

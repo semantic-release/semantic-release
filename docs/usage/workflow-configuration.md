@@ -184,3 +184,6 @@ With the configuration `"branches": ["master", {"name": "beta", "prerelease": tr
 With the configuration `"branches": ["master", {"name": "beta", "prerelease": true}]`, if the last release published from `master` is `1.0.0` and the last one published from `beta` is `2.0.0-beta.1` then:
 - Pushing a `fix` commit on the `master` branch will release the version `1.0.1` on the default distribution channel
 - Merging the branch `master` into `beta` will release the version `2.0.0-beta.2` on the `beta` distribution channel
+
+---
+[<- Plugins](plugins.md) | [Shareable configurations ->](shareable-configurations.md)

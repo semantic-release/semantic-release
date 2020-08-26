@@ -249,3 +249,6 @@ See [Node version requirement](./node-version.md#node-version-requirement) for m
 [`npx`](https://www.npmjs.com/package/npx) – short for "npm exec" – is a CLI to find and execute npm binaries within the local `node_modules` folder or in the $PATH. If a binary can't be located npx will download the required package and execute it from its cache location.
 The tool is bundled with [npm](https://www.npmjs.com/package/npm) >= 5.2, or can be installed via `npm install -g npx`.
 For more details and motivation read the [introductory blog post](https://medium.com/@maybekatz/introducing-npx-an-npm-package-runner-55f7d4bd282b) by [@zkat](https://github.com/zkat).
+
+---
+[<- Resources](resources.md) | [Troubleshooting ->](troubleshooting.md)

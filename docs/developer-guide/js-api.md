@@ -282,3 +282,6 @@ Example:
    }
  ]
 ```
+
+---
+[<- Publishing pre-releases](../recipes/pre-releases.md) | [Plugins ->](plugin.md)

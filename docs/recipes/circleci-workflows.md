@@ -63,3 +63,6 @@ A `package.json` is required only for [local](../usage/installation.md#local-ins
   }
 }
 ```
+
+---
+[<- Shareable configuration list](../extending/shareable-configurations-list.md) | [Travis CI ->](travis.md)

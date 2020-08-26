@@ -104,3 +104,6 @@ if (env.GITHUB_TOKEN) {
     //...
 }
 ```
+
+---
+[<- JavaScript API](js-api.md) | [Shareable configuration ->](shareable-configuration.md)

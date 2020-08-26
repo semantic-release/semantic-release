@@ -95,3 +95,6 @@ jobs:
         on:
           all_branches: true
 ```
+
+---
+[<- CircleCI 2.0 workflows](circleci-workflows.md) | [GitLab CI ->](gitlab-ci.md)

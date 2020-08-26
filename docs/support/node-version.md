@@ -33,3 +33,6 @@ If your CI environment provides [nvm](https://github.com/creationix/nvm) you can
 ```bash
 $ nvm install 8 && npx semantic-release
 ```
+
+---
+[<- Troubleshooting](troubleshooting.md) | [Node Support Policy ->](node-support-policy.md)
