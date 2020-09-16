@@ -111,7 +111,7 @@ To ensure consistency and quality, all documentation modifications must:
   - commands inside sentences, i.e. the `semantic-release` command
   - programming language keywords, i.e. `function`, `async`, `String`
   - packages or modules, i.e. The [`@semantic-release/github`](https://github.com/semantic-release/github) module
-- Use the the [triple backtick `code` formatting](https://help.github.com/articles/creating-and-highlighting-code-blocks) for:
+- Use the [triple backtick `code` formatting](https://help.github.com/articles/creating-and-highlighting-code-blocks) for:
   - code examples
   - configuration examples
   - sequence of command lines
