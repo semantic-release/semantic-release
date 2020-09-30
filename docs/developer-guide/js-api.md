@@ -220,7 +220,7 @@ Information related to the newly published release:
 | type    | `String` | The [semver](https://semver.org) type of the release (`patch`, `minor` or `major`).                                           |
 | version | `String` | The version of the new release.                                                                                               |
 | gitHead | `String` | The sha of the last commit being part of the new release.                                                                     |
-| gitTag  | `String` | The [Git tag](https://git-scm.com/book/en/v2/Git-Basics-Tagging) associated with the new release.                             |
+| gitTags | `Array`  | The [Git tag](https://git-scm.com/book/en/v2/Git-Basics-Tagging)s associated with the new release.                             |
 | notes   | `String` | The release notes for the new release.                                                                                        |
 | channel | `String` | The distribution channel on which the next release will be made available (`undefined` for the default distribution channel). |
 
@@ -230,7 +230,7 @@ Example:
   type: 'minor',
   gitHead: '68eb2c4d778050b0701136ca129f837d7ed494d2',
   version: '1.1.0',
-  gitTag: 'v1.1.0',
+  gitTags: ['v1.1.0', 'v1.0', 'v1'],
   notes: 'Release notes for version 1.1.0...',
   channel : 'next'
 }

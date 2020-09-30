@@ -110,14 +110,14 @@ async function run(context, plugins) {
       nextRelease.notes = await plugins.generateNotes({...context, commits, lastRelease, nextRelease});
 
       if (options.dryRun) {
-        logger.warn(`Skip ${nextRelease.gitTag} tag creation in dry-run mode`);
+        logger.warn(`Skip ${nextRelease.gitTags[0]} tag creation in dry-run mode`);
       } else {
         await addNote({channels: [...currentRelease.channels, nextRelease.channel]}, nextRelease.gitHead, {cwd, env});
         await push(options.repositoryUrl, {cwd, env});
         await pushNotes(options.repositoryUrl, {cwd, env});
         logger.success(
           `Add ${nextRelease.channel ? `channel ${nextRelease.channel}` : 'default channel'} to tag ${
-            nextRelease.gitTag
+            nextRelease.gitTags[0]
           }`
         );
       }
@@ -125,7 +125,7 @@ async function run(context, plugins) {
       context.branch.tags.push({
         version: nextRelease.version,
         channel: nextRelease.channel,
-        gitTag: nextRelease.gitTag,
+        gitTag: nextRelease.gitTags[0],
         gitHead: nextRelease.gitHead,
       });
 
@@ -166,8 +166,8 @@ async function run(context, plugins) {
 
   context.nextRelease = nextRelease;
   nextRelease.version = getNextVersion(context);
-  nextRelease.gitTag = makeTag(options.tagFormat, nextRelease.version);
-  nextRelease.name = nextRelease.gitTag;
+  nextRelease.gitTags = options.tagFormats.map(tagFormat => makeTag(tagFormat, nextRelease.version));
+  nextRelease.name = nextRelease.gitTags[0];
 
   if (context.branch.type !== 'prerelease' && !semver.satisfies(nextRelease.version, context.branch.range)) {
     throw getError('EINVALIDNEXTVERSION', {
@@ -185,10 +185,10 @@ async function run(context, plugins) {
   await plugins.prepare(context);
 
   if (options.dryRun) {
-    logger.warn(`Skip ${nextRelease.gitTag} tag creation in dry-run mode`);
+    logger.warn(`Skip ${nextRelease.gitTags} tags creation in dry-run mode`);
   } else {
     // Create the tag before calling the publish plugins as some require the tag to exists
-    await tag(nextRelease.gitTag, nextRelease.gitHead, {cwd, env});
+    nextRelease.gitTags.forEach(gitTag => await tag(nextRelease.gitTag, nextRelease.gitHead, {cwd, env}));
     await addNote({channels: [nextRelease.channel]}, nextRelease.gitHead, {cwd, env});
     await push(options.repositoryUrl, {cwd, env});
     await pushNotes(options.repositoryUrl, {cwd, env});

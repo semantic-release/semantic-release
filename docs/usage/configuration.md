@@ -88,15 +88,15 @@ The git repository URL.
 
 Any valid git url format is supported (See [Git protocols](https://git-scm.com/book/en/v2/Git-on-the-Server-The-Protocols)).
 
-### tagFormat
+### tagFormats
 
-Type: `String`<br>
-Default: `v${version}`<br>
-CLI arguments: `-t`, `--tag-format`
+Type: `Array`<br>
+Default: `['v${version}', 'v${major}', 'v${major}.${minor}']`<br>
+CLI arguments: `-t`, `--tag-formats`
 
-The [Git tag](https://git-scm.com/book/en/v2/Git-Basics-Tagging) format used by **semantic-release** to identify releases. The tag name is generated with [Lodash template](https://lodash.com/docs#template) and will be compiled with the `version` variable.
+The [Git tag](https://git-scm.com/book/en/v2/Git-Basics-Tagging) formats used by **semantic-release** to identify releases. The tag name is generated with [Lodash template](https://lodash.com/docs#template) and will be compiled with the `version`, `major`, `minor` and `patch` variables.
 
-**Note**: The `tagFormat` must contain the `version` variable exactly once and compile to a [valid Git reference](https://git-scm.com/docs/git-check-ref-format#_description).
+**Note**: At least one of the `tagFormats` must contain the `version` variable exactly once. All must compile to a [valid Git reference](https://git-scm.com/docs/git-check-ref-format#_description).
 
 ### plugins
 
