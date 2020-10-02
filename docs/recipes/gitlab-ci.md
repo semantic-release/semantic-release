@@ -14,7 +14,7 @@ GitLab CI supports [Pipelines](https://docs.gitlab.com/ee/ci/pipelines.html) all
 
 ### `.gitlab-ci.yml` configuration for Node projects
 
-This example is a minimal configuration for **semantic-release** with a build running Node 6 and 8. See [GitLab CI - Configuration of your jobs with .gitlab-ci.yml](https://docs.gitlab.com/ee/ci/yaml/README.html) for additional configuration options.
+This example is a minimal configuration for **semantic-release** with a build running Node 10 and 12. See [GitLab CI - Configuration of your jobs with .gitlab-ci.yml](https://docs.gitlab.com/ee/ci/yaml/README.html) for additional configuration options.
 
 **Note**: The`semantic-release` execution command varies depending if you are using a [local](../usage/installation.md#local-installation) or [global](../usage/installation.md#global-installation) **semantic-release** installation.
 
@@ -27,23 +27,58 @@ stages:
 before_script:
   - npm install
 
-node:6:
-  image: node:6
+node:10:
+  image: node:10
   stage: test
   script:
     - npm test
 
-node:8:
-  image: node:8
+node:12:
+  image: node:12
   stage: test
   script:
     - npm test
 
 publish:
-  image: node:8
+  image: node:12
   stage: release
   script:
     - npx semantic-release
+```
+
+### `.gitlab-ci.yml` configuration for all projects
+
+This example is a minimal configuration for **semantic-release** with a build running Node 10 and 12. See [GitLab CI - Configuration of your jobs with .gitlab-ci.yml](https://docs.gitlab.com/ee/ci/yaml/README.html) for additional configuration options.
+
+**Note**: The`semantic-release` execution command varies depending if you are using a [local](../usage/installation.md#local-installation) or [global](../usage/installation.md#global-installation) **semantic-release** installation.
+
+
+```yaml
+# The release pipeline will run only on the master branch a commit is triggered 
+stages:
+  - release
+
+release:
+  image: node:10-buster-slim
+  stage: release
+  before_script:
+    - apt-get update && apt-get install -y --no-install-recommends git-core ca-certificates
+    - npm install -g semantic-release @semantic-release/gitlab
+  script:
+    - semantic-release
+  only:
+    - master
+
+release:
+  image: node:12-buster-slim
+  stage: release
+  before_script:
+    - apt-get update && apt-get install -y --no-install-recommends git-core ca-certificates
+    - npm install -g semantic-release @semantic-release/gitlab
+  script:
+    - semantic-release
+  only:
+    - master
 ```
 
 ### `package.json` configuration

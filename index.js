@@ -26,7 +26,8 @@ marked.setOptions({renderer: new TerminalRenderer()});
 /* eslint complexity: off */
 async function run(context, plugins) {
   const {cwd, env, options, logger} = context;
-  const {isCi, branch: ciBranch, isPr} = context.envCi;
+  const {isCi, branch, prBranch, isPr} = context.envCi;
+  const ciBranch = isPr ? prBranch : branch;
 
   if (!isCi && !options.dryRun && !options.noCi) {
     logger.warn('This run was not triggered in a known CI environment, running in dry-run mode.');
@@ -66,7 +67,9 @@ async function run(context, plugins) {
   }
 
   logger[options.dryRun ? 'warn' : 'success'](
-    `Run automated release from branch ${ciBranch}${options.dryRun ? ' in dry-run mode' : ''}`
+    `Run automated release from branch ${ciBranch} on repository ${options.repositoryUrl}${
+      options.dryRun ? ' in dry-run mode' : ''
+    }`
   );
 
   try {
@@ -212,7 +215,7 @@ async function run(context, plugins) {
 }
 
 function logErrors({logger, stderr}, err) {
-  const errors = extractErrors(err).sort(error => (error.semanticRelease ? -1 : 0));
+  const errors = extractErrors(err).sort((error) => (error.semanticRelease ? -1 : 0));
   for (const error of errors) {
     if (error.semanticRelease) {
       logger.error(`${error.code} ${error.message}`);
@@ -226,7 +229,7 @@ function logErrors({logger, stderr}, err) {
 }
 
 async function callFail(context, plugins, err) {
-  const errors = extractErrors(err).filter(err => err.semanticRelease);
+  const errors = extractErrors(err).filter((err) => err.semanticRelease);
   if (errors.length > 0) {
     try {
       await plugins.fail({...context, errors});
@@ -236,7 +239,7 @@ async function callFail(context, plugins, err) {
   }
 }
 
-module.exports = async (opts = {}, {cwd = process.cwd(), env = process.env, stdout, stderr} = {}) => {
+module.exports = async (cliOptions = {}, {cwd = process.cwd(), env = process.env, stdout, stderr} = {}) => {
   const {unhook} = hookStd(
     {silent: false, streams: [process.stdout, process.stderr, stdout, stderr].filter(Boolean)},
     hideSensitive(env)
@@ -251,7 +254,7 @@ module.exports = async (opts = {}, {cwd = process.cwd(), env = process.env, stdo
   context.logger = getLogger(context);
   context.logger.log(`Running ${pkg.name} version ${pkg.version}`);
   try {
-    const {plugins, options} = await getConfig(context, opts);
+    const {plugins, options} = await getConfig(context, cliOptions);
     context.options = options;
     try {
       const result = await run(context, plugins);

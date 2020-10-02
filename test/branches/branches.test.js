@@ -12,7 +12,7 @@ const merge = (branches, source, target, tag) => {
   );
 };
 
-test('Enforce ranges with branching release workflow', async t => {
+test('Enforce ranges with branching release workflow', async (t) => {
   const branches = [
     {name: '1.x', tags: []},
     {name: '1.0.x', tags: []},
@@ -189,7 +189,7 @@ test('Enforce ranges with branching release workflow', async t => {
   t.is(getBranch(result, '1.x').range, '>=1.2.0 <2.0.0', 'Can release on 1.x only within range');
 });
 
-test('Throw SemanticReleaseError for invalid configurations', async t => {
+test('Throw SemanticReleaseError for invalid configurations', async (t) => {
   const branches = [
     {name: '123', range: '123', tags: []},
     {name: '1.x', tags: []},
@@ -224,7 +224,7 @@ test('Throw SemanticReleaseError for invalid configurations', async t => {
   t.truthy(errors[4].details);
 });
 
-test('Throw a SemanticReleaseError if there is duplicate branches', async t => {
+test('Throw a SemanticReleaseError if there is duplicate branches', async (t) => {
   const branches = [
     {name: 'master', tags: []},
     {name: 'master', tags: []},
@@ -239,7 +239,7 @@ test('Throw a SemanticReleaseError if there is duplicate branches', async t => {
   t.truthy(errors[0].details);
 });
 
-test('Throw a SemanticReleaseError for each invalid branch name', async t => {
+test('Throw a SemanticReleaseError for each invalid branch name', async (t) => {
   const branches = [
     {name: '~master', tags: []},
     {name: '^master', tags: []},

@@ -1,7 +1,7 @@
 const test = require('ava');
 const getLastRelease = require('../lib/get-last-release');
 
-test('Get the highest non-prerelease valid tag', t => {
+test('Get the highest non-prerelease valid tag', (t) => {
   const result = getLastRelease({
     branch: {
       name: 'master',
@@ -18,7 +18,7 @@ test('Get the highest non-prerelease valid tag', t => {
   t.deepEqual(result, {version: '2.0.0', gitTag: 'v2.0.0', name: 'v2.0.0', gitHead: 'v2.0.0', channels: undefined});
 });
 
-test('Get the highest prerelease valid tag, ignoring other tags from other prerelease channels', t => {
+test('Get the highest prerelease valid tag, ignoring other tags from other prerelease channels', (t) => {
   const result = getLastRelease({
     branch: {
       name: 'beta',
@@ -43,7 +43,7 @@ test('Get the highest prerelease valid tag, ignoring other tags from other prere
   });
 });
 
-test('Return empty object if no valid tag is found', t => {
+test('Return empty object if no valid tag is found', (t) => {
   const result = getLastRelease({
     branch: {
       name: 'master',
@@ -56,7 +56,7 @@ test('Return empty object if no valid tag is found', t => {
   t.deepEqual(result, {});
 });
 
-test('Get the highest non-prerelease valid tag before a certain version', t => {
+test('Get the highest non-prerelease valid tag before a certain version', (t) => {
   const result = getLastRelease(
     {
       branch: {

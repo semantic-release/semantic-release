@@ -5,15 +5,15 @@ const hideSensitive = require('./lib/hide-sensitive');
 const stringList = {
   type: 'string',
   array: true,
-  coerce: values =>
+  coerce: (values) =>
     values.length === 1 && values[0].trim() === 'false'
       ? []
-      : values.reduce((values, value) => values.concat(value.split(',').map(value => value.trim())), []),
+      : values.reduce((values, value) => values.concat(value.split(',').map((value) => value.trim())), []),
 };
 
 module.exports = async () => {
   const cli = require('yargs')
-    .command('$0', 'Run automated package publishing', yargs => {
+    .command('$0', 'Run automated package publishing', (yargs) => {
       yargs.demandCommand(0, 0).usage(`Run automated package publishing
 
 Usage:
@@ -41,18 +41,18 @@ Usage:
     .exitProcess(false);
 
   try {
-    const {help, version, ...opts} = cli.parse(argv.slice(2));
+    const {help, version, ...options} = cli.parse(argv.slice(2));
 
     if (Boolean(help) || Boolean(version)) {
       return 0;
     }
 
-    if (opts.debug) {
+    if (options.debug) {
       // Debug must be enabled before other requires in order to work
       require('debug').enable('semantic-release:*');
     }
 
-    await require('.')(opts);
+    await require('.')(options);
     return 0;
   } catch (error) {
     if (error.name !== 'YError') {
