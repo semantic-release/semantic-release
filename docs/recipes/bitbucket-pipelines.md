@@ -68,7 +68,7 @@ pipelines:
             - npx semantic-release
 ```
 
-### Customise the workflow
+## Customise the workflow
 
 The example above is configured to publish when changes are pushed only to the master branch.
 
