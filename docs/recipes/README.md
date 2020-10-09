@@ -6,6 +6,7 @@
 - [GitLab CI](gitlab-ci.md)
 - [GitHub Actions](github-actions.md)
 - [Jenkins CI](jenkins-ci.md)
+- [Bitbucket Pipelines](bitbucket-pipelines.md)
 
 ## Git hosted services
 - [Git authentication with SSH keys](git-auth-ssh-keys.md)
