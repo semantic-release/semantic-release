@@ -6,11 +6,17 @@ The [Authentication](../usage/ci-configuration.md#authentication) environment va
 
 ## Node project configuration
 
-[Bitbucket Pipelines](https://confluence.atlassian.com/bitbucket/use-docker-images-as-build-environments-in-bitbucket-pipelines-792298897.html) can be configured to run any container from Dockerhub or private registries
+[Bitbucket Pipelines](https://confluence.atlassian.com/bitbucket/use-docker-images-as-build-environments-in-bitbucket-pipelines-792298897.html) can be configured to run any container from Dockerhub or private registries (such as AWS or GCP)
 
 **Note**: The publish pipeline must run on [Node version >= 10.18](../support/FAQ.md#why-does-semantic-release-require-node-version--1018).
 
-Install all the required plugins (including the generic `git` plugin)
+The following examples use the tag `lts` as default, but you can choose a more specific image if you wish to, for instance using a smaller image based on Alpine Linux, or use a specific fixed version if you worry about handle security vulnerabilities of the image itself.
+
+You can see the list of available tags on the [public Dockerhub registry](https://hub.docker.com/_/node?tab=tags)
+
+### 'semantic-release' installation
+
+Install all the required plugins (including the generic `@semantic-release/git` plugin)
 
 ```bash
 npm i -D @semantic-release/changelog @semantic-release/commit-analyzer @semantic-release/git @semantic-release/npm @semantic-release/release-notes-generator semantic-release
@@ -27,11 +33,11 @@ A sample configuration may look like this.
 },
 "release": {
   "plugins": [
-  "@semantic-release/commit-analyzer",
-  "@semantic-release/release-notes-generator",
-  "@semantic-release/npm",
-  "@semantic-release/changelog",
-  "@semantic-release/git"
+    "@semantic-release/commit-analyzer",
+    "@semantic-release/release-notes-generator",
+    "@semantic-release/npm",
+    "@semantic-release/changelog",
+    "@semantic-release/git"
   ]
 }
 ```
@@ -47,8 +53,10 @@ You need to allow 2 things for this workflow to work with Bitbucket:
 
 ```yaml
 # bitbucket-pipelines.yml
-# You can use any image & tag, but node >= 10.18 is required
-image: node:erbium
+# You can use any image & tag, just remember that node >= 10.18 is required for semantic-release
+# If your packages are compatible, you can for instance use the smaller "node:lts-alpine"
+# https://hub.docker.com/_/node?tab=tags
+image: node:lts
 
 pipelines:
   branches:
@@ -86,8 +94,10 @@ You can still use npm to set the configuration, yarn will read its values withou
 
 ```yaml
 # bitbucket-pipelines.yml
-# You can use any image & tag, but node >= 10.18 is required
-image: node:erbium
+# You can use any image & tag, just remember that node >= 10.18 is required for semantic-release
+# If your packages are compatible, you can for instance use the smaller "node:lts-alpine"
+# https://hub.docker.com/_/node?tab=tags
+image: node:lts
 
 pipelines:
   branches:
