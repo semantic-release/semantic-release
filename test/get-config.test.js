@@ -531,6 +531,6 @@ test('Throw an Error if package.json has duplicate "repository" key', async (t) 
   );
 
   const error = await t.throwsAsync(t.context.getConfig({cwd}));
-  t.deepEqual(error.code, 'EDUPLICATEREPOSITORYKEY')
-  t.deepEqual(error.message, 'Duplicate `"repository"` key in package.json.')
+  t.is(error.code, 'EDUPLICATEREPOSITORYKEY');
+  t.is(error.message, 'Duplicate `"repository"` key in package.json.');
 });

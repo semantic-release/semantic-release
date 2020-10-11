@@ -129,7 +129,8 @@
     "prettier": true,
     "space": true,
     "rules": {
-      "unicorn/string-content": "off"
+      "unicorn/string-content": "off",
+      "node/no-unsupported-features/node-builtins": "off"
     }
   }
 }
