@@ -229,7 +229,7 @@ Before pushing your code changes make sure there are no linting errors with `npm
 
 ### Tests
 
-Running the integration test requires you to install [Docker](https://docs.docker.com/engine/installation) on your machine.
+Running the integration test requires you to install [Docker](https://docs.docker.com/engine/installation) on your machine. Note: the tests assume that running `git init` will create a `master` branch by default. If your local `git` is configured differently (see [`init.defaultBranch`](https://github.blog/2020-07-27-highlights-from-git-2-28/#introducing-init-defaultbranch)), change it temporarily when running the tests.
 
 All the [semantic-release](https://github.com/semantic-release) repositories use [AVA](https://github.com/avajs/ava) for writing and running tests.
 
