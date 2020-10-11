@@ -31,6 +31,7 @@
     "env-ci": "^5.0.0",
     "execa": "^4.0.0",
     "figures": "^3.0.0",
+    "find-duplicated-property-keys": "^1.2.2",
     "find-versions": "^3.0.0",
     "get-stream": "^5.0.0",
     "git-log-parser": "^1.2.0",
