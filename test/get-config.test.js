@@ -516,3 +516,21 @@ test('Throw an Error if one of the shareable config cannot be found', async (t) 
     code: 'MODULE_NOT_FOUND',
   });
 });
+
+test('Throw an Error if package.json has duplicate "repository" key', async (t) => {
+  // Create a git repository, set the current working directory at the root of the repo
+  const {cwd} = await gitRepo();
+
+  // Create package.json with duplicate "repository" key
+  await writeFile(
+    path.resolve(cwd, 'package.json'),
+    `{
+    "repository": "https://github.com/octocat/repository",
+    "repository": "https://github.com/octocat/repository"
+  }`
+  );
+
+  const error = await t.throwsAsync(t.context.getConfig({cwd}));
+  t.deepEqual(error.code, 'EDUPLICATEREPOSITORYKEY')
+  t.deepEqual(error.message, 'Duplicate `"repository"` key in package.json.')
+});
