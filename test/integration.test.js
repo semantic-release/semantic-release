@@ -678,7 +678,7 @@ test('Use the valid git credentials when multiple are provided', async (t) => {
   );
 });
 
-test('Use the reposirotry URL as is if none of the given git credentials are valid', async (t) => {
+test('Use the repository URL as is if none of the given git credentials are valid', async (t) => {
   const {cwd} = await gitbox.createRepo('test-invalid-auth');
   const dummyUrl = 'http://toto@localhost:2080/git/test-auth.git';
 
