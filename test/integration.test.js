@@ -6,6 +6,7 @@ const {writeJson, readJson} = require('fs-extra');
 const execa = require('execa');
 const {WritableStreamBuffer} = require('stream-buffers');
 const delay = require('delay');
+const getAuthUrl = require('../lib/get-git-auth-url');
 const {SECRET_REPLACEMENT} = require('../lib/definitions/constants');
 const {
   gitHead,
@@ -655,4 +656,44 @@ test('Hide sensitive environment variable values from the logs', async (t) => {
   t.regex(stdout, new RegExp(`Log: Exposing token ${escapeRegExp(SECRET_REPLACEMENT)}`));
   t.regex(stderr, new RegExp(`Error: Console token ${escapeRegExp(SECRET_REPLACEMENT)}`));
   t.regex(stderr, new RegExp(`Throw error: Exposing ${escapeRegExp(SECRET_REPLACEMENT)}`));
+});
+
+test('Use the valid git credentials when multiple are provided', async (t) => {
+  const {cwd, authUrl} = await gitbox.createRepo('test-auth');
+
+  t.is(
+    await getAuthUrl({
+      cwd,
+      env: {
+        GITHUB_TOKEN: 'dummy',
+        GITLAB_TOKEN: 'trash',
+        BB_TOKEN_BASIC_AUTH: gitbox.gitCredential,
+        GIT_ASKPASS: 'echo',
+        GIT_TERMINAL_PROMPT: 0,
+      },
+      branch: {name: 'master'},
+      options: {repositoryUrl: 'http://toto@localhost:2080/git/test-auth.git'},
+    }),
+    authUrl
+  );
+});
+
+test('Use the repository URL as is if none of the given git credentials are valid', async (t) => {
+  const {cwd} = await gitbox.createRepo('test-invalid-auth');
+  const dummyUrl = 'http://toto@localhost:2080/git/test-auth.git';
+
+  t.is(
+    await getAuthUrl({
+      cwd,
+      env: {
+        GITHUB_TOKEN: 'dummy',
+        GITLAB_TOKEN: 'trash',
+        GIT_ASKPASS: 'echo',
+        GIT_TERMINAL_PROMPT: 0,
+      },
+      branch: {name: 'master'},
+      options: {repositoryUrl: dummyUrl},
+    }),
+    dummyUrl
+  );
 });
