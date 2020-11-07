@@ -24,6 +24,14 @@ test('Replace sensitive environment variable matching specific regex for "privat
   t.is(hideSensitive(env)(`https://host.com?token=${env.privateKey}`), `https://host.com?token=${SECRET_REPLACEMENT}`);
 });
 
+test('Replace url-encoded environment variable', (t) => {
+  const env = {privateKey: 'secret '};
+  t.is(
+    hideSensitive(env)(`https://host.com?token=${encodeURI(env.privateKey)}`),
+    `https://host.com?token=${SECRET_REPLACEMENT}`
+  );
+});
+
 test('Escape regexp special characters', (t) => {
   const env = {SOME_CREDENTIALS: 'p$^{.+}\\w[a-z]o.*rd'};
   t.is(
