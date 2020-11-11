@@ -257,3 +257,16 @@ test('Throw a SemanticReleaseError for each invalid branch name', async (t) => {
   t.truthy(errors[1].message);
   t.truthy(errors[1].details);
 });
+
+test('Throw a SemanticReleaseError when a branch is not present at remote', async (t) => {
+  const branches = [{}];
+
+  const getBranches = proxyquire('../../lib/branches', {'./get-tags': () => [], './expand': () => []});
+
+  const errors = [...(await t.throwsAsync(getBranches('repositoryUrl', 'master', {options: {branches}})))];
+
+  t.is(errors[0].name, 'SemanticReleaseError');
+  t.is(errors[0].code, 'ERELEASEBRANCHES');
+  t.truthy(errors[0].message);
+  t.truthy(errors[0].details);
+});
