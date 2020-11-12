@@ -108,7 +108,7 @@
 - [semantic-release-npm-deprecate-old-versions](https://github.com/ghusse/semantic-release-npm-deprecate-old-versions)
   - `verifyConditions`: Validates configuration.
   - `publish`: Deprecates old versions, based on the declaration of supported versions in the config. 
-- [@amanda-mitchell/semantic-release-npm-multiple](https://github.com/amanda-mitchell/semantic-release-npm-multiple)
+- [amanda-mitchell/semantic-release-npm-multiple](https://github.com/amanda-mitchell/semantic-release-npm-multiple)
   - **Note**: this is a thin wrapper around the built-in npm plugin that can target multiple registries
   - `verifyConditions`: Verify the presence and the validity of the npm authentication and release configuration for multiple registries
   - `prepare`: Update the package.json version and create the npm package tarball
