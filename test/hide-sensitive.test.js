@@ -40,6 +40,14 @@ test('Escape regexp special characters', (t) => {
   );
 });
 
+test('Escape regexp special characters in url-encoded environment variable', (t) => {
+  const env = {SOME_PASSWORD: 'secret password p$^{.+}\\w[a-z]o.*rd)('};
+  t.is(
+    hideSensitive(env)(`https://user:${encodeURI(env.SOME_PASSWORD)}@host.com`),
+    `https://user:${SECRET_REPLACEMENT}@host.com`
+  );
+});
+
 test('Accept "undefined" input', (t) => {
   t.is(hideSensitive({})(), undefined);
 });
