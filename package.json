@@ -122,7 +122,8 @@
     "lint": "xo",
     "pretest": "npm run lint",
     "semantic-release": "./bin/semantic-release.js",
-    "test": "nyc ava -v"
+    "test": "nyc ava -v",
+    "test:ci": "nyc ava -v"
   },
   "xo": {
     "prettier": true,
@@ -130,5 +131,10 @@
     "rules": {
       "unicorn/string-content": "off"
     }
+  },
+  "renovate": {
+    "extends": [
+      "github>semantic-release/.github"
+    ]
   }
 }
