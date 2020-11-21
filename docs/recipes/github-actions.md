@@ -4,7 +4,7 @@
 
 The [Authentication](../usage/ci-configuration.md#authentication) environment variables can be configured with [Secret Variables](https://help.github.com/en/articles/virtual-environments-for-github-actions#creating-and-using-secrets-encrypted-variables).
 
-In this example an [`NPM_TOKEN`](https://docs.npmjs.com/creating-and-viewing-authentication-tokens) is required to publish a package to the npm registry. GitHub Actions [automatically populate](https://help.github.com/en/articles/virtual-environments-for-github-actions#github_token-secret) a [`GITHUB_TOKEN`](https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line) environment variable which can be used in Workflows.
+In this example a publish type [`NPM_TOKEN`](https://docs.npmjs.com/creating-and-viewing-authentication-tokens) is required to publish a package to the npm registry. GitHub Actions [automatically populate](https://help.github.com/en/articles/virtual-environments-for-github-actions#github_token-secret) a [`GITHUB_TOKEN`](https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line) environment variable which can be used in Workflows.
 
 ## Node project configuration
 
