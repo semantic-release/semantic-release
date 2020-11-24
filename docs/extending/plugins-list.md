@@ -113,3 +113,6 @@
   - `verifyConditions`: Verify the presence and the validity of the npm authentication and release configuration for multiple registries
   - `prepare`: Update the package.json version and create the npm package tarball
   - `publish`: Publish the package on the npm registry for multiple registries
+- [semantic-release-license](https://github.com/cbhq/semantic-release-license) Automatically update dates and more in your license file for new releases.
+  - `verifyConditions`: Verify the presence of a license file
+  - `prepare`: Update the license file based on its type
