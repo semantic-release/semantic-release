@@ -116,3 +116,7 @@
 - [semantic-release-license](https://github.com/cbhq/semantic-release-license) Automatically update dates and more in your license file for new releases.
   - `verifyConditions`: Verify the presence of a license file
   - `prepare`: Update the license file based on its type
+- [semantic-release-pypi](https://github.com/abichinger/semantic-release-pypi)
+  - `verifyConditions`: Verify the environment variable ```PYPI_TOKEN``` and installation of build tools
+  - `prepare`: Update the version in ```setup.cfg``` and create the distribution packages
+  - `publish`: Publish the python package to a repository (default: pypi)
