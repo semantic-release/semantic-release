@@ -53,6 +53,7 @@ async function run(context, plugins) {
       ...env,
       GIT_ASKPASS: "echo",
       GIT_TERMINAL_PROMPT: 0,
+      EDITOR: "echo 'Created-by: semantic-release' > $1",
     });
   }
 
