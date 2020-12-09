@@ -120,3 +120,7 @@
   - `verifyConditions`: Verify the environment variable ```PYPI_TOKEN``` and installation of build tools
   - `prepare`: Update the version in ```setup.cfg``` and create the distribution packages
   - `publish`: Publish the python package to a repository (default: pypi)
+- [semantic-release-helm](https://github.com/m1pl/semantic-release-helm)
+  - `verifyConditions`: Validate configuration and (if present) credentials
+  - `prepare`: Update version and appVersion in ```Chart.yaml```
+  - `publish`: Publish the chart to a registry (if configured)
