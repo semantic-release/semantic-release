@@ -12,6 +12,7 @@ A plugin is a npm module that can implement one or more of the following steps:
 | `generateNotes`    | No       | Responsible for generating the content of the release note. If multiple plugins with a `generateNotes` step are defined, the release notes will be the result of the concatenation of each plugin output.            |
 | `prepare`          | No       | Responsible for preparing the release, for example creating or updating files such as `package.json`, `CHANGELOG.md`, documentation or compiled assets and pushing a commit.                                         |
 | `publish`          | No       | Responsible for publishing the release.                                                                                                                                                                              |
+| `addChannel`       | No       | Responsible for adding a release channel (e.g. adding an npm dist-tag to a release).                                                                                                                                 |
 | `success`          | No       | Responsible for notifying of a new release.                                                                                                                                                                          |
 | `fail`             | No       | Responsible for notifying of a failed release.                                                                                                                                                                       |
 
