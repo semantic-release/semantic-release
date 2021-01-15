@@ -40,6 +40,7 @@ require('../cli')()
   .then((exitCode) => {
     process.exitCode = exitCode;
   })
-  .catch(() => {
+  .catch((error) => {
+    console.error(error);
     process.exitCode = 1;
   });
