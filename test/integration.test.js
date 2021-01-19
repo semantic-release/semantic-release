@@ -31,12 +31,13 @@ const requireNoCache = proxyquire.noPreserveCache();
 // Environment variables used with semantic-release cli (similar to what a user would setup)
 const env = {
   ...npmRegistry.authEnv,
+  CI: 'true',
   GH_TOKEN: gitbox.gitCredential,
   GITHUB_URL: mockServer.url,
-  TRAVIS: 'true',
-  CI: 'true',
-  TRAVIS_BRANCH: 'master',
-  TRAVIS_PULL_REQUEST: 'false',
+  GITHUB_EVENT_NAME: 'push',
+  GITHUB_EVENT_PATH: null,
+  GITHUB_ACTION: null,
+  GITHUB_REF: 'master',
 };
 // Environment variables used only for the local npm command used to do verification
 const testEnv = {
@@ -233,7 +234,7 @@ test('Release patch, minor and major versions', async (t) => {
   await gitPush('origin', 'next', {cwd});
   await gitCommits(['feat: foo\n\n BREAKING CHANGE: bar'], {cwd});
   t.log('$ semantic-release');
-  ({stdout, exitCode} = await execa(cli, [], {env: {...env, TRAVIS_BRANCH: 'next'}, cwd}));
+  ({stdout, exitCode} = await execa(cli, [], {env: {...env, GITHUB_REF: 'next'}, cwd}));
   t.regex(stdout, new RegExp(`Published GitHub release: release-url/${version}`));
   t.regex(stdout, new RegExp(`Publishing version ${version} to npm registry`));
   t.is(exitCode, 0);
@@ -400,7 +401,6 @@ test('Dry-run', async (t) => {
 
 test('Allow local releases with "noCi" option', async (t) => {
   const envNoCi = {...env};
-  delete envNoCi.TRAVIS;
   delete envNoCi.CI;
   const packageName = 'test-no-ci';
   const owner = 'git';
