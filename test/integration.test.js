@@ -29,7 +29,13 @@ const npmRegistry = require('./helpers/npm-registry');
 const requireNoCache = proxyquire.noPreserveCache();
 
 // Environment variables used with semantic-release cli (similar to what a user would setup)
+const {
+  GITHUB_ACTION,
+  GITHUB_TOKEN,
+  ...processEnvWithoutGitHubActionsVariables
+} = process.env
 const env = {
+  ...processEnvWithoutGitHubActionsVariables,
   ...npmRegistry.authEnv,
   CI: 'true',
   GH_TOKEN: gitbox.gitCredential,
@@ -39,33 +45,9 @@ const env = {
   GITHUB_API_URL: mockServer.url,
 };
 
-// ignore certain environment variables that are set on CI and that would interfere with our test setup,
-// see https://docs.github.com/en/actions/reference/environment-variables#default-environment-variables
-const {
-  GITHUB_TOKEN,
-  GITHUB_ACTION,
-  GITHUB_ACTIONS,
-  GITHUB_ACTOR,
-  GITHUB_API_URL,
-  GITHUB_BASE_REF,
-  GITHUB_EVENT_NAME,
-  GITHUB_EVENT_PATH,
-  GITHUB_GRAPHQL_URL,
-  GITHUB_HEAD_REF,
-  GITHUB_REF,
-  GITHUB_REPOSITORY,
-  GITHUB_RUN_ID,
-  GITHUB_RUN_NUMBER,
-  GITHUB_SERVER_URL,
-  GITHUB_SHA,
-  GITHUB_WORKFLOW,
-  GITHUB_WORKSPACE,
-  ...processEnv
-} = process.env
-
 // Environment variables used only for the local npm command used to do verification
-const testEnv = {
-  ...processEnv,
+const npmTestEnv = {
+  ...process.env,
   ...npmRegistry.authEnv,
   npm_config_registry: npmRegistry.url,
   LEGACY_TOKEN: Buffer.from(`${env.NPM_USERNAME}:${env.NPM_PASSWORD}`, 'utf8').toString('base64'),
@@ -84,7 +66,7 @@ test.after.always(async () => {
   await Promise.all([gitbox.stop(), npmRegistry.stop(), mockServer.stop()]);
 });
 
-test.only('Release patch, minor and major versions', async (t) => {
+test('Release patch, minor and major versions', async (t) => {
   const packageName = 'test-release';
   const owner = 'git';
   // Create a git repository, set the current working directory at the root of the repo
@@ -99,7 +81,7 @@ test.only('Release patch, minor and major versions', async (t) => {
     release: {branches: ['master', 'next'], success: false, fail: false},
   });
   // Create a npm-shrinkwrap.json file
-  await execa('npm', ['shrinkwrap'], {env: testEnv, cwd});
+  await execa('npm', ['shrinkwrap'], {env: npmTestEnv, cwd, extendEnv: false});
 
   /* No release */
   let verifyMock = await mockServer.mock(
@@ -110,7 +92,7 @@ test.only('Release patch, minor and major versions', async (t) => {
   t.log('Commit a chore');
   await gitCommits(['chore: Init repository'], {cwd});
   t.log('$ semantic-release');
-  let {stdout, exitCode} = await execa(cli, [], {env, cwd});
+  let {stdout, exitCode} = await execa(cli, [], {env, cwd, extendEnv: false});
   t.regex(stdout, /There are no relevant changes, so no new version is released/);
   t.is(exitCode, 0);
 
@@ -133,7 +115,7 @@ test.only('Release patch, minor and major versions', async (t) => {
   t.log('Commit a feature');
   await gitCommits(['feat: Initial commit'], {cwd});
   t.log('$ semantic-release');
-  ({stdout, exitCode} = await execa(cli, [], {env, cwd}));
+  ({stdout, exitCode} = await execa(cli, [], {env, cwd, extendEnv: false}));
   t.regex(stdout, new RegExp(`Published GitHub release: release-url/${version}`));
   t.regex(stdout, new RegExp(`Publishing version ${version} to npm registry`));
   t.is(exitCode, 0);
@@ -145,7 +127,7 @@ test.only('Release patch, minor and major versions', async (t) => {
   // Retrieve the published package from the registry and check version and gitHead
   let {
     'dist-tags': {latest: releasedVersion},
-  } = await npmView(packageName, testEnv);
+  } = await npmView(packageName, npmTestEnv);
   let head = await gitHead({cwd});
   t.is(releasedVersion, version);
   t.is(await gitTagHead(`v${version}`, {cwd}), head);
@@ -174,7 +156,7 @@ test.only('Release patch, minor and major versions', async (t) => {
   t.log('Commit a fix');
   await gitCommits(['fix: bar'], {cwd});
   t.log('$ semantic-release');
-  ({stdout, exitCode} = await execa(cli, [], {env, cwd}));
+  ({stdout, exitCode} = await execa(cli, [], {env, cwd, extendEnv: false}));
   t.regex(stdout, new RegExp(`Published GitHub release: release-url/${version}`));
   t.regex(stdout, new RegExp(`Publishing version ${version} to npm registry`));
   t.is(exitCode, 0);
@@ -186,7 +168,7 @@ test.only('Release patch, minor and major versions', async (t) => {
   // Retrieve the published package from the registry and check version and gitHead
   ({
     'dist-tags': {latest: releasedVersion},
-  } = await npmView(packageName, testEnv));
+  } = await npmView(packageName, npmTestEnv));
   head = await gitHead({cwd});
   t.is(releasedVersion, version);
   t.is(await gitTagHead(`v${version}`, {cwd}), head);
@@ -215,7 +197,7 @@ test.only('Release patch, minor and major versions', async (t) => {
   t.log('Commit a feature');
   await gitCommits(['feat: baz'], {cwd});
   t.log('$ semantic-release');
-  ({stdout, exitCode} = await execa(cli, [], {env, cwd}));
+  ({stdout, exitCode} = await execa(cli, [], {env, cwd, extendEnv: false}));
   t.regex(stdout, new RegExp(`Published GitHub release: release-url/${version}`));
   t.regex(stdout, new RegExp(`Publishing version ${version} to npm registry`));
   t.is(exitCode, 0);
@@ -227,7 +209,7 @@ test.only('Release patch, minor and major versions', async (t) => {
   // Retrieve the published package from the registry and check version and gitHead
   ({
     'dist-tags': {latest: releasedVersion},
-  } = await npmView(packageName, testEnv));
+  } = await npmView(packageName, npmTestEnv));
   head = await gitHead({cwd});
   t.is(releasedVersion, version);
   t.is(await gitTagHead(`v${version}`, {cwd}), head);
@@ -258,7 +240,7 @@ test.only('Release patch, minor and major versions', async (t) => {
   await gitPush('origin', 'next', {cwd});
   await gitCommits(['feat: foo\n\n BREAKING CHANGE: bar'], {cwd});
   t.log('$ semantic-release');
-  ({stdout, exitCode} = await execa(cli, [], {env: {...env, TRAVIS_BRANCH: 'next'}, cwd}));
+  ({stdout, exitCode} = await execa(cli, [], {env: {...env, TRAVIS_BRANCH: 'next'}, cwd, extendEnv: false}));
   t.regex(stdout, new RegExp(`Published GitHub release: release-url/${version}`));
   t.regex(stdout, new RegExp(`Publishing version ${version} to npm registry`));
   t.is(exitCode, 0);
@@ -270,7 +252,7 @@ test.only('Release patch, minor and major versions', async (t) => {
   // Retrieve the published package from the registry and check version and gitHead
   ({
     'dist-tags': {next: releasedVersion},
-  } = await npmView(packageName, testEnv));
+  } = await npmView(packageName, npmTestEnv));
   head = await gitHead({cwd});
   t.is(releasedVersion, version);
   t.is(await gitGetNote(`v${version}`, {cwd}), '{"channels":["next"]}');
@@ -308,7 +290,7 @@ test.only('Release patch, minor and major versions', async (t) => {
   await merge('next', {cwd});
   await gitPush('origin', 'master', {cwd});
   t.log('$ semantic-release');
-  ({stdout, exitCode} = await execa(cli, [], {env, cwd}));
+  ({stdout, exitCode} = await execa(cli, [], {env, cwd, extendEnv: false}));
   t.regex(stdout, new RegExp(`Updated GitHub release: release-url/${version}`));
   t.regex(stdout, new RegExp(`Adding version ${version} to npm registry on dist-tag latest`));
   t.is(exitCode, 0);
@@ -318,7 +300,7 @@ test.only('Release patch, minor and major versions', async (t) => {
   // Retrieve the published package from the registry and check version and gitHead
   ({
     'dist-tags': {latest: releasedVersion},
-  } = await npmView(packageName, testEnv));
+  } = await npmView(packageName, npmTestEnv));
   t.is(releasedVersion, version);
   t.is(await gitGetNote(`v${version}`, {cwd}), '{"channels":["next",null]}');
   t.is(await gitTagHead(`v${version}`, {cwd}), await gitTagHead(`v${version}`, {cwd}));
@@ -343,7 +325,7 @@ test('Exit with 1 if a plugin is not found', async (t) => {
     release: {analyzeCommits: 'non-existing-path', success: false, fail: false},
   });
 
-  const {exitCode, stderr} = await t.throwsAsync(execa(cli, [], {env, cwd}));
+  const {exitCode, stderr} = await t.throwsAsync(execa(cli, [], {env, cwd, extendEnv: false}));
   t.is(exitCode, 1);
   t.regex(stderr, /Cannot find module/);
 });
@@ -361,7 +343,7 @@ test('Exit with 1 if a shareable config is not found', async (t) => {
     release: {extends: 'non-existing-path', success: false, fail: false},
   });
 
-  const {exitCode, stderr} = await t.throwsAsync(execa(cli, [], {env, cwd}));
+  const {exitCode, stderr} = await t.throwsAsync(execa(cli, [], {env, cwd, extendEnv: false}));
   t.is(exitCode, 1);
   t.regex(stderr, /Cannot find module/);
 });
@@ -382,7 +364,7 @@ test('Exit with 1 if a shareable config reference a not found plugin', async (t)
   });
   await writeJson(path.resolve(cwd, 'shareable.json'), shareable);
 
-  const {exitCode, stderr} = await t.throwsAsync(execa(cli, [], {env, cwd}));
+  const {exitCode, stderr} = await t.throwsAsync(execa(cli, [], {env, cwd, extendEnv: false}));
   t.is(exitCode, 1);
   t.regex(stderr, /Cannot find module/);
 });
@@ -412,7 +394,7 @@ test('Dry-run', async (t) => {
   t.log('Commit a feature');
   await gitCommits(['feat: Initial commit'], {cwd});
   t.log('$ semantic-release -d');
-  const {stdout, exitCode} = await execa(cli, ['-d'], {env, cwd});
+  const {stdout, exitCode} = await execa(cli, ['-d'], {env, cwd, extendEnv: false});
   t.regex(stdout, new RegExp(`There is no previous release, the next release version is ${version}`));
   t.regex(stdout, new RegExp(`Release note for version ${version}`));
   t.regex(stdout, /Initial commit/);
@@ -459,7 +441,7 @@ test('Allow local releases with "noCi" option', async (t) => {
   t.log('Commit a feature');
   await gitCommits(['feat: Initial commit'], {cwd});
   t.log('$ semantic-release --no-ci');
-  const {stdout, exitCode} = await execa(cli, ['--no-ci'], {env: envNoCi, cwd});
+  const {stdout, exitCode} = await execa(cli, ['--no-ci'], {env: envNoCi, cwd, extendEnv: false});
   t.regex(stdout, new RegExp(`Published GitHub release: release-url/${version}`));
   t.regex(stdout, new RegExp(`Publishing version ${version} to npm registry`));
   t.is(exitCode, 0);
@@ -468,7 +450,7 @@ test('Allow local releases with "noCi" option', async (t) => {
   t.is((await readJson(path.resolve(cwd, 'package.json'))).version, version);
 
   // Retrieve the published package from the registry and check version and gitHead
-  const {version: releasedVersion, gitHead: releasedGitHead} = await npmView(packageName, testEnv);
+  const {version: releasedVersion, gitHead: releasedGitHead} = await npmView(packageName, npmTestEnv);
 
   const head = await gitHead({cwd});
   t.is(releasedVersion, version);
@@ -512,7 +494,7 @@ test('Pass options via CLI arguments', async (t) => {
       false,
       '--debug',
     ],
-    {env, cwd}
+    {env, cwd, extendEnv: false}
   );
   t.regex(stdout, new RegExp(`Publishing version ${version} to npm registry`));
   t.is(exitCode, 0);
@@ -521,7 +503,7 @@ test('Pass options via CLI arguments', async (t) => {
   t.is((await readJson(path.resolve(cwd, 'package.json'))).version, version);
 
   // Retrieve the published package from the registry and check version and gitHead
-  const {version: releasedVersion, gitHead: releasedGitHead} = await npmView(packageName, testEnv);
+  const {version: releasedVersion, gitHead: releasedGitHead} = await npmView(packageName, npmTestEnv);
   const head = await gitHead({cwd});
   t.is(releasedVersion, version);
   t.is(releasedGitHead, head);
@@ -577,7 +559,7 @@ test('Run via JS API', async (t) => {
   t.is((await readJson(path.resolve(cwd, 'package.json'))).version, version);
 
   // Retrieve the published package from the registry and check version and gitHead
-  const {version: releasedVersion, gitHead: releasedGitHead} = await npmView(packageName, testEnv);
+  const {version: releasedVersion, gitHead: releasedGitHead} = await npmView(packageName, npmTestEnv);
   const head = await gitHead({cwd});
   t.is(releasedVersion, version);
   t.is(releasedGitHead, head);
@@ -606,7 +588,7 @@ test('Log unexpected errors from plugins and exit with 1', async (t) => {
   t.log('Commit a feature');
   await gitCommits(['feat: Initial commit'], {cwd});
   t.log('$ semantic-release');
-  const {stderr, exitCode} = await execa(cli, [], {env, cwd, reject: false});
+  const {stderr, exitCode} = await execa(cli, [], {env, cwd, reject: false, extendEnv: false});
   // Verify the type and message are logged
   t.regex(stderr, /Error: a/);
   // Verify the the stacktrace is logged
@@ -633,7 +615,7 @@ test('Log errors inheriting SemanticReleaseError and exit with 1', async (t) => 
   t.log('Commit a feature');
   await gitCommits(['feat: Initial commit'], {cwd});
   t.log('$ semantic-release');
-  const {stderr, exitCode} = await execa(cli, [], {env, cwd, reject: false});
+  const {stderr, exitCode} = await execa(cli, [], {env, cwd, reject: false, extendEnv: false});
   // Verify the type and message are logged
   t.regex(stderr, /EINHERITED Inherited error/);
   t.is(exitCode, 1);
@@ -654,7 +636,7 @@ test('Exit with 1 if missing permission to push to the remote repository', async
   const {stderr, exitCode} = await execa(
     cli,
     ['--repository-url', 'http://user:wrong_pass@localhost:2080/git/unauthorized.git'],
-    {env: {...env, GH_TOKEN: 'user:wrong_pass'}, cwd, reject: false}
+    {env: {...env, GH_TOKEN: 'user:wrong_pass'}, cwd, reject: false, extendEnv: false}
   );
   // Verify the type and message are logged
   t.regex(stderr, /EGITNOPERMISSION/);
@@ -674,7 +656,7 @@ test('Hide sensitive environment variable values from the logs', async (t) => {
   });
 
   t.log('$ semantic-release');
-  const {stdout, stderr} = await execa(cli, [], {env: {...env, MY_TOKEN: 'secret token'}, cwd, reject: false});
+  const {stdout, stderr} = await execa(cli, [], {env: {...env, MY_TOKEN: 'secret token'}, cwd, reject: false, extendEnv: false});
 
   t.regex(stdout, new RegExp(`Console: Exposing token ${escapeRegExp(SECRET_REPLACEMENT)}`));
   t.regex(stdout, new RegExp(`Log: Exposing token ${escapeRegExp(SECRET_REPLACEMENT)}`));
