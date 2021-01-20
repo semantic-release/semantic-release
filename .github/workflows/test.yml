@@ -1,0 +1,45 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - master
+      - renovate/**
+
+  pull_request:
+    types:
+      - opened
+      - synchronize
+
+jobs:
+  test_matrix:
+    strategy:
+      matrix:
+        node-version:
+          - 10
+          - 12
+          - 14
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - run: git config --global user.name github-actions
+      - run: git config --global user.email github-actions@github.com
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - uses: bahmutov/npm-install@v1
+      - run: npm run test:ci
+
+  # separate job to set as required in branch protection,
+  # as the build names above change each time Node versions change
+  test:
+    runs-on: ubuntu-latest
+    needs: test_matrix
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+      - uses: bahmutov/npm-install@v1
+      - run: npm run lint
