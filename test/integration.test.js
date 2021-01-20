@@ -64,7 +64,7 @@ const {
 
 // Environment variables used only for the local npm command used to do verification
 const testEnv = {
-  ...process.env,
+  ...processEnv,
   ...npmRegistry.authEnv,
   npm_config_registry: npmRegistry.url,
   LEGACY_TOKEN: Buffer.from(`${env.NPM_USERNAME}:${env.NPM_PASSWORD}`, 'utf8').toString('base64'),
