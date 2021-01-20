@@ -35,10 +35,21 @@ const env = {
   GH_TOKEN: gitbox.gitCredential,
   GITHUB_URL: mockServer.url,
   GITHUB_EVENT_NAME: 'push',
-  GITHUB_REF: 'master',
-  GITHUB_EVENT_PATH: '',
-  GITHUB_ACTION: ''
+  GITHUB_REF: 'master'
 };
+
+// ignore certain environment variables that are set on CI and that would
+// interfere with our test setup
+const {
+  GITHUB_URL,
+  GITHUB_EVENT_NAME,
+  GITHUB_REF,
+  GITHUB_EVENT_PATH,
+  GITHUB_ACTION,
+  GITHUB_TOKEN,
+  ...processEnv
+} = process.env
+
 // Environment variables used only for the local npm command used to do verification
 const testEnv = {
   ...process.env,
@@ -680,7 +691,7 @@ test('Use the valid git credentials when multiple are provided', async (t) => {
 
 test('Use the repository URL as is if none of the given git credentials are valid', async (t) => {
   const {cwd} = await gitbox.createRepo('test-invalid-auth');
-  const dummyUrl = 'http://toto@localhost:2080/git/test-auth.git';
+  const dummyUrl = 'http://toto@localhost:2080/git/test-invalid-auth.git';
 
   t.is(
     await getAuthUrl({
