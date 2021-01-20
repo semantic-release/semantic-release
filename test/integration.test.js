@@ -36,6 +36,8 @@ const env = {
   GITHUB_URL: mockServer.url,
   GITHUB_EVENT_NAME: 'push',
   GITHUB_REF: 'master',
+  GITHUB_EVENT_PATH: '',
+  GITHUB_ACTION: ''
 };
 // Environment variables used only for the local npm command used to do verification
 const testEnv = {
