@@ -1,5 +1,5 @@
 const path = require('path');
-const { serial: test } = require('ava');
+const test = require('ava');
 const proxyquire = require('proxyquire');
 const {escapeRegExp} = require('lodash');
 const {writeJson, readJson} = require('fs-extra');
