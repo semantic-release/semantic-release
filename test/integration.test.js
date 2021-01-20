@@ -35,8 +35,6 @@ const env = {
   GH_TOKEN: gitbox.gitCredential,
   GITHUB_URL: mockServer.url,
   GITHUB_EVENT_NAME: 'push',
-  GITHUB_EVENT_PATH: null,
-  GITHUB_ACTION: null,
   GITHUB_REF: 'master',
 };
 // Environment variables used only for the local npm command used to do verification
