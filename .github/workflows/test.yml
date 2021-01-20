@@ -17,9 +17,9 @@ jobs:
     strategy:
       matrix:
         node-version:
-          - 10
+          # - 10
           - 12
-          - 14
+          # - 14
 
     runs-on: ubuntu-latest
 
@@ -32,7 +32,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - uses: bahmutov/npm-install@v1
-      - run: npm run test:ci
+      - run: npx ava test/integration.test.js
 
   # separate job to set as required in branch protection,
   # as the build names above change each time Node versions change

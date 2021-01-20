@@ -21,7 +21,12 @@ See https://github.com/semantic-release/semantic-release/blob/master/docs/suppor
   process.exit(1);
 }
 
+console.log("DEBUG START ==========")
+console.log('process.env')
 console.log(process.env)
+console.log('envCi({ env: process.env })')
+console.log(require('env-ci')({ env: process.env }))
+console.log("DEBUG END ==========")
 
 execa('git', ['--version'])
   .then(({stdout}) => {
