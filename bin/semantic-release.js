@@ -21,6 +21,8 @@ See https://github.com/semantic-release/semantic-release/blob/master/docs/suppor
   process.exit(1);
 }
 
+console.log(process.env)
+
 execa('git', ['--version'])
   .then(({stdout}) => {
     var gitVersion = findVersions(stdout)[0];

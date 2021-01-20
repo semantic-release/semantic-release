@@ -84,7 +84,7 @@ test.after.always(async () => {
   await Promise.all([gitbox.stop(), npmRegistry.stop(), mockServer.stop()]);
 });
 
-test('Release patch, minor and major versions', async (t) => {
+test.only('Release patch, minor and major versions', async (t) => {
   const packageName = 'test-release';
   const owner = 'git';
   // Create a git repository, set the current working directory at the root of the repo
