@@ -27,7 +27,7 @@ jobs:
       - run: git config --global user.name github-actions
       - run: git config --global user.email github-actions@github.com
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
       - uses: bahmutov/npm-install@v1
@@ -40,6 +40,6 @@ jobs:
     needs: test_matrix
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v2
       - uses: bahmutov/npm-install@v1
       - run: npm run lint
