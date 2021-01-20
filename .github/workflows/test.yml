@@ -5,6 +5,7 @@ on:
     branches:
       - master
       - renovate/**
+      - 1692/setup-renovate-debug
 
   pull_request:
     types:
