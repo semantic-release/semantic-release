@@ -33,9 +33,10 @@ const env = {
   ...npmRegistry.authEnv,
   CI: 'true',
   GH_TOKEN: gitbox.gitCredential,
-  GITHUB_URL: mockServer.url,
-  GITHUB_EVENT_NAME: 'push',
-  GITHUB_REF: 'master'
+  TRAVIS: 'true',
+  TRAVIS_BRANCH: 'master',
+  TRAVIS_PULL_REQUEST: 'false',
+  GITHUB_API_URL: mockServer.url,
 };
 
 // ignore certain environment variables that are set on CI and that would interfere with our test setup,
@@ -257,7 +258,7 @@ test('Release patch, minor and major versions', async (t) => {
   await gitPush('origin', 'next', {cwd});
   await gitCommits(['feat: foo\n\n BREAKING CHANGE: bar'], {cwd});
   t.log('$ semantic-release');
-  ({stdout, exitCode} = await execa(cli, [], {env: {...env, GITHUB_REF: 'next'}, cwd}));
+  ({stdout, exitCode} = await execa(cli, [], {env: {...env, TRAVIS_BRANCH: 'next'}, cwd}));
   t.regex(stdout, new RegExp(`Published GitHub release: release-url/${version}`));
   t.regex(stdout, new RegExp(`Publishing version ${version} to npm registry`));
   t.is(exitCode, 0);
