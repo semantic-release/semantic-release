@@ -29,11 +29,7 @@ const npmRegistry = require('./helpers/npm-registry');
 const requireNoCache = proxyquire.noPreserveCache();
 
 // Environment variables used with semantic-release cli (similar to what a user would setup)
-const {
-  GITHUB_ACTION,
-  GITHUB_TOKEN,
-  ...processEnvWithoutGitHubActionsVariables
-} = process.env
+const {GITHUB_ACTION, GITHUB_TOKEN, ...processEnvWithoutGitHubActionsVariables} = process.env;
 const env = {
   ...processEnvWithoutGitHubActionsVariables,
   ...npmRegistry.authEnv,
@@ -656,7 +652,12 @@ test('Hide sensitive environment variable values from the logs', async (t) => {
   });
 
   t.log('$ semantic-release');
-  const {stdout, stderr} = await execa(cli, [], {env: {...env, MY_TOKEN: 'secret token'}, cwd, reject: false, extendEnv: false});
+  const {stdout, stderr} = await execa(cli, [], {
+    env: {...env, MY_TOKEN: 'secret token'},
+    cwd,
+    reject: false,
+    extendEnv: false,
+  });
 
   t.regex(stdout, new RegExp(`Console: Exposing token ${escapeRegExp(SECRET_REPLACEMENT)}`));
   t.regex(stdout, new RegExp(`Log: Exposing token ${escapeRegExp(SECRET_REPLACEMENT)}`));
