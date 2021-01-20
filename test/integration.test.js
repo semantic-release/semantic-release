@@ -1,5 +1,5 @@
 const path = require('path');
-const test = require('ava');
+const { serial: test } = require('ava');
 const proxyquire = require('proxyquire');
 const {escapeRegExp} = require('lodash');
 const {writeJson, readJson} = require('fs-extra');
@@ -38,15 +38,27 @@ const env = {
   GITHUB_REF: 'master'
 };
 
-// ignore certain environment variables that are set on CI and that would
-// interfere with our test setup
+// ignore certain environment variables that are set on CI and that would interfere with our test setup,
+// see https://docs.github.com/en/actions/reference/environment-variables#default-environment-variables
 const {
-  GITHUB_URL,
-  GITHUB_EVENT_NAME,
-  GITHUB_REF,
-  GITHUB_EVENT_PATH,
-  GITHUB_ACTION,
   GITHUB_TOKEN,
+  GITHUB_ACTION,
+  GITHUB_ACTIONS,
+  GITHUB_ACTOR,
+  GITHUB_API_URL,
+  GITHUB_BASE_REF,
+  GITHUB_EVENT_NAME,
+  GITHUB_EVENT_PATH,
+  GITHUB_GRAPHQL_URL,
+  GITHUB_HEAD_REF,
+  GITHUB_REF,
+  GITHUB_REPOSITORY,
+  GITHUB_RUN_ID,
+  GITHUB_RUN_NUMBER,
+  GITHUB_SERVER_URL,
+  GITHUB_SHA,
+  GITHUB_WORKFLOW,
+  GITHUB_WORKSPACE,
   ...processEnv
 } = process.env
 
