@@ -505,14 +505,31 @@ test('Allow to unset properties defined in shareable config with "undefined"', a
 test('Throw an Error if one of the shareable config cannot be found', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
-  const pkhOptions = {extends: ['./shareable1.json', 'non-existing-path']};
+  const pkgOptions = {extends: ['./shareable1.json', 'non-existing-path']};
   const options1 = {analyzeCommits: 'analyzeCommits'};
   // Create package.json and shareable.json in repository root
-  await outputJson(path.resolve(cwd, 'package.json'), {release: pkhOptions});
+  await outputJson(path.resolve(cwd, 'package.json'), {release: pkgOptions});
   await outputJson(path.resolve(cwd, 'shareable1.json'), options1);
 
   await t.throwsAsync(t.context.getConfig({cwd}), {
     message: /Cannot find module 'non-existing-path'/,
     code: 'MODULE_NOT_FOUND',
   });
+});
+
+test('Convert "ci" option to "noCi" when set from extended config', async (t) => {
+  // Create a git repository, set the current working directory at the root of the repo
+  const {cwd} = await gitRepo();
+  const pkgOptions = {extends: './no-ci.json'};
+  const options = {
+    ci: false,
+  };
+  // Create package.json and shareable.json in repository root
+  await outputJson(path.resolve(cwd, 'package.json'), {release: pkgOptions});
+  await outputJson(path.resolve(cwd, 'no-ci.json'), options);
+
+  const {options: result} = await t.context.getConfig({cwd});
+
+  t.is(result.ci, false);
+  t.is(result.noCi, true);
 });

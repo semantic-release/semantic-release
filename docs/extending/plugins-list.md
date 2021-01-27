@@ -108,3 +108,19 @@
 - [semantic-release-npm-deprecate-old-versions](https://github.com/ghusse/semantic-release-npm-deprecate-old-versions)
   - `verifyConditions`: Validates configuration.
   - `publish`: Deprecates old versions, based on the declaration of supported versions in the config. 
+- [amanda-mitchell/semantic-release-npm-multiple](https://github.com/amanda-mitchell/semantic-release-npm-multiple)
+  - **Note**: this is a thin wrapper around the built-in npm plugin that can target multiple registries
+  - `verifyConditions`: Verify the presence and the validity of the npm authentication and release configuration for multiple registries
+  - `prepare`: Update the package.json version and create the npm package tarball
+  - `publish`: Publish the package on the npm registry for multiple registries
+- [semantic-release-license](https://github.com/cbhq/semantic-release-license) Automatically update dates and more in your license file for new releases.
+  - `verifyConditions`: Verify the presence of a license file
+  - `prepare`: Update the license file based on its type
+- [semantic-release-pypi](https://github.com/abichinger/semantic-release-pypi)
+  - `verifyConditions`: Verify the environment variable ```PYPI_TOKEN``` and installation of build tools
+  - `prepare`: Update the version in ```setup.cfg``` and create the distribution packages
+  - `publish`: Publish the python package to a repository (default: pypi)
+- [semantic-release-helm](https://github.com/m1pl/semantic-release-helm)
+  - `verifyConditions`: Validate configuration and (if present) credentials
+  - `prepare`: Update version and appVersion in ```Chart.yaml```
+  - `publish`: Publish the chart to a registry (if configured)
