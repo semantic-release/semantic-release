@@ -133,6 +133,32 @@ test('Return the "https" formatted URL if "gitCredentials" is defined and reposi
   );
 });
 
+test('Return the "https" formatted URL if "gitCredentials" is defined and repositoryUrl is a "git" URL without user and with a custom port', async (t) => {
+  const {cwd} = await gitRepo();
+
+  t.is(
+    await getAuthUrl({
+      cwd,
+      env: {...env, GIT_CREDENTIALS: 'user:pass'},
+      options: {branch: 'master', repositoryUrl: 'host.null:6666:owner/repo.git'},
+    }),
+    'https://user:pass@host.null:6666/owner/repo.git'
+  );
+});
+
+test('Return the "https" formatted URL if "gitCredentials" is defined and repositoryUrl is a "git" URL without user and with a custom port followed by a slash', async (t) => {
+  const {cwd} = await gitRepo();
+
+  t.is(
+    await getAuthUrl({
+      cwd,
+      env: {...env, GIT_CREDENTIALS: 'user:pass'},
+      options: {branch: 'master', repositoryUrl: 'host.null:6666:/owner/repo.git'},
+    }),
+    'https://user:pass@host.null:6666/owner/repo.git'
+  );
+});
+
 test('Return the "https" formatted URL if "gitCredentials" is defined and repositoryUrl is a "https" URL', async (t) => {
   const {cwd} = await gitRepo();
 

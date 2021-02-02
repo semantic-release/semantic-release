@@ -63,7 +63,7 @@ async function createRepo(name, branch = 'master', description = `Repository ${n
   const authUrl = `http://${gitCredential}@${SERVER_HOST}:${HOST_PORT}/git/${name}.git`;
 
   // Retry as the server might take a few ms to make the repo available push
-  await pRetry(() => initBareRepo(authUrl, branch), {retries: 3, minTimeout: 500, factor: 2});
+  await pRetry(() => initBareRepo(authUrl, branch), {retries: 5, minTimeout: 500, factor: 2});
   const cwd = await gitShallowClone(authUrl);
 
   return {cwd, repositoryUrl, authUrl};

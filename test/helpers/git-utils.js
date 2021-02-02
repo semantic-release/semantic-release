@@ -25,8 +25,12 @@ const {GIT_NOTE_REF} = require('../../lib/definitions/constants');
  */
 async function initGit(withRemote) {
   const cwd = tempy.directory();
+  const args = withRemote ? ['--bare', '--initial-branch=master'] : ['--initial-branch=master'];
 
-  await execa('git', ['init', ...(withRemote ? ['--bare'] : [])], {cwd});
+  await execa('git', ['init', ...args], {cwd}).catch(() => {
+    const args = withRemote ? ['--bare'] : [];
+    return execa('git', ['init', ...args], {cwd});
+  });
   const repositoryUrl = fileUrl(cwd);
   return {cwd, repositoryUrl};
 }
