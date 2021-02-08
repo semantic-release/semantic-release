@@ -1,8 +1,8 @@
 <h1 align="center" style="border-bottom: none;">📦🚀 semantic-release</h1>
 <h3 align="center">Fully automated version management and package publishing</h3>
 <p align="center">
-  <a href="https://spectrum.chat/semantic-release">
-    <img alt="Join the community on Spectrum" src="https://withspectrum.github.io/badge/badge.svg">
+  <a href="https://github.com/semantic-release/semantic-release/discussions">
+    <img alt="Join the community on GitHub Discussions" src="https://img.shields.io/badge/Join%20the%20community-on%20GitHub%20Discussions-blue">
   </a>
   <a href="https://github.com/semantic-release/semantic-release/actions?query=workflow%3ATest+branch%3Amaster">
     <img alt="Build states" src="https://github.com/semantic-release/semantic-release/workflows/Test/badge.svg">
@@ -131,7 +131,7 @@ In order to use **semantic-release** you need:
 ## Get help
 
 - [Stack Overflow](https://stackoverflow.com/questions/tagged/semantic-release)
-- [Spectrum community](https://spectrum.chat/semantic-release)
+- [GitHub Discussions](https://github.com/semantic-release/semantic-release/discussions)
 - [Twitter](https://twitter.com/SemanticRelease)
 
 ## Badge
