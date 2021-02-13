@@ -58,7 +58,7 @@
     "file-url": "3.0.0",
     "fs-extra": "9.1.0",
     "got": "11.8.1",
-    "js-yaml": "3.14.0",
+    "js-yaml": "3.14.1",
     "mockserver-client": "5.11.2",
     "nock": "13.0.7",
     "nyc": "15.1.0",
