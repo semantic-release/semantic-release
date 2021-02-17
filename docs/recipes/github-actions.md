@@ -21,6 +21,7 @@ name: Release
 on:
   push:
     branches:
+      - main
       - master
 jobs:
   release:
