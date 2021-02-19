@@ -1,11 +1,11 @@
 <h1 align="center" style="border-bottom: none;">📦🚀 semantic-release-plus</h1>
 <h3 align="center">Fully automated version management and package publishing</h3>
 <p align="center">
-  <a href="https://travis-ci.com/semantic-release-plus/semantic-release">
-    <img alt="Travis" src="https://img.shields.io/travis/semantic-release-plus/semantic-release/master.svg">
+  <a href="https://github.com/semantic-release-plus/semantic-release/discussions">
+    <img alt="Join the community on GitHub Discussions" src="https://img.shields.io/badge/Join%20the%20community-on%20GitHub%20Discussions-blue">
   </a>
-  <a href="https://codecov.io/gh/semantic-release-plus/semantic-release">
-    <img alt="Codecov" src="https://img.shields.io/codecov/c/github/semantic-release-plus/semantic-release/master.svg">
+  <a href="https://github.com/semantic-release-plus/semantic-release/actions?query=workflow%3ATest+branch%3Amaster">
+    <img alt="Build states" src="https://github.com/semantic-release-plus/semantic-release/workflows/Test/badge.svg">
   </a>
   <a href="https://renovatebot.com/"><img src="https://img.shields.io/badge/renovate-enabled-brightgreen.svg" alt="renovate"></a>
   <a href="#badge">
@@ -14,7 +14,7 @@
 </p>
 <p align="center">
   <a href="https://www.npmjs.com/package/semantic-release-plus">
-    <img alt="npm latest version" src="https://img.shields.io/npm/v/semantic-release-plus/latest.svg">
+    <img alt="npm latest version" src="https://img.shields.io/npm/v/semantic-release-plus/latest.svg">F
   </a>
   <a href="https://www.npmjs.com/package/semantic-release-plus">
     <img alt="npm next version" src="https://img.shields.io/npm/v/semantic-release-plus/next.svg">
@@ -26,8 +26,11 @@
 
 **semantic-release-plus** is a drop in replacement for **semantic release** that adds some enhancements:
 - [X] Filter commit by path [commitPaths](docs/usage/configuration.md#commitPaths)
+    - allows support for monorepos like nx and lerna to support multi version between releasable apps
 - [ ] Set the logging level
-- [ ] Print the next version only
+- [X] Print the next version only
+    - semantic release can not be configured to run and have no impact on the git repository using the `skipTag` property
+
 
 **semantic-release** automates the whole package release workflow including: determining the next version number, generating the release notes and publishing the package.
 
@@ -61,7 +64,7 @@ Tools such as [commitizen](https://github.com/commitizen/cz-cli) or [commitlint]
 Here is an example of the release type that will be done based on a commit messages:
 
 | Commit message                                                                                                                                                                                   | Release type               |
-|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------|
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------- |
 | `fix(pencil): stop graphite breaking when too much pressure applied`                                                                                                                             | Patch Release              |
 | `feat(pencil): add 'graphiteWidth' option`                                                                                                                                                       | ~~Minor~~ Feature Release  |
 | `perf(pencil): remove graphiteWidth option`<br><br>`BREAKING CHANGE: The graphiteWidth option has been removed.`<br>`The default graphite width of 10mm is always used for performance reasons.` | ~~Major~~ Breaking Release |
@@ -75,6 +78,7 @@ Here is an example of the release type that will be done based on a commit messa
 For each new commits added to one of the release branches (for example `master`, `next`, `beta`), with `git push` or by merging a pull request or merging from another branch, a CI build is triggered and runs the `semantic-release` command to make a release if there are codebase changes since the last release that affect the package functionalities.
 
 **semantic-release** offers various ways to control the timing, the content and the audience of published releases. See example workflows in the following recipes:
+
 - [Using distribution channels](docs/recipes/distribution-channels.md#publishing-on-distribution-channels)
 - [Maintenance releases](docs/recipes/maintenance-releases.md#publishing-maintenance-releases)
 - [Pre-releases](docs/recipes/pre-releases.md#publishing-pre-releases)
@@ -84,7 +88,7 @@ For each new commits added to one of the release branches (for example `master`,
 After running the tests, the command `semantic-release` will execute the following steps:
 
 | Step              | Description                                                                                                                     |
-|-------------------|---------------------------------------------------------------------------------------------------------------------------------|
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------- |
 | Verify Conditions | Verify all the conditions to proceed with the release.                                                                          |
 | Get last release  | Obtain the commit corresponding to the last release by analyzing [Git tags](https://git-scm.com/book/en/v2/Git-Basics-Tagging). |
 | Analyze commits   | Determine the type of release based on the commits added since the last release.                                                |
@@ -98,6 +102,7 @@ After running the tests, the command `semantic-release` will execute the followi
 ## Requirements
 
 In order to use **semantic-release** you need:
+
 - To host your code in a [Git repository](https://git-scm.com)
 - Use a Continuous Integration service that allows you to [securely set up credentials](docs/usage/ci-configuration.md#authentication)
 - Git CLI version [2.7.1 or higher](docs/support/FAQ.md#why-does-semantic-release-require-git-version--271) installed in your Continuous Integration environment
@@ -135,7 +140,7 @@ In order to use **semantic-release** you need:
 ## Get help
 
 - [Stack Overflow](https://stackoverflow.com/questions/tagged/semantic-release)
-- [Spectrum community](https://spectrum.chat/semantic-release)
+- [GitHub Discussions](https://github.com/semantic-release/semantic-release/discussions)
 - [Twitter](https://twitter.com/SemanticRelease)
 
 ## Badge
@@ -150,9 +155,15 @@ Let people know that your package is published using **semantic-release** by inc
 
 ## Team
 
-| [![Stephan Bönnemann](https://github.com/boennemann.png?size=100)](https://github.com/boennemann) | [![Rolf Erik Lekang](https://github.com/relekang.png?size=100)](https://github.com/relekang) | [![Johannes Jörg Schmidt](https://github.com/jo.png?size=100)](https://github.com/jo) | [![Gregor Martynus](https://github.com/gr2m.png?size=100)](https://github.com/gr2m) | [![Pierre Vanduynslager](https://github.com/finnp.png?size=100)](https://github.com/finnp) | [![Pierre Vanduynslager](https://github.com/pvdlg.png?size=100)](https://github.com/pvdlg) | [![Christoph Witzko](https://github.com/christophwitzko.png?size=100)](https://github.com/christophwitzko) |
-|---------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|
-| [Stephan Bönnemann](https://github.com/boennemann)                                                | [Rolf Erik Lekang](https://github.com/relekang)                                              | [Johannes Jörg Schmidt](https://github.com/jo)                                        | [Gregor Martynus](https://github.com/gr2m)                                          | [Finn Pauls](https://github.com/finnp)                                                     | [Pierre Vanduynslager](https://github.com/pvdlg)                                           | [Christoph Witzko](https://github.com/christophwitzko)                                                     |
+| [![Gregor Martynus](https://github.com/gr2m.png?size=100)](https://github.com/gr2m) | [![Pierre Vanduynslager](https://github.com/pvdlg.png?size=100)](https://github.com/pvdlg) | [![Matt Travi](https://github.com/travi.png?size=100)](https://github.com/travi) |
+| ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------- |
+| [Gregor Martynus](https://github.com/gr2m)                                          | [Pierre Vanduynslager](https://github.com/pvdlg)                                           | [Matt Travi](https://github.com/travi)                                           |
+
+## Alumni
+
+| [![Stephan Bönnemann](https://github.com/boennemann.png?size=100)](https://github.com/boennemann) | [![Rolf Erik Lekang](https://github.com/relekang.png?size=100)](https://github.com/relekang) | [![Johannes Jörg Schmidt](https://github.com/jo.png?size=100)](https://github.com/jo) | [![Finn Pauls](https://github.com/finnp.png?size=100)](https://github.com/finnp) | [![Christoph Witzko](https://github.com/christophwitzko.png?size=100)](https://github.com/christophwitzko) |
+| ------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| [Stephan Bönnemann](https://github.com/boennemann)                                                | [Rolf Erik Lekang](https://github.com/relekang)                                              | [Johannes Jörg Schmidt](https://github.com/jo)                                        | [Finn Pauls](https://github.com/finnp)                                           | [Christoph Witzko](https://github.com/christophwitzko)                                                     |
 
 <p align="center">
   <img alt="Kill all humans" src="media/bender.png">

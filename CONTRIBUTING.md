@@ -107,11 +107,11 @@ To ensure consistency and quality, all documentation modifications must:
   - a third-party product/brand/service, i.e. Integrate with [GitHub](https://github.com)
   - an external concept or feature, i.e. Create a [GitHub release](https://help.github.com/articles/creating-releases)
   - a package or module, i.e. The [`@semantic-release/github`](https://github.com/semantic-release/github) module
-- Use the the [single backtick `code` quoting](https://help.github.com/articles/basic-writing-and-formatting-syntax/#quoting-code) for:
+- Use the [single backtick `code` quoting](https://help.github.com/articles/basic-writing-and-formatting-syntax/#quoting-code) for:
   - commands inside sentences, i.e. the `semantic-release` command
   - programming language keywords, i.e. `function`, `async`, `String`
   - packages or modules, i.e. The [`@semantic-release/github`](https://github.com/semantic-release/github) module
-- Use the the [triple backtick `code` formatting](https://help.github.com/articles/creating-and-highlighting-code-blocks) for:
+- Use the [triple backtick `code` formatting](https://help.github.com/articles/creating-and-highlighting-code-blocks) for:
   - code examples
   - configuration examples
   - sequence of command lines
@@ -183,17 +183,17 @@ The footer should contain any information about **Breaking Changes** and is also
 #### Examples
 
 ```commit
-`fix(pencil): stop graphite breaking when too much pressure applied`
+fix(pencil): stop graphite breaking when too much pressure applied
 ```
 
 ```commit
-`feat(pencil): add 'graphiteWidth' option`
+feat(pencil): add 'graphiteWidth' option
 
 Fix #42
 ```
 
 ```commit
-perf(pencil): remove graphiteWidth option`
+perf(pencil): remove graphiteWidth option
 
 BREAKING CHANGE: The graphiteWidth option has been removed.
 
