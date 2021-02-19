@@ -26,6 +26,10 @@
 * [Git hosted services](recipes/git-hosted-services/README.md)
   * [Git authentication with SSH keys](docs/recipes/git-auth-ssh-keys.md)
 * [Package managers and languages](recipes/package-managers-and-languages.md)
+* [Monorepos](docs/recipes/README.md#Monorepos)
+  * [nx monorepo](docs/recipes/nx-monorepo.md)
+* [Utility](docs/recipes/README.md#Utility)
+  * [Get expected next version](docs/recipes/expected-next-version.md)
 
 ## Developer guide
 
