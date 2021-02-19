@@ -15,6 +15,9 @@
 - [Publishing maintenance releases](maintenance-releases.md)
 - [Publishing pre-releases](pre-releases.md)
 
+## Monorepos
+- [nx mono repo](nx-mono-repo.md)
+
 ## Utility
 - [Get expected next version](expected-next-version.md)
 
