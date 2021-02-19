@@ -5,6 +5,7 @@
 - [Travis CI](travis.md)
 - [GitLab CI](gitlab-ci.md)
 - [GitHub Actions](github-actions.md)
+- [Jenkins CI](jenkins-ci.md)
 
 ## Git hosted services
 - [Git authentication with SSH keys](git-auth-ssh-keys.md)
@@ -13,5 +14,9 @@
 - [Publishing on distribution channels](distribution-channels.md)
 - [Publishing maintenance releases](maintenance-releases.md)
 - [Publishing pre-releases](pre-releases.md)
+
+## Utility
+- [Get expected next version](expected-next-version.md)
+
 
 ## Package managers and languages

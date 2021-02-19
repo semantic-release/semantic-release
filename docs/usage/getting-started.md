@@ -1,6 +1,7 @@
 # Getting started
 
 In order to use **semantic-release** you must follow these steps:
+
 1. [Install](./installation.md#installation) **semantic-release** in your project
 2. Configure your Continuous Integration service to [run **semantic-release**](./ci-configuration.md#run-semantic-release-only-after-all-tests-succeeded)
 3. Configure your Git repository and package manager repository [authentication](ci-configuration.md#authentication) in your Continuous Integration service
@@ -9,10 +10,8 @@ In order to use **semantic-release** you must follow these steps:
 Alternatively those steps can be easily done with the [**semantic-release** interactive CLI](https://github.com/semantic-release/cli):
 
 ```bash
-npm install -g semantic-release-cli
-
 cd your-module
-semantic-release-cli setup
+npx semantic-release-cli setup
 ```
 
 ![dialogue](../../media/semantic-release-cli.png)

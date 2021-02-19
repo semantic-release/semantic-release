@@ -12,6 +12,7 @@ A plugin is a npm module that can implement one or more of the following steps:
 | `generateNotes`    | No       | Responsible for generating the content of the release note. If multiple plugins with a `generateNotes` step are defined, the release notes will be the result of the concatenation of each plugin output.            |
 | `prepare`          | No       | Responsible for preparing the release, for example creating or updating files such as `package.json`, `CHANGELOG.md`, documentation or compiled assets and pushing a commit.                                         |
 | `publish`          | No       | Responsible for publishing the release.                                                                                                                                                                              |
+| `addChannel`       | No       | Responsible for adding a release channel (e.g. adding an npm dist-tag to a release).                                                                                                                                 |
 | `success`          | No       | Responsible for notifying of a new release.                                                                                                                                                                          |
 | `fail`             | No       | Responsible for notifying of a failed release.                                                                                                                                                                       |
 
@@ -21,12 +22,12 @@ A plugin is a npm module that can implement one or more of the following steps:
 
 ### Default plugins
 
-These four plugins are already part of **semantic-release** and don't have to be installed separately:
+These four plugins are already part of **semantic-release** and are listed in order of execution. They do not have to be installed separately:
 ```
 "@semantic-release/commit-analyzer"
-"@semantic-release/github"
-"@semantic-release/npm"
 "@semantic-release/release-notes-generator"
+"@semantic-release/npm"
+"@semantic-release/github"
 ```
 
 ### Additional plugins
@@ -65,8 +66,8 @@ For each [release step](../../README.md#release-steps) the plugins that implemen
 With this configuration **semantic-release** will:
 - execute the `verifyConditions` implementation of `@semantic-release/npm` then `@semantic-release/git`
 - execute the `analyzeCommits` implementation of `@semantic-release/commit-analyzer`
-- execute the `prepare` implementation of `@semantic-release/npm` then `@semantic-release/git`
 - execute the `generateNotes` implementation of `@semantic-release/release-notes-generator`
+- execute the `prepare` implementation of `@semantic-release/npm` then `@semantic-release/git`
 - execute the `publish` implementation of `@semantic-release/npm`
 
 ## Plugin options configuration

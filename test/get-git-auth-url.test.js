@@ -1,10 +1,10 @@
-import test from 'ava';
-import getAuthUrl from '../lib/get-git-auth-url';
-import {gitRepo} from './helpers/git-utils';
+const test = require('ava');
+const getAuthUrl = require('../lib/get-git-auth-url');
+const {gitRepo} = require('./helpers/git-utils');
 
 const env = {GIT_ASKPASS: 'echo', GIT_TERMINAL_PROMPT: 0};
 
-test('Return the same "git" formatted URL if "gitCredentials" is not defined', async t => {
+test('Return the same "git" formatted URL if "gitCredentials" is not defined', async (t) => {
   const {cwd} = await gitRepo();
 
   t.is(
@@ -13,7 +13,7 @@ test('Return the same "git" formatted URL if "gitCredentials" is not defined', a
   );
 });
 
-test('Return the same "https" formatted URL if "gitCredentials" is not defined', async t => {
+test('Return the same "https" formatted URL if "gitCredentials" is not defined', async (t) => {
   const {cwd} = await gitRepo();
 
   t.is(
@@ -27,7 +27,7 @@ test('Return the same "https" formatted URL if "gitCredentials" is not defined',
   );
 });
 
-test('Return the "https" formatted URL if "gitCredentials" is not defined and repositoryUrl is a "git+https" URL', async t => {
+test('Return the "https" formatted URL if "gitCredentials" is not defined and repositoryUrl is a "git+https" URL', async (t) => {
   const {cwd} = await gitRepo();
 
   t.is(
@@ -41,7 +41,7 @@ test('Return the "https" formatted URL if "gitCredentials" is not defined and re
   );
 });
 
-test('Do not add trailing ".git" if not present in the origian URL', async t => {
+test('Do not add trailing ".git" if not present in the origian URL', async (t) => {
   const {cwd} = await gitRepo();
 
   t.is(
@@ -50,7 +50,7 @@ test('Do not add trailing ".git" if not present in the origian URL', async t => 
   );
 });
 
-test('Handle "https" URL with group and subgroup', async t => {
+test('Handle "https" URL with group and subgroup', async (t) => {
   const {cwd} = await gitRepo();
 
   t.is(
@@ -64,7 +64,7 @@ test('Handle "https" URL with group and subgroup', async t => {
   );
 });
 
-test('Handle "git" URL with group and subgroup', async t => {
+test('Handle "git" URL with group and subgroup', async (t) => {
   const {cwd} = await gitRepo();
 
   t.is(
@@ -78,7 +78,7 @@ test('Handle "git" URL with group and subgroup', async t => {
   );
 });
 
-test('Convert shorthand URL', async t => {
+test('Convert shorthand URL', async (t) => {
   const {cwd} = await gitRepo();
 
   t.is(
@@ -92,7 +92,7 @@ test('Convert shorthand URL', async t => {
   );
 });
 
-test('Convert GitLab shorthand URL', async t => {
+test('Convert GitLab shorthand URL', async (t) => {
   const {cwd} = await gitRepo();
 
   t.is(
@@ -106,7 +106,7 @@ test('Convert GitLab shorthand URL', async t => {
   );
 });
 
-test('Return the "https" formatted URL if "gitCredentials" is defined and repositoryUrl is a "git" URL', async t => {
+test('Return the "https" formatted URL if "gitCredentials" is defined and repositoryUrl is a "git" URL', async (t) => {
   const {cwd} = await gitRepo();
 
   t.is(
@@ -120,7 +120,7 @@ test('Return the "https" formatted URL if "gitCredentials" is defined and reposi
   );
 });
 
-test('Return the "https" formatted URL if "gitCredentials" is defined and repositoryUrl is a "git" URL without user', async t => {
+test('Return the "https" formatted URL if "gitCredentials" is defined and repositoryUrl is a "git" URL without user', async (t) => {
   const {cwd} = await gitRepo();
 
   t.is(
@@ -133,7 +133,33 @@ test('Return the "https" formatted URL if "gitCredentials" is defined and reposi
   );
 });
 
-test('Return the "https" formatted URL if "gitCredentials" is defined and repositoryUrl is a "https" URL', async t => {
+test('Return the "https" formatted URL if "gitCredentials" is defined and repositoryUrl is a "git" URL without user and with a custom port', async (t) => {
+  const {cwd} = await gitRepo();
+
+  t.is(
+    await getAuthUrl({
+      cwd,
+      env: {...env, GIT_CREDENTIALS: 'user:pass'},
+      options: {branch: 'master', repositoryUrl: 'host.null:6666:owner/repo.git'},
+    }),
+    'https://user:pass@host.null:6666/owner/repo.git'
+  );
+});
+
+test('Return the "https" formatted URL if "gitCredentials" is defined and repositoryUrl is a "git" URL without user and with a custom port followed by a slash', async (t) => {
+  const {cwd} = await gitRepo();
+
+  t.is(
+    await getAuthUrl({
+      cwd,
+      env: {...env, GIT_CREDENTIALS: 'user:pass'},
+      options: {branch: 'master', repositoryUrl: 'host.null:6666:/owner/repo.git'},
+    }),
+    'https://user:pass@host.null:6666/owner/repo.git'
+  );
+});
+
+test('Return the "https" formatted URL if "gitCredentials" is defined and repositoryUrl is a "https" URL', async (t) => {
   const {cwd} = await gitRepo();
 
   t.is(
@@ -147,7 +173,7 @@ test('Return the "https" formatted URL if "gitCredentials" is defined and reposi
   );
 });
 
-test('Return the "http" formatted URL if "gitCredentials" is defined and repositoryUrl is a "http" URL', async t => {
+test('Return the "http" formatted URL if "gitCredentials" is defined and repositoryUrl is a "http" URL', async (t) => {
   const {cwd} = await gitRepo();
 
   t.is(
@@ -161,7 +187,7 @@ test('Return the "http" formatted URL if "gitCredentials" is defined and reposit
   );
 });
 
-test('Return the "http" formatted URL if "gitCredentials" is defined and repositoryUrl is a "http" URL with custom port', async t => {
+test('Return the "http" formatted URL if "gitCredentials" is defined and repositoryUrl is a "http" URL with custom port', async (t) => {
   const {cwd} = await gitRepo();
 
   t.is(
@@ -174,7 +200,7 @@ test('Return the "http" formatted URL if "gitCredentials" is defined and reposit
   );
 });
 
-test('Return the "https" formatted URL if "gitCredentials" is defined and repositoryUrl is a "git+https" URL', async t => {
+test('Return the "https" formatted URL if "gitCredentials" is defined and repositoryUrl is a "git+https" URL', async (t) => {
   const {cwd} = await gitRepo();
 
   t.is(
@@ -188,7 +214,7 @@ test('Return the "https" formatted URL if "gitCredentials" is defined and reposi
   );
 });
 
-test('Return the "http" formatted URL if "gitCredentials" is defined and repositoryUrl is a "git+http" URL', async t => {
+test('Return the "http" formatted URL if "gitCredentials" is defined and repositoryUrl is a "git+http" URL', async (t) => {
   const {cwd} = await gitRepo();
 
   t.is(
@@ -202,7 +228,7 @@ test('Return the "http" formatted URL if "gitCredentials" is defined and reposit
   );
 });
 
-test('Return the "http" formatted URL if "gitCredentials" is defined and repositoryUrl is a "ssh" URL', async t => {
+test('Return the "http" formatted URL if "gitCredentials" is defined and repositoryUrl is a "ssh" URL', async (t) => {
   const {cwd} = await gitRepo();
 
   t.is(
@@ -215,7 +241,7 @@ test('Return the "http" formatted URL if "gitCredentials" is defined and reposit
   );
 });
 
-test('Return the "https" formatted URL if "gitCredentials" is defined with "GH_TOKEN"', async t => {
+test('Return the "https" formatted URL if "gitCredentials" is defined with "GH_TOKEN"', async (t) => {
   const {cwd} = await gitRepo();
 
   t.is(
@@ -229,7 +255,7 @@ test('Return the "https" formatted URL if "gitCredentials" is defined with "GH_T
   );
 });
 
-test('Return the "https" formatted URL if "gitCredentials" is defined with "GITHUB_TOKEN"', async t => {
+test('Return the "https" formatted URL if "gitCredentials" is defined with "GITHUB_TOKEN"', async (t) => {
   const {cwd} = await gitRepo();
 
   t.is(
@@ -243,7 +269,7 @@ test('Return the "https" formatted URL if "gitCredentials" is defined with "GITH
   );
 });
 
-test('Return the "https" formatted URL if "gitCredentials" is defined with "GL_TOKEN"', async t => {
+test('Return the "https" formatted URL if "gitCredentials" is defined with "GL_TOKEN"', async (t) => {
   const {cwd} = await gitRepo();
 
   t.is(
@@ -257,7 +283,7 @@ test('Return the "https" formatted URL if "gitCredentials" is defined with "GL_T
   );
 });
 
-test('Return the "https" formatted URL if "gitCredentials" is defined with "GITLAB_TOKEN"', async t => {
+test('Return the "https" formatted URL if "gitCredentials" is defined with "GITLAB_TOKEN"', async (t) => {
   const {cwd} = await gitRepo();
 
   t.is(
@@ -271,7 +297,7 @@ test('Return the "https" formatted URL if "gitCredentials" is defined with "GITL
   );
 });
 
-test('Return the "https" formatted URL if "gitCredentials" is defined with "BB_TOKEN"', async t => {
+test('Return the "https" formatted URL if "gitCredentials" is defined with "BB_TOKEN"', async (t) => {
   const {cwd} = await gitRepo();
 
   t.is(
@@ -285,7 +311,7 @@ test('Return the "https" formatted URL if "gitCredentials" is defined with "BB_T
   );
 });
 
-test('Return the "https" formatted URL if "gitCredentials" is defined with "BITBUCKET_TOKEN"', async t => {
+test('Return the "https" formatted URL if "gitCredentials" is defined with "BITBUCKET_TOKEN"', async (t) => {
   const {cwd} = await gitRepo();
 
   t.is(
@@ -299,7 +325,35 @@ test('Return the "https" formatted URL if "gitCredentials" is defined with "BITB
   );
 });
 
-test('Return the "https" formatted URL if "GITHUB_ACTION" is set', async t => {
+test('Return the "https" formatted URL if "gitCredentials" is defined with "BB_TOKEN_BASIC_AUTH"', async (t) => {
+  const {cwd} = await gitRepo();
+
+  t.is(
+    await getAuthUrl({
+      cwd,
+      env: {...env, BB_TOKEN_BASIC_AUTH: 'username:token'},
+      branch: {name: 'master'},
+      options: {repositoryUrl: 'git@host.null:owner/repo.git'},
+    }),
+    'https://username:token@host.null/owner/repo.git'
+  );
+});
+
+test('Return the "https" formatted URL if "gitCredentials" is defined with "BITBUCKET_TOKEN_BASIC_AUTH"', async (t) => {
+  const {cwd} = await gitRepo();
+
+  t.is(
+    await getAuthUrl({
+      cwd,
+      env: {...env, BITBUCKET_TOKEN_BASIC_AUTH: 'username:token'},
+      branch: {name: 'master'},
+      options: {repositoryUrl: 'git@host.null:owner/repo.git'},
+    }),
+    'https://username:token@host.null/owner/repo.git'
+  );
+});
+
+test('Return the "https" formatted URL if "GITHUB_ACTION" is set', async (t) => {
   const {cwd} = await gitRepo();
 
   t.is(
@@ -312,7 +366,7 @@ test('Return the "https" formatted URL if "GITHUB_ACTION" is set', async t => {
   );
 });
 
-test('Handle "https" URL with group and subgroup, with "GIT_CREDENTIALS"', async t => {
+test('Handle "https" URL with group and subgroup, with "GIT_CREDENTIALS"', async (t) => {
   const {cwd} = await gitRepo();
 
   t.is(
@@ -326,7 +380,7 @@ test('Handle "https" URL with group and subgroup, with "GIT_CREDENTIALS"', async
   );
 });
 
-test('Handle "git" URL with group and subgroup, with "GIT_CREDENTIALS', async t => {
+test('Handle "git" URL with group and subgroup, with "GIT_CREDENTIALS', async (t) => {
   const {cwd} = await gitRepo();
 
   t.is(
@@ -340,7 +394,7 @@ test('Handle "git" URL with group and subgroup, with "GIT_CREDENTIALS', async t 
   );
 });
 
-test('Do not add git credential to repositoryUrl if push is allowed', async t => {
+test('Do not add git credential to repositoryUrl if push is allowed', async (t) => {
   const {cwd, repositoryUrl} = await gitRepo(true);
 
   t.is(

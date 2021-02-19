@@ -1,7 +1,7 @@
-import Docker from 'dockerode';
-import getStream from 'get-stream';
-import pRetry from 'p-retry';
-import {initBareRepo, gitShallowClone} from './git-utils';
+const Docker = require('dockerode');
+const getStream = require('get-stream');
+const pRetry = require('p-retry');
+const {initBareRepo, gitShallowClone} = require('./git-utils');
 
 const IMAGE = 'pvdlg/docker-gitbox:latest';
 const SERVER_PORT = 80;
@@ -63,10 +63,10 @@ async function createRepo(name, branch = 'master', description = `Repository ${n
   const authUrl = `http://${gitCredential}@${SERVER_HOST}:${HOST_PORT}/git/${name}.git`;
 
   // Retry as the server might take a few ms to make the repo available push
-  await pRetry(() => initBareRepo(authUrl, branch), {retries: 3, minTimeout: 500, factor: 2});
+  await pRetry(() => initBareRepo(authUrl, branch), {retries: 5, minTimeout: 500, factor: 2});
   const cwd = await gitShallowClone(authUrl);
 
   return {cwd, repositoryUrl, authUrl};
 }
 
-export default {start, stop, gitCredential, createRepo};
+module.exports = {start, stop, gitCredential, createRepo};

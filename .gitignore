@@ -125,10 +125,6 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-# Lockfiles
-package-lock.json
-yarn.lock
-
 # Gitbook
 _book
 

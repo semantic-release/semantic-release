@@ -8,7 +8,7 @@ Here is a few example of the CI services that can be used to achieve this:
 - [CircleCI Workflows](https://circleci.com/docs/2.0/workflows)
 - [GitHub Actions](https://github.com/features/actions)
 - [Codeship Deployment Pipelines](https://documentation.codeship.com/basic/builds-and-configuration/deployment-pipelines)
-- [GitLab Pipelines](https://docs.gitlab.com/ee/ci/pipelines.html#introduction-to-pipelines-and-jobs)
+- [GitLab Pipelines](https://docs.gitlab.com/ce/ci/introduction/)
 - [Codefresh Pipelines](https://codefresh.io/docs/docs/configure-ci-cd-pipeline/introduction-to-codefresh-pipelines)
 - [Wercker Workflows](http://devcenter.wercker.com/docs/workflows)
 - [GoCD Pipelines](https://docs.gocd.org/current/introduction/concepts_in_go.html#pipeline).
@@ -21,12 +21,13 @@ See [CI configuration recipes](../recipes/README.md#ci-configurations) for more 
 
 **semantic-release** requires push access to the project Git repository in order to create [Git tags](https://git-scm.com/book/en/v2/Git-Basics-Tagging). The Git authentication can be set with one of the following environment variables:
 
-| Variable                        | Description                                                                                                                                                                                                                  |
-|---------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `GH_TOKEN` or `GITHUB_TOKEN`    | A GitHub [personal access token](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line).                                                                                                    |
-| `GL_TOKEN` or `GITLAB_TOKEN`    | A GitLab [personal access token](https://docs.gitlab.com/ce/user/profile/personal_access_tokens.html).                                                                                                                       |
-| `BB_TOKEN` or `BITBUCKET_TOKEN` | A Bitbucket [personal access token](https://confluence.atlassian.com/bitbucketserver/personal-access-tokens-939515499.html).                                                                                                 |
-| `GIT_CREDENTIALS`               | [URL encoded](https://en.wikipedia.org/wiki/Percent-encoding) Git username and password in the format `<username>:<password>`. The username and password must each be individually URL encoded, not the `:` separating them. |
+| Variable                                              | Description                                                                                                                                                                                                                  |
+|-------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `GH_TOKEN` or `GITHUB_TOKEN`                          | A GitHub [personal access token](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line).                                                                                                    |
+| `GL_TOKEN` or `GITLAB_TOKEN`                          | A GitLab [personal access token](https://docs.gitlab.com/ce/user/profile/personal_access_tokens.html).                                                                                                                       |
+| `BB_TOKEN` or `BITBUCKET_TOKEN`                       | A Bitbucket [personal access token](https://confluence.atlassian.com/bitbucketserver/personal-access-tokens-939515499.html).                                                                                                 |
+| `BB_TOKEN_BASIC_AUTH` or `BITBUCKET_TOKEN_BASIC_AUTH` | A Bitbucket [personal access token](https://confluence.atlassian.com/bitbucketserver/personal-access-tokens-939515499.html) with basic auth support. For clearification `user:token` has to be the value of this env.        |
+| `GIT_CREDENTIALS`                                     | [URL encoded](https://en.wikipedia.org/wiki/Percent-encoding) Git username and password in the format `<username>:<password>`. The username and password must each be individually URL encoded, not the `:` separating them. |
 
 Alternatively the Git authentication can be set up via [SSH keys](../recipes/git-auth-ssh-keys.md).
 
