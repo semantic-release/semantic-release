@@ -37,6 +37,7 @@ Usage:
     .option('d', {alias: 'dry-run', describe: 'Skip publishing', type: 'boolean', group: 'Options'})
     .option('h', {alias: 'help', group: 'Options'})
     .option('v', {alias: 'version', group: 'Options'})
+    .option('skip-tag', {describe: 'Prevent tagging of the git commit on release', type: 'boolean', group: 'Options'})
     .strict(false)
     .exitProcess(false);
 
