@@ -14,7 +14,7 @@
 </p>
 <p align="center">
   <a href="https://www.npmjs.com/package/semantic-release-plus">
-    <img alt="npm latest version" src="https://img.shields.io/npm/v/semantic-release-plus/latest.svg">F
+    <img alt="npm latest version" src="https://img.shields.io/npm/v/semantic-release-plus/latest.svg">
   </a>
   <a href="https://www.npmjs.com/package/semantic-release-plus">
     <img alt="npm next version" src="https://img.shields.io/npm/v/semantic-release-plus/next.svg">
@@ -29,7 +29,7 @@
     - allows support for monorepos like nx and lerna to support multi version between releasable apps
 - [ ] Set the logging level
 - [X] Print the next version only
-    - semantic release can not be configured to run and have no impact on the git repository using the `skipTag` property
+    - semantic release can not be configured to run and have no impact on the git repository using the `skipTag` property. [example recipe](docs/recipes/expected-next-version.md)
 
 
 **semantic-release** automates the whole package release workflow including: determining the next version number, generating the release notes and publishing the package.
