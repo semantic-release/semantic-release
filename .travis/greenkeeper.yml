@@ -1,3 +1,0 @@
-branches:
-  only:
-    - /^greenkeeper.*$/

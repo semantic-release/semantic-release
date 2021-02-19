@@ -8,7 +8,7 @@ Here is a few example of the CI services that can be used to achieve this:
 - [CircleCI Workflows](https://circleci.com/docs/2.0/workflows)
 - [GitHub Actions](https://github.com/features/actions)
 - [Codeship Deployment Pipelines](https://documentation.codeship.com/basic/builds-and-configuration/deployment-pipelines)
-- [GitLab Pipelines](https://docs.gitlab.com/ee/ci/pipelines.html#introduction-to-pipelines-and-jobs)
+- [GitLab Pipelines](https://docs.gitlab.com/ce/ci/introduction/)
 - [Codefresh Pipelines](https://codefresh.io/docs/docs/configure-ci-cd-pipeline/introduction-to-codefresh-pipelines)
 - [Wercker Workflows](http://devcenter.wercker.com/docs/workflows)
 - [GoCD Pipelines](https://docs.gocd.org/current/introduction/concepts_in_go.html#pipeline).
