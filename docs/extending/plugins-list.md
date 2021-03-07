@@ -20,7 +20,7 @@
   - `publish`: Publish the package on the npm registry
 - [@semantic-release/gitlab](https://github.com/semantic-release/gitlab)
   - `verifyConditions`: Verify the presence and the validity of the GitLab authentication and release configuration
-  - `publish`: Publish a [GitLab release](https://docs.gitlab.com/ce/workflow/releases.html)
+  - `publish`: Publish a [GitLab release](https://docs.gitlab.com/ee/user/project/releases/)
 - [@semantic-release/git](https://github.com/semantic-release/git)
   - `verifyConditions`: Verify the presence and the validity of the Git authentication and release configuration
   - `prepare`: Push a release commit and tag, including configurable files
