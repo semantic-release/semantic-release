@@ -97,6 +97,7 @@ test.serial("Plugins are called with expected values", async (t) => {
     originalRepositoryURL: repositoryUrl,
     globalOpt: "global",
     tagFormat: `v\${version}`,
+    preset: "conventionalcommits",
   };
   const branches = [
     {
@@ -912,6 +913,7 @@ test.serial('Call all "success" plugins even if one errors out', async (t) => {
     repositoryUrl,
     globalOpt: "global",
     tagFormat: `v\${version}`,
+    preset: "conventionalcommits",
   };
   const options = {
     ...config,
@@ -962,6 +964,7 @@ test.serial('Log all "verifyConditions" errors', async (t) => {
     repositoryUrl,
     originalRepositoryURL: repositoryUrl,
     tagFormat: `v\${version}`,
+    preset: "conventionalcommits",
   };
   const options = {
     ...config,
@@ -1012,7 +1015,12 @@ test.serial('Log all "verifyRelease" errors', async (t) => {
   const error1 = new SemanticReleaseError("error 1", "ERR1");
   const error2 = new SemanticReleaseError("error 2", "ERR2");
   const fail = stub().resolves();
-  const config = { branches: [{ name: "master" }], repositoryUrl, tagFormat: `v\${version}` };
+  const config = {
+    branches: [{ name: "master" }],
+    repositoryUrl,
+    tagFormat: `v\${version}`,
+    preset: "conventionalcommits",
+  };
   const options = {
     ...config,
     verifyConditions: stub().resolves(),

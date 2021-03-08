@@ -53,6 +53,7 @@ test("Default values, reading repositoryUrl from package.json", async (t) => {
   ]);
   t.is(result.repositoryUrl, "https://host.null/owner/package.git");
   t.is(result.tagFormat, `v\${version}`);
+  t.is(result.preset, "conventionalcommits");
 });
 
 test("Default values, reading repositoryUrl from repo if not set in package.json", async (t) => {
@@ -75,6 +76,7 @@ test("Default values, reading repositoryUrl from repo if not set in package.json
   ]);
   t.is(result.repositoryUrl, "https://host.null/owner/module.git");
   t.is(result.tagFormat, `v\${version}`);
+  t.is(result.preset, "conventionalcommits");
 });
 
 test("Default values, reading repositoryUrl (http url) from package.json if not set in repo", async (t) => {
@@ -98,6 +100,7 @@ test("Default values, reading repositoryUrl (http url) from package.json if not 
   ]);
   t.is(result.repositoryUrl, "https://host.null/owner/module.git");
   t.is(result.tagFormat, `v\${version}`);
+  t.is(result.preset, "conventionalcommits");
 });
 
 test('Convert "ci" option to "noCi"', async (t) => {
@@ -122,6 +125,7 @@ test.serial("Read options from package.json", async (t) => {
     repositoryUrl: "https://host.null/owner/module.git",
     tagFormat: `v\${version}`,
     plugins: false,
+    preset: "conventionalcommits",
   };
   // Verify the plugins module is called with the plugin options from package.json
   td.when(plugins({ cwd, options }, {})).thenResolve(pluginsConfig);
@@ -143,6 +147,7 @@ test.serial("Read options from .releaserc.yml", async (t) => {
     repositoryUrl: "https://host.null/owner/module.git",
     tagFormat: `v\${version}`,
     plugins: false,
+    preset: "conventionalcommits",
   };
   // Create package.json in repository root
   await writeFile(path.resolve(cwd, ".releaserc.yml"), yaml.dump(options));
@@ -164,6 +169,7 @@ test.serial("Read options from .releaserc.json", async (t) => {
     repositoryUrl: "https://host.null/owner/module.git",
     tagFormat: `v\${version}`,
     plugins: false,
+    preset: "conventionalcommits",
   };
   // Create package.json in repository root
   await outputJson(path.resolve(cwd, ".releaserc.json"), options);
@@ -185,6 +191,7 @@ test.serial("Read options from .releaserc.js", async (t) => {
     repositoryUrl: "https://host.null/owner/module.git",
     tagFormat: `v\${version}`,
     plugins: false,
+    preset: "conventionalcommits",
   };
   // Create package.json in repository root
   await writeFile(path.resolve(cwd, ".releaserc.js"), `module.exports = ${JSON.stringify(options)}`);
@@ -206,6 +213,7 @@ test.serial("Read options from .releaserc.cjs", async (t) => {
     repositoryUrl: "https://host.null/owner/module.git",
     tagFormat: `v\${version}`,
     plugins: false,
+    preset: "conventionalcommits",
   };
   // Create .releaserc.cjs in repository root
   await writeFile(path.resolve(cwd, ".releaserc.cjs"), `module.exports = ${JSON.stringify(options)}`);
@@ -227,6 +235,7 @@ test.serial("Read options from .releaserc.mjs", async (t) => {
     repositoryUrl: "https://host.null/owner/module.git",
     tagFormat: `v\${version}`,
     plugins: false,
+    preset: "conventionalcommits",
   };
   // Create .releaserc.mjs in repository root
   await writeFile(path.resolve(cwd, ".releaserc.mjs"), `export default ${JSON.stringify(options)}`);
@@ -248,6 +257,7 @@ test.serial("Read options from release.config.js", async (t) => {
     repositoryUrl: "https://host.null/owner/module.git",
     tagFormat: `v\${version}`,
     plugins: false,
+    preset: "conventionalcommits",
   };
   // Create package.json in repository root
   await writeFile(path.resolve(cwd, "release.config.js"), `module.exports = ${JSON.stringify(options)}`);
@@ -269,6 +279,7 @@ test.serial("Read options from release.config.cjs", async (t) => {
     repositoryUrl: "https://host.null/owner/module.git",
     tagFormat: `v\${version}`,
     plugins: false,
+    preset: "conventionalcommits",
   };
   // Verify the plugins module is called with the plugin options from release.config.cjs
   td.when(plugins({ cwd, options }, {})).thenResolve(pluginsConfig);
@@ -290,6 +301,7 @@ test.serial("Read options from release.config.mjs", async (t) => {
     repositoryUrl: "https://host.null/owner/module.git",
     tagFormat: `v\${version}`,
     plugins: false,
+    preset: "conventionalcommits",
   };
   // Verify the plugins module is called with the plugin options from release.config.mjs
   td.when(plugins({ cwd, options }, {})).thenResolve(pluginsConfig);
@@ -318,6 +330,7 @@ test.serial("Prioritise CLI/API parameters over file configuration and git repo"
     repositoryUrl: "http://cli-url.com/owner/package",
     tagFormat: `cli\${version}`,
     plugins: false,
+    preset: "conventionalcommits",
   };
   // Verify the plugins module is called with the plugin options from CLI/API
   td.when(plugins({ cwd, options }, {})).thenResolve(pluginsConfig);
@@ -342,6 +355,7 @@ test.serial('Read configuration from file path in "extends"', async (t) => {
     repositoryUrl: "https://host.null/owner/module.git",
     tagFormat: `v\${version}`,
     plugins: ["plugin-1", ["plugin-2", { plugin2Opt: "value" }]],
+    preset: "conventionalcommits",
   };
   // Create package.json and shareable.json in repository root
   await outputJson(path.resolve(cwd, "package.json"), { release: pkgOptions });
@@ -376,6 +390,7 @@ test.serial('Read configuration from module path in "extends"', async (t) => {
     repositoryUrl: "https://host.null/owner/module.git",
     tagFormat: `v\${version}`,
     plugins: false,
+    preset: "conventionalcommits",
   };
   // Create package.json and shareable.json in repository root
   await outputJson(path.resolve(cwd, "package.json"), { release: pkgOptions });
@@ -408,6 +423,7 @@ test.serial('Read configuration from an array of paths in "extends"', async (t) 
     branches: ["test_branch"],
     tagFormat: `v\${version}`,
     plugins: false,
+    preset: "conventionalcommits",
   };
   // Create package.json and shareable.json in repository root
   await outputJson(path.resolve(cwd, "package.json"), { release: pkgOptions });
@@ -451,6 +467,7 @@ test.serial('Read configuration from an array of CJS files in "extends"', async 
     branches: ["test_branch"],
     tagFormat: `v\${version}`,
     plugins: false,
+    preset: "conventionalcommits",
   };
   // Create package.json and shareable.json in repository root
   await outputJson(path.resolve(cwd, "package.json"), { release: pkgOptions });
@@ -494,6 +511,7 @@ test.serial('Read configuration from an array of ESM files in "extends"', async 
     branches: ["test_branch"],
     tagFormat: `v\${version}`,
     plugins: false,
+    preset: "conventionalcommits",
   };
   // Create package.json and shareable.json in repository root
   await outputJson(path.resolve(cwd, "package.json"), { release: pkgOptions });
@@ -537,6 +555,7 @@ test.serial('Prioritize configuration from config file over "extends"', async (t
     repositoryUrl: "https://host.null/owner/module.git",
     tagFormat: `v\${version}`,
     plugins: false,
+    preset: "conventionalcommits",
   };
   // Create package.json and shareable.json in repository root
   await outputJson(path.resolve(cwd, "package.json"), { release: pkgOptions });
@@ -588,6 +607,7 @@ test.serial('Prioritize configuration from cli/API options over "extends"', asyn
     branches: ["test_branch2"],
     tagFormat: `v\${version}`,
     plugins: false,
+    preset: "conventionalcommits",
   };
   // Create package.json, shareable1.json and shareable2.json in repository root
   await outputJson(path.resolve(cwd, "package.json"), { release: pkgOptions });
@@ -623,6 +643,7 @@ test.serial('Allow to unset properties defined in shareable config with "null"',
     analyzeCommits: { path: "analyzeCommits", param: "analyzeCommits_param" },
     tagFormat: `v\${version}`,
     plugins: ["test-plugin"],
+    preset: "conventionalcommits",
   };
   // Create package.json and shareable.json in repository root
   await outputJson(path.resolve(cwd, "package.json"), { release: pkgOptions });
@@ -673,6 +694,7 @@ test.serial('Allow to unset properties defined in shareable config with "undefin
     analyzeCommits: { path: "analyzeCommits", param: "analyzeCommits_param" },
     tagFormat: `v\${version}`,
     plugins: false,
+    preset: "conventionalcommits",
   };
   // Create release.config.js and shareable.json in repository root
   await writeFile(path.resolve(cwd, "release.config.js"), `module.exports = ${format(pkgOptions)}`);
