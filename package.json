@@ -35,7 +35,7 @@
     "get-stream": "^6.0.0",
     "git-log-parser": "^1.2.0",
     "hook-std": "^2.0.0",
-    "hosted-git-info": "^3.0.0",
+    "hosted-git-info": "^4.0.0",
     "lodash": "^4.17.15",
     "marked": "^2.0.0",
     "marked-terminal": "^4.1.1",
