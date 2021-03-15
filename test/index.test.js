@@ -92,6 +92,7 @@ test('Plugins are called with expected values', async (t) => {
     repositoryUrl,
     globalOpt: 'global',
     tagFormat: `v\${version}`,
+    allowOutdatedBranch: false,
   };
   const branches = [
     {
@@ -592,6 +593,7 @@ test('Publish a pre-release version', async (t) => {
   t.is(await gitGetNote('v1.1.0-beta.1', {cwd}), '{"channels":["beta"]}');
 
   await gitCommits(['fix: a fix'], {cwd});
+  await gitPush(repositoryUrl, 'beta', {cwd});
   ({releases} = await semanticRelease(options, {
     cwd,
     env: {},
@@ -644,6 +646,7 @@ test('Publish releases from different branch on the same channel', async (t) => 
   t.is(releases[0].gitTag, 'v1.1.0');
 
   await gitCommits(['fix: a fix'], {cwd});
+  await gitPush(repositoryUrl, 'next', {cwd});
   ({releases} = await semanticRelease(options, {
     cwd,
     env: {},
@@ -657,7 +660,7 @@ test('Publish releases from different branch on the same channel', async (t) => 
 
   await gitCheckout('master', false, {cwd});
   await merge('next', {cwd});
-  await gitPush('origin', 'master', {cwd});
+  await gitPush(repositoryUrl, 'master', {cwd});
 
   semanticRelease = requireNoCache('..', {
     './lib/get-logger': () => t.context.logger,
@@ -704,6 +707,7 @@ test('Publish pre-releases the same channel as regular releases', async (t) => {
   t.is(releases[0].gitTag, 'v1.1.0-beta.1');
 
   await gitCommits(['fix: a fix'], {cwd});
+  await gitPush(repositoryUrl, 'beta', {cwd});
   ({releases} = await semanticRelease(options, {
     cwd,
     env: {},
@@ -883,6 +887,7 @@ test('Call all "success" plugins even if one errors out', async (t) => {
     repositoryUrl,
     globalOpt: 'global',
     tagFormat: `v\${version}`,
+    allowOutdatedBranch: false,
   };
   const options = {
     ...config,
@@ -927,7 +932,7 @@ test('Log all "verifyConditions" errors', async (t) => {
   const error2 = new SemanticReleaseError('error 2', 'ERR2');
   const error3 = new SemanticReleaseError('error 3', 'ERR3');
   const fail = stub().resolves();
-  const config = {branches: [{name: 'master'}], repositoryUrl, tagFormat: `v\${version}`};
+  const config = {branches: [{name: 'master'}], repositoryUrl, tagFormat: `v\${version}`, allowOutdatedBranch: false};
   const options = {
     ...config,
     plugins: false,
@@ -971,7 +976,7 @@ test('Log all "verifyRelease" errors', async (t) => {
   const error1 = new SemanticReleaseError('error 1', 'ERR1');
   const error2 = new SemanticReleaseError('error 2', 'ERR2');
   const fail = stub().resolves();
-  const config = {branches: [{name: 'master'}], repositoryUrl, tagFormat: `v\${version}`};
+  const config = {branches: [{name: 'master'}], repositoryUrl, tagFormat: `v\${version}`, allowOutdatedBranch: false};
   const options = {
     ...config,
     verifyConditions: stub().resolves(),
@@ -1378,13 +1383,14 @@ test('Throws "EINVALIDNEXTVERSION" if next release is out of range of the curren
   await gitTagVersion('v1.0.0', undefined, {cwd});
   await gitAddNote(JSON.stringify({channels: [null, '1.x']}), 'v1.0.0', {cwd});
   await gitCheckout('1.x', true, {cwd});
-  await gitPush('origin', '1.x', {cwd});
+  await gitPush(repositoryUrl, '1.x', {cwd});
   await gitCheckout('master', false, {cwd});
   await gitCommits(['feat: new feature on master'], {cwd});
   await gitTagVersion('v1.1.0', undefined, {cwd});
+  await gitPush(repositoryUrl, 'master', {cwd});
   await gitCheckout('1.x', false, {cwd});
   await gitCommits(['feat: feature on maintenance version 1.x'], {cwd});
-  await gitPush('origin', 'master', {cwd});
+  await gitPush(repositoryUrl, '1.x', {cwd});
 
   const verifyConditions = stub().resolves();
   const verifyRelease = stub().resolves();
@@ -1570,6 +1576,85 @@ test('Returns false value if triggered on an outdated clone', async (t) => {
   );
   t.deepEqual(t.context.log.args[t.context.log.args.length - 1], [
     "The local branch master is behind the remote one, therefore a new version won't be published.",
+  ]);
+});
+
+test('Allow to run on outdated version is "allowOutdatedBranch" is specified', async (t) => {
+  // Create a git repository, set the current working directory at the root of the repo
+  let {cwd, repositoryUrl} = await gitRepo(true);
+  const repoDir = cwd;
+  // Add commits to the master branch
+  await gitCommits(['First'], {cwd});
+  await gitTagVersion('v1.0.0', undefined, {cwd});
+  const [commit] = await gitCommits(['fix: Second'], {cwd});
+  await gitPush(repositoryUrl, 'master', {cwd});
+  cwd = await gitShallowClone(repositoryUrl);
+  await gitCommits(['feat: Third'], {cwd});
+  await gitPush(repositoryUrl, 'master', {cwd});
+
+  const nextRelease = {
+    name: 'v1.0.1',
+    type: 'patch',
+    version: '1.0.1',
+    gitHead: commit.hash,
+    gitTag: 'v1.0.1',
+  };
+  const config = {branches: 'master', repositoryUrl, globalOpt: 'global', allowOutdatedBranch: true};
+  const options = {
+    ...config,
+    verifyConditions: stub().resolves(),
+    analyzeCommits: stub().resolves(nextRelease.type),
+    verifyRelease: stub().resolves(),
+    generateNotes: stub().resolves(),
+    addChannel: stub().resolves(),
+    prepare: stub().resolves(),
+    publish: stub().resolves(),
+    success: stub().resolves(),
+    fail: stub().resolves(),
+  };
+
+  const semanticRelease = requireNoCache('..', {
+    './lib/get-logger': () => t.context.logger,
+    'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
+  });
+
+  t.truthy(
+    await semanticRelease(options, {
+      cwd: repoDir,
+      env: {},
+      stdout: new WritableStreamBuffer(),
+      stderr: new WritableStreamBuffer(),
+    })
+  );
+
+  // Verify the tag has been created on the local and remote repo and reference the gitHead
+  t.is(await gitTagHead(nextRelease.gitTag, {cwd: repoDir}), nextRelease.gitHead);
+  t.is(await gitRemoteTagHead(repositoryUrl, nextRelease.gitTag, {cwd}), nextRelease.gitHead);
+});
+
+test('Returns false value if branch contains local commit', async (t) => {
+  // Create a git repository, set the current working directory at the root of the repo
+  const {cwd, repositoryUrl} = await gitRepo(true);
+  const repoDir = cwd;
+  // Add commits to the master branch
+  await gitCommits(['First'], {cwd});
+  await gitCommits(['Second'], {cwd});
+  await gitPush(repositoryUrl, 'master', {cwd});
+  await gitCommits(['Third'], {cwd});
+
+  const semanticRelease = requireNoCache('..', {
+    './lib/get-logger': () => t.context.logger,
+    'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
+  });
+
+  t.false(
+    await semanticRelease(
+      {repositoryUrl},
+      {cwd: repoDir, env: {}, stdout: new WritableStreamBuffer(), stderr: new WritableStreamBuffer()}
+    )
+  );
+  t.deepEqual(t.context.log.args[t.context.log.args.length - 1], [
+    "The branch master has local commit, therefore a new version won't be published.",
   ]);
 });
 
