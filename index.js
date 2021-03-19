@@ -17,7 +17,17 @@ const {extractErrors, makeTag} = require('./lib/utils');
 const getGitAuthUrl = require('./lib/get-git-auth-url');
 const getBranches = require('./lib/branches');
 const getLogger = require('./lib/get-logger');
-const {verifyAuth, isBranchUpToDate, getGitHead, tag, push, pushNotes, getTagHead, addNote} = require('./lib/git');
+const {
+  verifyAuth,
+  isBranchUpToDate,
+  isRemoteHead,
+  getGitHead,
+  tag,
+  push,
+  pushNotes,
+  getTagHead,
+  addNote,
+} = require('./lib/git');
 const getError = require('./lib/get-error');
 const {COMMIT_NAME, COMMIT_EMAIL} = require('./lib/definitions/constants');
 
@@ -73,17 +83,21 @@ async function run(context, plugins) {
   );
 
   try {
-    try {
-      await verifyAuth(options.repositoryUrl, context.branch.name, {cwd, env});
-    } catch (error) {
-      if (!(await isBranchUpToDate(options.repositoryUrl, context.branch.name, {cwd, env}))) {
-        logger.log(
-          `The local branch ${context.branch.name} is behind the remote one, therefore a new version won't be published.`
-        );
-        return false;
-      }
+    await verifyAuth(options.repositoryUrl, context.branch.name, {cwd, env});
 
-      throw error;
+    if (!(await isRemoteHead(options.repositoryUrl, context.branch.name, {cwd, env}))) {
+      logger.log(`The branch ${context.branch.name} has local commit, therefore a new version won't be published.`);
+      return false;
+    }
+
+    if (
+      !options.allowOutdatedBranch &&
+      !(await isBranchUpToDate(options.repositoryUrl, context.branch.name, {cwd, env}))
+    ) {
+      logger.log(
+        `The local branch ${context.branch.name} is behind the remote one, therefore a new version won't be published.`
+      );
+      return false;
     }
   } catch (error) {
     logger.error(`The command "${error.command}" failed with the error message ${error.stderr}.`);

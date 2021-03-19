@@ -13,6 +13,7 @@ const {
   isGitRepo,
   verifyTagName,
   isBranchUpToDate,
+  isRemoteHead,
   getNote,
   addNote,
   fetchNotes,
@@ -414,4 +415,31 @@ test('Fetch all notes on a detached head repository', async (t) => {
   await fetchNotes(repositoryUrl, {cwd});
 
   t.is(await gitGetNote(commit.hash, {cwd}), '{"note":"note"}');
+});
+
+test('Return "true" if local and remote head are the same', async (t) => {
+  const {cwd, repositoryUrl} = await gitRepo(true);
+  await gitCommits(['First'], {cwd});
+  await gitPush(repositoryUrl, 'master', {cwd});
+
+  t.true(await isRemoteHead(repositoryUrl, 'master', {cwd}));
+});
+
+test('Return "true" if local head in remote', async (t) => {
+  const {cwd, repositoryUrl} = await gitRepo(true);
+  const [commit] = await gitCommits(['First'], {cwd});
+  await gitCommits(['Second'], {cwd});
+  await gitPush(repositoryUrl, 'master', {cwd});
+  await gitDetachedHeadFromBranch(repositoryUrl, 'master', commit.hash);
+
+  t.true(await isRemoteHead(repositoryUrl, 'master', {cwd}));
+});
+
+test('Return falsy if branch has local commit', async (t) => {
+  const {cwd, repositoryUrl} = await gitRepo(true);
+  await gitCommits(['First'], {cwd});
+  await gitPush(repositoryUrl, 'master', {cwd});
+  await gitCommits(['Second'], {cwd});
+
+  t.false(await isRemoteHead(repositoryUrl, 'master', {cwd}));
 });
