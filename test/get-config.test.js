@@ -112,6 +112,7 @@ test('Read options from package.json', async (t) => {
     repositoryUrl: 'https://host.null/owner/module.git',
     tagFormat: `v\${version}`,
     plugins: false,
+    allowOutdatedBranch: false,
   };
   // Create package.json in repository root
   await outputJson(path.resolve(cwd, 'package.json'), {release: options});
@@ -134,6 +135,7 @@ test('Read options from .releaserc.yml', async (t) => {
     repositoryUrl: 'https://host.null/owner/module.git',
     tagFormat: `v\${version}`,
     plugins: false,
+    allowOutdatedBranch: false,
   };
   // Create package.json in repository root
   await writeFile(path.resolve(cwd, '.releaserc.yml'), yaml.safeDump(options));
@@ -156,6 +158,7 @@ test('Read options from .releaserc.json', async (t) => {
     repositoryUrl: 'https://host.null/owner/module.git',
     tagFormat: `v\${version}`,
     plugins: false,
+    allowOutdatedBranch: false,
   };
   // Create package.json in repository root
   await outputJson(path.resolve(cwd, '.releaserc.json'), options);
@@ -178,6 +181,7 @@ test('Read options from .releaserc.js', async (t) => {
     repositoryUrl: 'https://host.null/owner/module.git',
     tagFormat: `v\${version}`,
     plugins: false,
+    allowOutdatedBranch: false,
   };
   // Create package.json in repository root
   await writeFile(path.resolve(cwd, '.releaserc.js'), `module.exports = ${JSON.stringify(options)}`);
@@ -200,6 +204,7 @@ test('Read options from .releaserc.cjs', async (t) => {
     repositoryUrl: 'https://host.null/owner/module.git',
     tagFormat: `v\${version}`,
     plugins: false,
+    allowOutdatedBranch: false,
   };
   // Create .releaserc.cjs in repository root
   await writeFile(path.resolve(cwd, '.releaserc.cjs'), `module.exports = ${JSON.stringify(options)}`);
@@ -222,6 +227,7 @@ test('Read options from release.config.js', async (t) => {
     repositoryUrl: 'https://host.null/owner/module.git',
     tagFormat: `v\${version}`,
     plugins: false,
+    allowOutdatedBranch: false,
   };
   // Create package.json in repository root
   await writeFile(path.resolve(cwd, 'release.config.js'), `module.exports = ${JSON.stringify(options)}`);
@@ -244,6 +250,7 @@ test('Read options from release.config.cjs', async (t) => {
     repositoryUrl: 'https://host.null/owner/module.git',
     tagFormat: `v\${version}`,
     plugins: false,
+    allowOutdatedBranch: false,
   };
   // Create release.config.cjs in repository root
   await writeFile(path.resolve(cwd, 'release.config.cjs'), `module.exports = ${JSON.stringify(options)}`);
@@ -273,6 +280,7 @@ test('Prioritise CLI/API parameters over file configuration and git repo', async
     repositoryUrl: 'http://cli-url.com/owner/package',
     tagFormat: `cli\${version}`,
     plugins: false,
+    allowOutdatedBranch: false,
   };
   const pkg = {release: pkgOptions, repository: 'git@host.null:owner/module.git'};
   // Create package.json in repository root
@@ -298,6 +306,7 @@ test('Read configuration from file path in "extends"', async (t) => {
     repositoryUrl: 'https://host.null/owner/module.git',
     tagFormat: `v\${version}`,
     plugins: ['plugin-1', ['plugin-2', {plugin2Opt: 'value'}]],
+    allowOutdatedBranch: false,
   };
   // Create package.json and shareable.json in repository root
   await outputJson(path.resolve(cwd, 'package.json'), {release: pkgOptions});
@@ -329,6 +338,7 @@ test('Read configuration from module path in "extends"', async (t) => {
     repositoryUrl: 'https://host.null/owner/module.git',
     tagFormat: `v\${version}`,
     plugins: false,
+    allowOutdatedBranch: false,
   };
   // Create package.json and shareable.json in repository root
   await outputJson(path.resolve(cwd, 'package.json'), {release: pkgOptions});
@@ -364,6 +374,7 @@ test('Read configuration from an array of paths in "extends"', async (t) => {
     branches: ['test_branch'],
     tagFormat: `v\${version}`,
     plugins: false,
+    allowOutdatedBranch: false,
   };
   // Create package.json and shareable.json in repository root
   await outputJson(path.resolve(cwd, 'package.json'), {release: pkgOptions});
@@ -403,6 +414,7 @@ test('Prioritize configuration from config file over "extends"', async (t) => {
     repositoryUrl: 'https://host.null/owner/module.git',
     tagFormat: `v\${version}`,
     plugins: false,
+    allowOutdatedBranch: false,
   };
   // Create package.json and shareable.json in repository root
   await outputJson(path.resolve(cwd, 'package.json'), {release: pkgOptions});
@@ -450,6 +462,7 @@ test('Prioritize configuration from cli/API options over "extends"', async (t) =
     branches: ['test_branch2'],
     tagFormat: `v\${version}`,
     plugins: false,
+    allowOutdatedBranch: false,
   };
   // Create package.json, shareable1.json and shareable2.json in repository root
   await outputJson(path.resolve(cwd, 'package.json'), {release: pkgOptions});
@@ -473,6 +486,7 @@ test('Allow to unset properties defined in shareable config with "null"', async 
     analyzeCommits: null,
     branches: ['test_branch'],
     repositoryUrl: 'https://host.null/owner/module.git',
+    allowOutdatedBranch: false,
     plugins: null,
   };
   const options1 = {
@@ -518,6 +532,7 @@ test('Allow to unset properties defined in shareable config with "undefined"', a
     analyzeCommits: undefined,
     branches: ['test_branch'],
     repositoryUrl: 'https://host.null/owner/module.git',
+    allowOutdatedBranch: false,
   };
   const options1 = {
     generateNotes: 'generateNotes',
