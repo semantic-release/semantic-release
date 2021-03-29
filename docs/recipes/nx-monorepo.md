@@ -50,7 +50,7 @@ module.exports = {
         changelogFile: `${appPath}/CHANGELOG.md`,
       },
     ],
-    'semantic-release/npm',
+    '@semantic-release/npm',
     [
       '@semantic-release/git',
       {
