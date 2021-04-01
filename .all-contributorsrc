@@ -1,0 +1,26 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "JoA-MoS",
+      "name": "Justin Dietz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5566979?v=4",
+      "profile": "http://justindietz.com",
+      "contributions": [
+        "doc",
+        "bug",
+        "code"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "semantic-release",
+  "projectOwner": "semantic-release-plus",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true
+}
