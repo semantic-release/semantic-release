@@ -181,7 +181,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- markdownlint-disable -->
 <table>
   <tr>
-    <td align="center"><a href="http://justindietz.com"><img src="https://avatars.githubusercontent.com/u/5566979?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Justin Dietz</b></sub></a><br /><a href="https://github.com/semantic-release-plus/semantic-release/commits?author=JoA-MoS" title="Documentation">📖</a> <a href="https://github.com/semantic-release-plus/semantic-release/issues?q=author%3AJoA-MoS" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="http://justindietz.com"><img src="https://avatars.githubusercontent.com/u/5566979?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Justin Dietz</b></sub></a><br /><a href="https://github.com/semantic-release-plus/semantic-release/commits?author=JoA-MoS" title="Documentation">📖</a> <a href="https://github.com/semantic-release-plus/semantic-release/issues?q=author%3AJoA-MoS" title="Bug reports">🐛</a> <a href="https://github.com/semantic-release-plus/semantic-release/commits?author=JoA-MoS" title="Code">💻</a></td>
   </tr>
 </table>
 
