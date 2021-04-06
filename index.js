@@ -1,4 +1,4 @@
-const {template,pick} = require('lodash');
+const {template, pick} = require('lodash');
 const marked = require('marked');
 const TerminalRenderer = require('marked-terminal');
 const envCi = require('env-ci');
@@ -191,10 +191,13 @@ async function run(context, plugins) {
     await tag(
       nextRelease.gitTag,
       nextRelease.gitHead,
-      options.tagAnnotate,
-      options.tagSign,
-      template(options.tagMessage)({nextRelease}),
-      {cwd, env});
+      {
+        tagAnnotate: options.tagAnnotate,
+        tagSign: options.tagSign,
+        tagMessage: template(options.tagMessage)({nextRelease}),
+      },
+      {cwd, env}
+    );
     await addNote({channels: [nextRelease.channel]}, nextRelease.gitHead, {cwd, env});
     await push(options.repositoryUrl, {cwd, env});
     await pushNotes(options.repositoryUrl, {cwd, env});
