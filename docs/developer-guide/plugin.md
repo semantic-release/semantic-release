@@ -2,7 +2,8 @@
 
 To create a plugin for `semantic-release`, you need to decide which parts of the release lifecycle are important to that plugin. For example, it is best to always have a `verify` step because you may be receiving inputs from a user and want to make sure they exist. A plugin can abide by any of the following lifecycles:
 
-- `verify`
+- `analyzeCommits`
+- `verifyConditions`
 - `prepare`
 - `publish`
 - `success`
