@@ -1,15 +1,22 @@
 # Plugin Developer Guide
 
-To create a plugin for `semantic-release`, you need to decide which parts of the release lifecycle are important to that plugin. For example, it is best to always have a `verify` step because you may be receiving inputs from a user and want to make sure they exist. A plugin can abide by any of the following lifecycles:
+To create a plugin for `semantic-release`, you need to decide which parts of the release lifecycle are important to that plugin.
+For example, it is best to always have a `verifyConditions` step because you may be receiving inputs from a user and want to make
+sure they exist. A plugin can abide by any of the following lifecycles:
 
-- `analyzeCommits`
 - `verifyConditions`
+- `analyzeCommits`
+- `verifyRelease`
+- `generateNotes`
+- `addChannel`
 - `prepare`
 - `publish`
 - `success`
 - `fail`
 
-`semantic-release` will require the plugin via `node` and look through the required object for methods named like the lifecyles stated above. For example, if your plugin only had a `verify` and `success` step, the `main` file for your object would need to `export` an object with `verify` and `success` functions.
+`semantic-release` will require the plugin via `node` and look through the required object for methods named like the lifecyles
+stated above. For example, if your plugin only had a `verifyConditions` and `success` step, the `main` file for your object would need to
+`export` an object with `verifyConditions` and `success` functions.
 
 In addition to the lifecycle methods, each lifecyle is passed two objects:
 
@@ -20,11 +27,15 @@ For each lifecycle you create, you will want to ensure it can accept `pluginConf
 
 ## Creating a Plugin Project
 
-It is recommended that you generate a new project with `yarn init`. This will provide you with a basic node project to get started with. From there, create an `index.js` file, and make sure it is specified as the `main` in the `package.json`. We will use this file to orchestrate the lifecycle methods later on.
+It is recommended that you generate a new project with `yarn init`. This will provide you with a basic node project to get started
+with. From there, create an `index.js` file, and make sure it is specified as the `main` in the `package.json`. We will use this
+file to orchestrate the lifecycle methods later on.
 
-Next, create a `src` or `lib` folder in the root of the project. This is where we will store our logic and code for how our lifecycle methods work. Finally, create a `test` folder so you can write tests related to your logic.
+Next, create a `src` or `lib` folder in the root of the project. This is where we will store our logic and code for how our
+lifecycle methods work. Finally, create a `test` folder so you can write tests related to your logic.
 
-We recommend you setup a linting system to ensure good javascript practices are enforced. ESLint is usually the system of choice, and the configuration can be whatever you or your team fancies.
+We recommend you setup a linting system to ensure good javascript practices are enforced. ESLint is usually the system of
+choice, and the configuration can be whatever you or your team fancies.
 
 ## Exposing Lifecycle Methods
 
@@ -67,13 +78,15 @@ module.exports = async (pluginConfig, context) => {
 };
 ```
 
-As of right now, this code won't do anything. However, if you were to run this plugin via `semantic-release`, it would run when the `verify` step occurred.
+As of right now, this code won't do anything. However, if you were to run this plugin via `semantic-release`,
+it would run when the `verify` step occurred.
 
 Following this structure, you can create different steps and checks to run through out the release process.
 
 ## Supporting Options
 
-Let's say we want to verify that an `option` is passed. An `option` is a configuration object that is specific to your plugin. For example, the user may set an `option` in their release config like:
+Let's say we want to verify that an `option` is passed. An `option` is a configuration object that is specific to your plugin.
+For example, the user may set an `option` in their release config like:
 
 ```js
 {
@@ -84,7 +97,8 @@ Let's say we want to verify that an `option` is passed. An `option` is a configu
 }
 ```
 
-This `message` option will be passed to the `pluginConfig` object mentioned earlier. We can use the validation method we created to verify this option exists so we can perform logic based on that knowledge. In our `verify` file, we can add the following:
+This `message` option will be passed to the `pluginConfig` object mentioned earlier. We can use the validation method we
+created to verify this option exists so we can perform logic based on that knowledge. In our `verify` file, we can add the following:
 
 ```js
 const { message } = pluginConfig;
@@ -94,14 +108,119 @@ if (message.length) {
 }
 ```
 
-## Supporting Environment Variables
+## Context
 
-Similar to `options`, environment variables exist to allow users to pass tokens and set special URLs. These are set on the `context` object instead of the `pluginConfig` object. Let's say we wanted to check for `GITHUB_TOKEN` in the environment because we want to post to GitHub on the user's behalf. To do this, we can add the following to our `verify` command:
+### Common context keys
+
+* `stdout`
+* `stderr`
+* `logger`
+
+### Context object keys by lifecycle
+
+#### verifyConditions
+
+Initially the context object contains the following keys (`verifyConditions` lifecycle):
+* `cwd`
+  * Current working directory
+* `env`
+  * Environment variables
+* `envCi`
+  * Information about CI environment
+  * Contains (at least) the following keys:
+    * `isCi`
+      * Boolean, true if the environment is a CI environment
+    * `commit`
+      * Commit hash
+    * `branch`
+      * Current branch
+* `options`
+  * Options passed to `semantic-release` via CLI, configuration files etc.
+* `branch`
+  * Information on the current branch
+  * Object keys:
+    * `channel`
+    * `tags`
+    * `type`
+    * `name`
+    * `range`
+    * `accept`
+    * `main`
+* `branches`
+  * Information on branches
+  * List of branch objects (see above)
+
+#### analyzeCommits
+
+Compared to the verifyConditions, `analyzeCommits` lifecycle context has keys
+
+* `releases`
+  * List
+* `lastRelease`
+  * Object with keys
+    * `version`
+      * String
+    * `gitTag`
+      * String
+    * `channels`
+      * List
+    * `gitHead`
+      * Commit hash
+    * `name`
+      * String
+
+#### verifyRelease
+
+Additional keys:
+
+* `nextRelease`
+  * Similar object as `lastRelease` (see above)
+
+#### generateNotes
+
+No new content in the context.
+
+#### addChannel
+
+*This is run only if there are releases that have been merged from a higher branch but not added on the channel of the current branch.*
+
+Context content is similar to lifecycle `verifyRelease`.
+
+#### prepare
+
+Only change is that `generateNotes` has populated `nextRelease.notes`.
+
+#### publish
+
+No new content in the context.
+
+#### success
+
+Lifecycles `success` and `fail` are mutually exclusive, only one of them will be run.
+
+Additional keys:
+
+* `releases`
+  * Populated by `publish` lifecycle
+
+#### fail
+
+Lifecycles `success` and `fail` are mutually exclusive, only one of them will be run.
+
+Additional keys:
+
+* `errors`
+
+### Supporting Environment Variables
+
+Similar to `options`, environment variables exist to allow users to pass tokens and set special URLs. These are set on
+the `context` object instead of the `pluginConfig` object. Let's say we wanted to check for `GITHUB_TOKEN` in the environment
+because we want to post to GitHub on the user's behalf. To do this, we can add the following to our `verify` command:
 
 ```js
 const { env } = context;
 
 if (env.GITHUB_TOKEN) {
-    //...
+  //...
 }
 ```
