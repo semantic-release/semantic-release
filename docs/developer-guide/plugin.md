@@ -154,20 +154,41 @@ Initially the context object contains the following keys (`verifyConditions` lif
 
 Compared to the verifyConditions, `analyzeCommits` lifecycle context has keys
 
-* `releases`
-  * List
-* `lastRelease`
-  * Object with keys
-    * `version`
-      * String
-    * `gitTag`
-      * String
-    * `channels`
-      * List
-    * `gitHead`
-      * Commit hash
-    * `name`
-      * String
+* `commits` (List)
+  * List of commits taken into account when determining the new version.
+  * Keys:
+    * `commit` (Object)
+      * Keys:
+        * `long` (String, Commit hash)
+        * `short` (String, Commit hash)
+    * `tree` (Object)
+      * Keys:
+        * `long` (String, Commit hash)
+        * `short` (String, Commit hash)
+    * `author` (Object)
+      * Keys:
+        * `name` (String)
+        * `email` (String)
+        * `date` (String, ISO 8601 timestamp)
+    * `committer` (Object)
+      * Keys:
+        * `name` (String)
+        * `email` (String)
+        * `date` (String, ISO 8601 timestamp)
+    * `subject` (String, Commit message subject)
+    * `body` (String, Commit message body)
+    * `hash` (String, Commit hash)
+    * `committerDate` (String, ISO 8601 timestamp)
+    * `message` (String)
+    * `gitTags` (String, List of git tags)
+* `releases` (List)
+* `lastRelease` (Object)
+  * Keys
+    * `version` (String)
+    * `gitTag` (String)
+    * `channels` (List)
+    * `gitHead` (String, Commit hash)
+    * `name` (String)
 
 #### verifyRelease
 
