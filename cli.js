@@ -22,6 +22,7 @@ Usage:
     .option('b', {alias: 'branches', describe: 'Git branches to release from', ...stringList, group: 'Options'})
     .option('r', {alias: 'repository-url', describe: 'Git repository URL', type: 'string', group: 'Options'})
     .option('t', {alias: 'tag-format', describe: 'Git tag format', type: 'string', group: 'Options'})
+    .option('n', {alias: 'git-note', describe: 'Custom Git note', type: 'string', group: 'Options'})
     .option('p', {alias: 'plugins', describe: 'Plugins', ...stringList, group: 'Options'})
     .option('e', {alias: 'extends', describe: 'Shareable configurations', ...stringList, group: 'Options'})
     .option('ci', {describe: 'Toggle CI verifications', type: 'boolean', group: 'Options'})
