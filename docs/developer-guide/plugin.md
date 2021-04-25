@@ -1,15 +1,18 @@
 # Plugin Developer Guide
 
-To create a plugin for `semantic-release`, you need to decide which parts of the release lifecycle are important to that plugin. For example, it is best to always have a `verify` step because you may be receiving inputs from a user and want to make sure they exist. A plugin can abide by any of the following lifecycles:
+To create a plugin for `semantic-release`, you need to decide which parts of the release lifecycle are important to that plugin. For example, it is best to always have a `verifyConditions` step because you may be receiving inputs from a user and want to make sure they exist. A plugin can abide by any of the following lifecycles:
 
-- `analyzeCommits`
 - `verifyConditions`
+- `analyzeCommits`
+- `verifyRelease`
+- `generateNotes`
+- `addChannel`
 - `prepare`
 - `publish`
 - `success`
 - `fail`
 
-`semantic-release` will require the plugin via `node` and look through the required object for methods named like the lifecyles stated above. For example, if your plugin only had a `verify` and `success` step, the `main` file for your object would need to `export` an object with `verify` and `success` functions.
+`semantic-release` will require the plugin via `node` and look through the required object for methods named like the lifecyles stated above. For example, if your plugin only had a `verifyConditions` and `success` step, the `main` file for your object would need to `export` an object with `verifyConditions` and `success` functions.
 
 In addition to the lifecycle methods, each lifecyle is passed two objects:
 
@@ -94,7 +97,131 @@ if (message.length) {
 }
 ```
 
-## Supporting Environment Variables
+## Context
+
+### Common context keys
+
+* `stdout`
+* `stderr`
+* `logger`
+
+### Context object keys by lifecycle
+
+#### verifyConditions
+
+Initially the context object contains the following keys (`verifyConditions` lifecycle):
+* `cwd`
+  * Current working directory
+* `env`
+  * Environment variables
+* `envCi`
+  * Information about CI environment
+  * Contains (at least) the following keys:
+    * `isCi`
+      * Boolean, true if the environment is a CI environment
+    * `commit`
+      * Commit hash
+    * `branch`
+      * Current branch
+* `options`
+  * Options passed to `semantic-release` via CLI, configuration files etc.
+* `branch`
+  * Information on the current branch
+  * Object keys:
+    * `channel`
+    * `tags`
+    * `type`
+    * `name`
+    * `range`
+    * `accept`
+    * `main`
+* `branches`
+  * Information on branches
+  * List of branch objects (see above)
+
+#### analyzeCommits
+
+Compared to the verifyConditions, `analyzeCommits` lifecycle context has keys
+
+* `commits` (List)
+  * List of commits taken into account when determining the new version.
+  * Keys:
+    * `commit` (Object)
+      * Keys:
+        * `long` (String, Commit hash)
+        * `short` (String, Commit hash)
+    * `tree` (Object)
+      * Keys:
+        * `long` (String, Commit hash)
+        * `short` (String, Commit hash)
+    * `author` (Object)
+      * Keys:
+        * `name` (String)
+        * `email` (String)
+        * `date` (String, ISO 8601 timestamp)
+    * `committer` (Object)
+      * Keys:
+        * `name` (String)
+        * `email` (String)
+        * `date` (String, ISO 8601 timestamp)
+    * `subject` (String, Commit message subject)
+    * `body` (String, Commit message body)
+    * `hash` (String, Commit hash)
+    * `committerDate` (String, ISO 8601 timestamp)
+    * `message` (String)
+    * `gitTags` (String, List of git tags)
+* `releases` (List)
+* `lastRelease` (Object)
+  * Keys
+    * `version` (String)
+    * `gitTag` (String)
+    * `channels` (List)
+    * `gitHead` (String, Commit hash)
+    * `name` (String)
+
+#### verifyRelease
+
+Additional keys:
+
+* `nextRelease`
+  * Similar object as `lastRelease` (see above)
+
+#### generateNotes
+
+No new content in the context.
+
+#### addChannel
+
+*This is run only if there are releases that have been merged from a higher branch but not added on the channel of the current branch.*
+
+Context content is similar to lifecycle `verifyRelease`.
+
+#### prepare
+
+Only change is that `generateNotes` has populated `nextRelease.notes`.
+
+#### publish
+
+No new content in the context.
+
+#### success
+
+Lifecycles `success` and `fail` are mutually exclusive, only one of them will be run.
+
+Additional keys:
+
+* `releases`
+  * Populated by `publish` lifecycle
+
+#### fail
+
+Lifecycles `success` and `fail` are mutually exclusive, only one of them will be run.
+
+Additional keys:
+
+* `errors`
+
+### Supporting Environment Variables
 
 Similar to `options`, environment variables exist to allow users to pass tokens and set special URLs. These are set on the `context` object instead of the `pluginConfig` object. Let's say we wanted to check for `GITHUB_TOKEN` in the environment because we want to post to GitHub on the user's behalf. To do this, we can add the following to our `verify` command:
 
@@ -102,6 +229,6 @@ Similar to `options`, environment variables exist to allow users to pass tokens 
 const { env } = context;
 
 if (env.GITHUB_TOKEN) {
-    //...
+  //...
 }
 ```
