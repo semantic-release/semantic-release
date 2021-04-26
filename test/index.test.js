@@ -1678,15 +1678,6 @@ test('Throw SemanticReleaseError if local branch does not contain remote tags', 
   const config = {branches: 'master', repositoryUrl, globalOpt: 'global', allowOutdatedBranch: true};
   const options = {
     ...config,
-    // VerifyConditions: stub().resolves(),
-    // analyzeCommits: stub().resolves(nextRelease.type),
-    // verifyRelease: stub().resolves(),
-    // generateNotes: stub().resolves(),
-    // addChannel: stub().resolves(),
-    // prepare: stub().resolves(),
-    // publish: stub().resolves(),
-    // success: stub().resolves(),
-    // fail: stub().resolves(),
   };
 
   const semanticRelease = requireNoCache('..', {

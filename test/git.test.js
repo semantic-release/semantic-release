@@ -321,41 +321,6 @@ test('Throws error if obtaining the tags fails', async (t) => {
   await t.throwsAsync(getTags('master', {cwd}));
 });
 
-// Test('Return "true" if repository is up to date', async (t) => {
-//   const {cwd, repositoryUrl} = await gitRepo(true);
-//   await gitCommits(['First'], {cwd});
-//   await gitPush(repositoryUrl, 'master', {cwd});
-
-//   t.true(await isBranchUpToDate(repositoryUrl, 'master', {cwd}));
-// });
-
-// test('Return falsy if repository is not up to date', async (t) => {
-//   const {cwd, repositoryUrl} = await gitRepo(true);
-//   await gitCommits(['First'], {cwd});
-//   await gitCommits(['Second'], {cwd});
-//   await gitPush(repositoryUrl, 'master', {cwd});
-
-//   t.true(await isBranchUpToDate(repositoryUrl, 'master', {cwd}));
-
-//   const temporaryRepo = await gitShallowClone(repositoryUrl);
-//   await gitCommits(['Third'], {cwd: temporaryRepo});
-//   await gitPush('origin', 'master', {cwd: temporaryRepo});
-
-//   t.falsy(await isBranchUpToDate(repositoryUrl, 'master', {cwd}));
-// });
-
-// test('Return falsy if detached head repository is not up to date', async (t) => {
-//   let {cwd, repositoryUrl} = await gitRepo();
-
-//   const [commit] = await gitCommits(['First'], {cwd});
-//   await gitCommits(['Second'], {cwd});
-//   await gitPush(repositoryUrl, 'master', {cwd});
-//   cwd = await gitDetachedHead(repositoryUrl, commit.hash);
-//   await fetch(repositoryUrl, 'master', 'master', {cwd});
-
-//   t.falsy(await isBranchUpToDate(repositoryUrl, 'master', {cwd}));
-// });
-
 test('Get a commit note', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
@@ -453,64 +418,3 @@ test('Validate that first commit is ancestor of second', async (t) => {
   t.true(await isAncestor(first.hash, second.hash, {cwd}));
   t.false(await isAncestor(second.hash, first.hash, {cwd}));
 });
-
-// Test('Return "true" if local and remote head are the same', async (t) => {
-//   const {cwd, repositoryUrl} = await gitRepo(true);
-//   await gitCommits(['First'], {cwd});
-//   await gitPush(repositoryUrl, 'master', {cwd});
-
-//   t.true(await isRemoteHead(repositoryUrl, 'master', {cwd}));
-// });
-
-// test('Return "true" if local head in remote', async (t) => {
-//   const {cwd, repositoryUrl} = await gitRepo(true);
-//   const [commit] = await gitCommits(['First'], {cwd});
-//   await gitCommits(['Second'], {cwd});
-//   await gitPush(repositoryUrl, 'master', {cwd});
-//   await gitDetachedHeadFromBranch(repositoryUrl, 'master', commit.hash);
-
-//   t.true(await isRemoteHead(repositoryUrl, 'master', {cwd}));
-// });
-
-// test('Return falsy if branch has local commit', async (t) => {
-//   const {cwd, repositoryUrl} = await gitRepo(true);
-//   await gitCommits(['First'], {cwd});
-//   await gitPush(repositoryUrl, 'master', {cwd});
-//   await gitCommits(['Second'], {cwd});
-
-//   t.false(await isRemoteHead(repositoryUrl, 'master', {cwd}));
-// });
-
-// test('Return "true" if local and remote have the same tags', async (t) => {
-//   const {cwd, repositoryUrl} = await gitRepo(true);
-//   await gitCommits(['First'], {cwd});
-//   await gitTagVersion('v1.0.0', undefined, {cwd});
-//   await gitCommits(['Second'], {cwd});
-//   await gitTagVersion('v2.0.0', undefined, {cwd});
-//   await gitPush(repositoryUrl, 'master', {cwd});
-
-//   t.true(await hasAllRemoteTags(repositoryUrl, 'master', {cwd}));
-// });
-
-// test('Return "true" if local branch contains all remote tags', async (t) => {
-//   const {cwd, repositoryUrl} = await gitRepo(true);
-//   await gitCommits(['First'], {cwd});
-//   await gitTagVersion('v1.0.0', undefined, {cwd});
-//   await gitPush(repositoryUrl, 'master', {cwd});
-//   await gitCommits(['Second'], {cwd});
-//   await gitTagVersion('v2.0.0', undefined, {cwd});
-
-//   t.true(await hasAllRemoteTags(repositoryUrl, 'master', {cwd}));
-// });
-
-// test('Return falsy if local branch does not contain all remote tags', async (t) => {
-//   const {cwd, repositoryUrl} = await gitRepo(true);
-//   const [commit] = await gitCommits(['First'], {cwd});
-//   await gitTagVersion('v1.0.0', undefined, {cwd});
-//   await gitCommits(['Second'], {cwd});
-//   await gitTagVersion('v2.0.0', undefined, {cwd});
-//   await gitPush(repositoryUrl, 'master', {cwd});
-//   await gitReset(commit.hash, {cwd});
-
-//   t.false(await hasAllRemoteTags(repositoryUrl, 'master', {cwd}));
-// });
