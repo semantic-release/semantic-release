@@ -15,6 +15,7 @@ const {
   gitTagVersion,
   gitRemoteTagHead,
   gitPush,
+  gitReset,
   gitShallowClone,
   merge,
   mergeFf,
@@ -1579,7 +1580,7 @@ test('Returns false value if triggered on an outdated clone', async (t) => {
   ]);
 });
 
-test('Allow to run on outdated version is "allowOutdatedBranch" is specified', async (t) => {
+test('Allow to run on outdated version if "allowOutdatedBranch" is specified', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   let {cwd, repositoryUrl} = await gitRepo(true);
   const repoDir = cwd;
@@ -1632,7 +1633,7 @@ test('Allow to run on outdated version is "allowOutdatedBranch" is specified', a
   t.is(await gitRemoteTagHead(repositoryUrl, nextRelease.gitTag, {cwd}), nextRelease.gitHead);
 });
 
-test('Returns false value if branch contains local commit', async (t) => {
+test('Throw SemanticReleaseError if branch contains local commit', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd, repositoryUrl} = await gitRepo(true);
   const repoDir = cwd;
@@ -1647,15 +1648,57 @@ test('Returns false value if branch contains local commit', async (t) => {
     'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
   });
 
-  t.false(
-    await semanticRelease(
+  const error = await t.throwsAsync(
+    semanticRelease(
       {repositoryUrl},
       {cwd: repoDir, env: {}, stdout: new WritableStreamBuffer(), stderr: new WritableStreamBuffer()}
     )
   );
-  t.deepEqual(t.context.log.args[t.context.log.args.length - 1], [
-    "The branch master has local commit, therefore a new version won't be published.",
-  ]);
+
+  // Verify error code and type
+  t.is(error.code, 'ELOCALCOMMIT');
+  t.is(error.name, 'SemanticReleaseError');
+  t.truthy(error.message);
+  t.truthy(error.details);
+});
+
+test('Throw SemanticReleaseError if local branch does not contain remote tags', async (t) => {
+  // Create a git repository, set the current working directory at the root of the repo
+  const {cwd, repositoryUrl} = await gitRepo(true);
+  const repoDir = cwd;
+  // Add commits to the master branch
+  const [commit] = await gitCommits(['First'], {cwd});
+  await gitTagVersion('v1.0.0', undefined, {cwd});
+  await gitCommits(['Second'], {cwd});
+  await gitTagVersion('v2.0.0', undefined, {cwd});
+  await gitPush(repositoryUrl, 'master', {cwd});
+  await gitCommits(['Third'], {cwd});
+  await gitReset(commit.hash, {cwd});
+
+  const config = {branches: 'master', repositoryUrl, globalOpt: 'global', allowOutdatedBranch: true};
+  const options = {
+    ...config,
+  };
+
+  const semanticRelease = requireNoCache('..', {
+    './lib/get-logger': () => t.context.logger,
+    'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
+  });
+
+  const error = await t.throwsAsync(
+    semanticRelease(options, {
+      cwd: repoDir,
+      env: {},
+      stdout: new WritableStreamBuffer(),
+      stderr: new WritableStreamBuffer(),
+    })
+  );
+
+  // Verify error code and type
+  t.is(error.code, 'EREMOTETAG');
+  t.is(error.name, 'SemanticReleaseError');
+  t.truthy(error.message);
+  t.truthy(error.details);
 });
 
 test('Returns false if not running from the configured branch', async (t) => {
