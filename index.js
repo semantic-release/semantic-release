@@ -17,7 +17,7 @@ const {extractErrors, makeTag} = require('./lib/utils');
 const getGitAuthUrl = require('./lib/get-git-auth-url');
 const getBranches = require('./lib/branches');
 const getLogger = require('./lib/get-logger');
-const {verifyAuth, isBranchUpToDate, getGitHead, tag, push, pushNotes, getTagHead, addNote} = require('./lib/git');
+const {verifyPushAuth, isBranchUpToDate, getGitHead, tag, push, pushNotes, getTagHead, addNote} = require('./lib/git');
 const getError = require('./lib/get-error');
 const {COMMIT_NAME, COMMIT_EMAIL} = require('./lib/definitions/constants');
 
@@ -74,7 +74,8 @@ async function run(context, plugins) {
 
   try {
     try {
-      await verifyAuth(options.repositoryUrl, context.branch.name, {cwd, env});
+      await verifyPushAuth(options.repositoryUrl, context.branch.name, {cwd, env});
+      logger.success(`Allowed to push to the Git repository`);
     } catch (error) {
       if (!(await isBranchUpToDate(options.repositoryUrl, context.branch.name, {cwd, env}))) {
         logger.log(
@@ -83,14 +84,16 @@ async function run(context, plugins) {
         return false;
       }
 
-      throw error;
+      if (options.disablePush) {
+        logger.warn('No push permissions required in disable-push mode');
+      } else {
+        throw error;
+      }
     }
   } catch (error) {
     logger.error(`The command "${error.command}" failed with the error message ${error.stderr}.`);
     throw getError('EGITNOPERMISSION', context);
   }
-
-  logger.success(`Allowed to push to the Git repository`);
 
   await plugins.verifyConditions(context);
 
@@ -111,6 +114,8 @@ async function run(context, plugins) {
 
       if (options.dryRun) {
         logger.warn(`Skip ${nextRelease.gitTag} tag creation in dry-run mode`);
+      } else if (options.disablePush) {
+        logger.warn(`Skip ${nextRelease.gitTag} tag creation in disable-push mode`);
       } else {
         await addNote({channels: [...currentRelease.channels, nextRelease.channel]}, nextRelease.gitHead, {cwd, env});
         await push(options.repositoryUrl, {cwd, env});
@@ -186,6 +191,8 @@ async function run(context, plugins) {
 
   if (options.dryRun) {
     logger.warn(`Skip ${nextRelease.gitTag} tag creation in dry-run mode`);
+  } else if (options.disablePush) {
+    logger.warn(`Skip ${nextRelease.gitTag} tag creation in disable-push mode`);
   } else {
     // Create the tag before calling the publish plugins as some require the tag to exists
     await tag(nextRelease.gitTag, nextRelease.gitHead, {cwd, env});
