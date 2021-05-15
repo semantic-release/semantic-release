@@ -20,7 +20,7 @@
   - `publish`: Publish the package on the npm registry
 - [@semantic-release/gitlab](https://github.com/semantic-release/gitlab)
   - `verifyConditions`: Verify the presence and the validity of the GitLab authentication and release configuration
-  - `publish`: Publish a [GitLab release](https://docs.gitlab.com/ce/workflow/releases.html)
+  - `publish`: Publish a [GitLab release](https://docs.gitlab.com/ee/user/project/releases/)
 - [@semantic-release/git](https://github.com/semantic-release/git)
   - `verifyConditions`: Verify the presence and the validity of the Git authentication and release configuration
   - `prepare`: Push a release commit and tag, including configurable files
@@ -91,6 +91,9 @@
 - [semantic-release-github-pages](https://github.com/qiwi/semantic-release-gh-pages-plugin)
   - `verifyConditions`: Verify the presence of the auth token set via environment variables.
   - `publish`: Pushes commit to the documentation branch.
+- [semantic-release-github-pullrequest](https://github.com/asbiin/semantic-release-github-pullrequest)
+  - `verifyConditions`: Verify the presence and the validity of the GitHub authentication and other configuration.
+  - `publish`: Create a branch to upload all assets and create the pull request on the base branch on GitHub.
 - [leiningen-semantic-release](https://github.com/NoxHarmonium/leiningen-semantic-release)
   - `verifyConditions`: Checks the project.clj is syntactically valid.
   - `prepare`: Update the project.clj version and package the output jar file.

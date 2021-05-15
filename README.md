@@ -1,8 +1,8 @@
 <h1 align="center" style="border-bottom: none;">📦🚀 semantic-release</h1>
 <h3 align="center">Fully automated version management and package publishing</h3>
 <p align="center">
-  <a href="https://spectrum.chat/semantic-release">
-    <img alt="Join the community on Spectrum" src="https://withspectrum.github.io/badge/badge.svg">
+  <a href="https://github.com/semantic-release/semantic-release/discussions">
+    <img alt="Join the community on GitHub Discussions" src="https://img.shields.io/badge/Join%20the%20community-on%20GitHub%20Discussions-blue">
   </a>
   <a href="https://github.com/semantic-release/semantic-release/actions?query=workflow%3ATest+branch%3Amaster">
     <img alt="Build states" src="https://github.com/semantic-release/semantic-release/workflows/Test/badge.svg">
@@ -48,7 +48,7 @@ This removes the immediate connection between human emotions and version numbers
 
 **semantic-release** uses the commit messages to determine the type of changes in the codebase. Following formalized conventions for commit messages, **semantic-release** automatically determines the next [semantic version](https://semver.org) number, generates a changelog and publishes the release.
 
-By default **semantic-release** uses [Angular Commit Message Conventions](https://github.com/angular/angular.js/blob/master/DEVELOPERS.md#-git-commit-guidelines). The commit message format can be changed with the [`preset` or `config` options](docs/usage/configuration.md#options) of the [@semantic-release/commit-analyzer](https://github.com/semantic-release/commit-analyzer#options) and [@semantic-release/release-notes-generator](https://github.com/semantic-release/release-notes-generator#options) plugins.
+By default **semantic-release** uses [Angular Commit Message Conventions](https://github.com/angular/angular/blob/master/CONTRIBUTING.md#-commit-message-format). The commit message format can be changed with the [`preset` or `config` options](docs/usage/configuration.md#options) of the [@semantic-release/commit-analyzer](https://github.com/semantic-release/commit-analyzer#options) and [@semantic-release/release-notes-generator](https://github.com/semantic-release/release-notes-generator#options) plugins.
 
 Tools such as [commitizen](https://github.com/commitizen/cz-cli) or [commitlint](https://github.com/conventional-changelog/commitlint) can be used to help contributors and enforce valid commit messages.
 
@@ -131,7 +131,7 @@ In order to use **semantic-release** you need:
 ## Get help
 
 - [Stack Overflow](https://stackoverflow.com/questions/tagged/semantic-release)
-- [Spectrum community](https://spectrum.chat/semantic-release)
+- [GitHub Discussions](https://github.com/semantic-release/semantic-release/discussions)
 - [Twitter](https://twitter.com/SemanticRelease)
 
 ## Badge
