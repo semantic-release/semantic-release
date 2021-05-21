@@ -127,6 +127,8 @@
   - `verifyConditions`: Validate configuration and (if present) credentials
   - `prepare`: Update version and appVersion in ```Chart.yaml```
   - `publish`: Publish the chart to a registry (if configured)
+- [semantic-release-codeartifact](https://github.com/ryansonshine/semantic-release-codeartifact)
+  - `verifyConditions`: Validate configuration, get AWS CodeArtifact authentication and repository, validate `publishConfig` or `.npmrc` (if they exist), then pass the configuration to the associated plugins.
 - [semantic-release-heroku](https://github.com/pustovitDmytro/semantic-release-heroku)
   - `verifyConditions`: Validate configuration and verify ```HEROKU_API_KEY```
   - `prepare`: Update the package.json version and create release tarball
