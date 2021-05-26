@@ -20,7 +20,7 @@
   - `publish`: Publish the package on the npm registry
 - [@semantic-release/gitlab](https://github.com/semantic-release/gitlab)
   - `verifyConditions`: Verify the presence and the validity of the GitLab authentication and release configuration
-  - `publish`: Publish a [GitLab release](https://docs.gitlab.com/ce/workflow/releases.html)
+  - `publish`: Publish a [GitLab release](https://docs.gitlab.com/ee/user/project/releases/)
 - [@semantic-release/git](https://github.com/semantic-release/git)
   - `verifyConditions`: Verify the presence and the validity of the Git authentication and release configuration
   - `prepare`: Push a release commit and tag, including configurable files
@@ -127,3 +127,13 @@
   - `verifyConditions`: Validate configuration and (if present) credentials
   - `prepare`: Update version and appVersion in ```Chart.yaml```
   - `publish`: Publish the chart to a registry (if configured)
+- [semantic-release-codeartifact](https://github.com/ryansonshine/semantic-release-codeartifact)
+  - `verifyConditions`: Validate configuration, get AWS CodeArtifact authentication and repository, validate `publishConfig` or `.npmrc` (if they exist), then pass the configuration to the associated plugins.
+- [semantic-release-telegram](https://github.com/pustovitDmytro/semantic-release-telegram)
+  - `verifyConditions`: Validate configuration and verify ```TELEGRAM_BOT_ID``` and ```TELEGRAM_BOT_TOKEN```
+  - `success`: Publish a message about the successful release to a telegram chat
+  - `fail`: publish a message about failure to a telegram chat
+- [semantic-release-heroku](https://github.com/pustovitDmytro/semantic-release-heroku)
+  - `verifyConditions`: Validate configuration and verify ```HEROKU_API_KEY```
+  - `prepare`: Update the package.json version and create release tarball
+  - `publish`: Publish version to heroku
