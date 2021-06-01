@@ -52,7 +52,7 @@ By default **semantic-release** uses [Angular Commit Message Conventions](https:
 
 Tools such as [commitizen](https://github.com/commitizen/cz-cli) or [commitlint](https://github.com/conventional-changelog/commitlint) can be used to help contributors and enforce valid commit messages.
 
-The table below shows which commit message gets you which release type when `semantic-release` runs:
+The table below shows which commit message gets you which release type when `semantic-release` runs (using the default configuration):
 
 | Commit message                                                                                                                                                                                   | Release type               |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------- |
