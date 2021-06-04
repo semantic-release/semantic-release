@@ -52,6 +52,8 @@ By default **semantic-release** uses [Angular Commit Message Conventions](https:
 
 Tools such as [commitizen](https://github.com/commitizen/cz-cli) or [commitlint](https://github.com/conventional-changelog/commitlint) can be used to help contributors and enforce valid commit messages.
 
+**semantic-release** does not care about the pull request title, the only thing that matters is the commit message you end up with after a normal merge, squash merge, or rebase. For example, if you squash-merge a pull request, the pull request title will become the main commit message.
+
 The table below shows which commit message gets you which release type when `semantic-release` runs (using the default configuration):
 
 | Commit message                                                                                                                                                                                   | Release type               |
