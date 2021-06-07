@@ -1,9 +1,1 @@
-{
-  "[javascript]": {
-    "editor.defaultFormatter": "samverschueren.linter-xo"
-  },
-  "xo.enable": true,
-  "xo.format.enable": true,
-  "editor.formatOnSave": false,
-  "jira-plugin.workingProject": ""
-}
+{}

@@ -1,5 +1,5 @@
 const test = require('ava');
-const {stub} = require('sinon');
+const { stub } = require('sinon');
 const AggregateError = require('aggregate-error');
 const pipeline = require('../../lib/plugins/pipeline');
 
@@ -25,7 +25,10 @@ test('Execute each function in series passing a transformed input from "getNextI
   const step4 = stub().resolves(4);
   const getNextInput = (lastResult, result) => lastResult + result;
 
-  const result = await pipeline([step1, step2, step3, step4], {settleAll: false, getNextInput})(0);
+  const result = await pipeline([step1, step2, step3, step4], {
+    settleAll: false,
+    getNextInput,
+  })(0);
 
   t.deepEqual(result, [1, 2, 3, 4]);
   t.true(step1.calledWith(0));
@@ -44,7 +47,10 @@ test('Execute each function in series passing the "lastResult" and "result" to "
   const step4 = stub().resolves(4);
   const getNextInput = stub().returnsArg(0);
 
-  const result = await pipeline([step1, step2, step3, step4], {settleAll: false, getNextInput})(5);
+  const result = await pipeline([step1, step2, step3, step4], {
+    settleAll: false,
+    getNextInput,
+  })(5);
 
   t.deepEqual(result, [1, 2, 3, 4]);
   t.deepEqual(getNextInput.args, [
@@ -63,7 +69,10 @@ test('Execute each function in series calling "transform" to modify the results'
   const getNextInput = stub().returnsArg(0);
   const transform = stub().callsFake((result) => result + 1);
 
-  const result = await pipeline([step1, step2, step3, step4], {getNextInput, transform})(5);
+  const result = await pipeline([step1, step2, step3, step4], {
+    getNextInput,
+    transform,
+  })(5);
 
   t.deepEqual(result, [1 + 1, 2 + 1, 3 + 1, 4 + 1]);
   t.deepEqual(getNextInput.args, [
@@ -82,7 +91,11 @@ test('Execute each function in series calling "transform" to modify the results 
   const getNextInput = stub().returnsArg(0);
   const transform = stub().callsFake((result) => result + 1);
 
-  const result = await pipeline([step1, step2, step3, step4], {settleAll: true, getNextInput, transform})(5);
+  const result = await pipeline([step1, step2, step3, step4], {
+    settleAll: true,
+    getNextInput,
+    transform,
+  })(5);
 
   t.deepEqual(result, [1 + 1, 2 + 1, 3 + 1, 4 + 1]);
   t.deepEqual(getNextInput.args, [
@@ -131,7 +144,9 @@ test('Execute all even if a Promise rejects', async (t) => {
   const step2 = stub().rejects(error1);
   const step3 = stub().rejects(error2);
 
-  const errors = await t.throwsAsync(pipeline([step1, step2, step3], {settleAll: true})(0));
+  const errors = await t.throwsAsync(
+    pipeline([step1, step2, step3], { settleAll: true })(0)
+  );
 
   t.deepEqual([...errors], [error1, error2]);
   t.true(step1.calledWith(0));
@@ -147,7 +162,9 @@ test('Throw all errors from all steps throwing an AggregateError', async (t) => 
   const step1 = stub().rejects(new AggregateError([error1, error2]));
   const step2 = stub().rejects(new AggregateError([error3, error4]));
 
-  const errors = await t.throwsAsync(pipeline([step1, step2], {settleAll: true})(0));
+  const errors = await t.throwsAsync(
+    pipeline([step1, step2], { settleAll: true })(0)
+  );
 
   t.deepEqual([...errors], [error1, error2, error3, error4]);
   t.true(step1.calledWith(0));
@@ -163,7 +180,9 @@ test('Execute each function in series passing a transformed input even if a step
   const step4 = stub().resolves(4);
   const getNextInput = (previousResult, result) => previousResult + result;
 
-  const errors = await t.throwsAsync(pipeline([step1, step2, step3, step4], {settleAll: true, getNextInput})(0));
+  const errors = await t.throwsAsync(
+    pipeline([step1, step2, step3, step4], { settleAll: true, getNextInput })(0)
+  );
 
   t.deepEqual([...errors], [error2, error3]);
   t.true(step1.calledWith(0));

@@ -1,6 +1,7 @@
 # Plugins list
 
 ## Official plugins
+
 - [@semantic-release/commit-analyzer](https://github.com/semantic-release/commit-analyzer)
   - **Note**: this is already part of semantic-release and does not have to be installed separately
   - `analyzeCommits`: Determine the type of release by analyzing commits with [conventional-changelog](https://github.com/conventional-changelog/conventional-changelog)
@@ -110,10 +111,10 @@
 - [semantic-release-rubygem](https://github.com/Gusto/semantic-release-rubygem)
   - `verifyConditions`: Locate and validate a `.gemspec` file, locate and validate a `lib/**/version.rb` file, verify the presence of the `GEM_HOST_API_KEY` environment variable, and create a credentials file with the API key.
   - `prepare`: Update the version in the `lib/**/version.rb` version file and [build](https://guides.rubygems.org/command-reference/#gem-build) the gem.
-  - `publish`: [Push the Ruby gem](https://guides.rubygems.org/command-reference/#gem-push) to the gem server. 
+  - `publish`: [Push the Ruby gem](https://guides.rubygems.org/command-reference/#gem-push) to the gem server.
 - [semantic-release-npm-deprecate-old-versions](https://github.com/ghusse/semantic-release-npm-deprecate-old-versions)
   - `verifyConditions`: Validates configuration.
-  - `publish`: Deprecates old versions, based on the declaration of supported versions in the config. 
+  - `publish`: Deprecates old versions, based on the declaration of supported versions in the config.
 - [amanda-mitchell/semantic-release-npm-multiple](https://github.com/amanda-mitchell/semantic-release-npm-multiple)
   - **Note**: this is a thin wrapper around the built-in npm plugin that can target multiple registries
   - `verifyConditions`: Verify the presence and the validity of the npm authentication and release configuration for multiple registries
@@ -123,20 +124,20 @@
   - `verifyConditions`: Verify the presence of a license file
   - `prepare`: Update the license file based on its type
 - [semantic-release-pypi](https://github.com/abichinger/semantic-release-pypi)
-  - `verifyConditions`: Verify the environment variable ```PYPI_TOKEN``` and installation of build tools
-  - `prepare`: Update the version in ```setup.cfg``` and create the distribution packages
+  - `verifyConditions`: Verify the environment variable `PYPI_TOKEN` and installation of build tools
+  - `prepare`: Update the version in `setup.cfg` and create the distribution packages
   - `publish`: Publish the python package to a repository (default: pypi)
 - [semantic-release-helm](https://github.com/m1pl/semantic-release-helm)
   - `verifyConditions`: Validate configuration and (if present) credentials
-  - `prepare`: Update version and appVersion in ```Chart.yaml```
+  - `prepare`: Update version and appVersion in `Chart.yaml`
   - `publish`: Publish the chart to a registry (if configured)
 - [semantic-release-codeartifact](https://github.com/ryansonshine/semantic-release-codeartifact)
   - `verifyConditions`: Validate configuration, get AWS CodeArtifact authentication and repository, validate `publishConfig` or `.npmrc` (if they exist), then pass the configuration to the associated plugins.
 - [semantic-release-telegram](https://github.com/pustovitDmytro/semantic-release-telegram)
-  - `verifyConditions`: Validate configuration and verify ```TELEGRAM_BOT_ID``` and ```TELEGRAM_BOT_TOKEN```
+  - `verifyConditions`: Validate configuration and verify `TELEGRAM_BOT_ID` and `TELEGRAM_BOT_TOKEN`
   - `success`: Publish a message about the successful release to a telegram chat
   - `fail`: publish a message about failure to a telegram chat
 - [semantic-release-heroku](https://github.com/pustovitDmytro/semantic-release-heroku)
-  - `verifyConditions`: Validate configuration and verify ```HEROKU_API_KEY```
+  - `verifyConditions`: Validate configuration and verify `HEROKU_API_KEY`
   - `prepare`: Update the package.json version and create release tarball
   - `publish`: Publish version to heroku

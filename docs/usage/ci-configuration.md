@@ -4,6 +4,7 @@
 
 The `semantic-release` command must be executed only after all the tests in the CI build pass. If the build runs multiple jobs (for example to test on multiple Operating Systems or Node versions) the CI has to be configured to guarantee that the `semantic-release` command is executed only after all jobs are successful.
 Here is a few example of the CI services that can be used to achieve this:
+
 - [Travis Build Stages](https://docs.travis-ci.com/user/build-stages)
 - [CircleCI Workflows](https://circleci.com/docs/2.0/workflows)
 - [GitHub Actions](https://github.com/features/actions)
@@ -22,7 +23,7 @@ See [CI configuration recipes](../recipes/README.md#ci-configurations) for more 
 **semantic-release** requires push access to the project Git repository in order to create [Git tags](https://git-scm.com/book/en/v2/Git-Basics-Tagging). The Git authentication can be set with one of the following environment variables:
 
 | Variable                                              | Description                                                                                                                                                                                                                  |
-|-------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `GH_TOKEN` or `GITHUB_TOKEN`                          | A GitHub [personal access token](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line).                                                                                                    |
 | `GL_TOKEN` or `GITLAB_TOKEN`                          | A GitLab [personal access token](https://docs.gitlab.com/ce/user/profile/personal_access_tokens.html).                                                                                                                       |
 | `BB_TOKEN` or `BITBUCKET_TOKEN`                       | A Bitbucket [personal access token](https://confluence.atlassian.com/bitbucketserver/personal-access-tokens-939515499.html).                                                                                                 |
@@ -36,7 +37,7 @@ Alternatively the Git authentication can be set up via [SSH keys](../recipes/git
 Most **semantic-release** [plugins](plugins.md) require setting up authentication in order to publish to a package manager registry. The default [@semantic-release/npm](https://github.com/semantic-release/npm#environment-variables) and [@semantic-release/github](https://github.com/semantic-release/github#environment-variables) plugins require the following environment variables:
 
 | Variable    | Description                                                                                                                                                                                                                                                                                                               |
-|-------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `NPM_TOKEN` | npm token created via [npm token create](https://docs.npmjs.com/getting-started/working_with_tokens#how-to-create-new-tokens).<br/>**Note**: Only the `auth-only` [level of npm two-factor authentication](https://docs.npmjs.com/getting-started/using-two-factor-authentication#levels-of-authentication) is supported. |
 | `GH_TOKEN`  | GitHub authentication token.<br/>**Note**: Only the [personal token](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line) authentication is supported.                                                                                                                                 |
 

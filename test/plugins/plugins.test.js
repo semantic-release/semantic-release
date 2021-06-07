@@ -1,7 +1,7 @@
 const path = require('path');
 const test = require('ava');
-const {copy, outputFile} = require('fs-extra');
-const {stub} = require('sinon');
+const { copy, outputFile } = require('fs-extra');
+const { stub } = require('sinon');
 const tempy = require('tempy');
 const getPlugins = require('../../lib/plugins');
 
@@ -12,11 +12,18 @@ test.beforeEach((t) => {
   // Stub the logger functions
   t.context.log = stub();
   t.context.success = stub();
-  t.context.logger = {log: t.context.log, success: t.context.success, scope: () => t.context.logger};
+  t.context.logger = {
+    log: t.context.log,
+    success: t.context.success,
+    scope: () => t.context.logger,
+  };
 });
 
 test('Export default plugins', (t) => {
-  const plugins = getPlugins({cwd, options: {}, logger: t.context.logger}, {});
+  const plugins = getPlugins(
+    { cwd, options: {}, logger: t.context.logger },
+    {}
+  );
 
   // Verify the module returns a function for each plugin
   t.is(typeof plugins.verifyConditions, 'function');
@@ -35,9 +42,12 @@ test('Export plugins based on steps config', (t) => {
       cwd,
       logger: t.context.logger,
       options: {
-        verifyConditions: ['./test/fixtures/plugin-noop', {path: './test/fixtures/plugin-noop'}],
+        verifyConditions: [
+          './test/fixtures/plugin-noop',
+          { path: './test/fixtures/plugin-noop' },
+        ],
         generateNotes: './test/fixtures/plugin-noop',
-        analyzeCommits: {path: './test/fixtures/plugin-noop'},
+        analyzeCommits: { path: './test/fixtures/plugin-noop' },
         verifyRelease: () => {},
       },
     },
@@ -56,21 +66,25 @@ test('Export plugins based on steps config', (t) => {
 });
 
 test('Export plugins based on "plugins" config (array)', async (t) => {
-  const plugin1 = {verifyConditions: stub(), publish: stub()};
-  const plugin2 = {verifyConditions: stub(), verifyRelease: stub()};
+  const plugin1 = { verifyConditions: stub(), publish: stub() };
+  const plugin2 = { verifyConditions: stub(), verifyRelease: stub() };
   const plugins = getPlugins(
-    {cwd, logger: t.context.logger, options: {plugins: [plugin1, [plugin2, {}]], verifyRelease: () => {}}},
+    {
+      cwd,
+      logger: t.context.logger,
+      options: { plugins: [plugin1, [plugin2, {}]], verifyRelease: () => {} },
+    },
     {}
   );
 
-  await plugins.verifyConditions({options: {}});
+  await plugins.verifyConditions({ options: {} });
   t.true(plugin1.verifyConditions.calledOnce);
   t.true(plugin2.verifyConditions.calledOnce);
 
-  await plugins.publish({options: {}});
+  await plugins.publish({ options: {} });
   t.true(plugin1.publish.calledOnce);
 
-  await plugins.verifyRelease({options: {}});
+  await plugins.verifyRelease({ options: {} });
   t.true(plugin2.verifyRelease.notCalled);
 
   // Verify the module returns a function for each plugin
@@ -85,13 +99,16 @@ test('Export plugins based on "plugins" config (array)', async (t) => {
 });
 
 test('Export plugins based on "plugins" config (single definition)', async (t) => {
-  const plugin1 = {verifyConditions: stub(), publish: stub()};
-  const plugins = getPlugins({cwd, logger: t.context.logger, options: {plugins: plugin1}}, {});
+  const plugin1 = { verifyConditions: stub(), publish: stub() };
+  const plugins = getPlugins(
+    { cwd, logger: t.context.logger, options: { plugins: plugin1 } },
+    {}
+  );
 
-  await plugins.verifyConditions({options: {}});
+  await plugins.verifyConditions({ options: {} });
   t.true(plugin1.verifyConditions.calledOnce);
 
-  await plugins.publish({options: {}});
+  await plugins.publish({ options: {} });
   t.true(plugin1.publish.calledOnce);
 
   // Verify the module returns a function for each plugin
@@ -106,32 +123,54 @@ test('Export plugins based on "plugins" config (single definition)', async (t) =
 });
 
 test('Merge global options, "plugins" options and step options', async (t) => {
-  const plugin1 = [{verifyConditions: stub(), publish: stub()}, {pluginOpt1: 'plugin1'}];
-  const plugin2 = [{verifyConditions: stub()}, {pluginOpt2: 'plugin2'}];
-  const plugin3 = [stub(), {pluginOpt3: 'plugin3'}];
+  const plugin1 = [
+    { verifyConditions: stub(), publish: stub() },
+    { pluginOpt1: 'plugin1' },
+  ];
+  const plugin2 = [{ verifyConditions: stub() }, { pluginOpt2: 'plugin2' }];
+  const plugin3 = [stub(), { pluginOpt3: 'plugin3' }];
   const plugins = getPlugins(
     {
       cwd,
       logger: t.context.logger,
-      options: {globalOpt: 'global', plugins: [plugin1, plugin2], verifyRelease: [plugin3]},
+      options: {
+        globalOpt: 'global',
+        plugins: [plugin1, plugin2],
+        verifyRelease: [plugin3],
+      },
     },
     {}
   );
 
-  await plugins.verifyConditions({options: {}});
-  t.deepEqual(plugin1[0].verifyConditions.args[0][0], {globalOpt: 'global', pluginOpt1: 'plugin1'});
-  t.deepEqual(plugin2[0].verifyConditions.args[0][0], {globalOpt: 'global', pluginOpt2: 'plugin2'});
+  await plugins.verifyConditions({ options: {} });
+  t.deepEqual(plugin1[0].verifyConditions.args[0][0], {
+    globalOpt: 'global',
+    pluginOpt1: 'plugin1',
+  });
+  t.deepEqual(plugin2[0].verifyConditions.args[0][0], {
+    globalOpt: 'global',
+    pluginOpt2: 'plugin2',
+  });
 
-  await plugins.publish({options: {}});
-  t.deepEqual(plugin1[0].publish.args[0][0], {globalOpt: 'global', pluginOpt1: 'plugin1'});
+  await plugins.publish({ options: {} });
+  t.deepEqual(plugin1[0].publish.args[0][0], {
+    globalOpt: 'global',
+    pluginOpt1: 'plugin1',
+  });
 
-  await plugins.verifyRelease({options: {}});
-  t.deepEqual(plugin3[0].args[0][0], {globalOpt: 'global', pluginOpt3: 'plugin3'});
+  await plugins.verifyRelease({ options: {} });
+  t.deepEqual(plugin3[0].args[0][0], {
+    globalOpt: 'global',
+    pluginOpt3: 'plugin3',
+  });
 });
 
 test('Unknown steps of plugins configured in "plugins" are ignored', (t) => {
-  const plugin1 = {verifyConditions: () => {}, unknown: () => {}};
-  const plugins = getPlugins({cwd, logger: t.context.logger, options: {plugins: [plugin1]}}, {});
+  const plugin1 = { verifyConditions: () => {}, unknown: () => {} };
+  const plugins = getPlugins(
+    { cwd, logger: t.context.logger, options: { plugins: [plugin1] } },
+    {}
+  );
 
   t.is(typeof plugins.verifyConditions, 'function');
   t.is(plugins.unknown, undefined);
@@ -141,22 +180,28 @@ test('Export plugins loaded from the dependency of a shareable config module', a
   const cwd = tempy.directory();
   await copy(
     './test/fixtures/plugin-noop.js',
-    path.resolve(cwd, 'node_modules/shareable-config/node_modules/custom-plugin/index.js')
+    path.resolve(
+      cwd,
+      'node_modules/shareable-config/node_modules/custom-plugin/index.js'
+    )
   );
-  await outputFile(path.resolve(cwd, 'node_modules/shareable-config/index.js'), '');
+  await outputFile(
+    path.resolve(cwd, 'node_modules/shareable-config/index.js'),
+    ''
+  );
 
   const plugins = getPlugins(
     {
       cwd,
       logger: t.context.logger,
       options: {
-        verifyConditions: ['custom-plugin', {path: 'custom-plugin'}],
+        verifyConditions: ['custom-plugin', { path: 'custom-plugin' }],
         generateNotes: 'custom-plugin',
-        analyzeCommits: {path: 'custom-plugin'},
+        analyzeCommits: { path: 'custom-plugin' },
         verifyRelease: () => {},
       },
     },
-    {'custom-plugin': 'shareable-config'}
+    { 'custom-plugin': 'shareable-config' }
   );
 
   // Verify the module returns a function for each plugin
@@ -172,7 +217,10 @@ test('Export plugins loaded from the dependency of a shareable config module', a
 
 test('Export plugins loaded from the dependency of a shareable config file', async (t) => {
   const cwd = tempy.directory();
-  await copy('./test/fixtures/plugin-noop.js', path.resolve(cwd, 'plugin/plugin-noop.js'));
+  await copy(
+    './test/fixtures/plugin-noop.js',
+    path.resolve(cwd, 'plugin/plugin-noop.js')
+  );
   await outputFile(path.resolve(cwd, 'shareable-config.js'), '');
 
   const plugins = getPlugins(
@@ -180,13 +228,16 @@ test('Export plugins loaded from the dependency of a shareable config file', asy
       cwd,
       logger: t.context.logger,
       options: {
-        verifyConditions: ['./plugin/plugin-noop', {path: './plugin/plugin-noop'}],
+        verifyConditions: [
+          './plugin/plugin-noop',
+          { path: './plugin/plugin-noop' },
+        ],
         generateNotes: './plugin/plugin-noop',
-        analyzeCommits: {path: './plugin/plugin-noop'},
+        analyzeCommits: { path: './plugin/plugin-noop' },
         verifyRelease: () => {},
       },
     },
-    {'./plugin/plugin-noop': './shareable-config.js'}
+    { './plugin/plugin-noop': './shareable-config.js' }
   );
 
   // Verify the module returns a function for each plugin
@@ -212,7 +263,10 @@ test('Use default when only options are passed for a single plugin', (t) => {
       cwd,
       logger: t.context.logger,
       options: {
-        plugins: ['@semantic-release/commit-analyzer', '@semantic-release/release-notes-generator'],
+        plugins: [
+          '@semantic-release/commit-analyzer',
+          '@semantic-release/release-notes-generator',
+        ],
         analyzeCommits,
         generateNotes,
         publish,
@@ -242,15 +296,23 @@ test('Merge global options with plugin options', async (t) => {
       options: {
         globalOpt: 'global',
         otherOpt: 'globally-defined',
-        verifyRelease: {path: './test/fixtures/plugin-result-config', localOpt: 'local', otherOpt: 'locally-defined'},
+        verifyRelease: {
+          path: './test/fixtures/plugin-result-config',
+          localOpt: 'local',
+          otherOpt: 'locally-defined',
+        },
       },
     },
     {}
   );
 
-  const [result] = await plugins.verifyRelease({options: {}});
+  const [result] = await plugins.verifyRelease({ options: {} });
 
-  t.deepEqual(result.pluginConfig, {localOpt: 'local', globalOpt: 'global', otherOpt: 'locally-defined'});
+  t.deepEqual(result.pluginConfig, {
+    localOpt: 'local',
+    globalOpt: 'global',
+    otherOpt: 'locally-defined',
+  });
 });
 
 test('Throw an error for each invalid plugin configuration', (t) => {
@@ -261,11 +323,14 @@ test('Throw an error for each invalid plugin configuration', (t) => {
           cwd,
           logger: t.context.logger,
           options: {
-            plugins: ['@semantic-release/commit-analyzer', '@semantic-release/release-notes-generator'],
+            plugins: [
+              '@semantic-release/commit-analyzer',
+              '@semantic-release/release-notes-generator',
+            ],
             verifyConditions: 1,
             analyzeCommits: [],
             verifyRelease: [{}],
-            generateNotes: [{path: null}],
+            generateNotes: [{ path: null }],
           },
         },
         {}
@@ -290,7 +355,13 @@ test('Throw EPLUGINSCONF error if the "plugins" option contains an old plugin de
         {
           cwd,
           logger: t.context.logger,
-          options: {plugins: ['./test/fixtures/multi-plugin', './test/fixtures/plugin-noop', () => {}]},
+          options: {
+            plugins: [
+              './test/fixtures/multi-plugin',
+              './test/fixtures/plugin-noop',
+              () => {},
+            ],
+          },
         },
         {}
       )
@@ -306,7 +377,14 @@ test('Throw EPLUGINSCONF error if the "plugins" option contains an old plugin de
 test('Throw EPLUGINSCONF error for each invalid definition if the "plugins" option', (t) => {
   const errors = [
     ...t.throws(() =>
-      getPlugins({cwd, logger: t.context.logger, options: {plugins: [1, {path: 1}, [() => {}, {}, {}]]}}, {})
+      getPlugins(
+        {
+          cwd,
+          logger: t.context.logger,
+          options: { plugins: [1, { path: 1 }, [() => {}, {}, {}]] },
+        },
+        {}
+      )
     ),
   ];
 

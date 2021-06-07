@@ -3,6 +3,7 @@
 ✨ Thanks for contributing to **semantic-release**! ✨
 
 As a contributor, here are the guidelines we would like you to follow:
+
 - [Code of conduct](#code-of-conduct)
 - [How can I contribute?](#how-can-i-contribute)
 - [Using the issue tracker](#using-the-issue-tracker)
@@ -64,24 +65,31 @@ Here is a summary of the steps to follow:
 
 1. [Set up the workspace](#set-up-the-workspace)
 2. If you cloned a while ago, get the latest changes from upstream and update dependencies:
+
 ```bash
 $ git checkout master
 $ git pull upstream master
 $ rm -rf node_modules
 $ npm install
 ```
+
 3. Create a new topic branch (off the main project development branch) to contain your feature, change, or fix:
+
 ```bash
 $ git checkout -b <topic-branch-name>
 ```
+
 4. Make your code changes, following the [Coding rules](#coding-rules)
 5. Push your topic branch up to your fork:
+
 ```bash
 $ git push origin <topic-branch-name>
 ```
+
 6. [Open a Pull Request](https://help.github.com/articles/creating-a-pull-request/#creating-the-pull-request) with a clear title and description.
 
 **Tips**:
+
 - For ambitious tasks, open a Pull Request as soon as possible with the `[WIP]` prefix in the title, in order to get feedback and help from the community.
 - [Allow semantic-release maintainers to make changes to your Pull Request branch](https://help.github.com/articles/allowing-changes-to-a-pull-request-branch-created-from-a-fork). This way, we can rebase it and make some minor changes if necessary. All changes we make will be done in new commit and we'll ask for your approval before merging them.
 
@@ -90,6 +98,7 @@ $ git push origin <topic-branch-name>
 ### Source code
 
 To ensure consistency and quality throughout the source code, all code modifications must have:
+
 - No [linting](#lint) errors
 - A [test](#tests) for every possible case introduced by your code change
 - **100%** test coverage
@@ -100,6 +109,7 @@ To ensure consistency and quality throughout the source code, all code modificat
 ### Documentation
 
 To ensure consistency and quality, all documentation modifications must:
+
 - Refer to brand in [bold](https://help.github.com/articles/basic-writing-and-formatting-syntax/#styling-text) with proper capitalization, i.e. **GitHub**, **semantic-release**, **npm**
 - Prefer [tables](https://help.github.com/articles/organizing-information-with-tables) over [lists](https://help.github.com/articles/basic-writing-and-formatting-syntax/#lists) when listing key values, i.e. List of options with their description
 - Use [links](https://help.github.com/articles/basic-writing-and-formatting-syntax/#links) when you are referring to:
@@ -121,6 +131,7 @@ To ensure consistency and quality, all documentation modifications must:
 #### Atomic commits
 
 If possible, make [atomic commits](https://en.wikipedia.org/wiki/Atomic_commit), which means:
+
 - a commit should contain exactly one self-contained functional change
 - a functional change should be contained in exactly one commit
 - a commit should not create an inconsistent state (such as test errors, linting errors, partial fix, feature with documentation etc...)
@@ -152,7 +163,7 @@ If the commit reverts a previous commit, it should begin with `revert: `, follow
 The type must be one of the following:
 
 | Type         | Description                                                                                                 |
-|--------------|-------------------------------------------------------------------------------------------------------------|
+| ------------ | ----------------------------------------------------------------------------------------------------------- |
 | **build**    | Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm)         |
 | **ci**       | Changes to our CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs) |
 | **docs**     | Documentation only changes                                                                                  |
@@ -172,10 +183,12 @@ The subject contains succinct description of the change:
 - no dot (.) at the end
 
 #### Body
+
 Just as in the **subject**, use the imperative, present tense: "change" not "changed" nor "changes".
 The body should include the motivation for the change and contrast this with previous behavior.
 
 #### Footer
+
 The footer should contain any information about **Breaking Changes** and is also the place to reference GitHub issues that this commit **Closes**.
 
 **Breaking Changes** should start with the word `BREAKING CHANGE:` with a space or two newlines. The rest of the commit message is then used for this.
@@ -224,6 +237,7 @@ All the [semantic-release](https://github.com/semantic-release) repositories use
 Before pushing your code changes make sure there are no linting errors with `npm run lint`.
 
 **Tips**:
+
 - Most linting errors can be automatically fixed with `npm run lint -- --fix`.
 - Install the [XO plugin](https://github.com/sindresorhus/xo#editor-plugins) for your editor to see linting errors directly in your editor and automatically fix them on save.
 
@@ -240,6 +254,7 @@ $ npm run test
 ```
 
 **Tips:** During development you can:
+
 - run only a subset of test files with `ava <glob>`, for example `ava test/mytestfile.test.js`
 - run in watch mode with `ava -w` to automatically run a test file when you modify it
 - run only the test you are working on by adding [`.only` to the test definition](https://github.com/avajs/ava#running-specific-tests)
@@ -251,6 +266,7 @@ All the [semantic-release](https://github.com/semantic-release) repositories use
 After staging your changes with `git add`, run `npm run cm` to start the interactive commit message CLI.
 
 ### Merging Upstream
+
 Make sure you have an upstream remote added `git remote add upstream https://github.com/semantic-release/semantic-release.git`
 
 1. `git checkout -b merge-upstream`

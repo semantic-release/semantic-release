@@ -1,6 +1,7 @@
 # Workflow configuration
 
 **semantic-release** allow to manage and automate complex release workflow, based on multiple Git branches and distribution channels. This allow to:
+
 - Distributes certain releases to a particular group of users via distribution channels
 - Manage the availability of releases on distribution channels via branches merge
 - Maintain multiple lines of releases in parallel
@@ -12,6 +13,7 @@ The release workflow is configured via the [branches option](./configuration.md#
 Each branch can be defined either as a string, a [glob](https://github.com/micromatch/micromatch#matching-features) or an object. For string and glob definitions each [property](#branches-properties) will be defaulted.
 
 A branch can defined as one of three types:
+
 - [release](#release-branches): to make releases on top of the last version released
 - [maintenance](#maintenance-branches): to make releases on top of an old release
 - [pre-release](#pre-release-branches): to make pre-releases
@@ -21,7 +23,7 @@ The type of the branch is automatically determined based on naming convention an
 ## Branches properties
 
 | Property     | Branch type                               | Description                                                                                                                                                                             | Default                                                                                         |
-|--------------|-------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------|
+| ------------ | ----------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
 | `name`       | All                                       | **Required.** The Git branch holding the commits to analyze and the code to release. See [name](#name).                                                                                 | - The value itself if defined as a `String` or the matching branches name if defined as a glob. |
 | `channel`    | All                                       | The distribution channel on which to publish releases from this branch. Set to `false` to force the default distribution channel instead of using the default. See [channel](#channel). | `undefined` for the first release branch, the value of `name` for subsequent ones.              |
 | `range`      | [maintenance](#maintenance-branches) only | **Required unless `name` is formatted like `N.N.x` or `N.x` (`N` is a number).** The range of [semantic versions](https://semver.org) to support on this branch. See [range](#range).   | The value of `name`.                                                                            |
@@ -35,14 +37,15 @@ It can be defined as a [glob](https://github.com/micromatch/micromatch#matching-
 If `name` doesn't match to any branch existing in the repository, the definition will be ignored. For example the default configuration includes the definition `next` and `next-major` which will become active only when the branches `next` and/or `next-major` are created in the repository. This allow to define your workflow once with all potential branches you might use and have the effective configuration evolving as you create new branches.
 
 For example the configuration `['+([0-9])?(.{+([0-9]),x}).x', 'master', 'next']` will be expanded as:
+
 ```js
 {
   branches: [
-    {name: '1.x', range: '1.x', channel: '1.x'}, // Only after the `1.x` is created in the repo
-    {name: '2.x', range: '2.x', channel: '2.x'}, // Only after the `2.x` is created in the repo
-    {name: 'master'},
-    {name: 'next', channel: 'next'}, // Only after the `next` is created in the repo
-  ]
+    { name: '1.x', range: '1.x', channel: '1.x' }, // Only after the `1.x` is created in the repo
+    { name: '2.x', range: '2.x', channel: '2.x' }, // Only after the `2.x` is created in the repo
+    { name: 'master' },
+    { name: 'next', channel: 'next' }, // Only after the `next` is created in the repo
+  ];
 }
 ```
 
@@ -54,12 +57,13 @@ If the `channel` property is set to `false` the default channel will be used.
 The value of `channel`, if defined as a string, is generated with [Lodash template](https://lodash.com/docs#template) with the variable `name` available.
 
 For example the configuration `['master', {name: 'next', channel: 'channel-${name}'}]` will be expanded as:
+
 ```js
 {
   branches: [
-    {name: 'master'}, // `channel` is undefined so the default distribution channel will be used
-    {name: 'next', channel: 'channel-next'}, // `channel` is built with the template `channel-${name}`
-  ]
+    { name: 'master' }, // `channel` is undefined so the default distribution channel will be used
+    { name: 'next', channel: 'channel-next' }, // `channel` is built with the template `channel-${name}`
+  ];
 }
 ```
 
@@ -68,13 +72,14 @@ For example the configuration `['master', {name: 'next', channel: 'channel-${nam
 A `range` only applies to maintenance branches, is required and must be formatted like `N.N.x` or `N.x` (`N` is a number). In case the `name` is formatted as a range (for example `1.x` or `1.5.x`) the branch will be considered a maintenance branch and the `name` value will be used for the `range`.
 
 For example the configuration `['1.1.x', '1.2.x', 'master']` will be expanded as:
+
 ```js
 {
   branches: [
-    {name: '1.1.x', range: '1.1.x', channel: '1.1.x'},
-    {name: '1.2.x', range: '1.2.x', channel: '1.2.x'},
-    {name: 'master'},
-  ]
+    { name: '1.1.x', range: '1.1.x', channel: '1.1.x' },
+    { name: '1.2.x', range: '1.2.x', channel: '1.2.x' },
+    { name: 'master' },
+  ];
 }
 ```
 
@@ -86,13 +91,14 @@ If the `prerelease` property is set to `true` the `name` value will be used.
 The value of `prerelease`, if defined as a string, is generated with [Lodash template](https://lodash.com/docs#template) with the variable `name` available.
 
 For example the configuration `['master', {name: 'pre/rc', prerelease: '${name.replace(/^pre\\//g, "")}'}, {name: 'beta', prerelease: true}]` will be expanded as:
+
 ```js
 {
   branches: [
-    {name: 'master'},
-    {name: 'pre/rc', channel: 'pre/rc', prerelease: 'rc'}, // `prerelease` is built with the template `${name.replace(/^pre\\//g, "")}`
-    {name: 'beta', channel: 'beta', prerelease: 'beta'}, // `prerelease` is set to `beta` as it is the value of `name`
-  ]
+    { name: 'master' },
+    { name: 'pre/rc', channel: 'pre/rc', prerelease: 'rc' }, // `prerelease` is built with the template `${name.replace(/^pre\\//g, "")}`
+    { name: 'beta', channel: 'beta', prerelease: 'beta' }, // `prerelease` is set to `beta` as it is the value of `name`
+  ];
 }
 ```
 
@@ -113,10 +119,12 @@ See [publishing on distribution channels recipe](../recipes/distribution-channel
 #### Pushing to a release branch
 
 With the configuration `"branches": ["master", "next"]`, if the last release published from `master` is `1.0.0` and the last one from `next` is `2.0.0` then:
+
 - Only versions in range `1.x.x` can be published from `master`, so only `fix` and `feat` commits can be pushed to `master`
 - Once `next` get merged into `master` the release `2.0.0` will be made available on the channel associated with `master` and both `master` and `next` will accept any commit type
 
 This verification prevent scenario such as:
+
 1. Create a `feat` commit on `next` which triggers the release of version `1.0.0` on the `next` channel
 2. Merge `next` into `master` which adds `1.0.0` on the default channel
 3. Create a `feat` commit on `next` which triggers the release of version `1.1.0` on the `next` channel
@@ -147,6 +155,7 @@ See [publishing maintenance releases recipe](../recipes/maintenance-releases.md)
 #### Pushing to a maintenance branch
 
 With the configuration `"branches": ["1.0.x", "1.x", "master"]`, if the last release published from `master` is `1.5.0` then:
+
 - Only versions in range `>=1.0.0 <1.1.0` can be published from `1.0.x`, so only `fix` commits can be pushed to `1.0.x`
 - Only versions in range `>=1.1.0 <1.5.0` can be published from `1.x`, so only `fix` and `feat` commits can be pushed to `1.x` as long the resulting release is lower than `1.5.0`
 - Once `2.0.0` is released from `master`, versions in range `>=1.1.0 <2.0.0` can be published from `1.x`, so any number of `fix` and `feat` commits can be pushed to `1.x`
@@ -154,6 +163,7 @@ With the configuration `"branches": ["1.0.x", "1.x", "master"]`, if the last rel
 #### Merging into a maintenance branch
 
 With the configuration `"branches": ["1.0.x", "1.x", "master"]`, if the last release published from `master` is `1.0.0` then:
+
 - Creating the branch `1.0.x` from `master` will make the `1.0.0` release available on the `1.0.x` distribution channel
 - Pushing a `fix` commit on the `1.0.x` branch will release the version `1.0.1` on the `1.0.x` distribution channel
 - Creating the branch `1.x` from `master` will make the `1.0.0` release available on the `1.x` distribution channel
@@ -176,11 +186,13 @@ See [publishing pre-releases recipe](../recipes/pre-releases.md) for a detailed 
 #### Pushing to a pre-release branch
 
 With the configuration `"branches": ["master", {"name": "beta", "prerelease": true}]`, if the last release published from `master` is `1.0.0` then:
+
 - Pushing a `BREAKING CHANGE` commit on the `beta` branch will release the version `2.0.0-beta.1` on the `beta` distribution channel
 - Pushing either a `fix`, `feat` or a `BREAKING CHANGE` commit on the `beta` branch will release the version `2.0.0-beta.2` (then `2.0.0-beta.3`, `2.0.0-beta.4`, etc...) on the `beta` distribution channel
 
 #### Merging into a pre-release branch
 
 With the configuration `"branches": ["master", {"name": "beta", "prerelease": true}]`, if the last release published from `master` is `1.0.0` and the last one published from `beta` is `2.0.0-beta.1` then:
+
 - Pushing a `fix` commit on the `master` branch will release the version `1.0.1` on the default distribution channel
 - Merging the branch `master` into `beta` will release the version `2.0.0-beta.2` on the `beta` distribution channel
