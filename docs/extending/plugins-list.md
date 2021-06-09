@@ -52,6 +52,9 @@
 - [semantic-release-docker](https://github.com/felixfbecker/semantic-release-docker)
   - `verifyConditions`: Verify that all needed configuration is present and login to the Docker registry.
   - `publish`: Tag the image specified by `name` with the new version, push it to Docker Hub and update the latest tag
+- [@semantic-release-plus/docker](https://github.com/semantic-release-plus/semantic-release-plus/tree/master/packages/plugins/docker)
+  - `verifyConditions`: Verify that all needed configuration is present and login to the configured docker registry.
+  - `publish`: Tag the image specified by `name` with the new version, push it to the configured docker registry and update the `latest`, `major`, `minor` tags based on the configuration settings.
 - [semantic-release-gcr](https://github.com/carlos-cubas/semantic-release-gcr)
   - `verifyConditions`: Verify that all needed configuration is present and login to the Docker registry
   - `publish`: Tag the image specified by `name` with the new version, push it to Docker Hub and update the latest tag
@@ -127,3 +130,13 @@
   - `verifyConditions`: Validate configuration and (if present) credentials
   - `prepare`: Update version and appVersion in ```Chart.yaml```
   - `publish`: Publish the chart to a registry (if configured)
+- [semantic-release-codeartifact](https://github.com/ryansonshine/semantic-release-codeartifact)
+  - `verifyConditions`: Validate configuration, get AWS CodeArtifact authentication and repository, validate `publishConfig` or `.npmrc` (if they exist), then pass the configuration to the associated plugins.
+- [semantic-release-telegram](https://github.com/pustovitDmytro/semantic-release-telegram)
+  - `verifyConditions`: Validate configuration and verify ```TELEGRAM_BOT_ID``` and ```TELEGRAM_BOT_TOKEN```
+  - `success`: Publish a message about the successful release to a telegram chat
+  - `fail`: publish a message about failure to a telegram chat
+- [semantic-release-heroku](https://github.com/pustovitDmytro/semantic-release-heroku)
+  - `verifyConditions`: Validate configuration and verify ```HEROKU_API_KEY```
+  - `prepare`: Update the package.json version and create release tarball
+  - `publish`: Publish version to heroku

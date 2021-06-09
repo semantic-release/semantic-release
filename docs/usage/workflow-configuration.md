@@ -162,7 +162,7 @@ With the configuration `"branches": ["1.0.x", "1.x", "master"]`, if the last rel
 ### Pre-release branches
 
 A pre-release branch is a type of branch used by **semantic-release** that allows to publish releases with a [pre-release version](https://semver.org/#spec-item-9).
-Using a pre-release version allow to publish multiple releases with the same version. Those release will be differentiated via there identifiers (in `1.0.0-alpha.1` the identifier is `alpha.1`).
+Using a pre-release version allow to publish multiple releases with the same version. Those release will be differentiated via their identifiers (in `1.0.0-alpha.1` the identifier is `alpha.1`).
 This is useful when you need to work on a future major release that will include many breaking changes but you do not want to increment the version number for each breaking change commit.
 
 A pre-release branch is characterized by the `prerelease` property that defines the static part of the version released (in `1.0.0-alpha.1` the static part fo the identifier is `alpha`). The [`prerelease`](#prerelease) value of each pre-release branch must be unique across the project.
