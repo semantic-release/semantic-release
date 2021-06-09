@@ -3,12 +3,12 @@
 This recipe will walk you through a simple example that uses pre-releases to publish beta versions while working on a future major release and then make only one release on the default distribution.
 
 This example uses the **semantic-release** default configuration:
-- [branches](../usage/configuration.md#branches): `['+([0-9])?(.{+([0-9]),x}).x', 'master', 'next', 'next-major', {name: 'beta', prerelease: true}, {name: 'alpha', prerelease: true}]`
+- [branches](../usage/configuration.md#branches): `['+([0-9])?(.{+([0-9]),x}).x', 'master', 'main', 'next', 'next-major', {name: 'beta', prerelease: true}, {name: 'alpha', prerelease: true}]`
 - [plugins](../usage/configuration.md#plugins): `['@semantic-release/commit-analyzer', '@semantic-release/release-notes-generator', '@semantic-release/npm', '@semantic-release/github']`
 
 ## Initial release
 
-We'll start by making the first commit of the project, with the code for the initial release and the message `feat: initial commit`. When pushing that commit, on `master` **semantic-release** will release the version `1.0.0` and make it available on the default distribution channel which is the dist-tag `@latest` for npm.
+We'll start by making the first commit of the project, with the code for the initial release and the message `feat: initial commit`. When pushing that commit, on `master`/`main` **semantic-release** will release the version `1.0.0` and make it available on the default distribution channel which is the dist-tag `@latest` for npm.
 
 The Git history of the repository is:
 
@@ -45,7 +45,7 @@ With another feature, the Git history of the repository is now:
 
 In the meantime we can also continue to commit changes and release updates to our users.
 
-For example, we can commit a bug fix with the message `fix: a fix` to `master`. When pushing that commit, **semantic-release** will release the version `1.0.1` on the dist-tag `@latest`.
+For example, we can commit a bug fix with the message `fix: a fix` to `master`/`main`. When pushing that commit, **semantic-release** will release the version `1.0.1` on the dist-tag `@latest`.
 
 The Git history of the repository is now:
 
@@ -94,9 +94,9 @@ With another feature, the Git history of the repository is now:
 
 Once we've developed and pushed all the feature we want to include in the future version `2.0.0` in the `beta` branch and all our tests are successful we can release it to our users.
 
-To do so we need to merge our changes made on `beta` into `master`. As `beta` and `master` branches have diverged, this merge might require to resolve conflicts.
+To do so we need to merge our changes made on `beta` into `master`/`main`. As `beta` and `master`/`main` branches have diverged, this merge might require to resolve conflicts.
 
-Once the conflicts are resolved and the merge commit is pushed to `master`, **semantic-release** will release the version `2.0.0` on the dist-tag `@latest`.
+Once the conflicts are resolved and the merge commit is pushed to `master`/`main`, **semantic-release** will release the version `2.0.0` on the dist-tag `@latest`.
 
 The Git history of the repository is now:
 
@@ -117,7 +117,7 @@ The Git history of the repository is now:
 
 Now that we published our the version `2.0.0` that was previously in beta, we decide to promote the version `3.0.0` in alpha to beta.
 
-To do so we need to merge our changes made on `alpha` into `beta`. There should be no conflict as `alpha` is strictly ahead of `master`.
+To do so we need to merge our changes made on `alpha` into `beta`. There should be no conflict as `alpha` is strictly ahead of `master`/`main`.
 
 Once the merge commit is pushed to `beta`, **semantic-release** will publish the pre-release version `3.0.0-beta.1` on the dist-tag `@beta`, which allow us to run our integration tests.
 
@@ -142,7 +142,7 @@ The Git history of the repository is now:
 
 Once we've developed and pushed all the feature we want to include in the future version `3.0.0` in the `beta` branch and all our tests are successful we can release it to our users.
 
-To do so we need to merge our changes made on `beta` into `master`. As `beta` and `master` branches have diverged, this merge might require to resolve conflicts.
+To do so we need to merge our changes made on `beta` into `master`/`main`. As `beta` and `master`/`main` branches have diverged, this merge might require to resolve conflicts.
 
 Once the conflicts are resolved and the merge commit is pushed to `master`, **semantic-release** will release the version `3.0.0` on the dist-tag `@latest`.
 
@@ -169,7 +169,7 @@ The Git history of the repository is now:
 
 We can now start to work on a new future major release, version `4.0.0`, on the `@beta` distribution channel.
 
-To do so we first need to update the `beta` branch with all the changes from `master` (the commits `fix: a fix`). As `beta` and `master` branches have diverged, this merge might require to resolve conflicts.
+To do so we first need to update the `beta` branch with all the changes from `master`/`main` (the commits `fix: a fix`). As `beta` and `master`/`main` branches have diverged, this merge might require to resolve conflicts.
 
 We can now commit our new feature on `beta`. When pushing that commit, **semantic-release** will publish the pre-release version `3.1.0-beta.1` on the dist-tag `@beta`. That allow us to run integration tests by installing our module with `npm install example-module@beta`. Other users installing with `npm install example-module` will still receive the version `3.0.0`.
 

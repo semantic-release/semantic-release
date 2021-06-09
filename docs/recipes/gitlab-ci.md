@@ -54,7 +54,7 @@ This example is a minimal configuration for **semantic-release** with a build ru
 
 
 ```yaml
-# The release pipeline will run only on the master branch a commit is triggered 
+# The release pipeline will run only on the master/main branch a commit is triggered 
 stages:
   - release
 
@@ -67,7 +67,7 @@ release:
   script:
     - semantic-release
   only:
-    - master
+    - master # or main
 
 release:
   image: node:12-buster-slim
@@ -78,7 +78,7 @@ release:
   script:
     - semantic-release
   only:
-    - master
+    - master # or main
 ```
 
 ### `package.json` configuration
