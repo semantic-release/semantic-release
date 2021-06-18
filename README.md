@@ -23,6 +23,11 @@
     <img alt="npm beta version" src="https://img.shields.io/npm/v/semantic-release-plus/beta.svg">
   </a>
 </p>
+<p align="center">
+  <a href="#contributors-">
+    <img alt="Github All Contributors" src="https://img.shields.io/github/all-contributors/semantic-release-plus/semantic-release">
+  </a>
+</p>
 
 <p align="center">
   <a href="#contributors-">
