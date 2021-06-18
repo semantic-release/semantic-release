@@ -29,7 +29,14 @@ const npmRegistry = require('./helpers/npm-registry');
 const requireNoCache = proxyquire.noPreserveCache();
 
 // Environment variables used with semantic-release cli (similar to what a user would setup)
-const { ...processEnvWithoutGitHubActionsVariables } = process.env;
+// FIXME: even though eslint says GITHUB_ACTION and GITHUB_TOKEN is unused if you remove them the tests fail
+const {
+  // eslint-disable-next-line no-unused-vars
+  GITHUB_ACTION,
+  // eslint-disable-next-line no-unused-vars
+  GITHUB_TOKEN,
+  ...processEnvWithoutGitHubActionsVariables
+} = process.env;
 const env = {
   ...processEnvWithoutGitHubActionsVariables,
   ...npmRegistry.authEnv,
