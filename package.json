@@ -99,19 +99,6 @@
   ],
   "license": "MIT",
   "main": "index.js",
-  "nyc": {
-    "include": [
-      "lib/**/*.js",
-      "index.js",
-      "cli.js"
-    ],
-    "reporter": [
-      "json",
-      "text",
-      "html"
-    ],
-    "all": true
-  },
   "publishConfig": {
     "access": "public"
   },
