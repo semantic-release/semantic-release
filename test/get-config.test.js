@@ -37,6 +37,7 @@ test('Default values, reading repositoryUrl from package.json', async (t) => {
   // Verify the default options are set
   t.deepEqual(result.branches, [
     '+([0-9])?(.{+([0-9]),x}).x',
+    'main',
     'master',
     'next',
     'next-major',
@@ -58,6 +59,7 @@ test('Default values, reading repositoryUrl from repo if not set in package.json
   // Verify the default options are set
   t.deepEqual(result.branches, [
     '+([0-9])?(.{+([0-9]),x}).x',
+    'main',
     'master',
     'next',
     'next-major',
@@ -80,6 +82,7 @@ test('Default values, reading repositoryUrl (http url) from package.json if not 
   // Verify the default options are set
   t.deepEqual(result.branches, [
     '+([0-9])?(.{+([0-9]),x}).x',
+    'main',
     'master',
     'next',
     'next-major',

@@ -210,11 +210,11 @@ This is fully customizable with the [`@semantic-release/commit-analyzer`](https:
 
 ## Is it *really* a good idea to release on every push?
 
-It is indeed a great idea because it *forces* you to follow best practices. If you don’t feel comfortable releasing every feature or fix on your `master` you might not treat your `master` branch as intended.
+It is indeed a great idea because it *forces* you to follow best practices. If you don’t feel comfortable releasing every feature or fix on your `master`/`main` you might not treat your `master`/`main` branch as intended.
 
 From [Understanding the GitHub Flow](https://guides.github.com/introduction/flow/index.html):
 
-> Branching is a core concept in Git, and the entire GitHub Flow is based upon it. There's only one rule: anything in the master branch is always deployable.
+> Branching is a core concept in Git, and the entire GitHub Flow is based upon it. There's only one rule: anything in the master/main branch is always deployable.
 
 If you need more control over the timing of releases, see [Triggering a release](../../README.md#triggering-a-release) for different options.
 

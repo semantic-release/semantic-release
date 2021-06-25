@@ -14,6 +14,7 @@ try {
     // Core options
     branches: [
       '+([0-9])?(.{+([0-9]),x}).x',
+      'main',
       'master',
       'next',
       'next-major',
