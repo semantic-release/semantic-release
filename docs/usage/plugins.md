@@ -16,6 +16,8 @@ A plugin is a npm module that can implement one or more of the following steps:
 | `success`          | No       | Responsible for notifying of a new release.                                                                                                                                                                          |
 | `fail`             | No       | Responsible for notifying of a failed release.                                                                                                                                                                       |
 
+Release steps will run in that order. At each step, **semantic-release** will run every plugin in the [`plugins` array](#plugins-declaration-and-execution-order), as long as the plugin implements the step.
+
 **Note:** If no plugin with a `analyzeCommits` step is defined `@semantic-release/commit-analyzer` will be used.
 
 ## Plugins installation
@@ -69,6 +71,8 @@ With this configuration **semantic-release** will:
 - execute the `generateNotes` implementation of `@semantic-release/release-notes-generator`
 - execute the `prepare` implementation of `@semantic-release/npm` then `@semantic-release/git`
 - execute the `publish` implementation of `@semantic-release/npm`
+
+Order is first determined by release steps (such as `verifyConditions` → `anayzeCommits`). At each release step, plugins are executed in the order in which they are defined.
 
 ## Plugin options configuration
 
