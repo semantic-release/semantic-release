@@ -31,6 +31,7 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
+          cache: npm
       - name: Ensure dependencies are compatible with the version of node
         run: echo 'engine-strict=true' >> .npmrc
       - uses: bahmutov/npm-install@v1
@@ -44,5 +45,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
+        with:
+          cache: npm
       - uses: bahmutov/npm-install@v1
       - run: npm run lint
