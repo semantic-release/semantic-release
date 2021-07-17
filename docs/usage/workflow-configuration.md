@@ -13,7 +13,7 @@ Each branch can be defined either as a string, a [glob](https://github.com/micro
 
 A branch can defined as one of three types:
 - [release](#release-branches): to make releases on top of the last version released
-- [maintenance](#maintenance-branches): to make release on top of an old release
+- [maintenance](#maintenance-branches): to make releases on top of an old release
 - [pre-release](#pre-release-branches): to make pre-releases
 
 The type of the branch is automatically determined based on naming convention and/or [properties](#branches-properties).
@@ -25,7 +25,7 @@ The type of the branch is automatically determined based on naming convention an
 | `name`       | All                                       | **Required.** The Git branch holding the commits to analyze and the code to release. See [name](#name).                                                                                 | - The value itself if defined as a `String` or the matching branches name if defined as a glob. |
 | `channel`    | All                                       | The distribution channel on which to publish releases from this branch. Set to `false` to force the default distribution channel instead of using the default. See [channel](#channel). | `undefined` for the first release branch, the value of `name` for subsequent ones.              |
 | `range`      | [maintenance](#maintenance-branches) only | **Required unless `name` is formatted like `N.N.x` or `N.x` (`N` is a number).** The range of [semantic versions](https://semver.org) to support on this branch. See [range](#range).   | The value of `name`.                                                                            |
-| `prerelease` | [pre-release](#pre-release-branches) only | **Required.** The pre-release detonation to append to [semantic versions](https://semver.org) released from this branch. See [prerelease](#prerelease).                                 | -                                                                                               |
+| `prerelease` | [pre-release](#pre-release-branches) only | **Required.** The pre-release denotation to append to [semantic versions](https://semver.org) released from this branch. See [prerelease](#prerelease).                                 | -                                                                                               |
 
 ### name
 
