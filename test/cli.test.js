@@ -62,6 +62,7 @@ test.serial('Pass options to semantic-release API', async (t) => {
     'fail2',
     '--debug',
     '-d',
+    '--disable-push',
   ];
   const cli = proxyquire('../cli', {'.': run, process: {...process, argv}});
 
@@ -82,6 +83,7 @@ test.serial('Pass options to semantic-release API', async (t) => {
   t.deepEqual(run.args[0][0].fail, ['fail1', 'fail2']);
   t.is(run.args[0][0].debug, true);
   t.is(run.args[0][0].dryRun, true);
+  t.is(run.args[0][0].disablePush, true);
 
   t.is(exitCode, 0);
 });
@@ -104,6 +106,7 @@ test.serial('Pass options to semantic-release API with alias arguments', async (
     'config1',
     'config2',
     '--dry-run',
+    '--disable-push',
   ];
   const cli = proxyquire('../cli', {'.': run, process: {...process, argv}});
 
@@ -115,6 +118,7 @@ test.serial('Pass options to semantic-release API with alias arguments', async (
   t.deepEqual(run.args[0][0].plugins, ['plugin1', 'plugin2']);
   t.deepEqual(run.args[0][0].extends, ['config1', 'config2']);
   t.is(run.args[0][0].dryRun, true);
+  t.is(run.args[0][0].disablePush, true);
 
   t.is(exitCode, 0);
 });
