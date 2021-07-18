@@ -78,3 +78,67 @@ test('Get the highest non-prerelease valid tag before a certain version', (t) =>
 
   t.deepEqual(result, {version: '2.0.0', gitTag: 'v2.0.0', name: 'v2.0.0', gitHead: 'v2.0.0', channels: undefined});
 });
+
+test('Get the highest prerelease valid tag, ignoring beta prerelease branch', (t) => {
+  const result = getLastRelease({
+    branch: {
+      name: 'alpha',
+      type: 'prerelease',
+      prerelease: 'alpha',
+      channel: 'alpha',
+      tags: [
+        {
+          gitTag: 'v1.2.3-alpha.1',
+          version: '1.2.3-alpha.1',
+          channels: ['alpha'],
+        },
+        {
+          gitTag: 'v1.2.3-beta.1',
+          version: '1.2.3-beta.1',
+          channels: ['alpha'],
+        },
+      ],
+    },
+    options: {tagFormat: `v\${version}`},
+  });
+
+  t.deepEqual(result, {
+    version: '1.2.3-alpha.1',
+    gitTag: 'v1.2.3-alpha.1',
+    name: 'v1.2.3-alpha.1',
+    gitHead: 'v1.2.3-alpha.1',
+    channels: ['alpha'],
+  });
+});
+
+test('Get the highest prerelease valid tag, ignoring alpha prerelease branch', (t) => {
+  const result = getLastRelease({
+    branch: {
+      name: 'beta',
+      type: 'prerelease',
+      prerelease: 'beta',
+      channel: 'beta',
+      tags: [
+        {
+          gitTag: 'v1.2.3-alpha.1',
+          version: '1.2.3-alpha.1',
+          channels: ['beta'],
+        },
+        {
+          gitTag: 'v1.2.3-beta.1',
+          version: '1.2.3-beta.1',
+          channels: ['beta'],
+        },
+      ],
+    },
+    options: {tagFormat: `v\${version}`},
+  });
+
+  t.deepEqual(result, {
+    version: '1.2.3-beta.1',
+    gitTag: 'v1.2.3-beta.1',
+    name: 'v1.2.3-beta.1',
+    gitHead: 'v1.2.3-beta.1',
+    channels: ['beta'],
+  });
+});

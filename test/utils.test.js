@@ -15,6 +15,7 @@ const {
   getRange,
   makeTag,
   isSameChannel,
+  isSamePrerelease,
 } = require('../lib/utils');
 
 test('extractErrors', (t) => {
@@ -183,4 +184,13 @@ test('isSameChannel', (t) => {
   t.true(isSameChannel('', false));
 
   t.false(isSameChannel('next', false));
+});
+
+test('isSamePrerelease', (t) => {
+  t.true(isSamePrerelease('alpha', '1.2.4-alpha.432'));
+  t.true(isSamePrerelease('alpha', '1321.2312.4312-alpha.432'));
+
+  t.false(isSamePrerelease('alpha', '1.2.4'));
+  t.false(isSamePrerelease('beta', '1.2.4-alpha.432'));
+  t.false(isSamePrerelease('beta', '1321.2312.4312-alpha.432'));
 });
