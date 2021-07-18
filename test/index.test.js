@@ -92,6 +92,7 @@ test('Plugins are called with expected values', async (t) => {
     repositoryUrl,
     globalOpt: 'global',
     tagFormat: `v\${version}`,
+    prereleaseVersionFormat: `\${version}-\${prereleaseBranch}.\${prereleaseVersion}`,
   };
   const branches = [
     {
@@ -139,7 +140,12 @@ test('Plugins are called with expected values', async (t) => {
       notes: `${notes1}\n\n${notes2}\n\n${notes3}`,
       pluginName: '[Function: functionStub]',
     },
-    {...nextRelease, ...release2, notes: `${notes1}\n\n${notes2}\n\n${notes3}`, pluginName: '[Function: functionStub]'},
+    {
+      ...nextRelease,
+      ...release2,
+      notes: `${notes1}\n\n${notes2}\n\n${notes3}`,
+      pluginName: '[Function: functionStub]',
+    },
     {...nextRelease, notes: `${notes1}\n\n${notes2}\n\n${notes3}`, pluginName: pluginNoop},
   ];
 
@@ -584,7 +590,12 @@ test('Publish a pre-release version', async (t) => {
     './lib/get-logger': () => t.context.logger,
     'env-ci': () => ({isCi: true, branch: 'beta', isPr: false}),
   });
-  let {releases} = await semanticRelease(options, {cwd, env: {}, stdout: {write: () => {}}, stderr: {write: () => {}}});
+  let {releases} = await semanticRelease(options, {
+    cwd,
+    env: {},
+    stdout: {write: () => {}},
+    stderr: {write: () => {}},
+  });
 
   t.is(releases.length, 1);
   t.is(releases[0].version, '1.1.0-beta.1');
@@ -637,7 +648,12 @@ test('Publish releases from different branch on the same channel', async (t) => 
     './lib/get-logger': () => t.context.logger,
     'env-ci': () => ({isCi: true, branch: 'next', isPr: false}),
   });
-  let {releases} = await semanticRelease(options, {cwd, env: {}, stdout: {write: () => {}}, stderr: {write: () => {}}});
+  let {releases} = await semanticRelease(options, {
+    cwd,
+    env: {},
+    stdout: {write: () => {}},
+    stderr: {write: () => {}},
+  });
 
   t.is(releases.length, 1);
   t.is(releases[0].version, '1.1.0');
@@ -697,7 +713,12 @@ test('Publish pre-releases the same channel as regular releases', async (t) => {
     './lib/get-logger': () => t.context.logger,
     'env-ci': () => ({isCi: true, branch: 'beta', isPr: false}),
   });
-  let {releases} = await semanticRelease(options, {cwd, env: {}, stdout: {write: () => {}}, stderr: {write: () => {}}});
+  let {releases} = await semanticRelease(options, {
+    cwd,
+    env: {},
+    stdout: {write: () => {}},
+    stderr: {write: () => {}},
+  });
 
   t.is(releases.length, 1);
   t.is(releases[0].version, '1.1.0-beta.1');
@@ -832,7 +853,12 @@ async function addChannelMacro(t, mergeFunction) {
     './lib/logger': t.context.logger,
     'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
   });
-  const result = await semanticRelease(options, {cwd, env: {}, stdout: {write: () => {}}, stderr: {write: () => {}}});
+  const result = await semanticRelease(options, {
+    cwd,
+    env: {},
+    stdout: {write: () => {}},
+    stderr: {write: () => {}},
+  });
 
   t.deepEqual(result.releases, [
     {...nextRelease, ...release1, notes, pluginName: '[Function: functionStub]'},
@@ -883,6 +909,7 @@ test('Call all "success" plugins even if one errors out', async (t) => {
     repositoryUrl,
     globalOpt: 'global',
     tagFormat: `v\${version}`,
+    prereleaseVersionFormat: `\${version}-\${prereleaseBranch}.\${prereleaseVersion}`,
   };
   const options = {
     ...config,
@@ -927,7 +954,12 @@ test('Log all "verifyConditions" errors', async (t) => {
   const error2 = new SemanticReleaseError('error 2', 'ERR2');
   const error3 = new SemanticReleaseError('error 3', 'ERR3');
   const fail = stub().resolves();
-  const config = {branches: [{name: 'master'}], repositoryUrl, tagFormat: `v\${version}`};
+  const config = {
+    branches: [{name: 'master'}],
+    repositoryUrl,
+    tagFormat: `v\${version}`,
+    prereleaseVersionFormat: `\${version}-\${prereleaseBranch}.\${prereleaseVersion}`,
+  };
   const options = {
     ...config,
     plugins: false,
@@ -971,7 +1003,12 @@ test('Log all "verifyRelease" errors', async (t) => {
   const error1 = new SemanticReleaseError('error 1', 'ERR1');
   const error2 = new SemanticReleaseError('error 2', 'ERR2');
   const fail = stub().resolves();
-  const config = {branches: [{name: 'master'}], repositoryUrl, tagFormat: `v\${version}`};
+  const config = {
+    branches: [{name: 'master'}],
+    repositoryUrl,
+    tagFormat: `v\${version}`,
+    prereleaseVersionFormat: `\${version}-\${prereleaseBranch}.\${prereleaseVersion}`,
+  };
   const options = {
     ...config,
     verifyConditions: stub().resolves(),

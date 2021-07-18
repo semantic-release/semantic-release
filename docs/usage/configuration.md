@@ -88,6 +88,16 @@ The git repository URL.
 
 Any valid git url format is supported (See [Git protocols](https://git-scm.com/book/en/v2/Git-on-the-Server-The-Protocols)).
 
+### prereleaseVersionFormat
+
+Type: `String`<br>
+Default: `${version}-${prereleaseBranch}.${prereleaseVersion}`<br>
+CLI arguments: `-pvf`, `--prerelease-version-format`
+
+The [Git tag](https://git-scm.com/book/en/v2/Git-Basics-Tagging) format used by **semantic-release** to identify releases. The tag name is generated with [Lodash template](https://lodash.com/docs#template) and will be compiled with the `version` variable.
+
+**Note**: The `prereleaseVersionFormat` must contain the `version`, `prereleaseBranch`, and `prereleaseVersion` variables exactly once and compile to a [valid Git reference](https://git-scm.com/docs/git-check-ref-format#_description).
+
 ### tagFormat
 
 Type: `String`<br>
