@@ -12,6 +12,25 @@ test('The "analyzeCommits" plugin output must be either undefined or a valid sem
   t.true(plugins.analyzeCommits.outputValidator('major'));
 });
 
+test('The "getLastRelease" plugin output must be either undefined or an object with version', (t) => {
+  t.false(plugins.getLastRelease.outputValidator('invalid'));
+  t.false(plugins.getLastRelease.outputValidator(1));
+  t.false(plugins.getLastRelease.outputValidator({}));
+
+  t.true(plugins.getLastRelease.outputValidator());
+  t.true(plugins.getLastRelease.outputValidator(null));
+  t.true(plugins.getLastRelease.outputValidator({version: '2.0.0'}));
+  t.true(
+    plugins.getLastRelease.outputValidator({
+      version: '2.0.0',
+      gitTag: 'v2.0.0',
+      name: 'v2.0.0',
+      gitHead: 'v2.0.0',
+      channels: undefined,
+    })
+  );
+});
+
 test('The "generateNotes" plugin output, if defined, must be a string', (t) => {
   t.false(plugins.generateNotes.outputValidator(1));
   t.false(plugins.generateNotes.outputValidator({}));
