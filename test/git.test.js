@@ -5,14 +5,16 @@ const {
   isRefExists,
   fetch,
   getGitHead,
+  getGitRemoteHead,
   repoUrl,
   tag,
   push,
   getTags,
+  getNoMergeTags,
   getBranches,
   isGitRepo,
   verifyTagName,
-  isBranchUpToDate,
+  isAncestor,
   getNote,
   addNote,
   fetchNotes,
@@ -52,6 +54,19 @@ test('Throw error if the last commit sha cannot be found', async (t) => {
   const {cwd} = await gitRepo();
 
   await t.throwsAsync(getGitHead({cwd}));
+});
+
+test('Get the head commit on the remote', async (t) => {
+  // Create a git repository, set the current working directory at the root of the repo
+  const {cwd, repositoryUrl} = await gitRepo(true);
+  // Add commits to the master branch
+  const [commit] = await gitCommits(['First'], {cwd});
+  await gitPush(repositoryUrl, 'master', {cwd});
+  await gitCommits(['Second'], {cwd});
+
+  const result = await getGitRemoteHead(repositoryUrl, 'master', {cwd});
+
+  t.is(result, commit.hash);
 });
 
 test('Unshallow and fetch repository', async (t) => {
@@ -152,6 +167,19 @@ test('Fetch all tags on a detached head repository with outdated cached repo (Gi
   await gitCheckout(commit.hash, false, {cwd: cloneCwd});
 
   t.deepEqual((await getTags('master', {cwd: cloneCwd})).sort(), ['v1.0.0', 'v1.0.1', 'v1.1.0', 'v1.2.0'].sort());
+});
+
+test('Fetch all tags not present on the local branch', async (t) => {
+  const {cwd, repositoryUrl} = await gitRepo();
+
+  await gitCommits(['First'], {cwd});
+  await gitTagVersion('v1.0.0', undefined, {cwd});
+  const [commit] = await gitCommits(['Second'], {cwd});
+  await gitCommits(['Third'], {cwd});
+  await gitTagVersion('v1.1.0', undefined, {cwd});
+  await gitPush(repositoryUrl, 'master', {cwd});
+
+  t.deepEqual((await getNoMergeTags(commit.hash, {cwd})).sort(), ['v1.1.0'].sort());
 });
 
 test('Verify if a branch exists', async (t) => {
@@ -293,41 +321,6 @@ test('Throws error if obtaining the tags fails', async (t) => {
   await t.throwsAsync(getTags('master', {cwd}));
 });
 
-test('Return "true" if repository is up to date', async (t) => {
-  const {cwd, repositoryUrl} = await gitRepo(true);
-  await gitCommits(['First'], {cwd});
-  await gitPush(repositoryUrl, 'master', {cwd});
-
-  t.true(await isBranchUpToDate(repositoryUrl, 'master', {cwd}));
-});
-
-test('Return falsy if repository is not up to date', async (t) => {
-  const {cwd, repositoryUrl} = await gitRepo(true);
-  await gitCommits(['First'], {cwd});
-  await gitCommits(['Second'], {cwd});
-  await gitPush(repositoryUrl, 'master', {cwd});
-
-  t.true(await isBranchUpToDate(repositoryUrl, 'master', {cwd}));
-
-  const temporaryRepo = await gitShallowClone(repositoryUrl);
-  await gitCommits(['Third'], {cwd: temporaryRepo});
-  await gitPush('origin', 'master', {cwd: temporaryRepo});
-
-  t.falsy(await isBranchUpToDate(repositoryUrl, 'master', {cwd}));
-});
-
-test('Return falsy if detached head repository is not up to date', async (t) => {
-  let {cwd, repositoryUrl} = await gitRepo();
-
-  const [commit] = await gitCommits(['First'], {cwd});
-  await gitCommits(['Second'], {cwd});
-  await gitPush(repositoryUrl, 'master', {cwd});
-  cwd = await gitDetachedHead(repositoryUrl, commit.hash);
-  await fetch(repositoryUrl, 'master', 'master', {cwd});
-
-  t.falsy(await isBranchUpToDate(repositoryUrl, 'master', {cwd}));
-});
-
 test('Get a commit note', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
@@ -414,4 +407,14 @@ test('Fetch all notes on a detached head repository', async (t) => {
   await fetchNotes(repositoryUrl, {cwd});
 
   t.is(await gitGetNote(commit.hash, {cwd}), '{"note":"note"}');
+});
+
+test('Validate that first commit is ancestor of second', async (t) => {
+  const {cwd, repositoryUrl} = await gitRepo(true);
+  const [first] = await gitCommits(['First'], {cwd});
+  const [second] = await gitCommits(['Second'], {cwd});
+  await gitPush(repositoryUrl, 'master', {cwd});
+
+  t.true(await isAncestor(first.hash, second.hash, {cwd}));
+  t.false(await isAncestor(second.hash, first.hash, {cwd}));
 });
