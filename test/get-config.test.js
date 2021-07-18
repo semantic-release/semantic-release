@@ -118,7 +118,7 @@ test('Read options from package.json', async (t) => {
 
   const {options: result} = await t.context.getConfig({cwd});
 
-  const expected = {...options, branches: ['test_branch']};
+  const expected = {...options, branches: ['test_branch'], preset: 'conventionalcommits'};
   // Verify the options contains the plugin config from package.json
   t.deepEqual(result, expected);
   // Verify the plugins module is called with the plugin options from package.json
@@ -140,7 +140,7 @@ test('Read options from .releaserc.yml', async (t) => {
 
   const {options: result} = await t.context.getConfig({cwd});
 
-  const expected = {...options, branches: ['test_branch']};
+  const expected = {...options, branches: ['test_branch'], preset: 'conventionalcommits'};
   // Verify the options contains the plugin config from package.json
   t.deepEqual(result, expected);
   // Verify the plugins module is called with the plugin options from package.json
@@ -162,7 +162,7 @@ test('Read options from .releaserc.json', async (t) => {
 
   const {options: result} = await t.context.getConfig({cwd});
 
-  const expected = {...options, branches: ['test_branch']};
+  const expected = {...options, branches: ['test_branch'], preset: 'conventionalcommits'};
   // Verify the options contains the plugin config from package.json
   t.deepEqual(result, expected);
   // Verify the plugins module is called with the plugin options from package.json
@@ -184,7 +184,7 @@ test('Read options from .releaserc.js', async (t) => {
 
   const {options: result} = await t.context.getConfig({cwd});
 
-  const expected = {...options, branches: ['test_branch']};
+  const expected = {...options, branches: ['test_branch'], preset: 'conventionalcommits'};
   // Verify the options contains the plugin config from package.json
   t.deepEqual(result, expected);
   // Verify the plugins module is called with the plugin options from package.json
@@ -206,7 +206,7 @@ test('Read options from .releaserc.cjs', async (t) => {
 
   const {options: result} = await t.context.getConfig({cwd});
 
-  const expected = {...options, branches: ['test_branch']};
+  const expected = {...options, branches: ['test_branch'], preset: 'conventionalcommits'};
   // Verify the options contains the plugin config from .releaserc.cjs
   t.deepEqual(result, expected);
   // Verify the plugins module is called with the plugin options from .releaserc.cjs
@@ -228,7 +228,7 @@ test('Read options from release.config.js', async (t) => {
 
   const {options: result} = await t.context.getConfig({cwd});
 
-  const expected = {...options, branches: ['test_branch']};
+  const expected = {...options, branches: ['test_branch'], preset: 'conventionalcommits'};
   // Verify the options contains the plugin config from package.json
   t.deepEqual(result, expected);
   // Verify the plugins module is called with the plugin options from package.json
@@ -250,7 +250,7 @@ test('Read options from release.config.cjs', async (t) => {
 
   const {options: result} = await t.context.getConfig({cwd});
 
-  const expected = {...options, branches: ['test_branch']};
+  const expected = {...options, branches: ['test_branch'], preset: 'conventionalcommits'};
   // Verify the options contains the plugin config from release.config.cjs
   t.deepEqual(result, expected);
   // Verify the plugins module is called with the plugin options from release.config.cjs
@@ -280,7 +280,7 @@ test('Prioritise CLI/API parameters over file configuration and git repo', async
 
   const result = await t.context.getConfig({cwd}, options);
 
-  const expected = {...options, branches: ['branch_cli']};
+  const expected = {...options, branches: ['branch_cli'], preset: 'conventionalcommits'};
   // Verify the options contains the plugin config from CLI/API
   t.deepEqual(result.options, expected);
   // Verify the plugins module is called with the plugin options from CLI/API
@@ -305,7 +305,7 @@ test('Read configuration from file path in "extends"', async (t) => {
 
   const {options: result} = await t.context.getConfig({cwd});
 
-  const expected = {...options, branches: ['test_branch']};
+  const expected = {...options, branches: ['test_branch'], preset: 'conventionalcommits'};
   // Verify the options contains the plugin config from shareable.json
   t.deepEqual(result, expected);
   // Verify the plugins module is called with the plugin options from shareable.json
@@ -336,7 +336,7 @@ test('Read configuration from module path in "extends"', async (t) => {
 
   const {options: result} = await t.context.getConfig({cwd});
 
-  const expected = {...options, branches: ['test_branch']};
+  const expected = {...options, branches: ['test_branch'], preset: 'conventionalcommits'};
   // Verify the options contains the plugin config from shareable.json
   t.deepEqual(result, expected);
   // Verify the plugins module is called with the plugin options from shareable.json
@@ -372,7 +372,7 @@ test('Read configuration from an array of paths in "extends"', async (t) => {
 
   const {options: result} = await t.context.getConfig({cwd});
 
-  const expected = {...options1, ...options2, branches: ['test_branch']};
+  const expected = {...options1, ...options2, branches: ['test_branch'], preset: 'conventionalcommits'};
   // Verify the options contains the plugin config from shareable1.json and shareable2.json
   t.deepEqual(result, expected);
   // Verify the plugins module is called with the plugin options from shareable1.json and shareable2.json
@@ -410,7 +410,7 @@ test('Prioritize configuration from config file over "extends"', async (t) => {
 
   const {options: result} = await t.context.getConfig({cwd});
 
-  const expected = omit({...options1, ...pkgOptions, branches: ['test_pkg']}, 'extends');
+  const expected = omit({...options1, ...pkgOptions, branches: ['test_pkg'], preset: 'conventionalcommits'}, 'extends');
   // Verify the options contains the plugin config from package.json and shareable.json
   t.deepEqual(result, expected);
   // Verify the plugins module is called with the plugin options from package.json and shareable.json
@@ -458,7 +458,10 @@ test('Prioritize configuration from cli/API options over "extends"', async (t) =
 
   const {options: result} = await t.context.getConfig({cwd}, cliOptions);
 
-  const expected = omit({...options2, ...pkgOptions, ...cliOptions, branches: ['branch_opts']}, 'extends');
+  const expected = omit(
+    {...options2, ...pkgOptions, ...cliOptions, branches: ['branch_opts'], preset: 'conventionalcommits'},
+    'extends'
+  );
   // Verify the options contains the plugin config from package.json and shareable2.json
   t.deepEqual(result, expected);
   // Verify the plugins module is called with the plugin options from package.json and shareable2.json
@@ -492,6 +495,7 @@ test('Allow to unset properties defined in shareable config with "null"', async 
     ...omit(options1, ['analyzeCommits']),
     ...omit(pkgOptions, ['extends', 'analyzeCommits']),
     plugins: DEFAULT_PLUGINS,
+    preset: 'conventionalcommits',
   });
   // Verify the plugins module is called with the plugin options from shareable.json and the default `plugins`
   t.deepEqual(t.context.plugins.args[0][0], {
@@ -499,6 +503,7 @@ test('Allow to unset properties defined in shareable config with "null"', async 
       ...omit(options1, 'analyzeCommits'),
       ...omit(pkgOptions, ['extends', 'analyzeCommits']),
       plugins: DEFAULT_PLUGINS,
+      preset: 'conventionalcommits',
     },
     cwd,
   });
@@ -535,6 +540,7 @@ test('Allow to unset properties defined in shareable config with "undefined"', a
     ...omit(options1, 'analyzeCommits'),
     ...omit(pkgOptions, ['extends', 'analyzeCommits']),
     branches: ['test_branch'],
+    preset: 'conventionalcommits',
   };
   // Verify the options contains the plugin config from shareable.json
   t.deepEqual(result, expected);
@@ -576,4 +582,41 @@ test('Convert "ci" option to "noCi" when set from extended config', async (t) =>
 
   t.is(result.ci, false);
   t.is(result.noCi, true);
+});
+
+test('Allow to override preset', async (t) => {
+  // Create a git repository, set the current working directory at the root of the repo
+  const {cwd} = await gitRepo();
+  const pkgOptions = {
+    preset: '1',
+  };
+  // Create package.json in repository root
+  await outputJson(path.resolve(cwd, 'package.json'), {release: pkgOptions});
+
+  const {
+    options: {preset: result},
+  } = await t.context.getConfig({cwd});
+
+  // Verify the preset contains the config from CLI/API
+  t.deepEqual(result, pkgOptions.preset);
+});
+
+test('Allow to override preset through CLI option --preset', async (t) => {
+  // Create a git repository, set the current working directory at the root of the repo
+  const {cwd} = await gitRepo();
+  const pkgOptions = {
+    preset: '1',
+  };
+  const cliOptions = {
+    preset: '2',
+  };
+  // Create package.json in repository root
+  await outputJson(path.resolve(cwd, 'package.json'), {release: pkgOptions});
+
+  const {
+    options: {preset: result},
+  } = await t.context.getConfig({cwd}, cliOptions);
+
+  // Verify the preset contains the config from CLI/API
+  t.deepEqual(result, cliOptions.preset);
 });
