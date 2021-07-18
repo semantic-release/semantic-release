@@ -98,6 +98,25 @@ The [Git tag](https://git-scm.com/book/en/v2/Git-Basics-Tagging) format used by 
 
 **Note**: The `tagFormat` must contain the `version` variable exactly once and compile to a [valid Git reference](https://git-scm.com/docs/git-check-ref-format#_description).
 
+### prereleaseBuildFormat
+
+Type: `String`<br>
+Default: `undefined`<br>
+CLI arguments: `--prerelease-build-format`
+
+The format used by **semantic-release** when appending prerelease build information after the auto increment prerelease number. If left unspecified, no build information will be appended, otherwise the parsed value of this formatter will be appended after a `+` in the resulting version, so there is no need to add one yourself. Using this option is useful if you want extra insight into which version of the project has been released, or if you need to avoid tag conflicts caused by more complex git workflows, like ones that utilize history rewrites. The build number is generated with [Lodash template](https://lodash.com/docs#template) and will be compiled with the following variables.
+
+- `commit` The current commit hash. Can use `commit.substr(0,7)` to use the short hash.
+- `build` The current CI build number. This is useful when you need atomically increasing build numbers.
+
+**Examples**:
+
+| Previous Version       | Prerelease Build Format | Branch  | Commit Sha | Result                  |
+| ---------------------- | ----------------------- | ------- | ---------- | ----------------------- |
+| `1.1.3`                | `${commit}`             | `alpha` | `1a2b3c4`  | `1.2.3-alpha.1+1a2b3c4` |
+| `1.2.3-alpha.1+abcdef` | `${commit}`             | `alpha` | `4d5e6f7`  | `1.2.3-alpha.2+4d5e6f7` |
+| `1.1.3`                |                         | `alpha` | `1a2b3c4`  | `1.2.3-alpha.1`         |
+
 ### plugins
 
 Type: `Array`<br>
