@@ -55,7 +55,7 @@
     "codecov": "3.8.2",
     "delay": "5.0.0",
     "dockerode": "3.3.0",
-    "file-url": "3.0.0",
+    "file-url": "4.0.0",
     "fs-extra": "10.0.0",
     "got": "11.8.2",
     "js-yaml": "4.1.0",
