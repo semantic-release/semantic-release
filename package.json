@@ -62,8 +62,8 @@
     "file-url": "3.0.0",
     "fs-extra": "9.1.0",
     "got": "11.8.2",
-    "js-yaml": "4.1.0",
     "husky": "^6.0.0",
+    "js-yaml": "4.1.0",
     "lint-staged": "^11.0.0",
     "mockserver-client": "5.11.2",
     "nock": "13.1.3",
@@ -113,6 +113,7 @@
     "lint:fix": "npx eslint --fix .",
     "format:check": "npx prettier --check .",
     "format:write": "npx prettier --write .",
+    "pretest": "npm run lint",
     "semantic-release": "node ./bin/semantic-release.js",
     "test": "nyc ava -v",
     "test:ci": "nyc ava -v"
