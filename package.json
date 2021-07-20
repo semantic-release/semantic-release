@@ -10,7 +10,8 @@
     "timeout": "2m"
   },
   "bin": {
-    "semantic-release": "bin/semantic-release.js"
+    "semantic-release": "bin/semantic-release.js",
+    "semantic-release-plus": "bin/semantic-release.js"
   },
   "bugs": {
     "url": "https://github.com/semantic-release-plus/semantic-release/issues"
@@ -122,7 +123,7 @@
     "codecov": "codecov -f coverage/coverage-final.json",
     "lint": "xo",
     "pretest": "npm run lint",
-    "semantic-release": "./bin/semantic-release.js",
+    "semantic-release": "node ./bin/semantic-release.js",
     "test": "nyc ava -v",
     "test:ci": "nyc ava -v"
   },
