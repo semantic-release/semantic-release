@@ -12,8 +12,11 @@ A plugin is a npm module that can implement one or more of the following steps:
 | `generateNotes`    | No       | Responsible for generating the content of the release note. If multiple plugins with a `generateNotes` step are defined, the release notes will be the result of the concatenation of each plugin output.            |
 | `prepare`          | No       | Responsible for preparing the release, for example creating or updating files such as `package.json`, `CHANGELOG.md`, documentation or compiled assets and pushing a commit.                                         |
 | `publish`          | No       | Responsible for publishing the release.                                                                                                                                                                              |
+| `addChannel`       | No       | Responsible for adding a release channel (e.g. adding an npm dist-tag to a release).                                                                                                                                 |
 | `success`          | No       | Responsible for notifying of a new release.                                                                                                                                                                          |
 | `fail`             | No       | Responsible for notifying of a failed release.                                                                                                                                                                       |
+
+Release steps will run in that order. At each step, **semantic-release** will run every plugin in the [`plugins` array](#plugins-declaration-and-execution-order), as long as the plugin implements the step.
 
 **Note:** If no plugin with a `analyzeCommits` step is defined `@semantic-release/commit-analyzer` will be used.
 
@@ -68,6 +71,8 @@ With this configuration **semantic-release** will:
 - execute the `generateNotes` implementation of `@semantic-release/release-notes-generator`
 - execute the `prepare` implementation of `@semantic-release/npm` then `@semantic-release/git`
 - execute the `publish` implementation of `@semantic-release/npm`
+
+Order is first determined by release steps (such as `verifyConditions` → `anayzeCommits`). At each release step, plugins are executed in the order in which they are defined.
 
 ## Plugin options configuration
 

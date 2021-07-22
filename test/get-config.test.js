@@ -136,7 +136,7 @@ test('Read options from .releaserc.yml', async (t) => {
     plugins: false,
   };
   // Create package.json in repository root
-  await writeFile(path.resolve(cwd, '.releaserc.yml'), yaml.safeDump(options));
+  await writeFile(path.resolve(cwd, '.releaserc.yml'), yaml.dump(options));
 
   const {options: result} = await t.context.getConfig({cwd});
 
@@ -191,6 +191,28 @@ test('Read options from .releaserc.js', async (t) => {
   t.deepEqual(t.context.plugins.args[0][0], {options: expected, cwd});
 });
 
+test('Read options from .releaserc.cjs', async (t) => {
+  // Create a git repository, set the current working directory at the root of the repo
+  const {cwd} = await gitRepo();
+  const options = {
+    analyzeCommits: {path: 'analyzeCommits', param: 'analyzeCommits_param'},
+    branches: ['test_branch'],
+    repositoryUrl: 'https://host.null/owner/module.git',
+    tagFormat: `v\${version}`,
+    plugins: false,
+  };
+  // Create .releaserc.cjs in repository root
+  await writeFile(path.resolve(cwd, '.releaserc.cjs'), `module.exports = ${JSON.stringify(options)}`);
+
+  const {options: result} = await t.context.getConfig({cwd});
+
+  const expected = {...options, branches: ['test_branch']};
+  // Verify the options contains the plugin config from .releaserc.cjs
+  t.deepEqual(result, expected);
+  // Verify the plugins module is called with the plugin options from .releaserc.cjs
+  t.deepEqual(t.context.plugins.args[0][0], {options: expected, cwd});
+});
+
 test('Read options from release.config.js', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
@@ -210,6 +232,28 @@ test('Read options from release.config.js', async (t) => {
   // Verify the options contains the plugin config from package.json
   t.deepEqual(result, expected);
   // Verify the plugins module is called with the plugin options from package.json
+  t.deepEqual(t.context.plugins.args[0][0], {options: expected, cwd});
+});
+
+test('Read options from release.config.cjs', async (t) => {
+  // Create a git repository, set the current working directory at the root of the repo
+  const {cwd} = await gitRepo();
+  const options = {
+    analyzeCommits: {path: 'analyzeCommits', param: 'analyzeCommits_param'},
+    branches: ['test_branch'],
+    repositoryUrl: 'https://host.null/owner/module.git',
+    tagFormat: `v\${version}`,
+    plugins: false,
+  };
+  // Create release.config.cjs in repository root
+  await writeFile(path.resolve(cwd, 'release.config.cjs'), `module.exports = ${JSON.stringify(options)}`);
+
+  const {options: result} = await t.context.getConfig({cwd});
+
+  const expected = {...options, branches: ['test_branch']};
+  // Verify the options contains the plugin config from release.config.cjs
+  t.deepEqual(result, expected);
+  // Verify the plugins module is called with the plugin options from release.config.cjs
   t.deepEqual(t.context.plugins.args[0][0], {options: expected, cwd});
 });
 
@@ -505,14 +549,31 @@ test('Allow to unset properties defined in shareable config with "undefined"', a
 test('Throw an Error if one of the shareable config cannot be found', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
-  const pkhOptions = {extends: ['./shareable1.json', 'non-existing-path']};
+  const pkgOptions = {extends: ['./shareable1.json', 'non-existing-path']};
   const options1 = {analyzeCommits: 'analyzeCommits'};
   // Create package.json and shareable.json in repository root
-  await outputJson(path.resolve(cwd, 'package.json'), {release: pkhOptions});
+  await outputJson(path.resolve(cwd, 'package.json'), {release: pkgOptions});
   await outputJson(path.resolve(cwd, 'shareable1.json'), options1);
 
   await t.throwsAsync(t.context.getConfig({cwd}), {
     message: /Cannot find module 'non-existing-path'/,
     code: 'MODULE_NOT_FOUND',
   });
+});
+
+test('Convert "ci" option to "noCi" when set from extended config', async (t) => {
+  // Create a git repository, set the current working directory at the root of the repo
+  const {cwd} = await gitRepo();
+  const pkgOptions = {extends: './no-ci.json'};
+  const options = {
+    ci: false,
+  };
+  // Create package.json and shareable.json in repository root
+  await outputJson(path.resolve(cwd, 'package.json'), {release: pkgOptions});
+  await outputJson(path.resolve(cwd, 'no-ci.json'), options);
+
+  const {options: result} = await t.context.getConfig({cwd});
+
+  t.is(result.ci, false);
+  t.is(result.noCi, true);
 });

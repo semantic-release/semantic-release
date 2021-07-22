@@ -20,7 +20,7 @@
   - `publish`: Publish the package on the npm registry
 - [@semantic-release/gitlab](https://github.com/semantic-release/gitlab)
   - `verifyConditions`: Verify the presence and the validity of the GitLab authentication and release configuration
-  - `publish`: Publish a [GitLab release](https://docs.gitlab.com/ce/workflow/releases.html)
+  - `publish`: Publish a [GitLab release](https://docs.gitlab.com/ee/user/project/releases/)
 - [@semantic-release/git](https://github.com/semantic-release/git)
   - `verifyConditions`: Verify the presence and the validity of the Git authentication and release configuration
   - `prepare`: Push a release commit and tag, including configurable files
@@ -52,6 +52,9 @@
 - [semantic-release-docker](https://github.com/felixfbecker/semantic-release-docker)
   - `verifyConditions`: Verify that all needed configuration is present and login to the Docker registry.
   - `publish`: Tag the image specified by `name` with the new version, push it to Docker Hub and update the latest tag
+- [@semantic-release-plus/docker](https://github.com/semantic-release-plus/semantic-release-plus/tree/master/packages/plugins/docker)
+  - `verifyConditions`: Verify that all needed configuration is present and login to the configured docker registry.
+  - `publish`: Tag the image specified by `name` with the new version, push it to the configured docker registry and update the `latest`, `major`, `minor` tags based on the configuration settings.
 - [semantic-release-gcr](https://github.com/carlos-cubas/semantic-release-gcr)
   - `verifyConditions`: Verify that all needed configuration is present and login to the Docker registry
   - `publish`: Tag the image specified by `name` with the new version, push it to Docker Hub and update the latest tag
@@ -91,6 +94,9 @@
 - [semantic-release-github-pages](https://github.com/qiwi/semantic-release-gh-pages-plugin)
   - `verifyConditions`: Verify the presence of the auth token set via environment variables.
   - `publish`: Pushes commit to the documentation branch.
+- [semantic-release-github-pullrequest](https://github.com/asbiin/semantic-release-github-pullrequest)
+  - `verifyConditions`: Verify the presence and the validity of the GitHub authentication and other configuration.
+  - `publish`: Create a branch to upload all assets and create the pull request on the base branch on GitHub.
 - [leiningen-semantic-release](https://github.com/NoxHarmonium/leiningen-semantic-release)
   - `verifyConditions`: Checks the project.clj is syntactically valid.
   - `prepare`: Update the project.clj version and package the output jar file.
@@ -116,3 +122,21 @@
 - [semantic-release-license](https://github.com/cbhq/semantic-release-license) Automatically update dates and more in your license file for new releases.
   - `verifyConditions`: Verify the presence of a license file
   - `prepare`: Update the license file based on its type
+- [semantic-release-pypi](https://github.com/abichinger/semantic-release-pypi)
+  - `verifyConditions`: Verify the environment variable ```PYPI_TOKEN``` and installation of build tools
+  - `prepare`: Update the version in ```setup.cfg``` and create the distribution packages
+  - `publish`: Publish the python package to a repository (default: pypi)
+- [semantic-release-helm](https://github.com/m1pl/semantic-release-helm)
+  - `verifyConditions`: Validate configuration and (if present) credentials
+  - `prepare`: Update version and appVersion in ```Chart.yaml```
+  - `publish`: Publish the chart to a registry (if configured)
+- [semantic-release-codeartifact](https://github.com/ryansonshine/semantic-release-codeartifact)
+  - `verifyConditions`: Validate configuration, get AWS CodeArtifact authentication and repository, validate `publishConfig` or `.npmrc` (if they exist), then pass the configuration to the associated plugins.
+- [semantic-release-telegram](https://github.com/pustovitDmytro/semantic-release-telegram)
+  - `verifyConditions`: Validate configuration and verify ```TELEGRAM_BOT_ID``` and ```TELEGRAM_BOT_TOKEN```
+  - `success`: Publish a message about the successful release to a telegram chat
+  - `fail`: publish a message about failure to a telegram chat
+- [semantic-release-heroku](https://github.com/pustovitDmytro/semantic-release-heroku)
+  - `verifyConditions`: Validate configuration and verify ```HEROKU_API_KEY```
+  - `prepare`: Update the package.json version and create release tarball
+  - `publish`: Publish version to heroku

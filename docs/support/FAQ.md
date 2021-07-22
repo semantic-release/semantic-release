@@ -8,7 +8,7 @@ By default, only the published package will contain the version, which is the on
 
 However, the [`@semantic-release/git`](https://github.com/semantic-release/git) plugin can be used to push the updated `package.json` as well as other files to the Git repository.
 
-If you wish to only update the `package.json` and push via Git you can set the project to `"private": true,` within your `package.json` to prevent publishing to [npm](https://www.npmjs.com). This can be useful for using **semantic-release** with a non-node project.
+If you wish to only update the `package.json` and push via Git you can set the project to `"private": true,` within your `package.json` to prevent publishing to [the npm registry](https://www.npmjs.com).
 
 ## How can I use a npm build script that requires the `package.json`’s version ?
 
