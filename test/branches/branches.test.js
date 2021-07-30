@@ -1,7 +1,7 @@
-const test = require('ava');
-const {union} = require('lodash');
-const semver = require('semver');
-const proxyquire = require('proxyquire');
+import test from 'ava';
+import {union} from 'lodash';
+import semver from 'semver';
+import proxyquire from 'proxyquire';
 
 const getBranch = (branches, branch) => branches.find(({name}) => name === branch);
 const release = (branches, name, version) => getBranch(branches, name).tags.push({version});

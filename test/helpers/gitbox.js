@@ -1,7 +1,7 @@
-const Docker = require('dockerode');
-const getStream = require('get-stream');
-const pRetry = require('p-retry');
-const {initBareRepo, gitShallowClone} = require('./git-utils');
+import Docker from 'dockerode';
+import getStream from 'get-stream';
+import pRetry from 'p-retry';
+import {initBareRepo, gitShallowClone} from './git-utils.js';
 
 const IMAGE = 'pvdlg/docker-gitbox:latest';
 const SERVER_PORT = 80;
@@ -69,4 +69,12 @@ async function createRepo(name, branch = 'master', description = `Repository ${n
   return {cwd, repositoryUrl, authUrl};
 }
 
-module.exports = {start, stop, gitCredential, createRepo};
+const exported = {
+  start,
+  stop,
+  gitCredential,
+  createRepo,
+};
+
+export default exported;
+export {start, stop, gitCredential, createRepo};

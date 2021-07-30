@@ -1,8 +1,8 @@
-const test = require('ava');
-const {escapeRegExp} = require('lodash');
+import test from 'ava';
+import {escapeRegExp} from 'lodash';
 const proxyquire = require('proxyquire').noPreserveCache();
-const {stub} = require('sinon');
-const {SECRET_REPLACEMENT} = require('../lib/definitions/constants');
+import {stub} from 'sinon';
+import {SECRET_REPLACEMENT} from '../lib/definitions/constants.js';
 
 test.beforeEach((t) => {
   t.context.logs = '';

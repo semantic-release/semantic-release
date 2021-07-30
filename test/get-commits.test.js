@@ -1,7 +1,7 @@
-const test = require('ava');
-const {stub} = require('sinon');
-const getCommits = require('../lib/get-commits');
-const {gitRepo, gitCommits, gitDetachedHead} = require('./helpers/git-utils');
+import test from 'ava';
+import {stub} from 'sinon';
+import getCommits from '../lib/get-commits.js';
+import {gitRepo, gitCommits, gitDetachedHead} from './helpers/git-utils.js';
 
 test.beforeEach((t) => {
   // Stub the logger functions

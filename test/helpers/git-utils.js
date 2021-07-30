@@ -1,10 +1,10 @@
-const tempy = require('tempy');
-const execa = require('execa');
-const fileUrl = require('file-url');
-const pEachSeries = require('p-each-series');
-const gitLogParser = require('git-log-parser');
-const getStream = require('get-stream');
-const {GIT_NOTE_REF} = require('../../lib/definitions/constants');
+import tempy from 'tempy';
+import execa from 'execa';
+import fileUrl from 'file-url';
+import pEachSeries from 'p-each-series';
+import gitLogParser from 'git-log-parser';
+import getStream from 'get-stream';
+import {GIT_NOTE_REF} from '../../lib/definitions/constants.js';
 
 /**
  * Commit message information.
@@ -323,7 +323,33 @@ async function gitGetNote(ref, execaOptions) {
   return (await execa('git', ['notes', '--ref', GIT_NOTE_REF, 'show', ref], execaOptions)).stdout;
 }
 
-module.exports = {
+const exported = {
+  initGit,
+  gitRepo,
+  initBareRepo,
+  gitCommits,
+  gitGetCommits,
+  gitCheckout,
+  gitFetch,
+  gitHead,
+  gitTagVersion,
+  gitShallowClone,
+  gitDetachedHead,
+  gitDetachedHeadFromBranch,
+  gitAddConfig,
+  gitTagHead,
+  gitRemoteTagHead,
+  gitCommitTag,
+  gitPush,
+  merge,
+  mergeFf,
+  rebase,
+  gitAddNote,
+  gitGetNote,
+};
+
+export default exported;
+export {
   initGit,
   gitRepo,
   initBareRepo,

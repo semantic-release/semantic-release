@@ -1,6 +1,9 @@
-const {argv, env, stderr} = require('process'); // eslint-disable-line node/prefer-global/process
-const util = require('util');
-const hideSensitive = require('./lib/hide-sensitive');
+import util from 'util';
+import hideSensitive from './lib/hide-sensitive';
+import yargs from 'yargs';
+import debug from 'debug';
+
+import run from '.';
 
 const stringList = {
   type: 'string',
@@ -11,8 +14,8 @@ const stringList = {
       : values.reduce((values, value) => values.concat(value.split(',').map((value) => value.trim())), []),
 };
 
-module.exports = async () => {
-  const cli = require('yargs')
+export default async () => {
+  const cli = yargs
     .command('$0', 'Run automated package publishing', (yargs) => {
       yargs.demandCommand(0, 0).usage(`Run automated package publishing
 
@@ -41,7 +44,7 @@ Usage:
     .exitProcess(false);
 
   try {
-    const {help, version, ...options} = cli.parse(argv.slice(2));
+    const {help, version, ...options} = cli.parse(process.argv.slice(2));
 
     if (Boolean(help) || Boolean(version)) {
       return 0;
@@ -49,14 +52,14 @@ Usage:
 
     if (options.debug) {
       // Debug must be enabled before other requires in order to work
-      require('debug').enable('semantic-release:*');
+      debug.enable('semantic-release:*');
     }
 
-    await require('.')(options);
+    await run(options);
     return 0;
   } catch (error) {
     if (error.name !== 'YError') {
-      stderr.write(hideSensitive(env)(util.inspect(error, {colors: true})));
+      process.stderr.write(hideSensitive(process.env)(util.inspect(error, {colors: true})));
     }
 
     return 1;

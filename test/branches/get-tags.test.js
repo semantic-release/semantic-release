@@ -1,6 +1,6 @@
-const test = require('ava');
-const getTags = require('../../lib/branches/get-tags');
-const {gitRepo, gitCommits, gitTagVersion, gitCheckout, gitAddNote} = require('../helpers/git-utils');
+import test from 'ava';
+import getTags from '../../lib/branches/get-tags.js';
+import {gitRepo, gitCommits, gitTagVersion, gitCheckout, gitAddNote} from '../helpers/git-utils.js';
 
 test('Get the valid tags', async (t) => {
   const {cwd} = await gitRepo();

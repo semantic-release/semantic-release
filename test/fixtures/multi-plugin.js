@@ -1,4 +1,4 @@
-module.exports = {
+const exported = {
   verifyConditions: () => {},
   getLastRelease: () => {},
   analyzeCommits: () => {},
@@ -6,3 +6,7 @@ module.exports = {
   generateNotes: () => {},
   publish: () => {},
 };
+
+export default exported;
+
+export const {verifyConditions, getLastRelease, analyzeCommits, verifyRelease, generateNotes, publish} = exported;

@@ -1,5 +1,6 @@
 {
   "name": "semantic-release",
+  "type": "module",
   "description": "Automated semver compliant package publishing",
   "version": "0.0.0-development",
   "author": "Stephan Bönnemann <stephan@boennemann.me> (http://boennemann.me)",
@@ -51,6 +52,7 @@
   },
   "devDependencies": {
     "ava": "3.15.0",
+    "cjs2esm": "^2.0.0",
     "clear-module": "4.1.1",
     "codecov": "3.8.2",
     "delay": "5.0.0",
@@ -92,7 +94,7 @@
     "version"
   ],
   "license": "MIT",
-  "main": "index.js",
+  "exports": "./index.js",
   "nyc": {
     "include": [
       "lib/**/*.js",
@@ -129,7 +131,8 @@
     "prettier": true,
     "space": true,
     "rules": {
-      "unicorn/string-content": "off"
+      "unicorn/string-content": "off",
+      "import/extensions": "off"
     }
   },
   "renovate": {

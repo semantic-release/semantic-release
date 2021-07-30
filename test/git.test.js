@@ -1,6 +1,7 @@
-const test = require('ava');
-const tempy = require('tempy');
-const {
+import test from 'ava';
+import tempy from 'tempy';
+
+import {
   getTagHead,
   isRefExists,
   fetch,
@@ -16,8 +17,9 @@ const {
   getNote,
   addNote,
   fetchNotes,
-} = require('../lib/git');
-const {
+} from '../lib/git.js';
+
+import {
   gitRepo,
   gitCommits,
   gitCheckout,
@@ -34,7 +36,7 @@ const {
   gitGetNote,
   gitFetch,
   initGit,
-} = require('./helpers/git-utils');
+} from './helpers/git-utils.js';
 
 test('Get the last commit sha', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo

@@ -1,7 +1,7 @@
-const test = require('ava');
-const {repeat} = require('lodash');
-const hideSensitive = require('../lib/hide-sensitive');
-const {SECRET_REPLACEMENT, SECRET_MIN_SIZE} = require('../lib/definitions/constants');
+import test from 'ava';
+import {repeat} from 'lodash';
+import hideSensitive from '../lib/hide-sensitive.js';
+import {SECRET_REPLACEMENT, SECRET_MIN_SIZE} from '../lib/definitions/constants.js';
 
 test('Replace multiple sensitive environment variable values', (t) => {
   const env = {SOME_PASSWORD: 'password', SOME_TOKEN: 'secret'};

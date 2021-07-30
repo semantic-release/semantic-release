@@ -1,1 +1,1 @@
-module.exports = (pluginConfig, context) => context;
+export default (pluginConfig, context) => context;

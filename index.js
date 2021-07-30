@@ -1,25 +1,27 @@
-const {pick} = require('lodash');
-const marked = require('marked');
-const TerminalRenderer = require('marked-terminal');
-const envCi = require('env-ci');
-const hookStd = require('hook-std');
-const semver = require('semver');
-const AggregateError = require('aggregate-error');
-const pkg = require('./package.json');
-const hideSensitive = require('./lib/hide-sensitive');
-const getConfig = require('./lib/get-config');
-const verify = require('./lib/verify');
-const getNextVersion = require('./lib/get-next-version');
-const getCommits = require('./lib/get-commits');
-const getLastRelease = require('./lib/get-last-release');
-const getReleaseToAdd = require('./lib/get-release-to-add');
-const {extractErrors, makeTag} = require('./lib/utils');
-const getGitAuthUrl = require('./lib/get-git-auth-url');
-const getBranches = require('./lib/branches');
-const getLogger = require('./lib/get-logger');
-const {verifyAuth, isBranchUpToDate, getGitHead, tag, push, pushNotes, getTagHead, addNote} = require('./lib/git');
-const getError = require('./lib/get-error');
-const {COMMIT_NAME, COMMIT_EMAIL} = require('./lib/definitions/constants');
+import {pick} from 'lodash';
+import marked from 'marked';
+import TerminalRenderer from 'marked-terminal';
+import envCi from 'env-ci';
+import hookStd from 'hook-std';
+import semver from 'semver';
+import AggregateError from 'aggregate-error';
+import pkg from './package.json';
+import hideSensitive from './lib/hide-sensitive';
+import getConfig from './lib/get-config';
+import verify from './lib/verify';
+import getNextVersion from './lib/get-next-version';
+import getCommits from './lib/get-commits';
+import getLastRelease from './lib/get-last-release';
+import getReleaseToAdd from './lib/get-release-to-add';
+import {extractErrors, makeTag} from './lib/utils';
+import getGitAuthUrl from './lib/get-git-auth-url';
+import getBranches from './lib/branches';
+import getLogger from './lib/get-logger';
+
+import {verifyAuth, isBranchUpToDate, getGitHead, tag, push, pushNotes, getTagHead, addNote} from './lib/git';
+
+import getError from './lib/get-error';
+import {COMMIT_NAME, COMMIT_EMAIL} from './lib/definitions/constants';
 
 marked.setOptions({renderer: new TerminalRenderer()});
 
@@ -239,7 +241,7 @@ async function callFail(context, plugins, err) {
   }
 }
 
-module.exports = async (cliOptions = {}, {cwd = process.cwd(), env = process.env, stdout, stderr} = {}) => {
+export default async (cliOptions = {}, {cwd = process.cwd(), env = process.env, stdout, stderr} = {}) => {
   const {unhook} = hookStd(
     {silent: false, streams: [process.stdout, process.stderr, stdout, stderr].filter(Boolean)},
     hideSensitive(env)

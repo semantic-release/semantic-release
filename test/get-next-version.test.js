@@ -1,6 +1,6 @@
-const test = require('ava');
-const {stub} = require('sinon');
-const getNextVersion = require('../lib/get-next-version');
+import test from 'ava';
+import {stub} from 'sinon';
+import getNextVersion from '../lib/get-next-version.js';
 
 test.beforeEach((t) => {
   // Stub the logger functions

@@ -1,14 +1,15 @@
-const path = require('path');
-const test = require('ava');
-const proxyquire = require('proxyquire');
-const {escapeRegExp} = require('lodash');
-const {writeJson, readJson} = require('fs-extra');
-const execa = require('execa');
-const {WritableStreamBuffer} = require('stream-buffers');
-const delay = require('delay');
-const getAuthUrl = require('../lib/get-git-auth-url');
-const {SECRET_REPLACEMENT} = require('../lib/definitions/constants');
-const {
+import path from 'path';
+import test from 'ava';
+import proxyquire from 'proxyquire';
+import {escapeRegExp} from 'lodash';
+import {writeJson, readJson} from 'fs-extra';
+import execa from 'execa';
+import {WritableStreamBuffer} from 'stream-buffers';
+import delay from 'delay';
+import getAuthUrl from '../lib/get-git-auth-url.js';
+import {SECRET_REPLACEMENT} from '../lib/definitions/constants.js';
+
+import {
   gitHead,
   gitTagHead,
   gitRepo,
@@ -18,11 +19,12 @@ const {
   gitCheckout,
   merge,
   gitGetNote,
-} = require('./helpers/git-utils');
-const {npmView} = require('./helpers/npm-utils');
-const gitbox = require('./helpers/gitbox');
-const mockServer = require('./helpers/mockserver');
-const npmRegistry = require('./helpers/npm-registry');
+} from './helpers/git-utils.js';
+
+import {npmView} from './helpers/npm-utils.js';
+import gitbox from './helpers/gitbox.js';
+import mockServer from './helpers/mockserver.js';
+import npmRegistry from './helpers/npm-registry.js';
 
 /* eslint camelcase: ["error", {properties: "never"}] */
 

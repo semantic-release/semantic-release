@@ -1,13 +1,14 @@
-const test = require('ava');
-const {escapeRegExp, isString, sortBy, omit} = require('lodash');
-const proxyquire = require('proxyquire');
-const {spy, stub} = require('sinon');
-const {WritableStreamBuffer} = require('stream-buffers');
-const AggregateError = require('aggregate-error');
-const SemanticReleaseError = require('@semantic-release/error');
-const {COMMIT_NAME, COMMIT_EMAIL, SECRET_REPLACEMENT} = require('../lib/definitions/constants');
-const {
-  gitHead: getGitHead,
+import test from 'ava';
+import {escapeRegExp, isString, sortBy, omit} from 'lodash';
+import proxyquire from 'proxyquire';
+import {spy, stub} from 'sinon';
+import {WritableStreamBuffer} from 'stream-buffers';
+import AggregateError from 'aggregate-error';
+import SemanticReleaseError from '@semantic-release/error';
+import {COMMIT_NAME, COMMIT_EMAIL, SECRET_REPLACEMENT} from '../lib/definitions/constants.js';
+
+import {
+  gitHead as getGitHead,
   gitCheckout,
   gitTagHead,
   gitRepo,
@@ -21,7 +22,7 @@ const {
   rebase,
   gitAddNote,
   gitGetNote,
-} = require('./helpers/git-utils');
+} from './helpers/git-utils.js';
 
 const requireNoCache = proxyquire.noPreserveCache();
 const pluginNoop = require.resolve('./fixtures/plugin-noop');

@@ -1,6 +1,6 @@
-const test = require('ava');
-const plugins = require('../../lib/definitions/plugins');
-const {RELEASE_NOTES_SEPARATOR, SECRET_REPLACEMENT} = require('../../lib/definitions/constants');
+import test from 'ava';
+import plugins from '../../lib/definitions/plugins.js';
+import {RELEASE_NOTES_SEPARATOR, SECRET_REPLACEMENT} from '../../lib/definitions/constants.js';
 
 test('The "analyzeCommits" plugin output must be either undefined or a valid semver release type', (t) => {
   t.false(plugins.analyzeCommits.outputValidator('invalid'));

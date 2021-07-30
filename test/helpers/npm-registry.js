@@ -1,8 +1,8 @@
-const Docker = require('dockerode');
-const getStream = require('get-stream');
-const got = require('got');
-const delay = require('delay');
-const pRetry = require('p-retry');
+import Docker from 'dockerode';
+import getStream from 'get-stream';
+import got from 'got';
+import delay from 'delay';
+import pRetry from 'p-retry';
 
 const IMAGE = 'semanticrelease/npm-registry-docker:latest';
 const SERVER_PORT = 15986;
@@ -76,4 +76,12 @@ async function stop() {
   await container.remove();
 }
 
-module.exports = {start, stop, authEnv, url};
+const exported = {
+  start,
+  stop,
+  authEnv,
+  url,
+};
+
+export default exported;
+export {start, stop, authEnv, url};
