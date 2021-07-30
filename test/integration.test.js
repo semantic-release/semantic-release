@@ -1,7 +1,8 @@
 import path from 'path';
 import test from 'ava';
 import proxyquire from 'proxyquire';
-import {escapeRegExp} from 'lodash';
+import lodash from 'lodash'
+const {escapeRegExp} = lodash
 import {writeJson, readJson} from 'fs-extra';
 import execa from 'execa';
 import {WritableStreamBuffer} from 'stream-buffers';

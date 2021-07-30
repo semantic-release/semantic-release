@@ -2,7 +2,8 @@ import path from 'path';
 import {format} from 'util';
 import test from 'ava';
 import {writeFile, outputJson} from 'fs-extra';
-import {omit} from 'lodash';
+import lodash from 'lodash'
+const {omit} = lodash
 import proxyquire from 'proxyquire';
 import sinon from 'sinon';
 import yaml from 'js-yaml';

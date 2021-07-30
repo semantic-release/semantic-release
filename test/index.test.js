@@ -1,5 +1,6 @@
 import test from 'ava';
-import {escapeRegExp, isString, sortBy, omit} from 'lodash';
+import lodash from 'lodash'
+const {escapeRegExp, isString, sortBy, omit} = lodash
 import proxyquire from 'proxyquire';
 import sinon from 'sinon';
 import {WritableStreamBuffer} from 'stream-buffers';

@@ -1,5 +1,6 @@
 import test from 'ava';
-import {escapeRegExp} from 'lodash';
+import lodash from 'lodash'
+const {escapeRegExp} = lodash
 const proxyquire = require('proxyquire').noPreserveCache();
 import sinon from 'sinon';
 import {SECRET_REPLACEMENT} from '../lib/definitions/constants.js';

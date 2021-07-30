@@ -1,4 +1,5 @@
-import {pick} from 'lodash';
+import lodash from 'lodash'
+const {pick} = lodash
 import marked from 'marked';
 import TerminalRenderer from 'marked-terminal';
 import envCi from 'env-ci';

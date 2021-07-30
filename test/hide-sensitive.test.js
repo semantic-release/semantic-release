@@ -1,5 +1,6 @@
 import test from 'ava';
-import {repeat} from 'lodash';
+import lodash from 'lodash'
+const {repeat} = lodash
 import hideSensitive from '../lib/hide-sensitive.js';
 import {SECRET_REPLACEMENT, SECRET_MIN_SIZE} from '../lib/definitions/constants.js';
 

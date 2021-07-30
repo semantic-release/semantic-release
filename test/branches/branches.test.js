@@ -1,5 +1,6 @@
 import test from 'ava';
-import {union} from 'lodash';
+import lodash from 'lodash'
+const {union} = lodash
 import semver from 'semver';
 import proxyquire from 'proxyquire';
 

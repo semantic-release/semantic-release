@@ -1,5 +1,6 @@
 import test from 'ava';
-import {noop} from 'lodash';
+import lodash from 'lodash'
+const {noop} = lodash
 import sinon from 'sinon';
 import normalize from '../../lib/plugins/normalize.js';
 
