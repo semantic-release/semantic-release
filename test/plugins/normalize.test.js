@@ -1,16 +1,16 @@
 import test from 'ava';
 import {noop} from 'lodash';
-import {stub} from 'sinon';
+import sinon from 'sinon';
 import normalize from '../../lib/plugins/normalize.js';
 
 const cwd = process.cwd();
 
 test.beforeEach((t) => {
   // Stub the logger functions
-  t.context.log = stub();
-  t.context.error = stub();
-  t.context.success = stub();
-  t.context.stderr = {write: stub()};
+  t.context.log = sinon.stub);
+  t.context.error = sinon.stub);
+  t.context.success = sinon.stub);
+  t.context.stderr = {write: sinon.stub)};
   t.context.logger = {
     log: t.context.log,
     error: t.context.error,
@@ -99,7 +99,7 @@ test('Normalize and load plugin that retuns multiple functions', (t) => {
 });
 
 test('Wrap "analyzeCommits" plugin in a function that validate the output of the plugin', async (t) => {
-  const analyzeCommits = stub().resolves(2);
+  const analyzeCommits = sinon.stub).resolves(2);
   const plugin = normalize(
     {cwd, options: {}, stderr: t.context.stderr, logger: t.context.logger},
     'analyzeCommits',
@@ -117,7 +117,7 @@ test('Wrap "analyzeCommits" plugin in a function that validate the output of the
 });
 
 test('Wrap "generateNotes" plugin in a function that validate the output of the plugin', async (t) => {
-  const generateNotes = stub().resolves(2);
+  const generateNotes = sinon.stub).resolves(2);
   const plugin = normalize(
     {cwd, options: {}, stderr: t.context.stderr, logger: t.context.logger},
     'generateNotes',
@@ -135,7 +135,7 @@ test('Wrap "generateNotes" plugin in a function that validate the output of the 
 });
 
 test('Wrap "publish" plugin in a function that validate the output of the plugin', async (t) => {
-  const publish = stub().resolves(2);
+  const publish = sinon.stub).resolves(2);
   const plugin = normalize(
     {cwd, options: {}, stderr: t.context.stderr, logger: t.context.logger},
     'publish',
@@ -153,7 +153,7 @@ test('Wrap "publish" plugin in a function that validate the output of the plugin
 });
 
 test('Wrap "addChannel" plugin in a function that validate the output of the plugin', async (t) => {
-  const addChannel = stub().resolves(2);
+  const addChannel = sinon.stub).resolves(2);
   const plugin = normalize(
     {cwd, options: {}, stderr: t.context.stderr, logger: t.context.logger},
     'addChannel',
@@ -171,7 +171,7 @@ test('Wrap "addChannel" plugin in a function that validate the output of the plu
 });
 
 test('Plugin is called with "pluginConfig" (with object definition) and input', async (t) => {
-  const pluginFunction = stub().resolves();
+  const pluginFunction = sinon.stub).resolves();
   const pluginConf = {path: pluginFunction, conf: 'confValue'};
   const options = {global: 'globalValue'};
   const plugin = normalize({cwd, options, logger: t.context.logger}, '', pluginConf, {});
@@ -186,7 +186,7 @@ test('Plugin is called with "pluginConfig" (with object definition) and input', 
 });
 
 test('Plugin is called with "pluginConfig" (with array definition) and input', async (t) => {
-  const pluginFunction = stub().resolves();
+  const pluginFunction = sinon.stub).resolves();
   const pluginConf = [pluginFunction, {conf: 'confValue'}];
   const options = {global: 'globalValue'};
   const plugin = normalize({cwd, options, logger: t.context.logger}, '', pluginConf, {});
@@ -201,7 +201,7 @@ test('Plugin is called with "pluginConfig" (with array definition) and input', a
 });
 
 test('Prevent plugins to modify "pluginConfig"', async (t) => {
-  const pluginFunction = stub().callsFake((pluginConfig) => {
+  const pluginFunction = sinon.stub).callsFake((pluginConfig) => {
     pluginConfig.conf.subConf = 'otherConf';
   });
   const pluginConf = {path: pluginFunction, conf: {subConf: 'originalConf'}};
@@ -214,7 +214,7 @@ test('Prevent plugins to modify "pluginConfig"', async (t) => {
 });
 
 test('Prevent plugins to modify its input', async (t) => {
-  const pluginFunction = stub().callsFake((pluginConfig, options) => {
+  const pluginFunction = sinon.stub).callsFake((pluginConfig, options) => {
     options.param.subParam = 'otherParam';
   });
   const input = {param: {subParam: 'originalSubParam'}, options: {}};

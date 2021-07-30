@@ -1,7 +1,7 @@
 import path from 'path';
 import test from 'ava';
 import {copy, outputFile} from 'fs-extra';
-import {stub} from 'sinon';
+import sinon from 'sinon';
 import tempy from 'tempy';
 import getPlugins from '../../lib/plugins';
 
@@ -10,8 +10,8 @@ const cwd = process.cwd();
 
 test.beforeEach((t) => {
   // Stub the logger functions
-  t.context.log = stub();
-  t.context.success = stub();
+  t.context.log = sinon.stub);
+  t.context.success = sinon.stub);
   t.context.logger = {log: t.context.log, success: t.context.success, scope: () => t.context.logger};
 });
 
@@ -56,8 +56,8 @@ test('Export plugins based on steps config', (t) => {
 });
 
 test('Export plugins based on "plugins" config (array)', async (t) => {
-  const plugin1 = {verifyConditions: stub(), publish: stub()};
-  const plugin2 = {verifyConditions: stub(), verifyRelease: stub()};
+  const plugin1 = {verifyConditions: sinon.stub), publish: sinon.stub)};
+  const plugin2 = {verifyConditions: sinon.stub), verifyRelease: sinon.stub)};
   const plugins = getPlugins(
     {cwd, logger: t.context.logger, options: {plugins: [plugin1, [plugin2, {}]], verifyRelease: () => {}}},
     {}
@@ -85,7 +85,7 @@ test('Export plugins based on "plugins" config (array)', async (t) => {
 });
 
 test('Export plugins based on "plugins" config (single definition)', async (t) => {
-  const plugin1 = {verifyConditions: stub(), publish: stub()};
+  const plugin1 = {verifyConditions: sinon.stub), publish: sinon.stub)};
   const plugins = getPlugins({cwd, logger: t.context.logger, options: {plugins: plugin1}}, {});
 
   await plugins.verifyConditions({options: {}});
@@ -106,8 +106,8 @@ test('Export plugins based on "plugins" config (single definition)', async (t) =
 });
 
 test('Merge global options, "plugins" options and step options', async (t) => {
-  const plugin1 = [{verifyConditions: stub(), publish: stub()}, {pluginOpt1: 'plugin1'}];
-  const plugin2 = [{verifyConditions: stub()}, {pluginOpt2: 'plugin2'}];
+  const plugin1 = [{verifyConditions: sinon.stub), publish: sinon.stub)}, {pluginOpt1: 'plugin1'}];
+  const plugin2 = [{verifyConditions: sinon.stub)}, {pluginOpt2: 'plugin2'}];
   const plugin3 = [stub(), {pluginOpt3: 'plugin3'}];
   const plugins = getPlugins(
     {

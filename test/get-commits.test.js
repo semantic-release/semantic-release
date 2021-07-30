@@ -1,12 +1,12 @@
 import test from 'ava';
-import {stub} from 'sinon';
+import sinon from 'sinon';
 import getCommits from '../lib/get-commits.js';
 import {gitRepo, gitCommits, gitDetachedHead} from './helpers/git-utils.js';
 
 test.beforeEach((t) => {
   // Stub the logger functions
-  t.context.log = stub();
-  t.context.error = stub();
+  t.context.log = sinon.stub();
+  t.context.error = sinon.stub();
   t.context.logger = {log: t.context.log, error: t.context.error};
 });
 

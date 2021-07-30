@@ -1,12 +1,12 @@
 import test from 'ava';
-import {stub} from 'sinon';
+import sinon from 'sinon';
 import AggregateError from 'aggregate-error';
 import pipeline from '../../lib/plugins/pipeline.js';
 
 test('Execute each function in series passing the same input', async (t) => {
-  const step1 = stub().resolves(1);
-  const step2 = stub().resolves(2);
-  const step3 = stub().resolves(3);
+  const step1 = sinon.stub).resolves(1);
+  const step2 = sinon.stub).resolves(2);
+  const step3 = sinon.stub).resolves(3);
 
   const result = await pipeline([step1, step2, step3])(0);
   t.deepEqual(result, [1, 2, 3]);
@@ -19,10 +19,10 @@ test('Execute each function in series passing the same input', async (t) => {
 });
 
 test('Execute each function in series passing a transformed input from "getNextInput"', async (t) => {
-  const step1 = stub().resolves(1);
-  const step2 = stub().resolves(2);
-  const step3 = stub().resolves(3);
-  const step4 = stub().resolves(4);
+  const step1 = sinon.stub).resolves(1);
+  const step2 = sinon.stub).resolves(2);
+  const step3 = sinon.stub).resolves(3);
+  const step4 = sinon.stub).resolves(4);
   const getNextInput = (lastResult, result) => lastResult + result;
 
   const result = await pipeline([step1, step2, step3, step4], {settleAll: false, getNextInput})(0);
@@ -38,11 +38,11 @@ test('Execute each function in series passing a transformed input from "getNextI
 });
 
 test('Execute each function in series passing the "lastResult" and "result" to "getNextInput"', async (t) => {
-  const step1 = stub().resolves(1);
-  const step2 = stub().resolves(2);
-  const step3 = stub().resolves(3);
-  const step4 = stub().resolves(4);
-  const getNextInput = stub().returnsArg(0);
+  const step1 = sinon.stub).resolves(1);
+  const step2 = sinon.stub).resolves(2);
+  const step3 = sinon.stub).resolves(3);
+  const step4 = sinon.stub).resolves(4);
+  const getNextInput = sinon.stub).returnsArg(0);
 
   const result = await pipeline([step1, step2, step3, step4], {settleAll: false, getNextInput})(5);
 
@@ -56,12 +56,12 @@ test('Execute each function in series passing the "lastResult" and "result" to "
 });
 
 test('Execute each function in series calling "transform" to modify the results', async (t) => {
-  const step1 = stub().resolves(1);
-  const step2 = stub().resolves(2);
-  const step3 = stub().resolves(3);
-  const step4 = stub().resolves(4);
-  const getNextInput = stub().returnsArg(0);
-  const transform = stub().callsFake((result) => result + 1);
+  const step1 = sinon.stub).resolves(1);
+  const step2 = sinon.stub).resolves(2);
+  const step3 = sinon.stub).resolves(3);
+  const step4 = sinon.stub).resolves(4);
+  const getNextInput = sinon.stub).returnsArg(0);
+  const transform = sinon.stub).callsFake((result) => result + 1);
 
   const result = await pipeline([step1, step2, step3, step4], {getNextInput, transform})(5);
 
@@ -75,12 +75,12 @@ test('Execute each function in series calling "transform" to modify the results'
 });
 
 test('Execute each function in series calling "transform" to modify the results with "settleAll"', async (t) => {
-  const step1 = stub().resolves(1);
-  const step2 = stub().resolves(2);
-  const step3 = stub().resolves(3);
-  const step4 = stub().resolves(4);
-  const getNextInput = stub().returnsArg(0);
-  const transform = stub().callsFake((result) => result + 1);
+  const step1 = sinon.stub).resolves(1);
+  const step2 = sinon.stub).resolves(2);
+  const step3 = sinon.stub).resolves(3);
+  const step4 = sinon.stub).resolves(4);
+  const getNextInput = sinon.stub).returnsArg(0);
+  const transform = sinon.stub).callsFake((result) => result + 1);
 
   const result = await pipeline([step1, step2, step3, step4], {settleAll: true, getNextInput, transform})(5);
 
@@ -94,9 +94,9 @@ test('Execute each function in series calling "transform" to modify the results 
 });
 
 test('Stop execution and throw error if a step rejects', async (t) => {
-  const step1 = stub().resolves(1);
-  const step2 = stub().rejects(new Error('test error'));
-  const step3 = stub().resolves(3);
+  const step1 = sinon.stub).resolves(1);
+  const step2 = sinon.stub).rejects(new Error('test error'));
+  const step3 = sinon.stub).resolves(3);
 
   const error = await t.throwsAsync(pipeline([step1, step2, step3])(0), {
     instanceOf: Error,
@@ -112,9 +112,9 @@ test('Throw all errors from the first step throwing an AggregateError', async (t
   const error1 = new Error('test error 1');
   const error2 = new Error('test error 2');
 
-  const step1 = stub().resolves(1);
-  const step2 = stub().rejects(new AggregateError([error1, error2]));
-  const step3 = stub().resolves(3);
+  const step1 = sinon.stub).resolves(1);
+  const step2 = sinon.stub).rejects(new AggregateError([error1, error2]));
+  const step3 = sinon.stub).resolves(3);
 
   const errors = await t.throwsAsync(pipeline([step1, step2, step3])(0));
 
@@ -127,9 +127,9 @@ test('Throw all errors from the first step throwing an AggregateError', async (t
 test('Execute all even if a Promise rejects', async (t) => {
   const error1 = new Error('test error 1');
   const error2 = new Error('test error 2');
-  const step1 = stub().resolves(1);
-  const step2 = stub().rejects(error1);
-  const step3 = stub().rejects(error2);
+  const step1 = sinon.stub).resolves(1);
+  const step2 = sinon.stub).rejects(error1);
+  const step3 = sinon.stub).rejects(error2);
 
   const errors = await t.throwsAsync(pipeline([step1, step2, step3], {settleAll: true})(0));
 
@@ -144,8 +144,8 @@ test('Throw all errors from all steps throwing an AggregateError', async (t) => 
   const error2 = new Error('test error 2');
   const error3 = new Error('test error 3');
   const error4 = new Error('test error 4');
-  const step1 = stub().rejects(new AggregateError([error1, error2]));
-  const step2 = stub().rejects(new AggregateError([error3, error4]));
+  const step1 = sinon.stub).rejects(new AggregateError([error1, error2]));
+  const step2 = sinon.stub).rejects(new AggregateError([error3, error4]));
 
   const errors = await t.throwsAsync(pipeline([step1, step2], {settleAll: true})(0));
 
@@ -157,10 +157,10 @@ test('Throw all errors from all steps throwing an AggregateError', async (t) => 
 test('Execute each function in series passing a transformed input even if a step rejects', async (t) => {
   const error2 = new Error('test error 2');
   const error3 = new Error('test error 3');
-  const step1 = stub().resolves(1);
-  const step2 = stub().rejects(error2);
-  const step3 = stub().rejects(error3);
-  const step4 = stub().resolves(4);
+  const step1 = sinon.stub).resolves(1);
+  const step2 = sinon.stub).rejects(error2);
+  const step3 = sinon.stub).rejects(error3);
+  const step4 = sinon.stub).resolves(4);
   const getNextInput = (previousResult, result) => previousResult + result;
 
   const errors = await t.throwsAsync(pipeline([step1, step2, step3, step4], {settleAll: true, getNextInput})(0));

@@ -4,7 +4,7 @@ import test from 'ava';
 import {writeFile, outputJson} from 'fs-extra';
 import {omit} from 'lodash';
 import proxyquire from 'proxyquire';
-import {stub} from 'sinon';
+import sinon from 'sinon';
 import yaml from 'js-yaml';
 import {gitRepo, gitTagVersion, gitCommits, gitShallowClone, gitAddConfig} from './helpers/git-utils.js';
 
@@ -16,7 +16,7 @@ const DEFAULT_PLUGINS = [
 ];
 
 test.beforeEach((t) => {
-  t.context.plugins = stub().returns({});
+  t.context.plugins = sinon.stub).returns({});
   t.context.getConfig = proxyquire('../lib/get-config', {'./plugins': t.context.plugins});
 });
 

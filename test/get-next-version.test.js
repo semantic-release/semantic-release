@@ -1,10 +1,10 @@
 import test from 'ava';
-import {stub} from 'sinon';
+import sinon from 'sinon';
 import getNextVersion from '../lib/get-next-version.js';
 
 test.beforeEach((t) => {
   // Stub the logger functions
-  t.context.log = stub();
+  t.context.log = sinon.stub);
   t.context.logger = {log: t.context.log};
 });
 

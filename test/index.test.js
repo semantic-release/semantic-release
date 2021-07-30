@@ -1,7 +1,7 @@
 import test from 'ava';
 import {escapeRegExp, isString, sortBy, omit} from 'lodash';
 import proxyquire from 'proxyquire';
-import {spy, stub} from 'sinon';
+import sinon from 'sinon';
 import {WritableStreamBuffer} from 'stream-buffers';
 import AggregateError from 'aggregate-error';
 import SemanticReleaseError from '@semantic-release/error';
@@ -29,10 +29,10 @@ const pluginNoop = require.resolve('./fixtures/plugin-noop');
 
 test.beforeEach((t) => {
   // Stub the logger functions
-  t.context.log = spy();
-  t.context.error = spy();
-  t.context.success = spy();
-  t.context.warn = spy();
+  t.context.log = sinon.spy();
+  t.context.error = sinon.spy();
+  t.context.success = sinon.spy();
+  t.context.warn = sinon.spy();
   t.context.logger = {
     log: t.context.log,
     error: t.context.error,
@@ -74,19 +74,19 @@ test('Plugins are called with expected values', async (t) => {
   const notes1 = 'Release notes 1';
   const notes2 = 'Release notes 2';
   const notes3 = 'Release notes 3';
-  const verifyConditions1 = stub().resolves();
-  const verifyConditions2 = stub().resolves();
-  const analyzeCommits = stub().resolves(nextRelease.type);
-  const verifyRelease = stub().resolves();
-  const generateNotes1 = stub().resolves(notes1);
-  const generateNotes2 = stub().resolves(notes2);
-  const generateNotes3 = stub().resolves(notes3);
+  const verifyConditions1 = sinon.stub().resolves();
+  const verifyConditions2 = sinon.stub().resolves();
+  const analyzeCommits = sinon.stub().resolves(nextRelease.type);
+  const verifyRelease = sinon.stub().resolves();
+  const generateNotes1 = sinon.stub().resolves(notes1);
+  const generateNotes2 = sinon.stub().resolves(notes2);
+  const generateNotes3 = sinon.stub().resolves(notes3);
   const release1 = {name: 'Release 1', url: 'https://release1.com'};
   const release2 = {name: 'Release 2', url: 'https://release2.com'};
-  const addChannel = stub().resolves(release1);
-  const prepare = stub().resolves();
-  const publish = stub().resolves(release2);
-  const success = stub().resolves();
+  const addChannel = sinon.stub().resolves(release1);
+  const prepare = sinon.stub().resolves();
+  const publish = sinon.stub().resolves(release2);
+  const success = sinon.stub().resolves();
   const env = {};
   const config = {
     branches: [{name: 'master'}, {name: 'next'}],
@@ -409,15 +409,15 @@ test('Use custom tag format', async (t) => {
   const config = {branches: 'master', repositoryUrl, globalOpt: 'global', tagFormat: `test-\${version}`};
   const options = {
     ...config,
-    verifyConditions: stub().resolves(),
-    analyzeCommits: stub().resolves(nextRelease.type),
-    verifyRelease: stub().resolves(),
-    generateNotes: stub().resolves(notes),
-    addChannel: stub().resolves(),
-    prepare: stub().resolves(),
-    publish: stub().resolves(),
-    success: stub().resolves(),
-    fail: stub().resolves(),
+    verifyConditions: sinon.stub().resolves(),
+    analyzeCommits: sinon.stub().resolves(nextRelease.type),
+    verifyRelease: sinon.stub().resolves(),
+    generateNotes: sinon.stub().resolves(notes),
+    addChannel: sinon.stub().resolves(),
+    prepare: sinon.stub().resolves(),
+    publish: sinon.stub().resolves(),
+    success: sinon.stub().resolves(),
+    fail: sinon.stub().resolves(),
   };
 
   const semanticRelease = requireNoCache('..', {
@@ -459,24 +459,24 @@ test('Use new gitHead, and recreate release notes if a prepare plugin create a c
   };
   const notes = 'Release notes';
 
-  const generateNotes = stub().resolves(notes);
-  const prepare1 = stub().callsFake(async () => {
+  const generateNotes = sinon.stub().resolves(notes);
+  const prepare1 = sinon.stub().callsFake(async () => {
     commits = (await gitCommits(['Third'], {cwd})).concat(commits);
   });
-  const prepare2 = stub().resolves();
-  const publish = stub().resolves();
+  const prepare2 = sinon.stub().resolves();
+  const publish = sinon.stub().resolves();
   const options = {
     branches: ['master'],
     repositoryUrl,
-    verifyConditions: stub().resolves(),
-    analyzeCommits: stub().resolves(nextRelease.type),
-    verifyRelease: stub().resolves(),
+    verifyConditions: sinon.stub().resolves(),
+    analyzeCommits: sinon.stub().resolves(nextRelease.type),
+    verifyRelease: sinon.stub().resolves(),
     generateNotes,
-    addChannel: stub().resolves(),
+    addChannel: sinon.stub().resolves(),
     prepare: [prepare1, prepare2],
     publish,
-    success: stub().resolves(),
-    fail: stub().resolves(),
+    success: sinon.stub().resolves(),
+    fail: sinon.stub().resolves(),
   };
 
   const semanticRelease = requireNoCache('..', {
@@ -528,12 +528,12 @@ test('Make a new release when a commit is forward-ported to an upper branch', as
   await merge('1.0.x', {cwd});
   await gitPush('origin', 'master', {cwd});
 
-  const verifyConditions = stub().resolves();
-  const verifyRelease = stub().resolves();
-  const addChannel = stub().resolves();
-  const prepare = stub().resolves();
-  const publish = stub().resolves();
-  const success = stub().resolves();
+  const verifyConditions = sinon.stub().resolves();
+  const verifyRelease = sinon.stub().resolves();
+  const addChannel = sinon.stub().resolves();
+  const prepare = sinon.stub().resolves();
+  const publish = sinon.stub().resolves();
+  const success = sinon.stub().resolves();
 
   const config = {branches: [{name: '1.0.x'}, {name: 'master'}], repositoryUrl, tagFormat: `v\${version}`};
   const options = {
@@ -571,14 +571,14 @@ test('Publish a pre-release version', async (t) => {
   const config = {branches: ['master', {name: 'beta', prerelease: true}], repositoryUrl};
   const options = {
     ...config,
-    verifyConditions: stub().resolves(),
-    verifyRelease: stub().resolves(),
-    generateNotes: stub().resolves(''),
+    verifyConditions: sinon.stub().resolves(),
+    verifyRelease: sinon.stub().resolves(),
+    generateNotes: sinon.stub().resolves(''),
     addChannel: false,
-    prepare: stub().resolves(),
-    publish: stub().resolves(),
-    success: stub().resolves(),
-    fail: stub().resolves(),
+    prepare: sinon.stub().resolves(),
+    publish: sinon.stub().resolves(),
+    success: sinon.stub().resolves(),
+    fail: sinon.stub().resolves(),
   };
 
   const semanticRelease = requireNoCache('..', {
@@ -621,17 +621,17 @@ test('Publish releases from different branch on the same channel', async (t) => 
     branches: ['master', {name: 'next', channel: false}, {name: 'next-major', channel: false}],
     repositoryUrl,
   };
-  const addChannel = stub().resolves({});
+  const addChannel = sinon.stub().resolves({});
   const options = {
     ...config,
-    verifyConditions: stub().resolves(),
-    verifyRelease: stub().resolves(),
-    generateNotes: stub().resolves(''),
+    verifyConditions: sinon.stub().resolves(),
+    verifyRelease: sinon.stub().resolves(),
+    generateNotes: sinon.stub().resolves(''),
     addChannel,
-    prepare: stub().resolves(),
-    publish: stub().resolves(),
-    success: stub().resolves(),
-    fail: stub().resolves(),
+    prepare: sinon.stub().resolves(),
+    publish: sinon.stub().resolves(),
+    success: sinon.stub().resolves(),
+    fail: sinon.stub().resolves(),
   };
 
   let semanticRelease = requireNoCache('..', {
@@ -684,14 +684,14 @@ test('Publish pre-releases the same channel as regular releases', async (t) => {
   };
   const options = {
     ...config,
-    verifyConditions: stub().resolves(),
-    verifyRelease: stub().resolves(),
-    generateNotes: stub().resolves(''),
+    verifyConditions: sinon.stub().resolves(),
+    verifyRelease: sinon.stub().resolves(),
+    generateNotes: sinon.stub().resolves(''),
     addChannel: false,
-    prepare: stub().resolves(),
-    publish: stub().resolves(),
-    success: stub().resolves(),
-    fail: stub().resolves(),
+    prepare: sinon.stub().resolves(),
+    publish: sinon.stub().resolves(),
+    success: sinon.stub().resolves(),
+    fail: sinon.stub().resolves(),
   };
 
   const semanticRelease = requireNoCache('..', {
@@ -734,14 +734,14 @@ test('Do not add pre-releases to a different channel', async (t) => {
   await merge('beta', {cwd});
   await gitPush('origin', 'master', {cwd});
 
-  const verifyConditions = stub().resolves();
-  const verifyRelease = stub().resolves();
-  const generateNotes = stub().resolves('Release notes');
+  const verifyConditions = sinon.stub().resolves();
+  const verifyRelease = sinon.stub().resolves();
+  const generateNotes = sinon.stub().resolves('Release notes');
   const release1 = {name: 'Release 1', url: 'https://release1.com'};
-  const addChannel = stub().resolves(release1);
-  const prepare = stub().resolves();
-  const publish = stub().resolves();
-  const success = stub().resolves();
+  const addChannel = sinon.stub().resolves(release1);
+  const prepare = sinon.stub().resolves();
+  const publish = sinon.stub().resolves();
+  const success = sinon.stub().resolves();
 
   const config = {
     branches: [{name: 'master'}, {name: 'beta', prerelease: 'beta'}],
@@ -792,15 +792,15 @@ async function addChannelMacro(t, mergeFunction) {
   await gitPush('origin', 'master', {cwd});
 
   const notes = 'Release notes';
-  const verifyConditions = stub().resolves();
-  const verifyRelease = stub().resolves();
-  const generateNotes = stub().resolves(notes);
+  const verifyConditions = sinon.stub().resolves();
+  const verifyRelease = sinon.stub().resolves();
+  const generateNotes = sinon.stub().resolves(notes);
   const release1 = {name: 'Release 1', url: 'https://release1.com'};
-  const addChannel1 = stub().resolves(release1);
-  const addChannel2 = stub().resolves();
-  const prepare = stub().resolves();
-  const publish = stub().resolves();
-  const success = stub().resolves();
+  const addChannel1 = sinon.stub().resolves(release1);
+  const addChannel2 = sinon.stub().resolves();
+  const prepare = sinon.stub().resolves();
+  const publish = sinon.stub().resolves();
+  const success = sinon.stub().resolves();
 
   const config = {
     branches: [
@@ -871,14 +871,14 @@ test('Call all "success" plugins even if one errors out', async (t) => {
     channel: null,
   };
   const notes = 'Release notes';
-  const verifyConditions1 = stub().resolves();
-  const verifyConditions2 = stub().resolves();
-  const analyzeCommits = stub().resolves(nextRelease.type);
-  const generateNotes = stub().resolves(notes);
+  const verifyConditions1 = sinon.stub().resolves();
+  const verifyConditions2 = sinon.stub().resolves();
+  const analyzeCommits = sinon.stub().resolves(nextRelease.type);
+  const generateNotes = sinon.stub().resolves(notes);
   const release = {name: 'Release', url: 'https://release.com'};
-  const publish = stub().resolves(release);
-  const success1 = stub().rejects();
-  const success2 = stub().resolves();
+  const publish = sinon.stub().resolves(release);
+  const success1 = sinon.stub().rejects();
+  const success2 = sinon.stub().resolves();
   const config = {
     branches: [{name: 'master'}],
     repositoryUrl,
@@ -890,8 +890,8 @@ test('Call all "success" plugins even if one errors out', async (t) => {
     verifyConditions: [verifyConditions1, verifyConditions2],
     analyzeCommits,
     generateNotes,
-    addChannel: stub().resolves(),
-    prepare: stub().resolves(),
+    addChannel: sinon.stub().resolves(),
+    prepare: sinon.stub().resolves(),
     publish,
     success: [success1, success2],
   };
@@ -927,12 +927,12 @@ test('Log all "verifyConditions" errors', async (t) => {
   const error1 = new Error('error 1');
   const error2 = new SemanticReleaseError('error 2', 'ERR2');
   const error3 = new SemanticReleaseError('error 3', 'ERR3');
-  const fail = stub().resolves();
+  const fail = sinon.stub().resolves();
   const config = {branches: [{name: 'master'}], repositoryUrl, tagFormat: `v\${version}`};
   const options = {
     ...config,
     plugins: false,
-    verifyConditions: [stub().rejects(new AggregateError([error1, error2])), stub().rejects(error3)],
+    verifyConditions: [sinon.stub().rejects(new AggregateError([error1, error2])), sinon.stub().rejects(error3)],
     fail,
   };
 
@@ -971,13 +971,13 @@ test('Log all "verifyRelease" errors', async (t) => {
 
   const error1 = new SemanticReleaseError('error 1', 'ERR1');
   const error2 = new SemanticReleaseError('error 2', 'ERR2');
-  const fail = stub().resolves();
+  const fail = sinon.stub().resolves();
   const config = {branches: [{name: 'master'}], repositoryUrl, tagFormat: `v\${version}`};
   const options = {
     ...config,
-    verifyConditions: stub().resolves(),
-    analyzeCommits: stub().resolves('major'),
-    verifyRelease: [stub().rejects(error1), stub().rejects(error2)],
+    verifyConditions: sinon.stub().resolves(),
+    analyzeCommits: sinon.stub().resolves('major'),
+    verifyRelease: [sinon.stub().rejects(error1), sinon.stub().rejects(error2)],
     fail,
   };
 
@@ -1012,14 +1012,14 @@ test('Dry-run skips addChannel, prepare, publish and success', async (t) => {
   await gitCheckout('next', true, {cwd});
   await gitPush('origin', 'next', {cwd});
 
-  const verifyConditions = stub().resolves();
-  const analyzeCommits = stub().resolves('minor');
-  const verifyRelease = stub().resolves();
-  const generateNotes = stub().resolves();
-  const addChannel = stub().resolves();
-  const prepare = stub().resolves();
-  const publish = stub().resolves();
-  const success = stub().resolves();
+  const verifyConditions = sinon.stub().resolves();
+  const analyzeCommits = sinon.stub().resolves('minor');
+  const verifyRelease = sinon.stub().resolves();
+  const generateNotes = sinon.stub().resolves();
+  const addChannel = sinon.stub().resolves();
+  const prepare = sinon.stub().resolves();
+  const publish = sinon.stub().resolves();
+  const success = sinon.stub().resolves();
 
   const options = {
     dryRun: true,
@@ -1078,13 +1078,13 @@ test('Dry-run skips fail', async (t) => {
 
   const error1 = new SemanticReleaseError('error 1', 'ERR1');
   const error2 = new SemanticReleaseError('error 2', 'ERR2');
-  const fail = stub().resolves();
+  const fail = sinon.stub().resolves();
 
   const options = {
     dryRun: true,
     branches: ['master'],
     repositoryUrl,
-    verifyConditions: [stub().rejects(error1), stub().rejects(error2)],
+    verifyConditions: [sinon.stub().rejects(error1), sinon.stub().rejects(error2)],
     fail,
   };
 
@@ -1126,12 +1126,12 @@ test('Force a dry-run if not on a CI and "noCi" is not explicitly set', async (t
   };
   const notes = 'Release notes';
 
-  const verifyConditions = stub().resolves();
-  const analyzeCommits = stub().resolves(nextRelease.type);
-  const verifyRelease = stub().resolves();
-  const generateNotes = stub().resolves(notes);
-  const publish = stub().resolves();
-  const success = stub().resolves();
+  const verifyConditions = sinon.stub().resolves();
+  const analyzeCommits = sinon.stub().resolves(nextRelease.type);
+  const verifyRelease = sinon.stub().resolves();
+  const generateNotes = sinon.stub().resolves(notes);
+  const publish = sinon.stub().resolves();
+  const success = sinon.stub().resolves();
 
   const options = {
     dryRun: false,
@@ -1141,11 +1141,11 @@ test('Force a dry-run if not on a CI and "noCi" is not explicitly set', async (t
     analyzeCommits,
     verifyRelease,
     generateNotes,
-    addChannel: stub().resolves(),
-    prepare: stub().resolves(),
+    addChannel: sinon.stub().resolves(),
+    prepare: sinon.stub().resolves(),
     publish,
     success,
-    fail: stub().resolves(),
+    fail: sinon.stub().resolves(),
   };
 
   const semanticRelease = requireNoCache('..', {
@@ -1182,8 +1182,8 @@ test('Dry-run does not print changelog if "generateNotes" return "undefined"', a
   await gitPush(repositoryUrl, 'master', {cwd});
 
   const nextRelease = {type: 'major', version: '2.0.0', gitHead: await getGitHead({cwd}), gitTag: 'v2.0.0'};
-  const analyzeCommits = stub().resolves(nextRelease.type);
-  const generateNotes = stub().resolves();
+  const analyzeCommits = sinon.stub().resolves(nextRelease.type);
+  const generateNotes = sinon.stub().resolves();
 
   const options = {
     dryRun: true,
@@ -1235,12 +1235,12 @@ test('Allow local releases with "noCi" option', async (t) => {
   };
   const notes = 'Release notes';
 
-  const verifyConditions = stub().resolves();
-  const analyzeCommits = stub().resolves(nextRelease.type);
-  const verifyRelease = stub().resolves();
-  const generateNotes = stub().resolves(notes);
-  const publish = stub().resolves();
-  const success = stub().resolves();
+  const verifyConditions = sinon.stub().resolves();
+  const analyzeCommits = sinon.stub().resolves(nextRelease.type);
+  const verifyRelease = sinon.stub().resolves();
+  const generateNotes = sinon.stub().resolves(notes);
+  const publish = sinon.stub().resolves();
+  const success = sinon.stub().resolves();
 
   const options = {
     noCi: true,
@@ -1250,11 +1250,11 @@ test('Allow local releases with "noCi" option', async (t) => {
     analyzeCommits,
     verifyRelease,
     generateNotes,
-    addChannel: stub().resolves(),
-    prepare: stub().resolves(),
+    addChannel: sinon.stub().resolves(),
+    prepare: sinon.stub().resolves(),
     publish,
     success,
-    fail: stub().resolves(),
+    fail: sinon.stub().resolves(),
   };
 
   const semanticRelease = requireNoCache('..', {
@@ -1304,27 +1304,27 @@ test('Accept "undefined" value returned by "generateNotes" and "false" by "publi
     gitTag: 'v1.2.0',
     channel: null,
   };
-  const analyzeCommits = stub().resolves(nextRelease.type);
-  const verifyRelease = stub().resolves();
-  const generateNotes1 = stub().resolves();
+  const analyzeCommits = sinon.stub().resolves(nextRelease.type);
+  const verifyRelease = sinon.stub().resolves();
+  const generateNotes1 = sinon.stub().resolves();
   const notes2 = 'Release notes 2';
-  const generateNotes2 = stub().resolves(notes2);
-  const publish = stub().resolves(false);
-  const addChannel = stub().resolves(false);
-  const success = stub().resolves();
+  const generateNotes2 = sinon.stub().resolves(notes2);
+  const publish = sinon.stub().resolves(false);
+  const addChannel = sinon.stub().resolves(false);
+  const success = sinon.stub().resolves();
 
   const options = {
     branches: ['master', 'next'],
     repositoryUrl,
-    verifyConditions: stub().resolves(),
+    verifyConditions: sinon.stub().resolves(),
     analyzeCommits,
     verifyRelease,
     generateNotes: [generateNotes1, generateNotes2],
     addChannel,
-    prepare: stub().resolves(),
+    prepare: sinon.stub().resolves(),
     publish,
     success,
-    fail: stub().resolves(),
+    fail: sinon.stub().resolves(),
   };
 
   const semanticRelease = requireNoCache('..', {
@@ -1387,12 +1387,12 @@ test('Throws "EINVALIDNEXTVERSION" if next release is out of range of the curren
   await gitCommits(['feat: feature on maintenance version 1.x'], {cwd});
   await gitPush('origin', 'master', {cwd});
 
-  const verifyConditions = stub().resolves();
-  const verifyRelease = stub().resolves();
-  const addChannel = stub().resolves();
-  const prepare = stub().resolves();
-  const publish = stub().resolves();
-  const success = stub().resolves();
+  const verifyConditions = sinon.stub().resolves();
+  const verifyRelease = sinon.stub().resolves();
+  const addChannel = sinon.stub().resolves();
+  const prepare = sinon.stub().resolves();
+  const publish = sinon.stub().resolves();
+  const success = sinon.stub().resolves();
 
   const config = {
     branches: [{name: '1.x'}, {name: 'master'}],
@@ -1439,12 +1439,12 @@ test('Throws "EINVALIDNEXTVERSION" if next release is out of range of the curren
   await gitCommits(['feat: new feature on master', 'fix: new fix on master'], {cwd});
   await gitPush('origin', 'master', {cwd});
 
-  const verifyConditions = stub().resolves();
-  const verifyRelease = stub().resolves();
-  const addChannel = stub().resolves();
-  const prepare = stub().resolves();
-  const publish = stub().resolves();
-  const success = stub().resolves();
+  const verifyConditions = sinon.stub().resolves();
+  const verifyRelease = sinon.stub().resolves();
+  const addChannel = sinon.stub().resolves();
+  const prepare = sinon.stub().resolves();
+  const publish = sinon.stub().resolves();
+  const success = sinon.stub().resolves();
 
   const config = {
     branches: [{name: 'master'}, {name: 'next'}, {name: 'next-major'}],
@@ -1497,15 +1497,15 @@ test('Throws "EINVALIDMAINTENANCEMERGE" if merge an out of range release in a ma
   await gitPush('origin', '1.1.x', {cwd});
 
   const notes = 'Release notes';
-  const verifyConditions = stub().resolves();
-  const analyzeCommits = stub().resolves();
-  const verifyRelease = stub().resolves();
-  const generateNotes = stub().resolves(notes);
-  const addChannel = stub().resolves();
-  const prepare = stub().resolves();
-  const publish = stub().resolves();
-  const success = stub().resolves();
-  const fail = stub().resolves();
+  const verifyConditions = sinon.stub().resolves();
+  const analyzeCommits = sinon.stub().resolves();
+  const verifyRelease = sinon.stub().resolves();
+  const generateNotes = sinon.stub().resolves(notes);
+  const addChannel = sinon.stub().resolves();
+  const prepare = sinon.stub().resolves();
+  const publish = sinon.stub().resolves();
+  const success = sinon.stub().resolves();
+  const fail = sinon.stub().resolves();
 
   const config = {branches: [{name: 'master'}, {name: '1.1.x'}], repositoryUrl, tagFormat: `v\${version}`};
   const options = {
@@ -1580,15 +1580,15 @@ test('Returns false if not running from the configured branch', async (t) => {
   const options = {
     branches: ['master'],
     repositoryUrl,
-    verifyConditions: stub().resolves(),
-    analyzeCommits: stub().resolves(),
-    verifyRelease: stub().resolves(),
-    generateNotes: stub().resolves(),
-    addChannel: stub().resolves(),
-    prepare: stub().resolves(),
-    publish: stub().resolves(),
-    success: stub().resolves(),
-    fail: stub().resolves(),
+    verifyConditions: sinon.stub().resolves(),
+    analyzeCommits: sinon.stub().resolves(),
+    verifyRelease: sinon.stub().resolves(),
+    generateNotes: sinon.stub().resolves(),
+    addChannel: sinon.stub().resolves(),
+    prepare: sinon.stub().resolves(),
+    publish: sinon.stub().resolves(),
+    success: sinon.stub().resolves(),
+    fail: sinon.stub().resolves(),
   };
 
   const semanticRelease = requireNoCache('..', {
@@ -1617,23 +1617,23 @@ test('Returns false if there is no relevant changes', async (t) => {
   await gitCommits(['First'], {cwd});
   await gitPush(repositoryUrl, 'master', {cwd});
 
-  const analyzeCommits = stub().resolves();
-  const verifyRelease = stub().resolves();
-  const generateNotes = stub().resolves();
-  const publish = stub().resolves();
+  const analyzeCommits = sinon.stub().resolves();
+  const verifyRelease = sinon.stub().resolves();
+  const generateNotes = sinon.stub().resolves();
+  const publish = sinon.stub().resolves();
 
   const options = {
     branches: ['master'],
     repositoryUrl,
-    verifyConditions: [stub().resolves()],
+    verifyConditions: [sinon.stub().resolves()],
     analyzeCommits,
     verifyRelease,
     generateNotes,
-    addChannel: stub().resolves(),
-    prepare: stub().resolves(),
+    addChannel: sinon.stub().resolves(),
+    prepare: sinon.stub().resolves(),
     publish,
-    success: stub().resolves(),
-    fail: stub().resolves(),
+    success: sinon.stub().resolves(),
+    fail: sinon.stub().resolves(),
   };
 
   const semanticRelease = requireNoCache('..', {
@@ -1677,19 +1677,19 @@ test('Exclude commits with [skip release] or [release skip] from analysis', asyn
     {cwd}
   );
   await gitPush(repositoryUrl, 'master', {cwd});
-  const analyzeCommits = stub().resolves();
+  const analyzeCommits = sinon.stub().resolves();
   const config = {branches: ['master'], repositoryUrl, globalOpt: 'global'};
   const options = {
     ...config,
-    verifyConditions: [stub().resolves(), stub().resolves()],
+    verifyConditions: [sinon.stub().resolves(), sinon.stub().resolves()],
     analyzeCommits,
-    verifyRelease: stub().resolves(),
-    generateNotes: stub().resolves(),
-    addChannel: stub().resolves(),
-    prepare: stub().resolves(),
-    publish: stub().resolves(),
-    success: stub().resolves(),
-    fail: stub().resolves(),
+    verifyRelease: sinon.stub().resolves(),
+    generateNotes: sinon.stub().resolves(),
+    addChannel: sinon.stub().resolves(),
+    prepare: sinon.stub().resolves(),
+    publish: sinon.stub().resolves(),
+    success: sinon.stub().resolves(),
+    fail: sinon.stub().resolves(),
   };
 
   const semanticRelease = requireNoCache('..', {
@@ -1717,8 +1717,8 @@ test('Log both plugins errors and errors thrown by "fail" plugin', async (t) => 
   const options = {
     branches: ['master'],
     repositoryUrl,
-    verifyConditions: stub().rejects(pluginError),
-    fail: [stub().rejects(failError1), stub().rejects(failError2)],
+    verifyConditions: sinon.stub().rejects(pluginError),
+    fail: [sinon.stub().rejects(failError1), sinon.stub().rejects(failError2)],
   };
   const semanticRelease = requireNoCache('..', {
     './lib/get-logger': () => t.context.logger,
@@ -1737,12 +1737,12 @@ test('Log both plugins errors and errors thrown by "fail" plugin', async (t) => 
 test('Call "fail" only if a plugin returns a SemanticReleaseError', async (t) => {
   const {cwd, repositoryUrl} = await gitRepo(true);
   const pluginError = new Error('Plugin error');
-  const fail = stub().resolves();
+  const fail = sinon.stub().resolves();
 
   const options = {
     branches: ['master'],
     repositoryUrl,
-    verifyConditions: stub().rejects(pluginError),
+    verifyConditions: sinon.stub().rejects(pluginError),
     fail,
   };
   const semanticRelease = requireNoCache('..', {
@@ -1790,16 +1790,16 @@ test('Throw an Error if plugin returns an unexpected value', async (t) => {
   await gitCommits(['Second'], {cwd});
   await gitPush(repositoryUrl, 'master', {cwd});
 
-  const verifyConditions = stub().resolves();
-  const analyzeCommits = stub().resolves('string');
+  const verifyConditions = sinon.stub().resolves();
+  const analyzeCommits = sinon.stub().resolves('string');
 
   const options = {
     branches: ['master'],
     repositoryUrl,
     verifyConditions: [verifyConditions],
     analyzeCommits,
-    success: stub().resolves(),
-    fail: stub().resolves(),
+    success: sinon.stub().resolves(),
+    fail: sinon.stub().resolves(),
   };
 
   const semanticRelease = requireNoCache('..', {
@@ -1816,19 +1816,19 @@ test('Throw an Error if plugin returns an unexpected value', async (t) => {
 test('Hide sensitive information passed to "fail" plugin', async (t) => {
   const {cwd, repositoryUrl} = await gitRepo(true);
 
-  const fail = stub().resolves();
+  const fail = sinon.stub().resolves();
   const env = {MY_TOKEN: 'secret token'};
   const options = {
     branch: 'master',
     repositoryUrl,
-    verifyConditions: stub().throws(
+    verifyConditions: sinon.stub().throws(
       new SemanticReleaseError(
         `Message: Exposing token ${env.MY_TOKEN}`,
         'ERR',
         `Details: Exposing token ${env.MY_TOKEN}`
       )
     ),
-    success: stub().resolves(),
+    success: sinon.stub().resolves(),
     fail,
   };
 
@@ -1859,7 +1859,7 @@ test('Hide sensitive information passed to "success" plugin', async (t) => {
   await gitCommits(['feat: new feature'], {cwd});
   await gitPush(repositoryUrl, 'master', {cwd});
 
-  const success = stub().resolves();
+  const success = sinon.stub().resolves();
   const env = {MY_TOKEN: 'secret token'};
   const options = {
     branch: 'master',
@@ -1867,14 +1867,14 @@ test('Hide sensitive information passed to "success" plugin', async (t) => {
     verifyConditions: false,
     verifyRelease: false,
     prepare: false,
-    generateNotes: stub().resolves(`Exposing token ${env.MY_TOKEN}`),
-    publish: stub().resolves({
+    generateNotes: sinon.stub().resolves(`Exposing token ${env.MY_TOKEN}`),
+    publish: sinon.stub().resolves({
       name: `Name: Exposing token ${env.MY_TOKEN}`,
       url: `URL: Exposing token ${env.MY_TOKEN}`,
     }),
     addChannel: false,
     success,
-    fail: stub().resolves(),
+    fail: sinon.stub().resolves(),
   };
 
   const semanticRelease = requireNoCache('..', {
@@ -1912,19 +1912,19 @@ test('Get all commits including the ones not in the shallow clone', async (t) =>
     channel: undefined,
   };
   const notes = 'Release notes';
-  const analyzeCommits = stub().resolves(nextRelease.type);
+  const analyzeCommits = sinon.stub().resolves(nextRelease.type);
 
   const config = {branches: ['master'], repositoryUrl, globalOpt: 'global'};
   const options = {
     ...config,
-    verifyConditions: stub().resolves(),
+    verifyConditions: sinon.stub().resolves(),
     analyzeCommits,
-    verifyRelease: stub().resolves(),
-    generateNotes: stub().resolves(notes),
-    prepare: stub().resolves(),
-    publish: stub().resolves(),
-    success: stub().resolves(),
-    fail: stub().resolves(),
+    verifyRelease: sinon.stub().resolves(),
+    generateNotes: sinon.stub().resolves(notes),
+    prepare: sinon.stub().resolves(),
+    publish: sinon.stub().resolves(),
+    success: sinon.stub().resolves(),
+    fail: sinon.stub().resolves(),
   };
 
   const semanticRelease = requireNoCache('..', {
