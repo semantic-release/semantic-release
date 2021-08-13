@@ -17,7 +17,17 @@ const {extractErrors, makeTag} = require('./lib/utils');
 const getGitAuthUrl = require('./lib/get-git-auth-url');
 const getBranches = require('./lib/branches');
 const getLogger = require('./lib/get-logger');
-const {verifyAuth, isBranchUpToDate, getGitHead, tag, push, pushNotes, getTagHead, addNote} = require('./lib/git');
+const {
+  verifyAuth,
+  isBranchUpToDate,
+  getGitHead,
+  tag,
+  push,
+  pushNotes,
+  getTagHead,
+  addNote,
+  fetchNotes,
+} = require('./lib/git');
 const getError = require('./lib/get-error');
 const {COMMIT_NAME, COMMIT_EMAIL} = require('./lib/definitions/constants');
 
@@ -112,6 +122,7 @@ async function run(context, plugins) {
       if (options.dryRun) {
         logger.warn(`Skip ${nextRelease.gitTag} tag creation in dry-run mode`);
       } else {
+        await fetchNotes(options.repositoryUrl, {cwd, env});
         await addNote({channels: [...currentRelease.channels, nextRelease.channel]}, nextRelease.gitHead, {cwd, env});
         await push(options.repositoryUrl, {cwd, env});
         await pushNotes(options.repositoryUrl, {cwd, env});
