@@ -33,7 +33,7 @@ The Git history of the repository is now:
 
 One of our users request a new feature, however they cannot migrate to Node.js 8 or higher due to corporate policies.
 
-If we were to push that feature on `master` and release it, the new version would require Node.js 8 or higher as the release would also contains the commit `feat: drop Node.js 6 support \n\n BREAKING CHANGE: Node.js >= 8 required`.
+If we were to push that feature on `master` and release it, the new version would require Node.js 8 or higher as the release would also contain the commit `feat: drop Node.js 6 support \n\n BREAKING CHANGE: Node.js >= 8 required`.
 
 Instead, we create the branch `1.x` from the tag `v1.0.0` with the command `git checkout -b 1.x v1.0.0` and we commit that feature with the message `feat: a feature` to the branch `1.x`. When pushing that commit, **semantic-release** will release the version `1.1.0` on the dist-tag `@release-1.x` so users who can't migrate to Node.js 8 or higher can benefit from it.
 
@@ -48,7 +48,7 @@ The Git history of the repository is now:
 
 ## Releasing a bug fix for version 1.0.x users
 
-Another user currently using version `1.0.0` reports a bug. They cannot migrate to Node.js 8 or higher and they also cannot migrate to `1.1.0` as they do not use the feature developed in `feat: a feature` and their corporate policies require to go through a costly quality insurance process for each `minor` upgrades.
+Another user currently using version `1.0.0` reports a bug. They cannot migrate to Node.js 8 or higher and they also cannot migrate to `1.1.0` as they do not use the feature developed in `feat: a feature` and their corporate policies require to go through a costly quality assurance process for each `minor` upgrades.
 
 In order to deliver the bug fix in a `patch` release, we create the branch `1.0.x` from the tag `v1.0.0` with the command `git checkout -b 1.0.x v1.0.0` and we commit that fix with the message `fix: a fix` to the branch `1.0.x`. When pushing that commit, **semantic-release** will release the version `1.0.1` on the dist-tag `@release-1.0.x` so users who can't migrate to `1.1.x` or `2.x` can benefit from it.
 
