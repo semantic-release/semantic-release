@@ -315,7 +315,7 @@ export async function rebase(ref, execaOptions) {
  * @param {Object} [execaOpts] Options to pass to `execa`.
  */
 export async function gitAddNote(note, ref, execaOptions) {
-  await execa("git", ["notes", "--ref", GIT_NOTE_REF, "add", "-m", note, ref], execaOptions);
+  await execa("git", ["notes", "--ref", `${GIT_NOTE_REF}-${ref}`, "add", "-m", note, ref], execaOptions);
 }
 
 /**
@@ -325,5 +325,5 @@ export async function gitAddNote(note, ref, execaOptions) {
  * @param {Object} [execaOpts] Options to pass to `execa`.
  */
 export async function gitGetNote(ref, execaOptions) {
-  return (await execa("git", ["notes", "--ref", GIT_NOTE_REF, "show", ref], execaOptions)).stdout;
+  return (await execa("git", ["notes", "--ref", `${GIT_NOTE_REF}-${ref}`, "show", ref], execaOptions)).stdout;
 }
