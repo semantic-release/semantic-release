@@ -33,7 +33,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: npm
       - name: Ensure dependencies are compatible with the version of node
-        run: echo 'engine-strict=true' >> .npmrc
+        run: npx ls-engines
       - run: npm ci
       - run: npm run test:ci
 
