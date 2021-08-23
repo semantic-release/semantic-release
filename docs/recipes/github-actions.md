@@ -10,11 +10,11 @@ In this example a publish type [`NPM_TOKEN`](https://docs.npmjs.com/creating-and
 
 [GitHub Actions](https://github.com/features/actions) support [Workflows](https://help.github.com/en/articles/configuring-workflows), allowing to run tests on multiple Node versions and publish a release only when all test pass.
 
-**Note**: The publish pipeline must run on [Node version >= 10.18](../support/FAQ.md#why-does-semantic-release-require-node-version--1018).
+**Note**: The publish pipeline must run on [Node version >= 10.19](../support/FAQ.md#why-does-semantic-release-require-node-version--1019).
 
 ### `.github/workflows/release.yml` configuration for Node projects
 
-The following is a minimal configuration for [`semantic-release`](https://github.com/semantic-release/semantic-release) with a build running on Node 12 when a new commit is pushed to a `master` branch. See [Configuring a Workflow](https://help.github.com/en/articles/configuring-a-workflow) for additional configuration options.
+The following is a minimal configuration for [`semantic-release`](https://github.com/semantic-release/semantic-release) with a build running on Node 10.19 when a new commit is pushed to a `master` branch. See [Configuring a Workflow](https://help.github.com/en/articles/configuring-a-workflow) for additional configuration options.
 
 ```yaml
 name: Release
@@ -34,7 +34,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: 12
+          node-version: '10.19'
       - name: Install dependencies
         run: npm ci
       - name: Release
