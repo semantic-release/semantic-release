@@ -33,8 +33,6 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: npm
       - run: npm ci
-      - name: Ensure dependencies are compatible with the version of node
-        run: npx ls-engines@0.4
       - run: npm run test:ci
 
   # separate job to set as required in branch protection,
@@ -48,4 +46,6 @@ jobs:
         with:
           cache: npm
       - run: npm ci
+      - name: Ensure dependencies are compatible with the version of node
+        run: npx ls-engines@0.4
       - run: npm run lint
