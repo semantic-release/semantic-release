@@ -4,7 +4,7 @@
 - [CircleCI 2.0 workflows](circleci-workflows.md)
 - [Travis CI](travis.md)
 - [GitLab CI](gitlab-ci.md)
-- [GitHub Actions](github-actions.md)
+- [GitHub Actions](github-actions.md) 
 - [Jenkins CI](jenkins-ci.md)
 
 ## Git hosted services
@@ -15,4 +15,4 @@
 - [Publishing maintenance releases](maintenance-releases.md)
 - [Publishing pre-releases](pre-releases.md)
 
-## Package managers and languages
+## Package managers and languages 
