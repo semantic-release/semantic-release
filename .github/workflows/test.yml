@@ -17,7 +17,7 @@ jobs:
     strategy:
       matrix:
         node-version:
-          - 10.18.0
+          - 10.19.0
           - 12
           - 14
 
@@ -32,8 +32,6 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: npm
-      - name: Ensure dependencies are compatible with the version of node
-        run: echo 'engine-strict=true' >> .npmrc
       - run: npm ci
       - run: npm run test:ci
 
@@ -48,4 +46,6 @@ jobs:
         with:
           cache: npm
       - run: npm ci
+      - name: Ensure dependencies are compatible with the version of node
+        run: npx ls-engines@0.4
       - run: npm run lint

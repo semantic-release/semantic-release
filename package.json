@@ -56,7 +56,7 @@
     "delay": "5.0.0",
     "dockerode": "3.3.0",
     "file-url": "3.0.0",
-    "fs-extra": "10.0.0",
+    "fs-extra": "9.1.0",
     "got": "11.8.2",
     "js-yaml": "4.1.0",
     "mockserver-client": "5.11.2",
@@ -70,7 +70,7 @@
     "xo": "0.29.1"
   },
   "engines": {
-    "node": ">=10.18"
+    "node": ">=10.19"
   },
   "files": [
     "bin",
