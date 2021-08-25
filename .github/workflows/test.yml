@@ -35,8 +35,11 @@ jobs:
       - run: npm ci
       - run: npm run test:ci
 
-  engines:
-    runs-on: macos-latest
+  # separate job to set as required in branch protection,
+  # as the build names above change each time Node versions change
+  test:
+    runs-on: ubuntu-latest
+    needs: test_matrix
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
@@ -45,16 +48,4 @@ jobs:
       - run: npm ci
       - name: Ensure dependencies are compatible with the version of node
         run: npx ls-engines@0.4
-
-  # separate job to set as required in branch protection,
-  # as the build names above change each time Node versions change
-  test:
-    runs-on: ubuntu-latest
-    needs: [engines, test_matrix]
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          cache: npm
-      - run: npm ci
       - run: npm run lint
