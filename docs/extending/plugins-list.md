@@ -142,4 +142,4 @@
   - `publish`: Publish version to heroku
 - [@temptek/semantic-release-jira](https://github.com/boxcee/semantic-release-jira)
   - `verifyConditions`: Validate the config options and check for credentials in the environment
-  - `sucess`: Find all tickets from commits and add them to a new release on JIRA
+  - `success`: Find all tickets from commits and add them to a new release on JIRA
