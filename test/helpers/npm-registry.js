@@ -1,15 +1,13 @@
 const Docker = require('dockerode');
 const getStream = require('get-stream');
 const got = require('got');
+const path = require('path');
 const delay = require('delay');
 const pRetry = require('p-retry');
 
-const IMAGE = 'semanticrelease/npm-registry-docker:latest';
-const SERVER_PORT = 15986;
-const COUCHDB_PORT = 5984;
-const SERVER_HOST = 'localhost';
-const COUCHDB_USER = 'admin';
-const COUCHDB_PASSWORD = 'password';
+const IMAGE = 'verdaccio/verdaccio:4';
+const REGISTRY_PORT = 4873;
+const REGISTRY_HOST = 'localhost';
 const NPM_USERNAME = 'integration';
 const NPM_PASSWORD = 'suchsecure';
 const NPM_EMAIL = 'integration@test.com';
@@ -25,8 +23,8 @@ async function start() {
   container = await docker.createContainer({
     Tty: true,
     Image: IMAGE,
-    PortBindings: {[`${COUCHDB_PORT}/tcp`]: [{HostPort: `${SERVER_PORT}`}]},
-    Env: [`COUCHDB_USER=${COUCHDB_USER}`, `COUCHDB_PASSWORD=${COUCHDB_PASSWORD}`],
+    PortBindings: {[`${REGISTRY_PORT}/tcp`]: [{HostPort: `${REGISTRY_PORT}`}]},
+    Binds: [`${path.join(__dirname, 'config.yaml')}:/verdaccio/conf/config.yaml`],
   });
 
   await container.start();
@@ -34,7 +32,7 @@ async function start() {
 
   try {
     // Wait for the registry to be ready
-    await pRetry(() => got(`http://${SERVER_HOST}:${SERVER_PORT}/registry/_design/app`, {cache: false}), {
+    await pRetry(() => got(`http://${REGISTRY_HOST}:${REGISTRY_PORT}/`, {cache: false}), {
       retries: 7,
       minTimeout: 1000,
       factor: 2,
@@ -44,9 +42,7 @@ async function start() {
   }
 
   // Create user
-  await got(`http://${SERVER_HOST}:${SERVER_PORT}/_users/org.couchdb.user:${NPM_USERNAME}`, {
-    username: COUCHDB_USER,
-    password: COUCHDB_PASSWORD,
+  await got(`http://${REGISTRY_HOST}:${REGISTRY_PORT}/-/user/org.couchdb.user:${NPM_USERNAME}`, {
     method: 'PUT',
     json: {
       _id: `org.couchdb.user:${NPM_USERNAME}`,
@@ -59,7 +55,7 @@ async function start() {
   });
 }
 
-const url = `http://${SERVER_HOST}:${SERVER_PORT}/registry/_design/app/_rewrite/`;
+const url = `http://${REGISTRY_HOST}:${REGISTRY_PORT}/`;
 
 const authEnv = {
   npm_config_registry: url, // eslint-disable-line camelcase
