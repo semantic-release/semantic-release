@@ -1,7 +1,6 @@
 ---
 name: New plugin suggestion
 about: Integrate with a new platform, etc
-
 ---
 
 ## New plugin motivation

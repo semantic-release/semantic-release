@@ -90,6 +90,6 @@ Some plugins (git) will add a commit to your repo which means you cannot run the
 
 ## Todo
 
-* Create an nx plugin that automates the steps above
-* for the project specific release config programmatically get the current project name, source dir, and dependencies for commitPaths.
-* Add a configPath cli argument rather than extends to specify the path to the semantic-release config
+- Create an nx plugin that automates the steps above
+- for the project specific release config programmatically get the current project name, source dir, and dependencies for commitPaths.
+- Add a configPath cli argument rather than extends to specify the path to the semantic-release config

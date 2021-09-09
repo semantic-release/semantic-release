@@ -1,8 +1,8 @@
 const test = require('ava');
-const {escapeRegExp} = require('lodash');
+const { escapeRegExp } = require('lodash');
 const proxyquire = require('proxyquire').noPreserveCache();
-const {stub} = require('sinon');
-const {SECRET_REPLACEMENT} = require('../lib/definitions/constants');
+const { stub } = require('sinon');
+const { SECRET_REPLACEMENT } = require('../lib/definitions/constants');
 
 test.beforeEach((t) => {
   t.context.logs = '';
@@ -63,7 +63,7 @@ test.serial('Pass options to semantic-release API', async (t) => {
     '--debug',
     '-d',
   ];
-  const cli = proxyquire('../cli', {'.': run, process: {...process, argv}});
+  const cli = proxyquire('../cli', { '.': run, process: { ...process, argv } });
 
   const exitCode = await cli();
 
@@ -86,43 +86,59 @@ test.serial('Pass options to semantic-release API', async (t) => {
   t.is(exitCode, 0);
 });
 
-test.serial('Pass options to semantic-release API with alias arguments', async (t) => {
+test.serial(
+  'Pass options to semantic-release API with alias arguments',
+  async (t) => {
+    const run = stub().resolves(true);
+    const argv = [
+      '',
+      '',
+      '--branches',
+      'master',
+      '--repository-url',
+      'https://github/com/owner/repo.git',
+      '--tag-format',
+      `v\${version}`,
+      '--plugins',
+      'plugin1',
+      'plugin2',
+      '--extends',
+      'config1',
+      'config2',
+      '--dry-run',
+    ];
+    const cli = proxyquire('../cli', {
+      '.': run,
+      process: { ...process, argv },
+    });
+
+    const exitCode = await cli();
+
+    t.deepEqual(run.args[0][0].branches, ['master']);
+    t.is(run.args[0][0].repositoryUrl, 'https://github/com/owner/repo.git');
+    t.is(run.args[0][0].tagFormat, `v\${version}`);
+    t.deepEqual(run.args[0][0].plugins, ['plugin1', 'plugin2']);
+    t.deepEqual(run.args[0][0].extends, ['config1', 'config2']);
+    t.is(run.args[0][0].dryRun, true);
+
+    t.is(exitCode, 0);
+  }
+);
+
+test.serial('Pass unknown options to semantic-release API', async (t) => {
   const run = stub().resolves(true);
   const argv = [
     '',
     '',
-    '--branches',
-    'master',
-    '--repository-url',
-    'https://github/com/owner/repo.git',
-    '--tag-format',
-    `v\${version}`,
-    '--plugins',
-    'plugin1',
-    'plugin2',
-    '--extends',
-    'config1',
-    'config2',
-    '--dry-run',
+    '--bool',
+    '--first-option',
+    'value1',
+    '--second-option',
+    'value2',
+    '--second-option',
+    'value3',
   ];
-  const cli = proxyquire('../cli', {'.': run, process: {...process, argv}});
-
-  const exitCode = await cli();
-
-  t.deepEqual(run.args[0][0].branches, ['master']);
-  t.is(run.args[0][0].repositoryUrl, 'https://github/com/owner/repo.git');
-  t.is(run.args[0][0].tagFormat, `v\${version}`);
-  t.deepEqual(run.args[0][0].plugins, ['plugin1', 'plugin2']);
-  t.deepEqual(run.args[0][0].extends, ['config1', 'config2']);
-  t.is(run.args[0][0].dryRun, true);
-
-  t.is(exitCode, 0);
-});
-
-test.serial('Pass unknown options to semantic-release API', async (t) => {
-  const run = stub().resolves(true);
-  const argv = ['', '', '--bool', '--first-option', 'value1', '--second-option', 'value2', '--second-option', 'value3'];
-  const cli = proxyquire('../cli', {'.': run, process: {...process, argv}});
+  const cli = proxyquire('../cli', { '.': run, process: { ...process, argv } });
 
   const exitCode = await cli();
 
@@ -133,39 +149,51 @@ test.serial('Pass unknown options to semantic-release API', async (t) => {
   t.is(exitCode, 0);
 });
 
-test.serial('Pass empty Array to semantic-release API for list option set to "false"', async (t) => {
-  const run = stub().resolves(true);
-  const argv = ['', '', '--publish', 'false'];
-  const cli = proxyquire('../cli', {'.': run, process: {...process, argv}});
+test.serial(
+  'Pass empty Array to semantic-release API for list option set to "false"',
+  async (t) => {
+    const run = stub().resolves(true);
+    const argv = ['', '', '--publish', 'false'];
+    const cli = proxyquire('../cli', {
+      '.': run,
+      process: { ...process, argv },
+    });
 
-  const exitCode = await cli();
+    const exitCode = await cli();
 
-  t.deepEqual(run.args[0][0].publish, []);
+    t.deepEqual(run.args[0][0].publish, []);
 
-  t.is(exitCode, 0);
-});
+    t.is(exitCode, 0);
+  }
+);
 
-test.serial('Do not set properties in option for which arg is not in command line', async (t) => {
-  const run = stub().resolves(true);
-  const argv = ['', '', '-b', 'master'];
-  const cli = proxyquire('../cli', {'.': run, process: {...process, argv}});
+test.serial(
+  'Do not set properties in option for which arg is not in command line',
+  async (t) => {
+    const run = stub().resolves(true);
+    const argv = ['', '', '-b', 'master'];
+    const cli = proxyquire('../cli', {
+      '.': run,
+      process: { ...process, argv },
+    });
 
-  await cli();
+    await cli();
 
-  t.false('ci' in run.args[0][0]);
-  t.false('d' in run.args[0][0]);
-  t.false('dry-run' in run.args[0][0]);
-  t.false('debug' in run.args[0][0]);
-  t.false('r' in run.args[0][0]);
-  t.false('t' in run.args[0][0]);
-  t.false('p' in run.args[0][0]);
-  t.false('e' in run.args[0][0]);
-});
+    t.false('ci' in run.args[0][0]);
+    t.false('d' in run.args[0][0]);
+    t.false('dry-run' in run.args[0][0]);
+    t.false('debug' in run.args[0][0]);
+    t.false('r' in run.args[0][0]);
+    t.false('t' in run.args[0][0]);
+    t.false('p' in run.args[0][0]);
+    t.false('e' in run.args[0][0]);
+  }
+);
 
 test.serial('Display help', async (t) => {
   const run = stub().resolves(true);
   const argv = ['', '', '--help'];
-  const cli = proxyquire('../cli', {'.': run, process: {...process, argv}});
+  const cli = proxyquire('../cli', { '.': run, process: { ...process, argv } });
 
   const exitCode = await cli();
 
@@ -173,49 +201,80 @@ test.serial('Display help', async (t) => {
   t.is(exitCode, 0);
 });
 
-test.serial('Return error exitCode and prints help if called with a command', async (t) => {
-  const run = stub().resolves(true);
-  const argv = ['', '', 'pre'];
-  const cli = proxyquire('../cli', {'.': run, process: {...process, argv}});
+test.serial(
+  'Return error exitCode and prints help if called with a command',
+  async (t) => {
+    const run = stub().resolves(true);
+    const argv = ['', '', 'pre'];
+    const cli = proxyquire('../cli', {
+      '.': run,
+      process: { ...process, argv },
+    });
 
-  const exitCode = await cli();
+    const exitCode = await cli();
 
-  t.regex(t.context.errors, /Run automated package publishing/);
-  t.regex(t.context.errors, /Too many non-option arguments/);
-  t.is(exitCode, 1);
-});
+    t.regex(t.context.errors, /Run automated package publishing/);
+    t.regex(t.context.errors, /Too many non-option arguments/);
+    t.is(exitCode, 1);
+  }
+);
 
-test.serial('Return error exitCode if multiple plugin are set for single plugin', async (t) => {
-  const run = stub().resolves(true);
-  const argv = ['', '', '--analyze-commits', 'analyze1', 'analyze2'];
-  const cli = proxyquire('../cli', {'.': run, process: {...process, argv}});
+test.serial(
+  'Return error exitCode if multiple plugin are set for single plugin',
+  async (t) => {
+    const run = stub().resolves(true);
+    const argv = ['', '', '--analyze-commits', 'analyze1', 'analyze2'];
+    const cli = proxyquire('../cli', {
+      '.': run,
+      process: { ...process, argv },
+    });
 
-  const exitCode = await cli();
+    const exitCode = await cli();
 
-  t.regex(t.context.errors, /Run automated package publishing/);
-  t.regex(t.context.errors, /Too many non-option arguments/);
-  t.is(exitCode, 1);
-});
+    t.regex(t.context.errors, /Run automated package publishing/);
+    t.regex(t.context.errors, /Too many non-option arguments/);
+    t.is(exitCode, 1);
+  }
+);
 
-test.serial('Return error exitCode if semantic-release throw error', async (t) => {
-  const run = stub().rejects(new Error('semantic-release error'));
-  const argv = ['', ''];
-  const cli = proxyquire('../cli', {'.': run, process: {...process, argv}});
+test.serial(
+  'Return error exitCode if semantic-release throw error',
+  async (t) => {
+    const run = stub().rejects(new Error('semantic-release error'));
+    const argv = ['', ''];
+    const cli = proxyquire('../cli', {
+      '.': run,
+      process: { ...process, argv },
+    });
 
-  const exitCode = await cli();
+    const exitCode = await cli();
 
-  t.regex(t.context.errors, /semantic-release error/);
-  t.is(exitCode, 1);
-});
+    t.regex(t.context.errors, /semantic-release error/);
+    t.is(exitCode, 1);
+  }
+);
 
-test.serial('Hide sensitive environment variable values from the logs', async (t) => {
-  const env = {MY_TOKEN: 'secret token'};
-  const run = stub().rejects(new Error(`Throw error: Exposing token ${env.MY_TOKEN}`));
-  const argv = ['', ''];
-  const cli = proxyquire('../cli', {'.': run, process: {...process, argv, env: {...process.env, ...env}}});
+test.serial(
+  'Hide sensitive environment variable values from the logs',
+  async (t) => {
+    const env = { MY_TOKEN: 'secret token' };
+    const run = stub().rejects(
+      new Error(`Throw error: Exposing token ${env.MY_TOKEN}`)
+    );
+    const argv = ['', ''];
+    const cli = proxyquire('../cli', {
+      '.': run,
+      process: { ...process, argv, env: { ...process.env, ...env } },
+    });
 
-  const exitCode = await cli();
+    const exitCode = await cli();
 
-  t.regex(t.context.errors, new RegExp(`Throw error: Exposing token ${escapeRegExp(SECRET_REPLACEMENT)}`));
-  t.is(exitCode, 1);
-});
+    t.regex(
+      t.context.errors,
+      new RegExp(
+        `Throw error: Exposing token ${escapeRegExp(SECRET_REPLACEMENT)}`
+      )
+    );
+    t.is(exitCode, 1);
+  }
+);

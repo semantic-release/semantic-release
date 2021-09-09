@@ -2,7 +2,7 @@ const Docker = require('dockerode');
 const getStream = require('get-stream');
 const got = require('got');
 const pRetry = require('p-retry');
-const {mockServerClient} = require('mockserver-client');
+const { mockServerClient } = require('mockserver-client');
 
 const IMAGE = 'jamesdbloom/mockserver:latest';
 const MOCK_SERVER_PORT = 1080;
@@ -19,17 +19,25 @@ async function start() {
   container = await docker.createContainer({
     Tty: true,
     Image: IMAGE,
-    PortBindings: {[`${MOCK_SERVER_PORT}/tcp`]: [{HostPort: `${MOCK_SERVER_PORT}`}]},
+    PortBindings: {
+      [`${MOCK_SERVER_PORT}/tcp`]: [{ HostPort: `${MOCK_SERVER_PORT}` }],
+    },
   });
   await container.start();
 
   try {
     // Wait for the mock server to be ready
-    await pRetry(() => got.put(`http://${MOCK_SERVER_HOST}:${MOCK_SERVER_PORT}/status`, {cache: false}), {
-      retries: 7,
-      minTimeout: 1000,
-      factor: 2,
-    });
+    await pRetry(
+      () =>
+        got.put(`http://${MOCK_SERVER_HOST}:${MOCK_SERVER_PORT}/status`, {
+          cache: false,
+        }),
+      {
+        retries: 7,
+        minTimeout: 1000,
+        factor: 2,
+      }
+    );
   } catch (_) {
     throw new Error(`Couldn't start mock-server after 2 min`);
   }
@@ -67,17 +75,19 @@ const url = `http://${MOCK_SERVER_HOST}:${MOCK_SERVER_PORT}`;
  */
 async function mock(
   path,
-  {body: requestBody, headers: requestHeaders},
-  {method = 'POST', statusCode = 200, body: responseBody}
+  { body: requestBody, headers: requestHeaders },
+  { method = 'POST', statusCode = 200, body: responseBody }
 ) {
   await client.mockAnyResponse({
-    httpRequest: {path, method},
+    httpRequest: { path, method },
     httpResponse: {
       statusCode,
-      headers: [{name: 'Content-Type', values: ['application/json; charset=utf-8']}],
+      headers: [
+        { name: 'Content-Type', values: ['application/json; charset=utf-8'] },
+      ],
       body: JSON.stringify(responseBody),
     },
-    times: {remainingTimes: 1, unlimited: false},
+    times: { remainingTimes: 1, unlimited: false },
   });
 
   return {
@@ -85,7 +95,11 @@ async function mock(
     path,
     headers: requestHeaders,
     body: requestBody
-      ? {type: 'JSON', json: JSON.stringify(requestBody), matchType: 'ONLY_MATCHING_FIELDS'}
+      ? {
+          type: 'JSON',
+          json: JSON.stringify(requestBody),
+          matchType: 'ONLY_MATCHING_FIELDS',
+        }
       : undefined,
   };
 }
@@ -100,4 +114,4 @@ function verify(expectation) {
   return client.verify(expectation);
 }
 
-module.exports = {start, stop, mock, verify, url};
+module.exports = { start, stop, mock, verify, url };

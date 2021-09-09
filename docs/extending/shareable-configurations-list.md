@@ -1,10 +1,12 @@
 # Shareable configurations list
 
 ## Official configurations
+
 - [@semantic-release/apm-config](https://github.com/semantic-release/apm-config) - semantic-release shareable configuration for releasing atom packages
 - [@semantic-release/gitlab-config](https://github.com/semantic-release/gitlab-config) - semantic-release shareable configuration for GitLab
 
 ## Community configurations
+
 - [@jedmao/semantic-release-npm-github-config](https://github.com/jedmao/semantic-release-npm-github-config)
   - Provides an informative [git](https://github.com/semantic-release/git) commit message for the release commit that does not trigger continuous integration and conforms to the [conventional commits specification](https://www.conventionalcommits.org/) (e.g., "chore(release): 1.2.3 [skip ci]\n\nnotes").
   - Creates a tarball that gets uploaded with each [GitHub release](https://github.com/semantic-release/github).
@@ -18,4 +20,3 @@
   - Updates GitHub release with release-notes.
   - Bumps a version in package.json.
   - Publishes the new version to [NPM](https://npmjs.org).
-  

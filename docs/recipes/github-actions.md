@@ -63,9 +63,11 @@ If the risk is acceptable, some extra configuration is needed. The [actions/chec
 ## Trigger semantic-release on demand
 
 ### Using GUI:
+
 You can use [Manual Triggers](https://github.blog/changelog/2020-07-06-github-actions-manual-triggers-with-workflow_dispatch/) for GitHub Actions.
 
 ### Using HTTP:
+
 Use [`repository_dispatch`](https://docs.github.com/en/actions/reference/events-that-trigger-workflows#repository_dispatch) event to have control on when to generate a release by making an HTTP request, e.g.:
 
 ```yaml
@@ -84,7 +86,8 @@ $ curl -v -H "Accept: application/vnd.github.everest-preview+json" -H "Authoriza
 ```
 
 ### Using 3rd party apps:
+
 If you'd like to use a GitHub app to manage this instead of creating a personal access token, you could consider using a project like:
 
-* [Actions Panel](https://www.actionspanel.app/) - A declaratively configured way for triggering GitHub Actions
-* [Action Button](https://github-action-button.web.app/#details) - A simple badge based mechanism for triggering GitHub Actions
+- [Actions Panel](https://www.actionspanel.app/) - A declaratively configured way for triggering GitHub Actions
+- [Action Button](https://github-action-button.web.app/#details) - A simple badge based mechanism for triggering GitHub Actions

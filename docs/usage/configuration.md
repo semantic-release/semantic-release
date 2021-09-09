@@ -143,6 +143,7 @@ The objective of the dry-run mode is to get a preview of the pending release. Dr
 **Note**: The Dry-run mode verifies the repository push permission, even though nothing will be pushed. The verification is done to help user to figure out potential configuration issues.
 
 ### skipTag
+
 Type: `Boolean`<br>
 Default: `false`
 CLI arguments: `--skip-tag`

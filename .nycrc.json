@@ -1,0 +1,5 @@
+{
+  "include": ["lib/**/*.js", "index.js", "cli.js"],
+  "reporter": ["json", "text", "html"],
+  "all": true
+}

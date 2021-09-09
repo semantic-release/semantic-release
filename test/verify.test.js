@@ -1,13 +1,13 @@
 const test = require('ava');
 const tempy = require('tempy');
 const verify = require('../lib/verify');
-const {gitRepo} = require('./helpers/git-utils');
+const { gitRepo } = require('./helpers/git-utils');
 
 test('Throw a AggregateError', async (t) => {
-  const {cwd} = await gitRepo();
-  const options = {branches: [{name: 'master'}, {name: ''}]};
+  const { cwd } = await gitRepo();
+  const options = { branches: [{ name: 'master' }, { name: '' }] };
 
-  const errors = [...(await t.throwsAsync(verify({cwd, options})))];
+  const errors = [...(await t.throwsAsync(verify({ cwd, options })))];
 
   t.is(errors[0].name, 'SemanticReleaseError');
   t.is(errors[0].code, 'ENOREPOURL');
@@ -29,9 +29,9 @@ test('Throw a AggregateError', async (t) => {
 
 test('Throw a SemanticReleaseError if does not run on a git repository', async (t) => {
   const cwd = tempy.directory();
-  const options = {branches: []};
+  const options = { branches: [] };
 
-  const errors = [...(await t.throwsAsync(verify({cwd, options})))];
+  const errors = [...(await t.throwsAsync(verify({ cwd, options })))];
 
   t.is(errors[0].name, 'SemanticReleaseError');
   t.is(errors[0].code, 'ENOGITREPO');
@@ -40,10 +40,10 @@ test('Throw a SemanticReleaseError if does not run on a git repository', async (
 });
 
 test('Throw a SemanticReleaseError if the "tagFormat" is not valid', async (t) => {
-  const {cwd, repositoryUrl} = await gitRepo(true);
-  const options = {repositoryUrl, tagFormat: `?\${version}`, branches: []};
+  const { cwd, repositoryUrl } = await gitRepo(true);
+  const options = { repositoryUrl, tagFormat: `?\${version}`, branches: [] };
 
-  const errors = [...(await t.throwsAsync(verify({cwd, options})))];
+  const errors = [...(await t.throwsAsync(verify({ cwd, options })))];
 
   t.is(errors[0].name, 'SemanticReleaseError');
   t.is(errors[0].code, 'EINVALIDTAGFORMAT');
@@ -52,10 +52,10 @@ test('Throw a SemanticReleaseError if the "tagFormat" is not valid', async (t) =
 });
 
 test('Throw a SemanticReleaseError if the "tagFormat" does not contains the "version" variable', async (t) => {
-  const {cwd, repositoryUrl} = await gitRepo(true);
-  const options = {repositoryUrl, tagFormat: 'test', branches: []};
+  const { cwd, repositoryUrl } = await gitRepo(true);
+  const options = { repositoryUrl, tagFormat: 'test', branches: [] };
 
-  const errors = [...(await t.throwsAsync(verify({cwd, options})))];
+  const errors = [...(await t.throwsAsync(verify({ cwd, options })))];
 
   t.is(errors[0].name, 'SemanticReleaseError');
   t.is(errors[0].code, 'ETAGNOVERSION');
@@ -64,10 +64,14 @@ test('Throw a SemanticReleaseError if the "tagFormat" does not contains the "ver
 });
 
 test('Throw a SemanticReleaseError if the "tagFormat" contains multiple "version" variables', async (t) => {
-  const {cwd, repositoryUrl} = await gitRepo(true);
-  const options = {repositoryUrl, tagFormat: `\${version}v\${version}`, branches: []};
+  const { cwd, repositoryUrl } = await gitRepo(true);
+  const options = {
+    repositoryUrl,
+    tagFormat: `\${version}v\${version}`,
+    branches: [],
+  };
 
-  const errors = [...(await t.throwsAsync(verify({cwd, options})))];
+  const errors = [...(await t.throwsAsync(verify({ cwd, options })))];
 
   t.is(errors[0].name, 'SemanticReleaseError');
   t.is(errors[0].code, 'ETAGNOVERSION');
@@ -76,14 +80,22 @@ test('Throw a SemanticReleaseError if the "tagFormat" contains multiple "version
 });
 
 test('Throw a SemanticReleaseError for each invalid branch', async (t) => {
-  const {cwd, repositoryUrl} = await gitRepo(true);
+  const { cwd, repositoryUrl } = await gitRepo(true);
   const options = {
     repositoryUrl,
     tagFormat: `v\${version}`,
-    branches: [{name: ''}, {name: '  '}, {name: 1}, {}, {name: ''}, 1, 'master'],
+    branches: [
+      { name: '' },
+      { name: '  ' },
+      { name: 1 },
+      {},
+      { name: '' },
+      1,
+      'master',
+    ],
   };
 
-  const errors = [...(await t.throwsAsync(verify({cwd, options})))];
+  const errors = [...(await t.throwsAsync(verify({ cwd, options })))];
 
   t.is(errors[0].name, 'SemanticReleaseError');
   t.is(errors[0].code, 'EINVALIDBRANCH');
@@ -110,8 +122,12 @@ test('Throw a SemanticReleaseError for each invalid branch', async (t) => {
 });
 
 test('Return "true" if all verification pass', async (t) => {
-  const {cwd, repositoryUrl} = await gitRepo(true);
-  const options = {repositoryUrl, tagFormat: `v\${version}`, branches: [{name: 'master'}]};
+  const { cwd, repositoryUrl } = await gitRepo(true);
+  const options = {
+    repositoryUrl,
+    tagFormat: `v\${version}`,
+    branches: [{ name: 'master' }],
+  };
 
-  await t.notThrowsAsync(verify({cwd, options}));
+  await t.notThrowsAsync(verify({ cwd, options }));
 });

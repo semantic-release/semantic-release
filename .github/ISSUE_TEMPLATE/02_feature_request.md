@@ -1,7 +1,6 @@
 ---
 name: Feature request
 about: Wouldn’t it be nice if semantic-release could ...
-
 ---
 
 ## New feature motivation

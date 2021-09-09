@@ -22,15 +22,19 @@ See https://github.com/semantic-release/semantic-release/blob/master/docs/suppor
 }
 
 execa('git', ['--version'])
-  .then(({stdout}) => {
+  .then(({ stdout }) => {
     var gitVersion = findVersions(stdout)[0];
     if (semver.lt(gitVersion, MIN_GIT_VERSION)) {
-      console.error(`[semantic-release]: Git version ${MIN_GIT_VERSION} is required. Found ${gitVersion}.`);
+      console.error(
+        `[semantic-release]: Git version ${MIN_GIT_VERSION} is required. Found ${gitVersion}.`
+      );
       process.exit(1);
     }
   })
   .catch((error) => {
-    console.error(`[semantic-release]: Git version ${MIN_GIT_VERSION} is required. No git binary found.`);
+    console.error(
+      `[semantic-release]: Git version ${MIN_GIT_VERSION} is required. No git binary found.`
+    );
     console.error(error);
     process.exit(1);
   });

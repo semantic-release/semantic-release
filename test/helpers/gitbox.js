@@ -1,7 +1,7 @@
 const Docker = require('dockerode');
 const getStream = require('get-stream');
 const pRetry = require('p-retry');
-const {initBareRepo, gitShallowClone} = require('./git-utils');
+const { initBareRepo, gitShallowClone } = require('./git-utils');
 
 const IMAGE = 'pvdlg/docker-gitbox:latest';
 const SERVER_PORT = 80;
@@ -23,7 +23,7 @@ async function start() {
   container = await docker.createContainer({
     Tty: true,
     Image: IMAGE,
-    PortBindings: {[`${SERVER_PORT}/tcp`]: [{HostPort: `${HOST_PORT}`}]},
+    PortBindings: { [`${SERVER_PORT}/tcp`]: [{ HostPort: `${HOST_PORT}` }] },
   });
   await container.start();
 
@@ -51,7 +51,11 @@ async function stop() {
  * @param {String} [description=`Repository ${name}`] The repository description.
  * @return {Object} The `repositoryUrl` (URL without auth) and `authUrl` (URL with auth).
  */
-async function createRepo(name, branch = 'master', description = `Repository ${name}`) {
+async function createRepo(
+  name,
+  branch = 'master',
+  description = `Repository ${name}`
+) {
   const exec = await container.exec({
     Cmd: ['repo-admin', '-n', name, '-d', description],
     AttachStdout: true,
@@ -63,10 +67,14 @@ async function createRepo(name, branch = 'master', description = `Repository ${n
   const authUrl = `http://${gitCredential}@${SERVER_HOST}:${HOST_PORT}/git/${name}.git`;
 
   // Retry as the server might take a few ms to make the repo available push
-  await pRetry(() => initBareRepo(authUrl, branch), {retries: 5, minTimeout: 500, factor: 2});
+  await pRetry(() => initBareRepo(authUrl, branch), {
+    retries: 5,
+    minTimeout: 500,
+    factor: 2,
+  });
   const cwd = await gitShallowClone(authUrl);
 
-  return {cwd, repositoryUrl, authUrl};
+  return { cwd, repositoryUrl, authUrl };
 }
 
-module.exports = {start, stop, gitCredential, createRepo};
+module.exports = { start, stop, gitCredential, createRepo };

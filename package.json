@@ -57,19 +57,23 @@
     "codecov": "3.8.3",
     "delay": "5.0.0",
     "dockerode": "3.3.1",
+    "eslint": "^7.2.0",
+    "eslint-config-prettier": "8.3.0",
     "file-url": "3.0.0",
     "fs-extra": "9.1.0",
     "got": "11.8.2",
+    "husky": "^6.0.0",
     "js-yaml": "4.1.0",
+    "lint-staged": "^11.0.0",
     "mockserver-client": "5.11.2",
     "nock": "13.1.3",
     "nyc": "15.1.0",
+    "prettier": "2.3.1",
     "p-retry": "4.6.1",
     "proxyquire": "2.1.3",
     "sinon": "11.1.2",
     "stream-buffers": "3.0.2",
-    "tempy": "1.0.1",
-    "xo": "0.29.1"
+    "tempy": "1.0.1"
   },
   "engines": {
     "node": ">=10.19"
@@ -95,23 +99,6 @@
   ],
   "license": "MIT",
   "main": "index.js",
-  "nyc": {
-    "include": [
-      "lib/**/*.js",
-      "index.js",
-      "cli.js"
-    ],
-    "reporter": [
-      "json",
-      "text",
-      "html"
-    ],
-    "all": true
-  },
-  "prettier": {
-    "printWidth": 120,
-    "trailingComma": "es5"
-  },
   "publishConfig": {
     "access": "public"
   },
@@ -121,22 +108,14 @@
   },
   "scripts": {
     "codecov": "codecov -f coverage/coverage-final.json",
-    "lint": "xo",
+    "prepare": "husky install",
+    "lint": "npx eslint .",
+    "lint:fix": "npx eslint --fix .",
+    "format:check": "npx prettier --check .",
+    "format:write": "npx prettier --write .",
     "pretest": "npm run lint",
     "semantic-release": "node ./bin/semantic-release.js",
     "test": "nyc ava -v",
     "test:ci": "nyc ava -v"
-  },
-  "xo": {
-    "prettier": true,
-    "space": true,
-    "rules": {
-      "unicorn/string-content": "off"
-    }
-  },
-  "renovate": {
-    "extends": [
-      "github>semantic-release/.github"
-    ]
   }
 }

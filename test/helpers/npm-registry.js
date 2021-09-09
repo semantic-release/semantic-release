@@ -25,8 +25,11 @@ async function start() {
   container = await docker.createContainer({
     Tty: true,
     Image: IMAGE,
-    PortBindings: {[`${COUCHDB_PORT}/tcp`]: [{HostPort: `${SERVER_PORT}`}]},
-    Env: [`COUCHDB_USER=${COUCHDB_USER}`, `COUCHDB_PASSWORD=${COUCHDB_PASSWORD}`],
+    PortBindings: { [`${COUCHDB_PORT}/tcp`]: [{ HostPort: `${SERVER_PORT}` }] },
+    Env: [
+      `COUCHDB_USER=${COUCHDB_USER}`,
+      `COUCHDB_PASSWORD=${COUCHDB_PASSWORD}`,
+    ],
   });
 
   await container.start();
@@ -34,29 +37,38 @@ async function start() {
 
   try {
     // Wait for the registry to be ready
-    await pRetry(() => got(`http://${SERVER_HOST}:${SERVER_PORT}/registry/_design/app`, {cache: false}), {
-      retries: 7,
-      minTimeout: 1000,
-      factor: 2,
-    });
+    await pRetry(
+      () =>
+        got(`http://${SERVER_HOST}:${SERVER_PORT}/registry/_design/app`, {
+          cache: false,
+        }),
+      {
+        retries: 7,
+        minTimeout: 1000,
+        factor: 2,
+      }
+    );
   } catch (_) {
     throw new Error(`Couldn't start npm-registry-docker after 2 min`);
   }
 
   // Create user
-  await got(`http://${SERVER_HOST}:${SERVER_PORT}/_users/org.couchdb.user:${NPM_USERNAME}`, {
-    username: COUCHDB_USER,
-    password: COUCHDB_PASSWORD,
-    method: 'PUT',
-    json: {
-      _id: `org.couchdb.user:${NPM_USERNAME}`,
-      name: NPM_USERNAME,
-      roles: [],
-      type: 'user',
-      password: NPM_PASSWORD,
-      email: NPM_EMAIL,
-    },
-  });
+  await got(
+    `http://${SERVER_HOST}:${SERVER_PORT}/_users/org.couchdb.user:${NPM_USERNAME}`,
+    {
+      username: COUCHDB_USER,
+      password: COUCHDB_PASSWORD,
+      method: 'PUT',
+      json: {
+        _id: `org.couchdb.user:${NPM_USERNAME}`,
+        name: NPM_USERNAME,
+        roles: [],
+        type: 'user',
+        password: NPM_PASSWORD,
+        email: NPM_EMAIL,
+      },
+    }
+  );
 }
 
 const url = `http://${SERVER_HOST}:${SERVER_PORT}/registry/_design/app/_rewrite/`;
@@ -76,4 +88,4 @@ async function stop() {
   await container.remove();
 }
 
-module.exports = {start, stop, authEnv, url};
+module.exports = { start, stop, authEnv, url };

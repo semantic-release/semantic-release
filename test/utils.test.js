@@ -25,11 +25,14 @@ test('extractErrors', (t) => {
 });
 
 test('tagsToVersions', (t) => {
-  t.deepEqual(tagsToVersions([{version: '1.0.0'}, {version: '1.1.0'}, {version: '1.2.0'}]), [
-    '1.0.0',
-    '1.1.0',
-    '1.2.0',
-  ]);
+  t.deepEqual(
+    tagsToVersions([
+      { version: '1.0.0' },
+      { version: '1.1.0' },
+      { version: '1.2.0' },
+    ]),
+    ['1.0.0', '1.1.0', '1.2.0']
+  );
 });
 
 test('isMajorRange', (t) => {
@@ -115,42 +118,81 @@ test('lowest', (t) => {
 });
 
 test.serial('getLatestVersion', (t) => {
-  t.is(getLatestVersion(['1.2.3-alpha.3', '1.2.0', '1.0.1', '1.0.0-alpha.1']), '1.2.0');
+  t.is(
+    getLatestVersion(['1.2.3-alpha.3', '1.2.0', '1.0.1', '1.0.0-alpha.1']),
+    '1.2.0'
+  );
   t.is(getLatestVersion(['1.2.3-alpha.3', '1.2.3-alpha.2']), undefined);
 
-  t.is(getLatestVersion(['1.2.3-alpha.3', '1.2.0', '1.0.1', '1.0.0-alpha.1']), '1.2.0');
+  t.is(
+    getLatestVersion(['1.2.3-alpha.3', '1.2.0', '1.0.1', '1.0.0-alpha.1']),
+    '1.2.0'
+  );
   t.is(getLatestVersion(['1.2.3-alpha.3', '1.2.3-alpha.2']), undefined);
 
-  t.is(getLatestVersion(['1.2.3-alpha.3', '1.2.0', '1.0.1', '1.0.0-alpha.1'], {withPrerelease: true}), '1.2.3-alpha.3');
-  t.is(getLatestVersion(['1.2.3-alpha.3', '1.2.3-alpha.2'], {withPrerelease: true}), '1.2.3-alpha.3');
+  t.is(
+    getLatestVersion(['1.2.3-alpha.3', '1.2.0', '1.0.1', '1.0.0-alpha.1'], {
+      withPrerelease: true,
+    }),
+    '1.2.3-alpha.3'
+  );
+  t.is(
+    getLatestVersion(['1.2.3-alpha.3', '1.2.3-alpha.2'], {
+      withPrerelease: true,
+    }),
+    '1.2.3-alpha.3'
+  );
 
   t.is(getLatestVersion([]), undefined);
 });
 
 test.serial('getEarliestVersion', (t) => {
-  t.is(getEarliestVersion(['1.2.3-alpha.3', '1.2.0', '1.0.0', '1.0.1-alpha.1']), '1.0.0');
-  t.is(getEarliestVersion(['1.2.3-alpha.3', '1.2.3-alpha.2']), undefined);
-
-  t.is(getEarliestVersion(['1.2.3-alpha.3', '1.2.0', '1.0.0', '1.0.1-alpha.1']), '1.0.0');
+  t.is(
+    getEarliestVersion(['1.2.3-alpha.3', '1.2.0', '1.0.0', '1.0.1-alpha.1']),
+    '1.0.0'
+  );
   t.is(getEarliestVersion(['1.2.3-alpha.3', '1.2.3-alpha.2']), undefined);
 
   t.is(
-    getEarliestVersion(['1.2.3-alpha.3', '1.2.0', '1.0.1', '1.0.0-alpha.1'], {withPrerelease: true}),
+    getEarliestVersion(['1.2.3-alpha.3', '1.2.0', '1.0.0', '1.0.1-alpha.1']),
+    '1.0.0'
+  );
+  t.is(getEarliestVersion(['1.2.3-alpha.3', '1.2.3-alpha.2']), undefined);
+
+  t.is(
+    getEarliestVersion(['1.2.3-alpha.3', '1.2.0', '1.0.1', '1.0.0-alpha.1'], {
+      withPrerelease: true,
+    }),
     '1.0.0-alpha.1'
   );
-  t.is(getEarliestVersion(['1.2.3-alpha.3', '1.2.3-alpha.2'], {withPrerelease: true}), '1.2.3-alpha.2');
+  t.is(
+    getEarliestVersion(['1.2.3-alpha.3', '1.2.3-alpha.2'], {
+      withPrerelease: true,
+    }),
+    '1.2.3-alpha.2'
+  );
 
   t.is(getEarliestVersion([]), undefined);
 });
 
 test('getFirstVersion', (t) => {
-  t.is(getFirstVersion(['1.2.0', '1.0.0', '1.3.0', '1.1.0', '1.4.0'], []), '1.0.0');
+  t.is(
+    getFirstVersion(['1.2.0', '1.0.0', '1.3.0', '1.1.0', '1.4.0'], []),
+    '1.0.0'
+  );
   t.is(
     getFirstVersion(
       ['1.2.0', '1.0.0', '1.3.0', '1.1.0', '1.4.0'],
       [
-        {name: 'master', tags: [{version: '1.0.0'}, {version: '1.1.0'}]},
-        {name: 'next', tags: [{version: '1.0.0'}, {version: '1.1.0'}, {version: '1.2.0'}]},
+        { name: 'master', tags: [{ version: '1.0.0' }, { version: '1.1.0' }] },
+        {
+          name: 'next',
+          tags: [
+            { version: '1.0.0' },
+            { version: '1.1.0' },
+            { version: '1.2.0' },
+          ],
+        },
       ]
     ),
     '1.3.0'
@@ -159,8 +201,15 @@ test('getFirstVersion', (t) => {
     getFirstVersion(
       ['1.2.0', '1.0.0', '1.1.0'],
       [
-        {name: 'master', tags: [{version: '1.0.0'}, {version: '1.1.0'}]},
-        {name: 'next', tags: [{version: '1.0.0'}, {version: '1.1.0'}, {version: '1.2.0'}]},
+        { name: 'master', tags: [{ version: '1.0.0' }, { version: '1.1.0' }] },
+        {
+          name: 'next',
+          tags: [
+            { version: '1.0.0' },
+            { version: '1.1.0' },
+            { version: '1.2.0' },
+          ],
+        },
       ]
     ),
     undefined
