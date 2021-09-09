@@ -10,7 +10,7 @@ Alternatively, the default `NPM_TOKEN` and `GH_TOKEN` can be easily [setup with 
 
 ### `Jenkinsfile (Declarative Pipeline)` configuration for a Node.js job
 
-**Note**: The publish pipeline must run a [Node >= 10.18 version](../support/FAQ.md#why-does-semantic-release-require-node-version--1018).
+**Note**: The publish pipeline must run a [Node >= 10.19 version](../support/FAQ.md#why-does-semantic-release-require-node-version--1019).
 
 This example is a minimal configuration for **semantic-release** with a build running Node 10.18. See [Jenkins documentation](https://www.jenkins.io/doc/) for additional configuration options.
 
@@ -19,7 +19,7 @@ The`semantic-release` execution command varies depending if you are using a [loc
 ```yaml
 // The release stage in the pipeline will run only if the test stage in the pipeline is successful
 pipeline {
-    agent any 
+    agent any
     environment {
         GH_TOKEN  = credentials('some-id')
     }
@@ -35,14 +35,14 @@ pipeline {
         }
         stage('Release') {
             tools {
-            nodejs "node 10.18"
+            nodejs "node 10.19"
             }
             steps {
                 sh '''
                 # Run optional required steps before releasing
                 npx semantic-release
                 '''
-            }            
+            }
         }
     }
 }

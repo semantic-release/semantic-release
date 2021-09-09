@@ -1,6 +1,6 @@
 # Node Support Policy
 
-We only support [Long-Term Support](https://github.com/nodejs/Release) versions of Node starting with [Node 8.9.0 (LTS)](https://nodejs.org/en/blog/release/v8.9.0).
+We only support [Long-Term Support](https://github.com/nodejs/Release) versions of Node starting with [Node 10.19 (LTS)](https://nodejs.org/en/blog/release/v10.19.0).
 
 We specifically limit our support to LTS versions of Node, not because this package won't work on other versions, but because we have a limited amount of time, and supporting LTS offers the greatest return on that investment.
 
