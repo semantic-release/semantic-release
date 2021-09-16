@@ -178,6 +178,9 @@ Compared to the verifyConditions, `analyzeCommits` lifecycle context has keys
     * `channels` (List)
     * `gitHead` (String, Commit hash)
     * `name` (String)
+    * `major` (Number)
+    * `minor` (Number)
+    * `patch` (Number)
 
 #### verifyRelease
 
@@ -190,6 +193,9 @@ Additional keys:
   * `version` (String, version without `v`)
   * `gitTag` (String, version with `v`)
   * `name` (String)
+  * `major` (Number)
+  * `minor` (Number)
+  * `patch` (Number)
     
 #### generateNotes
 

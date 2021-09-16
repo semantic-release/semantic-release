@@ -144,6 +144,10 @@ async function run(context, plugins) {
     context.lastRelease.gitHead = await getTagHead(context.lastRelease.gitHead, {cwd, env});
   }
 
+  context.lastRelease.major = semver.major(context.lastRelease.version);
+  context.lastRelease.minor = semver.minor(context.lastRelease.version);
+  context.lastRelease.patch = semver.patch(context.lastRelease.version);
+
   if (context.lastRelease.gitTag) {
     logger.log(
       `Found git tag ${context.lastRelease.gitTag} associated with version ${context.lastRelease.version} on branch ${context.branch.name}`
@@ -168,6 +172,9 @@ async function run(context, plugins) {
   nextRelease.version = getNextVersion(context);
   nextRelease.gitTag = makeTag(options.tagFormat, nextRelease.version);
   nextRelease.name = nextRelease.gitTag;
+  nextRelease.major = semver.major(nextRelease.version);
+  nextRelease.minor = semver.minor(nextRelease.version);
+  nextRelease.patch = semver.patch(nextRelease.version);
 
   if (context.branch.type !== 'prerelease' && !semver.satisfies(nextRelease.version, context.branch.range)) {
     throw getError('EINVALIDNEXTVERSION', {
