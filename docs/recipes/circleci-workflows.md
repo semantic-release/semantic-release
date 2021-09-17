@@ -39,7 +39,7 @@ workflows:
             parameters:
               version:
                 - 16.1.0
-                - 14.7.0
+                - 14.17.0
       - release:
           requires:
             - node/test
@@ -52,7 +52,7 @@ A `package.json` is required only for [local](../usage/installation.md#local-ins
 ```json
 {
   "devDependencies": {
-    "semantic-release": "^15.0.0"
+    "semantic-release": "^18.0.0"
   }
 }
 ```
