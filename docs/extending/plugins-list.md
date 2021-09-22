@@ -140,3 +140,6 @@
   - `verifyConditions`: Validate configuration and verify ```HEROKU_API_KEY```
   - `prepare`: Update the package.json version and create release tarball
   - `publish`: Publish version to heroku
+- [@temptek/semantic-release-jira](https://github.com/boxcee/semantic-release-jira)
+  - `verifyConditions`: Validate the config options and check for credentials in the environment
+  - `success`: Find all tickets from commits and add them to a new release on JIRA
