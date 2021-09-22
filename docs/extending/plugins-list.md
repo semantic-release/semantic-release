@@ -140,3 +140,5 @@
   - `verifyConditions`: Validate configuration and verify ```HEROKU_API_KEY```
   - `prepare`: Update the package.json version and create release tarball
   - `publish`: Publish version to heroku
+- [semantic-release-interval](https://www.npmjs.com/package/semantic-release-interval)
+  - `analyzeCommits`: Triggers a new release if the oldest commit since the last release is over a certain age.
