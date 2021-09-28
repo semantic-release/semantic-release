@@ -5,11 +5,55 @@ const path = require('path');
 const yaml = require('js-yaml');
 const {stub} = require('sinon');
 const proxyquire = require('proxyquire');
+const normalizeConfig = require('../lib/normalize-config');
 
 test.beforeEach((t) => {
   t.context.plugins = stub().returns({});
   t.context.getConfig = proxyquire('../lib/get-config', {'./plugins': t.context.plugins});
 });
+
+test('If plugins is of unexpected type, normalize should return them as is', (t) => {
+  // If it is string
+  const options = {
+    plugins: 'ThisIsNotSupposedToBeAString',
+  };
+  const result = normalizeConfig(options);
+
+  t.deepEqual(result, options);
+  // If plugins is null
+  t.deepEqual(normalizeConfig({plugins: null}), {plugins: null});
+});
+
+test('If the options is undefined/falsy, then the normalization function should return it as is', (t) => {
+  t.is(normalizeConfig(false), false);
+  t.is(normalizeConfig(undefined), undefined);
+});
+
+test('If the plugins is an Array, then the normalization function should return it as is', (t) => {
+  const options = {
+    plugins: ['ThisIsAPlugin'],
+  };
+  const result = normalizeConfig(options);
+  t.deepEqual(result, options);
+});
+
+test('If the plugins is an Object, then the normalization function should change it into array format', (t) => {
+  const options = {
+    plugins: {
+      ThisIsAPlugin: {
+        andThis: 'Is the config',
+      },
+    },
+  };
+  const expected = {
+    plugins: [['ThisIsAPlugin', {andThis: 'Is the config'}]],
+  };
+  const result = normalizeConfig(options);
+  t.deepEqual(result, expected);
+});
+
+// These tests are mostly copy-paste from get-config.test.js, with slight modifications. Their intention is to test
+// that the normalizing works in "real" situation.
 
 test('Read options from package.json when plugins are an object', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
