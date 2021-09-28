@@ -64,6 +64,14 @@ For each [release step](../../README.md#release-steps) the plugins that implemen
   ]
 }
 ```
+or the same as YAML and using the object format (since there is no configuration, the configuration is left empty):
+```yaml
+plugins:
+    "@semantic-release/commit-analyzer":
+    "@semantic-release/release-notes-generator":
+    "@semantic-release/npm":
+    "@semantic-release/git":
+```
 
 With this configuration **semantic-release** will:
 - execute the `verifyConditions` implementation of `@semantic-release/npm` then `@semantic-release/git`
@@ -97,3 +105,27 @@ Global plugin configuration can be defined at the root of the **semantic-release
 With this configuration:
 - All plugins will receive the `preset` option, which will be used by both `@semantic-release/commit-analyzer` and `@semantic-release/release-notes-generator` (and ignored by `@semantic-release/github` and `@semantic-release/git`)
 - The `@semantic-release/github` plugin will receive the `assets` options (`@semantic-release/git` will not receive it and therefore will use it's default value for that option)
+
+The above configuration in plugin object format (JSON):
+```json
+{
+  "plugins": {
+    "@semantic-release/commit-analyzer":  {},
+    "@semantic-release/release-notes-generator":  {},
+    "@semantic-release/github": {
+      "assets": ["dist/**"]
+    },
+    "@semantic-release/git": {}
+  },
+  "preset": "angular"
+}
+```
+and as YAML
+```yaml
+plugins:
+  "@semantic-release/commit-analyzer":
+  "@semantic-release/release-notes-generator":
+  "@semantic-release/github":
+    "assets": ["dist/**"]
+  "@semantic-release/git":
+```
