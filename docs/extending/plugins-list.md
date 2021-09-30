@@ -143,3 +143,4 @@
 - [semantic-release-mattermost](https://github.com/ttrobisch/semantic-release-mattermost)
   - `verifyConditions`: Verify that the webhook is setup and release-notes-generator is present.
   - `success`: Send a message about the new release and its notes to a mattermost webhook.
+
