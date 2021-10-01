@@ -200,19 +200,9 @@ See [“Introduction to SemVer” - Irina Gebauer](https://blog.greenkeeper.io/i
 
 ## Can I trust semantic-release with my releases?
 
-**semantic-release** has a full unit and integration test suite that tests `npm` publishes against the [npm-registry-couchapp](https://github.com/npm/npm-registry-couchapp).
+**semantic-release** has a full unit and integration test suite that tests `npm` publishes against the [verdaccio](https://www.npmjs.com/package/verdaccio).
 
 In addition the [verify conditions step](../../README.md#release-steps) verifies that all necessary conditions for proceeding with a release are met, and a new release will be performed [only if all your tests pass](../usage/ci-configuration.md#run-semantic-release-only-after-all-tests-succeeded).
-
-## Why does semantic-release require Node version >= 14.17?
-
-**semantic-release** is written using the latest [ECMAScript 2017](https://www.ecma-international.org/publications/standards/Ecma-262.htm) features, without transpilation which **requires Node version 14.17 or higher**.
-
-See [Node version requirement](./node-version.md#node-version-requirement) for more details and solutions.
-
-## Why does semantic-release require Git version >= 2.7.1?
-
-**semantic-release** uses Git CLI commands to read information about the repository such as branches, commit history and tags. Certain commands and options (such as [the `--merged` option of the `git tag` command](https://git-scm.com/docs/git-tag/2.7.0#git-tag---no-mergedltcommitgt) or bug fixes related to `git ls-files`) used by **semantic-release** are only available in Git version 2.7.1 and higher.
 
 ## What is npx?
 
