@@ -237,6 +237,20 @@ if (env.GITHUB_TOKEN) {
   //...
 }
 ```
+## Logger
+Use `context.logger` to provide debug logging in the plugin.
+
+```js
+const { logger } = context;
+
+logger.log('Some message from plugin.'). 
+```
+
+The above usage yields the following where `PLUGIN_PACKAGE_NAME` is automatically inferred.
+
+```
+[3:24:04 PM] [semantic-release] [PLUGIN_PACKAGE_NAME] › ℹ  Some message from plugin.
+```
 
 ## Execution order
 
