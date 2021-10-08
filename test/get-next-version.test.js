@@ -275,3 +275,26 @@ test('Increase version for release on prerelease branch when there is no regular
     '1.0.0-beta.2'
   );
 });
+
+test('Change prerelease id for version after the fact', (t) => {
+  t.is(
+    getNextVersion({
+      branch: {
+        name: 'main',
+        type: 'prerelease',
+        prerelease: 'canary',
+        tags: [
+          {
+            gitTag: 'v1.0.0-main.42',
+            version: '1.0.0-main.42',
+            channels: ['canary'],
+          },
+        ],
+      },
+      nextRelease: {type: 'patch', channel: 'canary'},
+      lastRelease: {version: 'v1.0.0-main.42', channels: ['canary']},
+      logger: t.context.logger,
+    }),
+    '1.0.0-canary.42'
+  );
+});
