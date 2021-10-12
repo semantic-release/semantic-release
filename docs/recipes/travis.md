@@ -10,7 +10,7 @@ Alternatively, the default `NPM_TOKEN` and `GH_TOKEN` can be easily [setup with 
 
 ### `.travis.yml` configuration for multiple Node.js jobs
 
-This example is a minimal configuration for **semantic-release** with a build running Node 10 and 12. See [Travis - Customizing the Build](https://docs.travis-ci.com/user/customizing-the-build) for additional configuration options.
+This example is a minimal configuration for **semantic-release** with a build running Node 14 and 16. See [Travis - Customizing the Build](https://docs.travis-ci.com/user/customizing-the-build) for additional configuration options.
 
 This example creates a `release` [build stage](https://docs.travis-ci.com/user/build-stages) that [runs `semantic-release` only after all test jobs are successful](../usage/ci-configuration.md#run-semantic-release-only-after-all-tests-succeeded).
 
@@ -24,8 +24,8 @@ It's recommended to run the `semantic-release` command in the [Travis `deploy` s
 language: node_js
 
 node_js:
-  - 10
-  - 12
+  - 14
+  - 16
 
 jobs:
   include:
@@ -48,7 +48,7 @@ A `package.json` is required only for [local](../usage/installation.md#local-ins
 ```json
 {
   "devDependencies": {
-    "semantic-release": "^15.0.0"
+    "semantic-release": "^18.0.0"
   }
 }
 ```

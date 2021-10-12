@@ -42,9 +42,9 @@
 - [x] Print the next version only
   - semantic release can now be configured to run and have no impact on the git repository using the `skipTag` property. [example recipe](docs/recipes/expected-next-version.md)
 
-**semantic-release** automates the whole package release workflow including: determining the next version number, generating the release notes and publishing the package.
+**semantic-release** automates the whole package release workflow including: determining the next version number, generating the release notes, and publishing the package.
 
-This removes the immediate connection between human emotions and version numbers, strictly following the [Semantic Versioning](http://semver.org) specification.
+This removes the immediate connection between human emotions and version numbers, strictly following the [Semantic Versioning](http://semver.org) specification and communicating the **impact** of changes to consumers.
 
 > Trust us, this will change your workflow for the better. – [egghead.io](https://egghead.io/lessons/javascript-how-to-write-a-javascript-library-automating-releases-with-semantic-release)
 
@@ -65,9 +65,11 @@ This removes the immediate connection between human emotions and version numbers
 
 ### Commit message format
 
-**semantic-release** uses the commit messages to determine the type of changes in the codebase. Following formalized conventions for commit messages, **semantic-release** automatically determines the next [semantic version](https://semver.org) number, generates a changelog and publishes the release.
+**semantic-release** uses the commit messages to determine the consumer impact of changes in the codebase.
+Following formalized conventions for commit messages, **semantic-release** automatically determines the next [semantic version](https://semver.org) number, generates a changelog and publishes the release.
 
-By default **semantic-release** uses [Angular Commit Message Conventions](https://github.com/angular/angular/blob/master/CONTRIBUTING.md#-commit-message-format). The commit message format can be changed with the [`preset` or `config` options](docs/usage/configuration.md#options) of the [@semantic-release/commit-analyzer](https://github.com/semantic-release/commit-analyzer#options) and [@semantic-release/release-notes-generator](https://github.com/semantic-release/release-notes-generator#options) plugins.
+By default, **semantic-release** uses [Angular Commit Message Conventions](https://github.com/angular/angular/blob/master/CONTRIBUTING.md#-commit-message-format).
+The commit message format can be changed with the [`preset` or `config` options](docs/usage/configuration.md#options) of the [@semantic-release/commit-analyzer](https://github.com/semantic-release/commit-analyzer#options) and [@semantic-release/release-notes-generator](https://github.com/semantic-release/release-notes-generator#options) plugins.
 
 Tools such as [commitizen](https://github.com/commitizen/cz-cli) or [commitlint](https://github.com/conventional-changelog/commitlint) can be used to help contributors and enforce valid commit messages.
 
@@ -75,19 +77,21 @@ The table below shows which commit message gets you which release type when `sem
 
 | Commit message                                                                                                                                                                                   | Release type               |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------- |
-| `fix(pencil): stop graphite breaking when too much pressure applied`                                                                                                                             | Patch Release              |
+| `fix(pencil): stop graphite breaking when too much pressure applied`                                                                                                                             | ~~Patch~~ Fix Release      |
 | `feat(pencil): add 'graphiteWidth' option`                                                                                                                                                       | ~~Minor~~ Feature Release  |
 | `perf(pencil): remove graphiteWidth option`<br><br>`BREAKING CHANGE: The graphiteWidth option has been removed.`<br>`The default graphite width of 10mm is always used for performance reasons.` | ~~Major~~ Breaking Release |
 
 ### Automation with CI
 
-**semantic-release** is meant to be executed on the CI environment after every successful build on the release branch. This way no human is directly involved in the release process and the releases are guaranteed to be [unromantic and unsentimental](http://sentimentalversioning.org).
+**semantic-release** is meant to be executed on the CI environment after every successful build on the release branch.
+This way no human is directly involved in the release process and the releases are guaranteed to be [unromantic and unsentimental](http://sentimentalversioning.org).
 
 ### Triggering a release
 
-For each new commits added to one of the release branches (for example `master`, `next`, `beta`), with `git push` or by merging a pull request or merging from another branch, a CI build is triggered and runs the `semantic-release` command to make a release if there are codebase changes since the last release that affect the package functionalities.
+For each new commit added to one of the release branches (for example: `master`, `next`, `beta`), with `git push` or by merging a pull request or merging from another branch, a CI build is triggered and runs the `semantic-release` command to make a release if there are codebase changes since the last release that affect the package functionalities.
 
-**semantic-release** offers various ways to control the timing, the content and the audience of published releases. See example workflows in the following recipes:
+**semantic-release** offers various ways to control the timing, the content and the audience of published releases.
+See example workflows in the following recipes:
 
 - [Using distribution channels](docs/recipes/distribution-channels.md#publishing-on-distribution-channels)
 - [Maintenance releases](docs/recipes/maintenance-releases.md#publishing-maintenance-releases)
@@ -116,7 +120,7 @@ In order to use **semantic-release** you need:
 - To host your code in a [Git repository](https://git-scm.com)
 - Use a Continuous Integration service that allows you to [securely set up credentials](docs/usage/ci-configuration.md#authentication)
 - Git CLI version [2.7.1 or higher](docs/support/FAQ.md#why-does-semantic-release-require-git-version--271) installed in your Continuous Integration environment
-- [Node.js](https://nodejs.org) version [10.19 or higher](docs/support/FAQ.md#why-does-semantic-release-require-node-version--1019) installed in your Continuous Integration environment
+- [Node.js](https://nodejs.org) version [14.17 or higher](docs/support/FAQ.md#why-does-semantic-release-require-node-version--1417) installed in your Continuous Integration environment
 
 ## Documentation
 
@@ -149,8 +153,8 @@ In order to use **semantic-release** you need:
 
 ## Get help
 
-- [Stack Overflow](https://stackoverflow.com/questions/tagged/semantic-release)
 - [GitHub Discussions](https://github.com/semantic-release/semantic-release/discussions)
+- [Stack Overflow](https://stackoverflow.com/questions/tagged/semantic-release)
 - [Twitter](https://twitter.com/SemanticRelease)
 
 ## Badge
