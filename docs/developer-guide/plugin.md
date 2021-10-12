@@ -238,13 +238,15 @@ if (env.GITHUB_TOKEN) {
   //...
 }
 ```
+
 ## Logger
+
 Use `context.logger` to provide debug logging in the plugin.
 
 ```js
 const { logger } = context;
 
-logger.log('Some message from plugin.'). 
+logger.log('Some message from plugin.').
 ```
 
 The above usage yields the following where `PLUGIN_PACKAGE_NAME` is automatically inferred.
