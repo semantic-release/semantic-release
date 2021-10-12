@@ -35,9 +35,9 @@ jobs:
     strategy:
       matrix:
         node-version:
-          - 10.19.0
-          - 12
-          - 14
+          - 14.17
+          - 16
+
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

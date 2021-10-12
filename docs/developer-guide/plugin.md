@@ -239,6 +239,22 @@ if (env.GITHUB_TOKEN) {
 }
 ```
 
+## Logger
+
+Use `context.logger` to provide debug logging in the plugin.
+
+```js
+const { logger } = context;
+
+logger.log('Some message from plugin.').
+```
+
+The above usage yields the following where `PLUGIN_PACKAGE_NAME` is automatically inferred.
+
+```
+[3:24:04 PM] [semantic-release] [PLUGIN_PACKAGE_NAME] › ℹ  Some message from plugin.
+```
+
 ## Execution order
 
 For the lifecycles, the list at the top of the readme contains the order. If there are multiple plugins for the same lifecycle, then the order of the plugins determines the order in which they are executed.
