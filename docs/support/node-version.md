@@ -27,7 +27,7 @@ Use it to execute the `semantic-release` command.
 $ npx -p node@lts -c "npx semantic-release"
 ```
 
-**Note:**: See [What is npx](./FAQ.md#what-is-npx) for more details.
+**Note**: See [What is npx](./FAQ.md#what-is-npx) for more details.
 
 ### Use `nvm`
 
