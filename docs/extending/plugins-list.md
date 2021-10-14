@@ -146,3 +146,7 @@
 - [semantic-release-github-milestones](https://github.com/nitzano/semantic-release-github-milestones)
   - `verifyConditions`: Verify github tokens are present and valid.
   - `verifyRelease`: Display information regarding the matching github milestone.
+- [semantic-release-telegram-bot](https://github.com/skoropadas/semantic-release-telegram-bot)
+  - `verifyConditions`: Validate configuration and verify `TELEGRAM_BOT_TOKEN` and package name
+  - `success`: Publish a success message to certain telegram chats
+  - `fail`: Publish a fail message to certain telegram chats
