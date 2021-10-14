@@ -17,7 +17,7 @@ In this example, the [`circleci/node`](https://circleci.com/developer/orbs/orb/c
 
 To run our `release` job, we have created a workflow named `test_and_release` which will run two jobs, `node/test`, which comes from the node orb and will test our application, and our release job.
 Here, we are actually making use of [matrix jobs](https://circleci.com/blog/circleci-matrix-jobs/) so that our single `node/test` job will actually be executed twice, once for Node version 16, and once for version 14.
-Finally, we call our release job with a `requires` parameter so that `release` will only run after `node/test` has successfully tested against v14 and v16.
+Finally, we call our release job with a `requires` parameter so that `release` will run against the latest LTS version of node, only after `node/test` has successfully tested against v14 and v16.
 
 ```yaml
 version: 2.1
@@ -28,6 +28,8 @@ jobs:
     executor: node/default
     steps:
       - checkout
+      - node/install
+          lts: true
       - node/install-packages # Install and automatically cache packages
       # Run optional required steps before releasing
       # - run: npm run build-script
