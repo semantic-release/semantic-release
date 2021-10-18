@@ -29,12 +29,6 @@
   </a>
 </p>
 
-<p align="center">
-  <a href="#contributors-">
-    <img alt="Github All Contributors" src="https://img.shields.io/github/all-contributors/semantic-release-plus/semantic-release">
-  </a>
-</p>
-
 **semantic-release-plus** is a drop in replacement for **semantic release** that adds some enhancements:
 
 - [x] Filter commit by path [commitPaths](docs/usage/configuration.md#commitPaths)
