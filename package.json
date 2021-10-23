@@ -62,7 +62,7 @@
     "file-url": "3.0.0",
     "fs-extra": "9.1.0",
     "got": "11.8.2",
-    "husky": "7.0.2",
+    "husky": "7.0.4",
     "js-yaml": "4.1.0",
     "lint-staged": "11.2.3",
     "mockserver-client": "5.11.2",
