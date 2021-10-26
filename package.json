@@ -64,7 +64,7 @@
     "got": "11.8.2",
     "husky": "7.0.4",
     "js-yaml": "4.1.0",
-    "lint-staged": "11.2.4",
+    "lint-staged": "11.2.5",
     "mockserver-client": "5.11.2",
     "nock": "13.1.4",
     "nyc": "15.1.0",
