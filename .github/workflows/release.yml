@@ -1,12 +1,11 @@
 name: Release
-on:
+"on":
   push:
     branches:
       - master
       - next
       - beta
-      - "*.x" # maintenance releases branches
-
+      - "*.x"
 jobs:
   release:
     name: release
@@ -16,6 +15,7 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           cache: npm
+          node-version: 16
       - run: npm ci
       - run: npx semantic-release
         env:
