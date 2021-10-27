@@ -152,3 +152,7 @@
   - `fail`: Publish a fail message to certain telegram chats
 - [semantic-release-npm-deprecate](https://github.com/jpoehnelt/semantic-release-npm-deprecate)
   - `publish`: Automatically mark old versions as deprecated.
+- [@eshepelyuk/semantic-release-helm-oci](https://github.com/eshepelyuk/semantic-release-helm-oci)
+  - `verifyConditions`: Verify plugin configuration and login to Helm registry
+  - `prepare`: Package Helm chart to local folder
+  - `publish`: Publish Helm chart to OCI registry
