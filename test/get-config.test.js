@@ -136,7 +136,7 @@ test('Read options from .releaserc.yml', async (t) => {
     plugins: false,
   };
   // Create package.json in repository root
-  await writeFile(path.resolve(cwd, '.releaserc.yml'), yaml.safeDump(options));
+  await writeFile(path.resolve(cwd, '.releaserc.yml'), yaml.dump(options));
 
   const {options: result} = await t.context.getConfig({cwd});
 

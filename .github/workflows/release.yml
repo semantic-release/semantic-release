@@ -1,12 +1,11 @@
 name: Release
-on:
+"on":
   push:
     branches:
       - master
       - next
       - beta
-      - "*.x" # maintenance releases branches
-
+      - "*.x"
 jobs:
   release:
     name: release
@@ -14,7 +13,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
-      - uses: bahmutov/npm-install@v1
+        with:
+          cache: npm
+          node-version: 16
+      - run: npm ci
       - run: npx semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
