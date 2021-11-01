@@ -15,6 +15,7 @@
 - ["Introduction to SemVer" - Irina Gebauer](https://blog.greenkeeper.io/introduction-to-semver-d272990c44f2)
 - ["Introduction to Semantic Release" - liv](https://blog.greenkeeper.io/introduction-to-semantic-release-33f73b117c8)
 - ["Series - Semantic Release Automation" - Abdelrahman Wahdan](https://dev.to/abdelrahmanahmed/semantic-release-and-how-to-automate-it-part-1-4pa2)
+- ["Explain semantic release and how to use it on GitLab pipeline"](https://regoo707.medium.com/auto-bump-apps-versions-and-releases-using-gitlab-pipeline-e32f1d7fa3ee)
 
 ## Tutorials
 
