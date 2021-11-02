@@ -1,0 +1,23 @@
+storage: /verdaccio/storage/data
+plugins: /verdaccio/plugins
+web:
+  title: Verdaccio
+auth:
+  htpasswd:
+    file: /verdaccio/storage/htpasswd
+packages:
+  '@*/*':
+    access: $all
+    publish: $authenticated
+    unpublish: $authenticated
+  '**':
+    access: $all
+    publish: $authenticated
+    unpublish: $authenticated
+server:
+  keepAliveTimeout: 60
+middlewares:
+  audit:
+    enabled: true
+logs:
+  - { type: stdout, format: pretty, level: http }

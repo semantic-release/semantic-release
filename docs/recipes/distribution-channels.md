@@ -97,7 +97,7 @@ The Git history of the repository is now:
 
 After a period of feedback from our users using the `@next` dist-tag we feel confident to make our big feature available to all users. To do so we merge the `next` branch into `master`. There should be no conflict as `next` is strictly ahead of `master`.
 
-Once the merge commit is pushed to `next`, **semantic-release** will add the version `2.1.0` to the dist-tag `@latest` so all users will receive it when installing out module with `npm install example-module`.
+Once the merge commit is pushed to `master`, **semantic-release** will add the version `2.1.0` to the dist-tag `@latest` so all users will receive it when installing out module with `npm install example-module`.
 
 The Git history of the repository is now:
 
