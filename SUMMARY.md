@@ -19,12 +19,18 @@
 
 ## Recipes
 
-- [CI configurations](docs/recipes/README.md)
+- [CI configurations](docs/recipes/README.md#ci-configurations)
   - [CircleCI 2.0](docs/recipes/circleci-workflows.md)
   - [Travis CI](docs/recipes/travis.md)
   - [GitLab CI](docs/recipes/gitlab-ci.md)
-- [Git hosted services](recipes/git-hosted-services/README.md)
+  - [GitHub Actions](docs/recipes/github-actions.md)
+  - [Jenkins CI](docs/recipes/jenkins-ci.md)
+- [Git hosted services](docs/recipes/README.md#git-hosted-services)
   - [Git authentication with SSH keys](docs/recipes/git-auth-ssh-keys.md)
+- [Release Workflow](docs/recipes/README.md#release-workflow)
+  - [Publishing on distribution channels](docs/recipes/distribution-channels.md)
+  - [Publishing maintenance releases](docs/recipes/maintenance-releases.md)
+  - [Publishing pre-releases](docs/recipes/pre-releases.md)
 - [Package managers and languages](recipes/package-managers-and-languages.md)
 - [Monorepos](docs/recipes/README.md#Monorepos)
   - [nx monorepo](docs/recipes/nx-monorepo.md)
@@ -44,3 +50,4 @@
 - [Troubleshooting](docs/support/troubleshooting.md)
 - [Node version requirement](docs/support/node-version.md)
 - [Node Support Policy](docs/support/node-support-policy.md)
+- [Git version requirement](docs/support/git-version.md)

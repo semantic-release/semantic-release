@@ -10,11 +10,14 @@ Alternatively, the default `NPM_TOKEN` and `GH_TOKEN` can be easily [setup with 
 
 ### `.circleci/config.yml` configuration for multiple Node jobs
 
-This example is a minimal configuration for **semantic-release** with tests running against Node 16 and 14. See [CircleCI documentation](https://circleci.com/docs/2.0) for additional configuration options.
+This example is a minimal configuration for **semantic-release** with tests running against Node 16 and 14.
+See [CircleCI documentation](https://circleci.com/docs/2.0) for additional configuration options.
 
 In this example, the [`circleci/node`](https://circleci.com/developer/orbs/orb/circleci/node) orb is imported (Which makes some node operations easier), then a `release` job is defined which will run `semantic-release`.
 
-To run our `release` job, we have created a workflow named `test_and_release` which will run two jobs, `node/test`, which comes from the node orb and will test our application, and our release job. Here, we are actually making use of [matrix jobs](https://circleci.com/blog/circleci-matrix-jobs/) so that our single `node/test` job will actually be executed twice, once for Node version 16, and once for version 14. Finally, we call our release job with a `requires` parameter so that `release` will only run after `node/test` has successfully tested against v14 and v16.
+To run our `release` job, we have created a workflow named `test_and_release` which will run two jobs, `node/test`, which comes from the node orb and will test our application, and our release job.
+Here, we are actually making use of [matrix jobs](https://circleci.com/blog/circleci-matrix-jobs/) so that our single `node/test` job will actually be executed twice, once for Node version 16, and once for version 14.
+Finally, we call our release job with a `requires` parameter so that `release` will run against the latest LTS version of node, only after `node/test` has successfully tested against v14 and v16.
 
 ```yaml
 version: 2.1
@@ -25,6 +28,8 @@ jobs:
     executor: node/default
     steps:
       - checkout
+      - node/install
+          lts: true
       - node/install-packages # Install and automatically cache packages
       # Run optional required steps before releasing
       # - run: npm run build-script
@@ -43,16 +48,4 @@ workflows:
       - release:
           requires:
             - node/test
-```
-
-### `package.json` configuration for multiple Node jobs
-
-A `package.json` is required only for [local](../usage/installation.md#local-installation) **semantic-release** installation.
-
-```json
-{
-  "devDependencies": {
-    "semantic-release": "^18.0.0"
-  }
-}
 ```
