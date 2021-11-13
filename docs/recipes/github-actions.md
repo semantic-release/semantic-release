@@ -42,7 +42,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npx semantic-release
+        run: npx 'semantic-release@^18.0.0' # replace with latest major version
 ```
 
 ## Pushing `package.json` changes to a `master` branch
