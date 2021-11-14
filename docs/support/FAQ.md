@@ -47,7 +47,7 @@ To publish a non-Node package (without a `package.json`) you would need to:
 - Set **semantic-release** [options](../usage/configuration.md#options) via [CLI arguments or rc file](../usage/configuration.md#configuration)
 - Make sure your CI job executing the `semantic-release` command has access to a version of Node that [meets our version requirement](./node-version.md) to execute the `semantic-release` command
 
-See the [CI configuration recipes](../recipes/README.md#ci-configurations) for more details on specific CI environments.
+See the [CI configuration recipes](../recipes/release-workflow/README.md#ci-configurations) for more details on specific CI environments.
 
 In addition, you will need to configure the **semantic-release** [plugins](../usage/plugins.md#plugins) to disable the [`@semantic-release/npm`](https://github.com/semantic-release/npm) plugin which is used by default and use a plugin for your project type.
 
@@ -71,7 +71,7 @@ Here is a basic example to create [GitHub releases](https://help.github.com/arti
 
 **Note**: This is a theoretical example where the command `set-version` update the project version with the value passed as its first argument and `publish-package` publishes the package to a registry.
 
-See the [package managers and languages recipes](../recipes/README.md#package-managers-and-languages) for more details on specific project types.
+See the [package managers and languages recipes](../recipes/release-workflow/README.md#package-managers-and-languages) for more details on specific project types.
 
 ## Can I use semantic-release with any CI service?
 
@@ -79,7 +79,7 @@ Yes, **semantic-release** can be used with any CI service, as long as it provide
 - A way to set [authentication](../usage/ci-configuration.md#authentication) via environment variables
 - A way to guarantee that the `semantic-release` command is [executed only after all the tests of all the jobs in the CI build pass](../usage/ci-configuration.md#run-semantic-release-only-after-all-tests-succeeded)
 
-See the [CI configuration recipes](../recipes/README.md#ci-configurations) for more details on specific CI environments.
+See the [CI configuration recipes](../recipes/release-workflow/README.md#ci-configurations) for more details on specific CI environments.
 
 ## Can I run semantic-release on my local machine rather than on a CI server?
 
@@ -95,7 +95,7 @@ However this is not the recommended approach, as running unit and integration te
 
 Yes, with the [`@semantic-release/gitlab-config`](https://github.com/semantic-release/gitlab-config) shareable configuration.
 
-See the [GitLab CI recipes](../recipes/gitlab-ci.md#using-semantic-release-with-gitlab-ci) for the CI configuration.
+See the [GitLab CI recipes](../recipes/ci-configurations/gitlab-ci.md#using-semantic-release-with-gitlab-ci) for the CI configuration.
 
 ## Can I use semantic-release with any Git hosted environment?
 
@@ -194,7 +194,7 @@ If you need more control over the timing of releases, see [Triggering a release]
 
 This is not supported by **semantic-release** as it's not considered a good practice, mostly because [Semantic Versioning](https://semver.org) rules applies differently to major version zero.
 
-If your project is under heavy development, with frequent breaking changes, and is not production ready yet we recommend [publishing pre-releases](../recipes/pre-releases.md#publishing-pre-releases).
+If your project is under heavy development, with frequent breaking changes, and is not production ready yet we recommend [publishing pre-releases](../recipes/release-workflow/pre-releases.md#publishing-pre-releases).
 
 See [“Introduction to SemVer” - Irina Gebauer](https://blog.greenkeeper.io/introduction-to-semver-d272990c44f2) for more details on [Semantic Versioning](https://semver.org) and the recommendation to start at version `1.0.0`.
 
