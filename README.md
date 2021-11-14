@@ -37,9 +37,9 @@ This removes the immediate connection between human emotions and version numbers
 - Notify maintainers and users of new releases
 - Use formalized commit message convention to document changes in the codebase
 - Publish on different distribution channels (such as [npm dist-tags](https://docs.npmjs.com/cli/dist-tag)) based on git merges
-- Integrate with your [continuous integration workflow](docs/recipes/README.md#ci-configurations)
+- Integrate with your [continuous integration workflow](docs/recipes/release-workflow/README.md#ci-configurations)
 - Avoid potential errors associated with manual releases
-- Support any [package managers and languages](docs/recipes/README.md#package-managers-and-languages) via [plugins](docs/usage/plugins.md)
+- Support any [package managers and languages](docs/recipes/release-workflow/README.md#package-managers-and-languages) via [plugins](docs/usage/plugins.md)
 - Simple and reusable configuration via [shareable configurations](docs/usage/shareable-configurations.md)
 
 ## How does it work?
@@ -74,9 +74,9 @@ For each new commit added to one of the release branches (for example: `master`,
 **semantic-release** offers various ways to control the timing, the content and the audience of published releases.
 See example workflows in the following recipes:
 
-- [Using distribution channels](docs/recipes/distribution-channels.md#publishing-on-distribution-channels)
-- [Maintenance releases](docs/recipes/maintenance-releases.md#publishing-maintenance-releases)
-- [Pre-releases](docs/recipes/pre-releases.md#publishing-pre-releases)
+- [Using distribution channels](docs/recipes/release-workflow/distribution-channels.md#publishing-on-distribution-channels)
+- [Maintenance releases](docs/recipes/release-workflow/maintenance-releases.md#publishing-maintenance-releases)
+- [Pre-releases](docs/recipes/release-workflow/pre-releases.md#publishing-pre-releases)
 
 ### Release steps
 
@@ -117,10 +117,10 @@ In order to use **semantic-release** you need:
   - [Plugins](docs/extending/plugins-list.md)
   - [Shareable configuration](docs/extending/shareable-configurations-list.md)
 - Recipes
-  - [CI configurations](docs/recipes/README.md)
-  - [Git hosted services](docs/recipes/README.md)
-  - [Release workflow](docs/recipes/README.md)
-  - [Package managers and languages](docs/recipes/README.md)
+  - [CI configurations](docs/recipes/release-workflow/README.md)
+  - [Git hosted services](docs/recipes/release-workflow/README.md)
+  - [Release workflow](docs/recipes/release-workflow/README.md)
+  - [Package managers and languages](docs/recipes/release-workflow/README.md)
 - Developer guide
   - [JavaScript API](docs/developer-guide/js-api.md)
   - [Plugins development](docs/developer-guide/plugin.md)

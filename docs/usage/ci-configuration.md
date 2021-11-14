@@ -13,7 +13,7 @@ Here is a few example of the CI services that can be used to achieve this:
 - [Wercker Workflows](http://devcenter.wercker.com/docs/workflows)
 - [GoCD Pipelines](https://docs.gocd.org/current/introduction/concepts_in_go.html#pipeline).
 
-See [CI configuration recipes](../recipes/README.md#ci-configurations) for more details.
+See [CI configuration recipes](../recipes/release-workflow/README.md#ci-configurations) for more details.
 
 ## Authentication
 
@@ -29,7 +29,7 @@ See [CI configuration recipes](../recipes/README.md#ci-configurations) for more 
 | `BB_TOKEN_BASIC_AUTH` or `BITBUCKET_TOKEN_BASIC_AUTH` | A Bitbucket [personal access token](https://confluence.atlassian.com/bitbucketserver/personal-access-tokens-939515499.html) with basic auth support. For clearification `user:token` has to be the value of this env.        |
 | `GIT_CREDENTIALS`                                     | [URL encoded](https://en.wikipedia.org/wiki/Percent-encoding) Git username and password in the format `<username>:<password>`. The username and password must each be individually URL encoded, not the `:` separating them. |
 
-Alternatively the Git authentication can be set up via [SSH keys](../recipes/git-auth-ssh-keys.md).
+Alternatively the Git authentication can be set up via [SSH keys](../recipes/git-hosted-services/git-auth-ssh-keys.md).
 
 ### Authentication for plugins
 
@@ -44,6 +44,6 @@ See each plugin's documentation for the environment variables required.
 
 The authentication token/credentials have to be made available in the CI service via environment variables.
 
-See [CI configuration recipes](../recipes/README.md#ci-configurations) for more details on how to configure environment variables in your CI service.
+See [CI configuration recipes](../recipes/release-workflow/README.md#ci-configurations) for more details on how to configure environment variables in your CI service.
 
 **Note**: The environment variables `GH_TOKEN`, `GITHUB_TOKEN`, `GL_TOKEN` and `GITLAB_TOKEN` can be used for both the Git authentication and the API authentication required by [@semantic-release/github](https://github.com/semantic-release/github) and [@semantic-release/gitlab](https://github.com/semantic-release/gitlab).
