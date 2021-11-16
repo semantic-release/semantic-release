@@ -3,8 +3,8 @@
 This recipe will walk you through a simple example that uses Git branches and distribution channels to publish fixes and features for old versions of a package.
 
 This example uses the **semantic-release** default configuration:
-- [branches](../usage/configuration.md#branches): `['+([0-9])?(.{+([0-9]),x}).x', 'master', 'next', 'next-major', {name: 'beta', prerelease: true}, {name: 'alpha', prerelease: true}]`
-- [plugins](../usage/configuration.md#plugins): `['@semantic-release/commit-analyzer', '@semantic-release/release-notes-generator', '@semantic-release/npm', '@semantic-release/github']`
+- [branches](../../usage/configuration.md#branches): `['+([0-9])?(.{+([0-9]),x}).x', 'master', 'next', 'next-major', {name: 'beta', prerelease: true}, {name: 'alpha', prerelease: true}]`
+- [plugins](../../usage/configuration.md#plugins): `['@semantic-release/commit-analyzer', '@semantic-release/release-notes-generator', '@semantic-release/npm', '@semantic-release/github']`
 
 ## Initial release
 
@@ -18,7 +18,7 @@ The Git history of the repository is:
 
 ## Releasing a breaking change
 
-We now decide to drop Node.js 6 support for our package, and require Node.js 8 or higher, which is a breaking change.  
+We now decide to drop Node.js 6 support for our package, and require Node.js 8 or higher, which is a breaking change.
 
 We commit that change with the message `feat: drop Node.js 6 support \n\n BREAKING CHANGE: Node.js >= 8 required` to `master`. When pushing that commit, **semantic-release** will release the version `2.0.0` on the dist-tag `@latest`.
 
