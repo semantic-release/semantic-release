@@ -34,7 +34,7 @@ We recommend you setup a linting system to ensure good javascript practices are 
 In your `index.js` file, you can start by writing the following code
 
 ```javascript
-const verifyConditions = require('./src/verify');
+const verify = require('./src/verify');
 
 let verified;
 
@@ -43,12 +43,12 @@ let verified;
  * @param {*} pluginConfig The semantic-release plugin config
  * @param {*} context The context provided by semantic-release
  */
-async function verify(pluginConfig, context) {
-  await verifyConditions(pluginConfig, context);
+async function verifyConditions(pluginConfig, context) {
+  await verify(pluginConfig, context);
   verified = true;
 }
 
-module.exports = { verify };
+module.exports = { verifyConditions };
 ```
 
 Then, in your `src` folder, create a file called `verify.js` and add the following
@@ -236,6 +236,20 @@ const { env } = context;
 if (env.GITHUB_TOKEN) {
   //...
 }
+```
+## Logger
+Use `context.logger` to provide debug logging in the plugin.
+
+```js
+const { logger } = context;
+
+logger.log('Some message from plugin.'). 
+```
+
+The above usage yields the following where `PLUGIN_PACKAGE_NAME` is automatically inferred.
+
+```
+[3:24:04 PM] [semantic-release] [PLUGIN_PACKAGE_NAME] › ℹ  Some message from plugin.
 ```
 
 ## Execution order
