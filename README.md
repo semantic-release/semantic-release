@@ -117,10 +117,9 @@ In order to use **semantic-release** you need:
   - [Plugins](docs/extending/plugins-list.md)
   - [Shareable configuration](docs/extending/shareable-configurations-list.md)
 - Recipes
-  - [CI configurations](docs/recipes/release-workflow/README.md)
-  - [Git hosted services](docs/recipes/release-workflow/README.md)
+  - [CI configurations](docs/recipes/ci-configurations/README.md)
+  - [Git hosted services](docs/recipes/git-hosted-services/README.md)
   - [Release workflow](docs/recipes/release-workflow/README.md)
-  - [Package managers and languages](docs/recipes/release-workflow/README.md)
 - Developer guide
   - [JavaScript API](docs/developer-guide/js-api.md)
   - [Plugins development](docs/developer-guide/plugin.md)
