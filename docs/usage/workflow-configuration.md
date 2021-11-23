@@ -6,14 +6,14 @@
 - Maintain multiple lines of releases in parallel
 - Work on large future releases outside the normal flow of one version increment per Git push
 
-See [Release workflow recipes](../recipes/README.md#release-workflow) for detailed examples.
+See [Release workflow recipes](../recipes/release-workflow/README.md#release-workflow) for detailed examples.
 
 The release workflow is configured via the [branches option](./configuration.md#branches) which accepts a single or an array of branch definitions.
 Each branch can be defined either as a string, a [glob](https://github.com/micromatch/micromatch#matching-features) or an object. For string and glob definitions each [property](#branches-properties) will be defaulted.
 
 A branch can defined as one of three types:
 - [release](#release-branches): to make releases on top of the last version released
-- [maintenance](#maintenance-branches): to make release on top of an old release
+- [maintenance](#maintenance-branches): to make releases on top of an old release
 - [pre-release](#pre-release-branches): to make pre-releases
 
 The type of the branch is automatically determined based on naming convention and/or [properties](#branches-properties).
@@ -25,7 +25,7 @@ The type of the branch is automatically determined based on naming convention an
 | `name`       | All                                       | **Required.** The Git branch holding the commits to analyze and the code to release. See [name](#name).                                                                                 | - The value itself if defined as a `String` or the matching branches name if defined as a glob. |
 | `channel`    | All                                       | The distribution channel on which to publish releases from this branch. Set to `false` to force the default distribution channel instead of using the default. See [channel](#channel). | `undefined` for the first release branch, the value of `name` for subsequent ones.              |
 | `range`      | [maintenance](#maintenance-branches) only | **Required unless `name` is formatted like `N.N.x` or `N.x` (`N` is a number).** The range of [semantic versions](https://semver.org) to support on this branch. See [range](#range).   | The value of `name`.                                                                            |
-| `prerelease` | [pre-release](#pre-release-branches) only | **Required.** The pre-release detonation to append to [semantic versions](https://semver.org) released from this branch. See [prerelease](#prerelease).                                 | -                                                                                               |
+| `prerelease` | [pre-release](#pre-release-branches) only | **Required.** The pre-release denotation to append to [semantic versions](https://semver.org) released from this branch. See [prerelease](#prerelease).                                 | -                                                                                               |
 
 ### name
 
@@ -108,7 +108,7 @@ A project must define a minimum of 1 release branch and can have a maximum of 3.
 
 **Note:** With **semantic-release** as with most package managers, a release version must be unique, independently of the distribution channel on which it is available.
 
-See [publishing on distribution channels recipe](../recipes/distribution-channels.md) for a detailed example.
+See [publishing on distribution channels recipe](../recipes/release-workflow/distribution-channels.md) for a detailed example.
 
 #### Pushing to a release branch
 
@@ -142,7 +142,7 @@ Maintenance branches are always considered lower than [release branches](#releas
 
 **semantic-release** will automatically add releases to the corresponding distribution channel when code is [merged from a release or maintenance branch to another maintenance branch](#merging-into-a-maintenance-branch), however only versions within the branch `range` can be merged. If a merged version is outside the maintenance branch `range`, **semantic-release** will not add to the corresponding channel and will throw an `EINVALIDMAINTENANCEMERGE` error.
 
-See [publishing maintenance releases recipe](../recipes/maintenance-releases.md) for a detailed example.
+See [publishing maintenance releases recipe](../recipes/release-workflow/maintenance-releases.md) for a detailed example.
 
 #### Pushing to a maintenance branch
 
@@ -162,7 +162,7 @@ With the configuration `"branches": ["1.0.x", "1.x", "master"]`, if the last rel
 ### Pre-release branches
 
 A pre-release branch is a type of branch used by **semantic-release** that allows to publish releases with a [pre-release version](https://semver.org/#spec-item-9).
-Using a pre-release version allow to publish multiple releases with the same version. Those release will be differentiated via there identifiers (in `1.0.0-alpha.1` the identifier is `alpha.1`).
+Using a pre-release version allow to publish multiple releases with the same version. Those release will be differentiated via their identifiers (in `1.0.0-alpha.1` the identifier is `alpha.1`).
 This is useful when you need to work on a future major release that will include many breaking changes but you do not want to increment the version number for each breaking change commit.
 
 A pre-release branch is characterized by the `prerelease` property that defines the static part of the version released (in `1.0.0-alpha.1` the static part fo the identifier is `alpha`). The [`prerelease`](#prerelease) value of each pre-release branch must be unique across the project.
@@ -171,7 +171,7 @@ A pre-release branch is characterized by the `prerelease` property that defines 
 
 When merging commits associated with an existing release, **semantic-release** will treat them as [pushed commits](#pushing-to-a-pre-release-branch) and publish a new release if necessary, but it will never add those releases to the distribution channel corresponding to the pre-release branch.
 
-See [publishing pre-releases recipe](../recipes/pre-releases.md) for a detailed example.
+See [publishing pre-releases recipe](../recipes/release-workflow/pre-releases.md) for a detailed example.
 
 #### Pushing to a pre-release branch
 

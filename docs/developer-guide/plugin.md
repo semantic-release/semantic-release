@@ -34,7 +34,7 @@ We recommend you setup a linting system to ensure good javascript practices are 
 In your `index.js` file, you can start by writing the following code
 
 ```javascript
-const verifyConditions = require('./src/verify');
+const verify = require('./src/verify');
 
 let verified;
 
@@ -43,12 +43,12 @@ let verified;
  * @param {*} pluginConfig The semantic-release plugin config
  * @param {*} context The context provided by semantic-release
  */
-async function verify(pluginConfig, context) {
-  await verifyConditions(pluginConfig, context);
+async function verifyConditions(pluginConfig, context) {
+  await verify(pluginConfig, context);
   verified = true;
 }
 
-module.exports = { verify };
+module.exports = { verifyConditions };
 ```
 
 Then, in your `src` folder, create a file called `verify.js` and add the following
@@ -183,9 +183,14 @@ Compared to the verifyConditions, `analyzeCommits` lifecycle context has keys
 
 Additional keys:
 
-* `nextRelease`
-  * Similar object as `lastRelease` (see above)
-
+* `nextRelease` (Object)
+  * `type` (String)
+  * `channel` (String)
+  * `gitHead` (String, Git hash)
+  * `version` (String, version without `v`)
+  * `gitTag` (String, version with `v`)
+  * `name` (String)
+    
 #### generateNotes
 
 No new content in the context.
@@ -232,3 +237,44 @@ if (env.GITHUB_TOKEN) {
   //...
 }
 ```
+## Logger
+Use `context.logger` to provide debug logging in the plugin.
+
+```js
+const { logger } = context;
+
+logger.log('Some message from plugin.'). 
+```
+
+The above usage yields the following where `PLUGIN_PACKAGE_NAME` is automatically inferred.
+
+```
+[3:24:04 PM] [semantic-release] [PLUGIN_PACKAGE_NAME] › ℹ  Some message from plugin.
+```
+
+## Execution order
+
+For the lifecycles, the list at the top of the readme contains the order. If there are multiple plugins for the same lifecycle, then the order of the plugins determines the order in which they are executed.
+
+## Handling errors
+
+In order to be able to detect and handle errors properly, the errors thrown from the must be of type [SemanticReleaseError](https://github.com/semantic-release/error) or extend it as described in the package readme. This way the errors are handled properly and plugins using the `fail` lifecycle receive the errors correctly. For any other types of errors the internal error handling does nothing, lets them through up until the final catch and does not call any `fail` plugins.
+
+## Advanced
+
+Knowledge that might be useful for plugin developers.
+
+### Multiple analyzeCommits plugins
+
+While it may be trivial that multiple analyzeCommits (or any lifecycle plugins) can be defined, it is not that self-evident that the plugins executed AFTER the first one (for example, the default one: `commit-analyzer`) can change the result. This way it is possible to create more advanced rules or situations, e.g. if none of the commits would result in new release, then a default can be defined.
+
+The commit must be a known release type, for example the commit-analyzer has the following default types:
+* major
+* premajor
+* minor
+* preminor
+* patch
+* prepatch
+* prerelease
+
+If the analyzeCommits-lifecycle plugin does not return anything, then the earlier result is used, but if it returns a supported string value, then that overrides the previous result.
