@@ -26,39 +26,49 @@ Please follow the [Documentation guidelines](#documentation).
 
 ### Give feedback on issues
 
-Some issues are created without information requested in the [Bug report guideline](#bug-report). Help make them easier to resolve by adding any relevant information.
+Some issues are created without information requested in the [Bug report guideline](#bug-report).
+Help make them easier to resolve by adding any relevant information.
 
-Issues with the [design label](https://github.com/issues?q=is%3Aopen+is%3Aissue+user%3Asemantic-release+archived%3Afalse+label%3Adesign) are meant to discuss the implementation of new features. Participating in the discussion is a good opportunity to get involved and influence the future direction of **semantic-release**.
+Issues with the [design label](https://github.com/issues?q=is%3Aopen+is%3Aissue+user%3Asemantic-release+archived%3Afalse+label%3Adesign) are meant to discuss the implementation of new features.
+Participating in the discussion is a good opportunity to get involved and influence the future direction of **semantic-release**.
 
 ### Fix bugs and implement features
 
-Confirmed bugs and ready-to-implement features are marked with the [help wanted label](https://github.com/issues?utf8=%E2%9C%93&q=is%3Aopen+is%3Aissue+user%3Asemantic-release+archived%3Afalse+label%3A%22help+wanted%22). Post a comment on an issue to indicate you would like to work on it and to request help from the [@semantic-release/maintainers](https://github.com/orgs/semantic-release/teams/contributors) and the community.
+Confirmed bugs and ready-to-implement features are marked with the [help wanted label](https://github.com/issues?utf8=%E2%9C%93&q=is%3Aopen+is%3Aissue+user%3Asemantic-release+archived%3Afalse+label%3A%22help+wanted%22).
+Post a comment on an issue to indicate you would like to work on it and to request help from the [@semantic-release/maintainers](https://github.com/orgs/semantic-release/teams/contributors) and the community.
 
 ## Using the issue tracker
 
-The issue tracker is the channel for [bug reports](#bug-report), [features requests](#feature-request) and [submitting pull requests](#submitting-a-pull-request) only. Please use the [Support](docs/support/README.md) and [Get help](README.md#get-help) sections for support, troubleshooting and questions.
+The issue tracker is the channel for [bug reports](#bug-report), [features requests](#feature-request) and [submitting pull requests](#submitting-a-pull-request) only.
+Please use the [Support](docs/support/README.md) and [Get help](README.md#get-help) sections for support, troubleshooting and questions.
 
 Before opening an issue or a Pull Request, please use the [GitHub issue search](https://github.com/issues?utf8=%E2%9C%93&q=user%3Asemantic-release) to make sure the bug or feature request hasn't been already reported or fixed.
 
 ### Bug report
 
-A good bug report shouldn't leave others needing to chase you for more information. Please try to be as detailed as possible in your report and fill the information requested in the [Bug report template](https://github.com/semantic-release/semantic-release/issues/new?template=bug-report.md).
+A good bug report shouldn't leave others needing to chase you for more information.
+Please try to be as detailed as possible in your report and fill the information requested in the [bug report template](https://github.com/semantic-release/semantic-release/issues/new?template=01_bug_report.md).
 
 ### Feature request
 
-Feature requests are welcome, but take a moment to find out whether your idea fits with the scope and aims of the project. It's up to you to make a strong case to convince the project's developers of the merits of this feature. Please provide as much detail and context as possible and fill the information requested in the [Feature request template](https://github.com/semantic-release/semantic-release/issues/new?template=feature-request.md).
+Feature requests are welcome, but take a moment to find out whether your idea fits with the scope and aims of the project.
+It's up to you to make a strong case to convince the project's developers of the merits of this feature.
+Please provide as much detail and context as possible and fill the information requested in the [feature request template](https://github.com/semantic-release/semantic-release/issues/new?template=02_feature_request.md).
 
 ### New plugin request
 
-[Plugins](docs/usage/plugins.md) are a great way to extend **semantic-release** capabilities, integrate with other systems and support new project type. Please provide as much detail and context as possible and fill the information requested in the [New plugin request template](https://github.com/semantic-release/semantic-release/issues/new?template=plugin-request.md).
+[Plugins](docs/usage/plugins.md) are a great way to extend **semantic-release** capabilities, integrate with other systems and support new project type.
+Please provide as much detail and context as possible and fill the information requested in the [plugin suggestion template](https://github.com/semantic-release/semantic-release/issues/new?template=03_plugin_suggestion.md).
 
 ## Submitting a Pull Request
 
-Good pull requests, whether patches, improvements, or new features, are a fantastic help. They should remain focused in scope and avoid containing unrelated commits.
+Good pull requests, whether patches, improvements, or new features, are a fantastic help.
+They should remain focused in scope and avoid containing unrelated commits.
 
-**Please ask first** before embarking on any significant pull requests (e.g. implementing features, refactoring code), otherwise you risk spending a lot of time working on something that the project's developers might not want to merge into the project.
+**Please ask first** before embarking on any significant pull requests (e.g. implementing features, refactoring code), otherwise you risk spending a lot of time working on something that the project's maintainers might not want to merge into the project.
 
-If you have never created a pull request before, welcome 🎉 😄. [Here is a great tutorial](https://opensource.guide/how-to-contribute/#opening-a-pull-request) on how to send one :)
+If you have never created a pull request before, welcome 🎉 😄.
+[Here is a great tutorial](https://opensource.guide/how-to-contribute/#opening-a-pull-request) on how to send one :)
 
 Here is a summary of the steps to follow:
 
@@ -83,7 +93,9 @@ $ git push origin <topic-branch-name>
 
 **Tips**:
 - For ambitious tasks, open a Pull Request as soon as possible with the `[WIP]` prefix in the title, in order to get feedback and help from the community.
-- [Allow semantic-release maintainers to make changes to your Pull Request branch](https://help.github.com/articles/allowing-changes-to-a-pull-request-branch-created-from-a-fork). This way, we can rebase it and make some minor changes if necessary. All changes we make will be done in new commit and we'll ask for your approval before merging them.
+- [Allow semantic-release maintainers to make changes to your Pull Request branch](https://help.github.com/articles/allowing-changes-to-a-pull-request-branch-created-from-a-fork).
+  This way, we can rebase it and make some minor changes if necessary.
+  All changes we make will be done in new commit, and we'll ask for your approval before merging them.
 
 ## Coding rules
 
@@ -129,7 +141,8 @@ A complex feature can be broken down into multiple commits as long as each one m
 
 #### Commit message format
 
-Each commit message consists of a **header**, a **body** and a **footer**. The header has a special format that includes a **type**, a **scope** and a **subject**:
+Each commit message consists of a **header**, a **body** and a **footer**.
+The header has a special format that includes a **type**, a **scope** and a **subject**:
 
 ```commit
 <type>(<scope>): <subject>
@@ -145,7 +158,8 @@ The **footer** can contain a [closing reference to an issue](https://help.github
 
 #### Revert
 
-If the commit reverts a previous commit, it should begin with `revert: `, followed by the header of the reverted commit. In the body it should say: `This reverts commit <hash>.`, where the hash is the SHA of the commit being reverted.
+If the commit reverts a previous commit, it should begin with `revert: `, followed by the header of the reverted commit.
+In the body it should say: `This reverts commit <hash>.`, where the hash is the SHA of the commit being reverted.
 
 #### Type
 
@@ -178,7 +192,8 @@ The body should include the motivation for the change and contrast this with pre
 #### Footer
 The footer should contain any information about **Breaking Changes** and is also the place to reference GitHub issues that this commit **Closes**.
 
-**Breaking Changes** should start with the word `BREAKING CHANGE:` with a space or two newlines. The rest of the commit message is then used for this.
+**Breaking Changes** should start with the word `BREAKING CHANGE:` with a space or two newlines.
+The rest of the commit message is then used for this.
 
 #### Examples
 
@@ -219,7 +234,8 @@ $ npm install
 
 ### Lint
 
-All the [semantic-release](https://github.com/semantic-release) repositories use [XO](https://github.com/sindresorhus/xo) for linting and [Prettier](https://prettier.io) for formatting. Prettier formatting will be automatically verified and fixed by XO.
+All the [semantic-release](https://github.com/semantic-release) repositories use [XO](https://github.com/sindresorhus/xo) for linting and [Prettier](https://prettier.io) for formatting.
+Prettier formatting will be automatically verified and fixed by XO.
 
 Before pushing your code changes make sure there are no linting errors with `npm run lint`.
 
