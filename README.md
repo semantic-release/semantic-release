@@ -139,7 +139,7 @@ In order to use **semantic-release** you need:
 
 ## Badge
 
-Let people know that your package is published using **semantic-release** by including this badge in your readme.
+Let people know that your package is published using **semantic-release** and which [commit-convention](#commit-message-format) is followed by including this badge in your readme.
 
 [![semantic-release: angular](https://img.shields.io/badge/semantic--release-angular-e10079?logo=semantic-release)](https://github.com/semantic-release/semantic-release)
 
