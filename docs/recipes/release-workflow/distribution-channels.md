@@ -3,8 +3,8 @@
 This recipe will walk you through a simple example that uses distribution channels to make releases available only to a subset of users, in order to collect feedbacks before distributing the release to all users.
 
 This example uses the **semantic-release** default configuration:
-- [branches](../usage/configuration.md#branches): `['+([0-9])?(.{+([0-9]),x}).x', 'master', 'next', 'next-major', {name: 'beta', prerelease: true}, {name: 'alpha', prerelease: true}]`
-- [plugins](../usage/configuration.md#plugins): `['@semantic-release/commit-analyzer', '@semantic-release/release-notes-generator', '@semantic-release/npm', '@semantic-release/github']`
+- [branches](../../usage/configuration.md#branches): `['+([0-9])?(.{+([0-9]),x}).x', 'master', 'next', 'next-major', {name: 'beta', prerelease: true}, {name: 'alpha', prerelease: true}]`
+- [plugins](../../usage/configuration.md#plugins): `['@semantic-release/commit-analyzer', '@semantic-release/release-notes-generator', '@semantic-release/npm', '@semantic-release/github']`
 
 ## Initial release
 
@@ -97,7 +97,7 @@ The Git history of the repository is now:
 
 After a period of feedback from our users using the `@next` dist-tag we feel confident to make our big feature available to all users. To do so we merge the `next` branch into `master`. There should be no conflict as `next` is strictly ahead of `master`.
 
-Once the merge commit is pushed to `next`, **semantic-release** will add the version `2.1.0` to the dist-tag `@latest` so all users will receive it when installing out module with `npm install example-module`.
+Once the merge commit is pushed to `master`, **semantic-release** will add the version `2.1.0` to the dist-tag `@latest` so all users will receive it when installing out module with `npm install example-module`.
 
 The Git history of the repository is now:
 

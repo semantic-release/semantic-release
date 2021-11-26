@@ -52,6 +52,10 @@
 - [semantic-release-docker](https://github.com/felixfbecker/semantic-release-docker)
   - `verifyConditions`: Verify that all needed configuration is present and login to the Docker registry.
   - `publish`: Tag the image specified by `name` with the new version, push it to Docker Hub and update the latest tag
+- [@semantic-release-plus/docker](https://github.com/semantic-release-plus/semantic-release-plus/tree/master/packages/plugins/docker)
+  - `verifyConditions`: Verify that all needed configuration is present and login to the configured docker registry.
+  - `publish`: Tag the image specified by `name` with the new version and channel and push it to the configured docker registry.
+  - `addChannel`: Updates a release published on one channel with the destinations channel tag and pushes to the registry ie: next to latest.
 - [semantic-release-gcr](https://github.com/carlos-cubas/semantic-release-gcr)
   - `verifyConditions`: Verify that all needed configuration is present and login to the Docker registry
   - `publish`: Tag the image specified by `name` with the new version, push it to Docker Hub and update the latest tag
@@ -127,3 +131,29 @@
   - `verifyConditions`: Validate configuration and (if present) credentials
   - `prepare`: Update version and appVersion in ```Chart.yaml```
   - `publish`: Publish the chart to a registry (if configured)
+- [semantic-release-codeartifact](https://github.com/ryansonshine/semantic-release-codeartifact)
+  - `verifyConditions`: Validate configuration, get AWS CodeArtifact authentication and repository, validate `publishConfig` or `.npmrc` (if they exist), then pass the configuration to the associated plugins.
+- [semantic-release-telegram](https://github.com/pustovitDmytro/semantic-release-telegram)
+  - `verifyConditions`: Validate configuration and verify ```TELEGRAM_BOT_ID``` and ```TELEGRAM_BOT_TOKEN```
+  - `success`: Publish a message about the successful release to a telegram chat
+  - `fail`: publish a message about failure to a telegram chat
+- [semantic-release-heroku](https://github.com/pustovitDmytro/semantic-release-heroku)
+  - `verifyConditions`: Validate configuration and verify ```HEROKU_API_KEY```
+  - `prepare`: Update the package.json version and create release tarball
+  - `publish`: Publish version to heroku
+- [semantic-release-mattermost](https://github.com/ttrobisch/semantic-release-mattermost)
+  - `verifyConditions`: Verify that the webhook is setup and release-notes-generator is present.
+  - `success`: Send a message about the new release and its notes to a [mattermost](https://mattermost.com/) webhook.
+- [semantic-release-github-milestones](https://github.com/nitzano/semantic-release-github-milestones)
+  - `verifyConditions`: Verify github tokens are present and valid.
+  - `verifyRelease`: Display information regarding the matching github milestone.
+- [semantic-release-telegram-bot](https://github.com/skoropadas/semantic-release-telegram-bot)
+  - `verifyConditions`: Validate configuration and verify `TELEGRAM_BOT_TOKEN` and package name
+  - `success`: Publish a success message to certain telegram chats
+  - `fail`: Publish a fail message to certain telegram chats
+- [semantic-release-npm-deprecate](https://github.com/jpoehnelt/semantic-release-npm-deprecate)
+  - `publish`: Automatically mark old versions as deprecated.
+- [@eshepelyuk/semantic-release-helm-oci](https://github.com/eshepelyuk/semantic-release-helm-oci)
+  - `verifyConditions`: Verify plugin configuration and login to Helm registry
+  - `prepare`: Package Helm chart to local folder
+  - `publish`: Publish Helm chart to OCI registry

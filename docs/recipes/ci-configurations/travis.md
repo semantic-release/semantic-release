@@ -2,17 +2,17 @@
 
 ## Environment variables
 
-The [Authentication](../usage/ci-configuration.md#authentication) environment variables can be configured in [Travis Repository Settings](https://docs.travis-ci.com/user/environment-variables/#defining-variables-in-repository-Settings) or with the [travis env set CLI](https://github.com/travis-ci/travis.rb#env).
+The [Authentication](../../usage/ci-configuration.md#authentication) environment variables can be configured in [Travis Repository Settings](https://docs.travis-ci.com/user/environment-variables/#defining-variables-in-repository-Settings) or with the [travis env set CLI](https://github.com/travis-ci/travis.rb#env).
 
-Alternatively, the default `NPM_TOKEN` and `GH_TOKEN` can be easily [setup with semantic-release-cli](../usage/getting-started.md#getting-started).
+Alternatively, the default `NPM_TOKEN` and `GH_TOKEN` can be easily [setup with semantic-release-cli](../../usage/getting-started.md#getting-started).
 
 ## Node.js projects configuration
 
 ### `.travis.yml` configuration for multiple Node.js jobs
 
-This example is a minimal configuration for **semantic-release** with a build running Node 6 and 8. See [Travis - Customizing the Build](https://docs.travis-ci.com/user/customizing-the-build) for additional configuration options.
+This example is a minimal configuration for **semantic-release** with a build running Node 14 and 16. See [Travis - Customizing the Build](https://docs.travis-ci.com/user/customizing-the-build) for additional configuration options.
 
-This example creates a `release` [build stage](https://docs.travis-ci.com/user/build-stages) that [runs `semantic-release` only after all test jobs are successful](../usage/ci-configuration.md#run-semantic-release-only-after-all-tests-succeeded).
+This example creates a `release` [build stage](https://docs.travis-ci.com/user/build-stages) that [runs `semantic-release` only after all test jobs are successful](../../usage/ci-configuration.md#run-semantic-release-only-after-all-tests-succeeded).
 
 It's recommended to run the `semantic-release` command in the [Travis `deploy` step](https://docs.travis-ci.com/user/customizing-the-build/#The-Build-Lifecycle) so if an error occurs the build will fail and Travis will send a notification.
 
@@ -24,8 +24,8 @@ It's recommended to run the `semantic-release` command in the [Travis `deploy` s
 language: node_js
 
 node_js:
-  - 8
-  - 6
+  - 14
+  - 16
 
 jobs:
   include:
@@ -43,12 +43,12 @@ jobs:
 
 ### `package.json` configuration for multiple Node jobs
 
-A `package.json` is required only for [local](../usage/installation.md#local-installation) **semantic-release** installation.
+A `package.json` is required only for [local](../../usage/installation.md#local-installation) **semantic-release** installation.
 
 ```json
 {
   "devDependencies": {
-    "semantic-release": "^15.0.0"
+    "semantic-release": "^18.0.0"
   }
 }
 ```
@@ -57,13 +57,13 @@ A `package.json` is required only for [local](../usage/installation.md#local-ins
 
 For projects that require to be tested with one or multiple version of a Non-JavaScript [language](https://docs.travis-ci.com/user/languages), optionally on multiple [Operating Systems](https://docs.travis-ci.com/user/multi-os).
 
-This recipe cover the Travis specifics only. See [Non JavaScript projects recipe](../support/FAQ.md#can-i-use-semantic-release-to-publish-non-javascript-packages) for more information on the **semantic-release** configuration.
+This recipe cover the Travis specifics only. See [Non JavaScript projects recipe](../../support/FAQ.md#can-i-use-semantic-release-to-publish-non-javascript-packages) for more information on the **semantic-release** configuration.
 
 ### `.travis.yml` configuration for non-JavaScript projects
 
 This example is a minimal configuration for **semantic-release** with a build running [Go 1.6 and 1.7](https://docs.travis-ci.com/user/languages/go). See [Travis - Customizing the Build](https://docs.travis-ci.com/user/customizing-the-build) for additional configuration options.
 
-This example creates a `release` [build stage](https://docs.travis-ci.com/user/build-stages) that [runs `semantic-release` only after all test jobs are successful](../usage/ci-configuration.md#run-semantic-release-only-after-all-tests-succeeded).
+This example creates a `release` [build stage](https://docs.travis-ci.com/user/build-stages) that [runs `semantic-release` only after all test jobs are successful](../../usage/ci-configuration.md#run-semantic-release-only-after-all-tests-succeeded).
 
 It's recommended to run the `semantic-release` command in the [Travis `deploy` step](https://docs.travis-ci.com/user/customizing-the-build/#The-Build-Lifecycle) so if an error occurs the build will fail and Travis will send a notification.
 
