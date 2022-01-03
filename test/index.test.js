@@ -20,7 +20,7 @@ const {
   mergeFf,
   rebase,
   gitAddNote,
-  gitGetNote,
+  gitGetNote, gitCommitsWithFiles,
 } = require('./helpers/git-utils');
 
 const requireNoCache = proxyquire.noPreserveCache();
@@ -1937,6 +1937,56 @@ test('Get all commits including the ones not in the shallow clone', async (t) =>
       stdout: new WritableStreamBuffer(),
       stderr: new WritableStreamBuffer(),
     })
+  );
+
+  t.is(analyzeCommits.args[0][1].commits.length, 3);
+});
+
+test('Get all commits in module1 ', async (t) => {
+  let {cwd, repositoryUrl} = await gitRepo(true);
+  await gitTagVersion('v1.0.0', undefined, {cwd});
+  let commitsToCreate = [{message: "message1",files: ["readme.md"]},{message: "message2",files: ["module1/readme.md"]},{message: "message3",files: ["readme1.md","module1/readme2.md"]},{message: "message4",files: ["readme4.md"]}]
+  await gitCommitsWithFiles(commitsToCreate, {cwd}, {cwd})
+
+  await gitPush(repositoryUrl, 'master', {cwd});
+
+  cwd = await gitShallowClone(repositoryUrl);
+
+  const nextRelease = {
+    name: 'v2.0.0',
+    type: 'major',
+    version: '2.0.0',
+    gitHead: await getGitHead({cwd}),
+    gitTag: 'v2.0.0',
+    channel: undefined,
+  };
+  const notes = 'Release notes';
+  const analyzeCommits = stub().resolves(nextRelease.type);
+
+  const config = {branches: ['master'], repositoryUrl, globalOpt: 'global',pathFilter: "^((?!module1).)*$" };
+  const options = {
+    ...config,
+    verifyConditions: stub().resolves(),
+    analyzeCommits,
+    verifyRelease: stub().resolves(),
+    generateNotes: stub().resolves(notes),
+    prepare: stub().resolves(),
+    publish: stub().resolves(),
+    success: stub().resolves(),
+    fail: stub().resolves(),
+  };
+
+  const semanticRelease = requireNoCache('..', {
+    './lib/get-logger': () => t.context.logger,
+    'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
+  });
+  t.truthy(
+      await semanticRelease(options, {
+        cwd,
+        env: {},
+        stdout: new WritableStreamBuffer(),
+        stderr: new WritableStreamBuffer(),
+      })
   );
 
   t.is(analyzeCommits.args[0][1].commits.length, 3);

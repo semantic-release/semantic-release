@@ -98,6 +98,21 @@ The [Git tag](https://git-scm.com/book/en/v2/Git-Basics-Tagging) format used by 
 
 **Note**: The `tagFormat` must contain the `version` variable exactly once and compile to a [valid Git reference](https://git-scm.com/docs/git-check-ref-format#_description).
 
+### pathFilter
+
+Type: `String`<br>
+Default: `null`<br>
+CLI arguments: `-f`, `--path-filter`
+
+If you need to limit commit analysis to a particular path. Default behaviour is no file filtering.
+
+Example : 
+
+* limit commit to specific directory
+* exclude one or multiple directories
+
+**Note**: Default value is `null` and is the same as `*`. You can use this regexp `^((?!mysubdir).)*$` to exclude specific dir.
+
 ### plugins
 
 Type: `Array`<br>

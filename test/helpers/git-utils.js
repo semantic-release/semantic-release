@@ -5,6 +5,8 @@ const pEachSeries = require('p-each-series');
 const gitLogParser = require('git-log-parser');
 const getStream = require('get-stream');
 const {GIT_NOTE_REF} = require('../../lib/definitions/constants');
+const fse = require('fs-extra');
+const path=require('path');
 
 /**
  * Commit message information.
@@ -94,6 +96,28 @@ async function gitCommits(messages, execaOptions) {
   );
   return (await gitGetCommits(undefined, execaOptions)).slice(0, messages.length);
 }
+
+/**
+ * Create commits on the current git repository.
+ *
+ * @param {Array<string>} messages Commit messages.
+ * @param {Object} [execaOpts] Options to pass to `execa`.
+ *
+ * @returns {Array<Commit>} The created commits, in reverse order (to match `git log` order).
+ */
+async function gitCommitsWithFiles(commits, repo, execaOptions) {
+
+  for (const commit of commits) {
+    for (const file of commit.files) {
+      let filePath = path.join(repo.cwd, file)
+      await fse.outputFile(filePath, commit.message)
+      await execa('git', ['add', filePath], execaOptions)
+    }
+    await execa('git', ['commit', '-m', commit.message, '--allow-empty', '--no-gpg-sign'], execaOptions)
+  }
+  return (await gitGetCommits(undefined, execaOptions)).slice(0, commits.length);
+}
+
 
 /**
  * Get the list of parsed commits since a git reference.
@@ -346,4 +370,5 @@ module.exports = {
   rebase,
   gitAddNote,
   gitGetNote,
+  gitCommitsWithFiles,
 };

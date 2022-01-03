@@ -25,6 +25,7 @@ Usage:
     .option('p', {alias: 'plugins', describe: 'Plugins', ...stringList, group: 'Options'})
     .option('e', {alias: 'extends', describe: 'Shareable configurations', ...stringList, group: 'Options'})
     .option('ci', {describe: 'Toggle CI verifications', type: 'boolean', group: 'Options'})
+    .option('f', {alias: 'path-filter',describe: 'Path Filter', type: 'string', group: 'Options'})
     .option('verify-conditions', {...stringList, group: 'Plugins'})
     .option('analyze-commits', {type: 'string', group: 'Plugins'})
     .option('verify-release', {...stringList, group: 'Plugins'})
