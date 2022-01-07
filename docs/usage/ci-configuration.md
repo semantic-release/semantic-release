@@ -13,7 +13,7 @@ Here is a few example of the CI services that can be used to achieve this:
 - [Wercker Workflows](http://devcenter.wercker.com/docs/workflows)
 - [GoCD Pipelines](https://docs.gocd.org/current/introduction/concepts_in_go.html#pipeline).
 
-See [CI configuration recipes](../recipes/release-workflow/README.md#ci-configurations) for more details.
+See [CI configuration recipes](../recipes/ci-configurations/README.md) for more details.
 
 ## Authentication
 
