@@ -24,7 +24,7 @@ For other type of projects we recommend installing **semantic-release** directly
 $ npx semantic-release
 ```
 
-**Note**: For a global installation, it's recommended to specify the major **semantic-release** version to install (for example with with `npx semantic-release@18`).
+**Note**: For a global installation, it's recommended to specify the major **semantic-release** version to install (for example with `npx semantic-release@18`).
 This way your build will not automatically use the next major **semantic-release** release that could possibly break your build.
 You will have to upgrade manually when a new major version is released.
 

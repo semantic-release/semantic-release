@@ -50,9 +50,9 @@ This removes the immediate connection between human emotions and version numbers
 - Notify maintainers and users of new releases
 - Use formalized commit message convention to document changes in the codebase
 - Publish on different distribution channels (such as [npm dist-tags](https://docs.npmjs.com/cli/dist-tag)) based on git merges
-- Integrate with your [continuous integration workflow](docs/recipes/README.md#ci-configurations)
+- Integrate with your [continuous integration workflow](docs/recipes/release-workflow/README.md#ci-configurations)
 - Avoid potential errors associated with manual releases
-- Support any [package managers and languages](docs/recipes/README.md#package-managers-and-languages) via [plugins](docs/usage/plugins.md)
+- Support any [package managers and languages](docs/recipes/release-workflow/README.md#package-managers-and-languages) via [plugins](docs/usage/plugins.md)
 - Simple and reusable configuration via [shareable configurations](docs/usage/shareable-configurations.md)
 
 ## How does it work?
@@ -69,11 +69,11 @@ Tools such as [commitizen](https://github.com/commitizen/cz-cli) or [commitlint]
 
 The table below shows which commit message gets you which release type when `semantic-release` runs (using the default configuration):
 
-| Commit message                                                                                                                                                                                   | Release type               |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------- |
-| `fix(pencil): stop graphite breaking when too much pressure applied`                                                                                                                             | ~~Patch~~ Fix Release      |
-| `feat(pencil): add 'graphiteWidth' option`                                                                                                                                                       | ~~Minor~~ Feature Release  |
-| `perf(pencil): remove graphiteWidth option`<br><br>`BREAKING CHANGE: The graphiteWidth option has been removed.`<br>`The default graphite width of 10mm is always used for performance reasons.` | ~~Major~~ Breaking Release |
+| Commit message                                                                                                                                                                                   | Release type                                                                                                    |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------- |
+| `fix(pencil): stop graphite breaking when too much pressure applied`                                                                                                                             | ~~Patch~~ Fix Release                                                                                           |
+| `feat(pencil): add 'graphiteWidth' option`                                                                                                                                                       | ~~Minor~~ Feature Release                                                                                       |
+| `perf(pencil): remove graphiteWidth option`<br><br>`BREAKING CHANGE: The graphiteWidth option has been removed.`<br>`The default graphite width of 10mm is always used for performance reasons.` | ~~Major~~ Breaking Release <br /> (Note that the `BREAKING CHANGE: ` token must be in the footer of the commit) |
 
 ### Automation with CI
 
@@ -87,9 +87,9 @@ For each new commit added to one of the release branches (for example: `master`,
 **semantic-release** offers various ways to control the timing, the content and the audience of published releases.
 See example workflows in the following recipes:
 
-- [Using distribution channels](docs/recipes/distribution-channels.md#publishing-on-distribution-channels)
-- [Maintenance releases](docs/recipes/maintenance-releases.md#publishing-maintenance-releases)
-- [Pre-releases](docs/recipes/pre-releases.md#publishing-pre-releases)
+- [Using distribution channels](docs/recipes/release-workflow/distribution-channels.md#publishing-on-distribution-channels)
+- [Maintenance releases](docs/recipes/release-workflow/maintenance-releases.md#publishing-maintenance-releases)
+- [Pre-releases](docs/recipes/release-workflow/pre-releases.md#publishing-pre-releases)
 
 ### Release steps
 
@@ -130,10 +130,9 @@ In order to use **semantic-release** you need:
   - [Plugins](docs/extending/plugins-list.md)
   - [Shareable configuration](docs/extending/shareable-configurations-list.md)
 - Recipes
-  - [CI configurations](docs/recipes/README.md)
-  - [Git hosted services](docs/recipes/README.md)
-  - [Release workflow](docs/recipes/README.md)
-  - [Package managers and languages](docs/recipes/README.md)
+  - [CI configurations](docs/recipes/ci-configurations/README.md)
+  - [Git hosted services](docs/recipes/git-hosted-services/README.md)
+  - [Release workflow](docs/recipes/release-workflow/README.md)
 - Developer guide
   - [JavaScript API](docs/developer-guide/js-api.md)
   - [Plugins development](docs/developer-guide/plugin.md)
@@ -153,12 +152,12 @@ In order to use **semantic-release** you need:
 
 ## Badge
 
-Let people know that your package is published using **semantic-release** by including this badge in your readme.
+Let people know that your package is published using **semantic-release** and which [commit-convention](#commit-message-format) is followed by including this badge in your readme.
 
-[![semantic-release](https://img.shields.io/badge/semantic-release-e10079.svg?logo=semantic-release)](https://github.com/semantic-release/semantic-release)
+[![semantic-release: angular](https://img.shields.io/badge/semantic--release-angular-e10079?logo=semantic-release)](https://github.com/semantic-release/semantic-release)
 
 ```md
-[![semantic-release](https://img.shields.io/badge/semantic-release-e10079.svg?logo=semantic-release)](https://github.com/semantic-release/semantic-release)
+[![semantic-release: angular](https://img.shields.io/badge/semantic--release-angular-e10079?logo=semantic-release)](https://github.com/semantic-release/semantic-release)
 ```
 
 ## Contributors ✨

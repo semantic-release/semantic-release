@@ -2,12 +2,12 @@
 
 **semantic-release** allow to manage and automate complex release workflow, based on multiple Git branches and distribution channels. This allow to:
 
-- Distributes certain releases to a particular group of users via distribution channels
+- Distribute certain releases to a particular group of users via distribution channels
 - Manage the availability of releases on distribution channels via branches merge
 - Maintain multiple lines of releases in parallel
 - Work on large future releases outside the normal flow of one version increment per Git push
 
-See [Release workflow recipes](../recipes/README.md#release-workflow) for detailed examples.
+See [Release workflow recipes](../recipes/release-workflow/README.md#release-workflow) for detailed examples.
 
 The release workflow is configured via the [branches option](./configuration.md#branches) which accepts a single or an array of branch definitions.
 Each branch can be defined either as a string, a [glob](https://github.com/micromatch/micromatch#matching-features) or an object. For string and glob definitions each [property](#branches-properties) will be defaulted.
@@ -97,7 +97,7 @@ For example the configuration `['master', {name: 'pre/rc', prerelease: '${name.r
   branches: [
     { name: 'master' },
     { name: 'pre/rc', channel: 'pre/rc', prerelease: 'rc' }, // `prerelease` is built with the template `${name.replace(/^pre\\//g, "")}`
-    { name: 'beta', channel: 'beta', prerelease: 'beta' }, // `prerelease` is set to `beta` as it is the value of `name`
+    { name: 'beta', channel: 'beta', prerelease: true }, // `prerelease` is set to `beta` as it is the value of `name`
   ];
 }
 ```
@@ -114,7 +114,7 @@ A project must define a minimum of 1 release branch and can have a maximum of 3.
 
 **Note:** With **semantic-release** as with most package managers, a release version must be unique, independently of the distribution channel on which it is available.
 
-See [publishing on distribution channels recipe](../recipes/distribution-channels.md) for a detailed example.
+See [publishing on distribution channels recipe](../recipes/release-workflow/distribution-channels.md) for a detailed example.
 
 #### Pushing to a release branch
 
@@ -150,7 +150,7 @@ Maintenance branches are always considered lower than [release branches](#releas
 
 **semantic-release** will automatically add releases to the corresponding distribution channel when code is [merged from a release or maintenance branch to another maintenance branch](#merging-into-a-maintenance-branch), however only versions within the branch `range` can be merged. If a merged version is outside the maintenance branch `range`, **semantic-release** will not add to the corresponding channel and will throw an `EINVALIDMAINTENANCEMERGE` error.
 
-See [publishing maintenance releases recipe](../recipes/maintenance-releases.md) for a detailed example.
+See [publishing maintenance releases recipe](../recipes/release-workflow/maintenance-releases.md) for a detailed example.
 
 #### Pushing to a maintenance branch
 
@@ -181,7 +181,7 @@ A pre-release branch is characterized by the `prerelease` property that defines 
 
 When merging commits associated with an existing release, **semantic-release** will treat them as [pushed commits](#pushing-to-a-pre-release-branch) and publish a new release if necessary, but it will never add those releases to the distribution channel corresponding to the pre-release branch.
 
-See [publishing pre-releases recipe](../recipes/pre-releases.md) for a detailed example.
+See [publishing pre-releases recipe](../recipes/release-workflow/pre-releases.md) for a detailed example.
 
 #### Pushing to a pre-release branch
 
