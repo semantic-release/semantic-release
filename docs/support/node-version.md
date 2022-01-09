@@ -14,7 +14,7 @@ See our [Node Support Policy](node-support-policy.md) for our long-term promise 
 The recommended approach is to run the `semantic-release` command from a CI job running on the latest available LTS version of node.
 This can either be a job used by your project to test on the latest Node LTS version or a dedicated job for the release steps.
 
-See [CI configuration](../usage/ci-configuration.md) and [CI configuration recipes](../recipes/README.md#ci-configurations) for more details.
+See [CI configuration](../usage/ci-configuration.md) and [CI configuration recipes](../recipes/release-workflow/README.md#ci-configurations) for more details.
 
 ## Alternative solutions
 

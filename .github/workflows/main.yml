@@ -63,7 +63,8 @@ jobs:
           cache: npm
       # run npm link to install current directory globally this is similar to `sudo npm install -g semantic-release`
       # we need to eat our own dog food not our previously published version
-      - run: sudo npm link
+      - run: npm ci --ignore-scripts
+      - run: sudo npm link --ignore-scripts
       - run: npx semantic-release-plus
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

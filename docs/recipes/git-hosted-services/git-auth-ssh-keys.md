@@ -1,6 +1,6 @@
 # Git authentication with SSH keys
 
-When using [environment variables](../usage/ci-configuration.md#authentication) to set up the Git authentication, the remote Git repository will automatically be accessed via [https](https://git-scm.com/book/en/v2/Git-on-the-Server-The-Protocols#_the_http_protocols), independently of the [`repositoryUrl`](../usage/configuration.md#repositoryurl) format configured in the **semantic-release** [Configuration](../usage/configuration.md#configuration) (the format will be automatically converted as needed).
+When using [environment variables](../../usage/ci-configuration.md#authentication) to set up the Git authentication, the remote Git repository will automatically be accessed via [https](https://git-scm.com/book/en/v2/Git-on-the-Server-The-Protocols#_the_http_protocols), independently of the [`repositoryUrl`](../../usage/configuration.md#repositoryurl) format configured in the **semantic-release** [Configuration](../../usage/configuration.md#configuration) (the format will be automatically converted as needed).
 
 Alternatively the Git repository can be accessed via [SSH](https://git-scm.com/book/en/v2/Git-on-the-Server-The-Protocols#_the_ssh_protocol) by creating SSH keys, adding the public one to your Git hosted account and making the private one available on the CI environment.
 
