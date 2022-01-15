@@ -207,7 +207,7 @@ async function run(context, plugins) {
   if (options.dryRun) {
     logger.log(`Release note for version ${nextRelease.version}:`);
     if (nextRelease.notes) {
-      context.stdout.write(marked(nextRelease.notes));
+      context.stdout.write(marked.parse(nextRelease.notes));
     }
   }
 
@@ -220,7 +220,7 @@ function logErrors({logger, stderr}, err) {
     if (error.semanticRelease) {
       logger.error(`${error.code} ${error.message}`);
       if (error.details) {
-        stderr.write(marked(error.details));
+        stderr.write(marked.parse(error.details));
       }
     } else {
       logger.error('An error occurred while running semantic-release: %O', error);
