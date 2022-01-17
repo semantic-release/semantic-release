@@ -37,8 +37,8 @@
     "hook-std": "^2.0.0",
     "hosted-git-info": "^4.0.0",
     "lodash": "^4.17.21",
-    "marked": "^2.0.0",
-    "marked-terminal": "^4.1.1",
+    "marked": "^4.0.10",
+    "marked-terminal": "^5.0.0",
     "micromatch": "^4.0.2",
     "p-each-series": "^2.1.0",
     "p-reduce": "^2.0.0",
@@ -70,7 +70,7 @@
     "xo": "0.29.1"
   },
   "engines": {
-    "node": ">=14.17"
+    "node": ">=16 || ^14.17"
   },
   "files": [
     "bin",
