@@ -1,6 +1,5 @@
 const {pick} = require('lodash');
 const marked = require('marked');
-const TerminalRenderer = require('marked-terminal');
 const envCi = require('env-ci');
 const hookStd = require('hook-std');
 const semver = require('semver');
@@ -21,7 +20,16 @@ const {verifyAuth, isBranchUpToDate, getGitHead, tag, push, pushNotes, getTagHea
 const getError = require('./lib/get-error');
 const {COMMIT_NAME, COMMIT_EMAIL} = require('./lib/definitions/constants');
 
-marked.setOptions({renderer: new TerminalRenderer()});
+let markedOptionsSet = false;
+async function terminalOutput(text) {
+  if (!markedOptionsSet) {
+    const {default: TerminalRenderer} = await import('marked-terminal'); // eslint-disable-line node/no-unsupported-features/es-syntax
+    marked.setOptions({renderer: new TerminalRenderer()});
+    markedOptionsSet = true;
+  }
+
+  return marked.parse(text);
+}
 
 /* eslint complexity: off */
 async function run(context, plugins) {
@@ -207,20 +215,20 @@ async function run(context, plugins) {
   if (options.dryRun) {
     logger.log(`Release note for version ${nextRelease.version}:`);
     if (nextRelease.notes) {
-      context.stdout.write(marked(nextRelease.notes));
+      context.stdout.write(await terminalOutput(nextRelease.notes));
     }
   }
 
   return pick(context, ['lastRelease', 'commits', 'nextRelease', 'releases']);
 }
 
-function logErrors({logger, stderr}, err) {
+async function logErrors({logger, stderr}, err) {
   const errors = extractErrors(err).sort((error) => (error.semanticRelease ? -1 : 0));
   for (const error of errors) {
     if (error.semanticRelease) {
       logger.error(`${error.code} ${error.message}`);
       if (error.details) {
-        stderr.write(marked(error.details));
+        stderr.write(await terminalOutput(error.details)); // eslint-disable-line no-await-in-loop
       }
     } else {
       logger.error('An error occurred while running semantic-release: %O', error);
@@ -234,7 +242,7 @@ async function callFail(context, plugins, err) {
     try {
       await plugins.fail({...context, errors});
     } catch (error) {
-      logErrors(context, error);
+      await logErrors(context, error);
     }
   }
 }
@@ -265,7 +273,7 @@ module.exports = async (cliOptions = {}, {cwd = process.cwd(), env = process.env
       throw error;
     }
   } catch (error) {
-    logErrors(context, error);
+    await logErrors(context, error);
     unhook();
     throw error;
   }
