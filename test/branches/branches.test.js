@@ -189,6 +189,17 @@ test('Enforce ranges with branching release workflow', async (t) => {
   t.is(getBranch(result, '1.x').range, '>=1.2.0 <2.0.0', 'Can release on 1.x only within range');
 });
 
+test('Throw SemanticReleaseError if there are no branches matching the configuration', async (t) => {
+  const branches = [];
+  const getBranches = proxyquire('../../lib/branches', {'./get-tags': () => branches, './expand': () => []});
+  const errors = [...(await t.throwsAsync(getBranches('repositoryUrl', 'master', {options: {branches}})))];
+
+  t.is(errors[0].name, 'SemanticReleaseError');
+  t.is(errors[0].code, 'ENOBRANCHES');
+  t.truthy(errors[0].message);
+  t.truthy(errors[0].details);
+});
+
 test('Throw SemanticReleaseError for invalid configurations', async (t) => {
   const branches = [
     {name: '123', range: '123', tags: []},
@@ -198,6 +209,10 @@ test('Throw SemanticReleaseError for invalid configurations', async (t) => {
     {name: 'beta', prerelease: '', tags: []},
     {name: 'alpha', prerelease: 'alpha', tags: []},
     {name: 'preview', prerelease: 'alpha', tags: []},
+    {name: 'main', tags: []},
+    {name: 'master', tags: []},
+    {name: 'next', tags: []},
+    {name: 'next-major', tags: []},
   ];
   const getBranches = proxyquire('../../lib/branches', {'./get-tags': () => branches, './expand': () => []});
   const errors = [...(await t.throwsAsync(getBranches('repositoryUrl', 'master', {options: {branches}})))];
