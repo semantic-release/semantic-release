@@ -28,7 +28,7 @@ jobs:
     executor: node/default
     steps:
       - checkout
-      - node/install
+      - node/install:
           lts: true
       - node/install-packages # Install and automatically cache packages
       # Run optional required steps before releasing
