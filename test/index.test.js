@@ -1941,3 +1941,42 @@ test('Get all commits including the ones not in the shallow clone', async (t) =>
 
   t.is(analyzeCommits.args[0][1].commits.length, 3);
 });
+
+test('Runs correctly without pushing any changes', async (t) => {
+  // Create a git repository, set the current working directory at the root of the repo
+  const {cwd, repositoryUrl} = await gitRepo(true);
+  // Add commits to the master branch
+  await gitCommits(['First'], {cwd});
+  // Add new commits to the master branch
+  await gitCommits(['Second'], {cwd});
+
+  const analyzeCommits = stub().resolves('major');
+  const generateNotes = stub().resolves();
+
+  const options = {
+    disablePush: true,
+    branches: ['master'],
+    repositoryUrl,
+    verifyConditions: false,
+    analyzeCommits,
+    verifyRelease: false,
+    generateNotes,
+    prepare: false,
+    publish: false,
+    success: false,
+  };
+
+  const semanticRelease = requireNoCache('..', {
+    './lib/get-logger': () => t.context.logger,
+    'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
+  });
+  const result = await semanticRelease(options, {
+    cwd,
+    env: {},
+    stdout: new WritableStreamBuffer(),
+    stderr: new WritableStreamBuffer(),
+  });
+
+  t.truthy(result);
+  t.is(result.nextRelease.version, '1.0.0');
+});

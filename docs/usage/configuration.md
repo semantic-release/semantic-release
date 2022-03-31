@@ -3,7 +3,7 @@
 **semantic-release** configuration consists of:
 - Git repository ([URL](#repositoryurl) and options [release branches](#branches) and [tag format](#tagformat))
 - Plugins [declaration](#plugins) and options
-- Run mode ([debug](#debug), [dry run](#dryrun) and [local (no CI)](#ci))
+- Run mode ([debug](#debug), [dry run](#dryrun), [local (no CI)](#ci) and [disable push](#disablepush))
 
 All of these options can be configured through config file, CLI arguments or by extending a [shareable configuration](shareable-configurations.md).
 
@@ -118,7 +118,15 @@ CLI arguments: `-d`, `--dry-run`
 
 The objective of the dry-run mode is to get a preview of the pending release. Dry-run mode skips the following steps: prepare, publish, success and fail. In addition to this it prints the next version and release notes to the console.
 
-**Note**: The Dry-run mode verifies the repository push permission, even though nothing will be pushed. The verification is done to help user to figure out potential configuration issues.
+**Note**: The Dry-run mode verifies the repository push permission, even though nothing will be pushed. The verification is done to help user to figure out potential configuration issues. If you do not want to verify push permissions nor push any changes use the [disable push](#disablepush) flag.
+
+### disablePush
+
+Type: `Boolean`<br>
+Default: `false`<br>
+CLI arguments: `--disable-push`
+
+Set to `true` to disable verifying push permissions and pushing anything. This can be useful when wanting to handle the release by yourself.
 
 ### ci
 
