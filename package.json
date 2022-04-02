@@ -129,6 +129,7 @@
     "prettier": true,
     "space": true,
     "rules": {
+      "unicorn/no-reduce": "off",
       "unicorn/string-content": "off"
     }
   },
