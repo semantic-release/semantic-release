@@ -90,6 +90,7 @@ test('Plugins are called with expected values', async (t) => {
   const config = {
     branches: [{name: 'master'}, {name: 'next'}],
     repositoryUrl,
+    originalRepositoryURL: repositoryUrl,
     globalOpt: 'global',
     tagFormat: `v\${version}`,
   };
@@ -927,7 +928,12 @@ test('Log all "verifyConditions" errors', async (t) => {
   const error2 = new SemanticReleaseError('error 2', 'ERR2');
   const error3 = new SemanticReleaseError('error 3', 'ERR3');
   const fail = stub().resolves();
-  const config = {branches: [{name: 'master'}], repositoryUrl, tagFormat: `v\${version}`};
+  const config = {
+    branches: [{name: 'master'}],
+    repositoryUrl,
+    originalRepositoryURL: repositoryUrl,
+    tagFormat: `v\${version}`,
+  };
   const options = {
     ...config,
     plugins: false,
