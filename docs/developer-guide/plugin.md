@@ -12,9 +12,9 @@ To create a plugin for `semantic-release`, you need to decide which parts of the
 - `success`
 - `fail`
 
-`semantic-release` will require the plugin via `node` and look through the required object for methods named like the lifecyles stated above. For example, if your plugin only had a `verifyConditions` and `success` step, the `main` file for your object would need to `export` an object with `verifyConditions` and `success` functions.
+`semantic-release` will require the plugin via `node` and look through the required object for methods named like the lifecycles stated above. For example, if your plugin only had a `verifyConditions` and `success` step, the `main` file for your object would need to `export` an object with `verifyConditions` and `success` functions.
 
-In addition to the lifecycle methods, each lifecyle is passed two objects:
+In addition to the lifecycle methods, each lifecycle is passed two objects:
 
 1. `pluginConfig` - an object containing the options that a user may pass in via their `release.config.js` file (or similar)
 2. `context` - provided by `semantic-release` for access to things like `env` variables set on the running process.

@@ -55,12 +55,12 @@
 - [@semantic-release-plus/docker](https://github.com/semantic-release-plus/semantic-release-plus/tree/master/packages/plugins/docker)
   - `verifyConditions`: Verify that all needed configuration is present and login to the configured docker registry.
   - `publish`: Tag the image specified by `name` with the new version and channel and push it to the configured docker registry.
-  - `addChannel`: Updates a release published on one channel with the destinations channel tag and pushes to the registry ie: next to latest.
+  - `addChannel`: Updates a release published on one channel with the destinations channel tag and pushes to the registry i.e.: next to latest.
 - [semantic-release-gcr](https://github.com/carlos-cubas/semantic-release-gcr)
   - `verifyConditions`: Verify that all needed configuration is present and login to the Docker registry
   - `publish`: Tag the image specified by `name` with the new version, push it to Docker Hub and update the latest tag
 - [semantic-release-vsce](https://github.com/raix/semantic-release-vsce)
-  - `verifyConditions`: Verify the presence and the validity of the vsce authentication and release configuration
+  - `verifyConditions`: Verify the presence and the validity of the "VS Code extension" authentication and release configuration
   - `prepare`: Create a `.vsix` for distribution
   - `publish`: Publish the package to the Visual Studio Code marketplace
 - [semantic-release-verify-deps](https://github.com/piercus/semantic-release-verify-deps)
@@ -84,7 +84,7 @@
   - `prepare`: Changes the version number in the `pom.xml` (or all `pom.xml` files in maven projects with multiple `pom.xml` files) and optionally creates a commit with this version number and pushes it to `master`
   - `publish`: Runs `mvn deploy` to deploy to maven central and optionally will update to next snapshot version and merge changes to development branch
 - [semantic-release-ado](https://github.com/lluchmk/semantic-release-ado)
-  - `prepare`: Stores the version number as an Azure DevOps pipeline variable availabe to downstream steps on the job
+  - `prepare`: Stores the version number as an Azure DevOps pipeline variable available to downstream steps on the job
 - [gradle-semantic-release](https://github.com/KengoTODA/gradle-semantic-release-plugin)
   - `verifyConditions`: Verify that project has a Gradle wrapper script, and `build.gradle` contains a task to publish artifacts.
   - `prepare`: Changes the version number in the `gradle.properties`
