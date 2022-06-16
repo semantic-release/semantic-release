@@ -1,0 +1,16 @@
+name: New plugin suggestion
+description: Integrate with a new platform, etc
+body:
+  - type: textarea
+    attributes:
+      label: New plugin motivation
+      description: Describe the reasons to create a new plugin and why it's not covered by the existing ones.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Third-party documentation
+      description: Provide explanation and documentation links for the platform to integrate with.
+    validations:
+      required: true
