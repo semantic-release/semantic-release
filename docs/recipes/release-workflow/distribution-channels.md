@@ -1,6 +1,6 @@
 # Publishing on distribution channels
 
-This recipe will walk you through a simple example that uses distribution channels to make releases available only to a subset of users, in order to collect feedbacks before distributing the release to all users.
+This recipe will walk you through a simple example that uses distribution channels to make releases available only to a subset of users, in order to collect feedback before distributing the release to all users.
 
 This example uses the **semantic-release** default configuration:
 - [branches](../../usage/configuration.md#branches): `['+([0-9])?(.{+([0-9]),x}).x', 'master', 'next', 'next-major', {name: 'beta', prerelease: true}, {name: 'alpha', prerelease: true}]`
