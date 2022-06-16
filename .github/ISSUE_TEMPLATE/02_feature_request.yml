@@ -1,0 +1,23 @@
+name: Feature request
+description: Wouldn't it be nice if `semantic-release` could ...
+body:
+  - type: textarea
+    attributes:
+      label: New feature motivation
+      description: Describe the context, the use-case and the advantages of the feature request.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: New feature description
+      description: Describe the functional changes that would have to be made in `semantic-release` or its plugins.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: New feature implementation
+      description: Optionally describe the technical changes to be made in `semantic-release` or its plugins.
+    validations:
+      required: false
