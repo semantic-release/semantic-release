@@ -153,7 +153,7 @@ Any npm compatible registry is supported with the [`@semantic-release/npm`](http
 
 See [npm registry authentication](https://github.com/semantic-release/npm#npm-registry-authentication) for more details.
 
-See [Artifactory - npm Registry](https://www.jfrog.com/confluence/display/RTF/Npm+Registry#NpmRegistry-AuthenticatingthenpmClient) documentation for Artifactiry configuration.
+See [Artifactory - npm Registry](https://www.jfrog.com/confluence/display/RTF/Npm+Registry#NpmRegistry-AuthenticatingthenpmClient) documentation for Artifactory configuration.
 
 ## Can I manually trigger the release of a specific version?
 
