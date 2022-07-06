@@ -66,8 +66,8 @@ release:
     - npm install -g semantic-release @semantic-release/gitlab
   script:
     - semantic-release
-  only:
-    - master
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
 
 release:
   image: node:12-buster-slim
@@ -77,8 +77,8 @@ release:
     - npm install -g semantic-release @semantic-release/gitlab
   script:
     - semantic-release
-  only:
-    - master
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
 ```
 
 ### `package.json` configuration
