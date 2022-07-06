@@ -157,3 +157,6 @@
   - `verifyConditions`: Verify plugin configuration and login to Helm registry
   - `prepare`: Package Helm chart to local folder
   - `publish`: Publish Helm chart to OCI registry
+- [@iam1337/create-unitypackage](https://github.com/Iam1337/create-unitypackage)
+  - `verifyConditions`:	Verify the `packageRoot`, `projectRoot` and `output` options configuration.
+  - `prepare`: Сreation unitypackage file.
