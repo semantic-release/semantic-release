@@ -157,3 +157,9 @@
   - `verifyConditions`: Verify plugin configuration and login to Helm registry
   - `prepare`: Package Helm chart to local folder
   - `publish`: Publish Helm chart to OCI registry
+- [semantic-release-space](https://github.com/123FLO321/semantic-release-space)
+  - `verifyConditions` Verifies that all required options are set.
+  - `prepare` Creates a JetBrains Space Deployment Target if it does not yet exist.
+  - `publish` Starts a JetBrains Space Deployment.
+  - `success` Marks the JetBrains Space Deployment as completed.
+  - `fail` Marks the JetBrains Space Deployment as failed.
