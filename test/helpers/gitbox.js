@@ -3,7 +3,7 @@ const getStream = require('get-stream');
 const pRetry = require('p-retry');
 const {initBareRepo, gitShallowClone} = require('./git-utils');
 
-const IMAGE = 'pvdlg/docker-gitbox:latest';
+const IMAGE = 'semanticrelease/docker-gitbox:latest';
 const SERVER_PORT = 80;
 const HOST_PORT = 2080;
 const SERVER_HOST = 'localhost';

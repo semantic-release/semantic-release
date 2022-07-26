@@ -36,7 +36,7 @@ async function start() {
 }
 
 /**
- * Stop and remote the `mockserver` Docker container.
+ * Stop and remove the `mockserver` Docker container.
  */
 async function stop() {
   await container.stop();
@@ -91,7 +91,7 @@ async function mock(
 }
 
 /**
- * Verify the `mockserver` has been called with a requestion matching expectations. The `expectation` is created with the `mock` function.
+ * Verify the `mockserver` has been called with a request matching expectations. The `expectation` is created with the `mock` function.
  *
  * @param {Object} expectation The expectation created with `mock` function.
  * @return {Promise} A Promise that resolves if the expectation is met or reject otherwise.
