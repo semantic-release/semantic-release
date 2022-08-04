@@ -122,8 +122,8 @@
     "lint": "xo",
     "pretest": "npm run lint",
     "semantic-release": "./bin/semantic-release.js",
-    "test": "nyc ava -v",
-    "test:ci": "nyc ava -v"
+    "test": "LANG='en_US.UTF-8' nyc ava -v",
+    "test:ci": "LANG='en_US.UTF-8' nyc ava -v"
   },
   "xo": {
     "prettier": true,

@@ -100,13 +100,13 @@ The [Git tag](https://git-scm.com/book/en/v2/Git-Basics-Tagging) format used by 
 
 ### plugins
 
-Type: `Array`<br>
+Type: `Array`, `Object`<br>
 Default: `['@semantic-release/commit-analyzer', '@semantic-release/release-notes-generator', '@semantic-release/npm', '@semantic-release/github']`<br>
 CLI arguments: `-p`, `--plugins`
 
 Define the list of plugins to use. Plugins will run in series, in the order defined, for each [steps](../../README.md#release-steps) if they implement it.
 
-Plugins configuration can defined by wrapping the name and an options object in an array.
+Plugins configuration can defined by wrapping the name and an options object in an array, or as an object, where the key is the plugin name, and the value contains the configuration.
 
 See [Plugins configuration](plugins.md#plugins) for more details.
 

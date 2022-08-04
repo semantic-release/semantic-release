@@ -68,6 +68,18 @@ Here is a basic example to create [GitHub releases](https://help.github.com/arti
   ]
 }
 ```
+or
+```yaml
+
+plugins:
+  "@semantic-release/commit-analyzer":
+  "@semantic-release/release-notes-generator":
+  "@semantic-release/github":
+  "@semantic-release/exec":
+    "prepareCmd" : "set-version ${nextRelease.version}"
+    "publishCmd" : "publish-package"
+```
+
 
 **Note**: This is a theoretical example where the command `set-version` update the project version with the value passed as its first argument and `publish-package` publishes the package to a registry.
 
