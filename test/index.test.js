@@ -90,6 +90,7 @@ test('Plugins are called with expected values', async (t) => {
   const config = {
     branches: [{name: 'master'}, {name: 'next'}],
     repositoryUrl,
+    originalRepositoryURL: repositoryUrl,
     globalOpt: 'global',
     tagFormat: `v\${version}`,
     tagAnnotate: false,
@@ -936,6 +937,7 @@ test('Log all "verifyConditions" errors', async (t) => {
   const config = {
     branches: [{name: 'master'}],
     repositoryUrl,
+    originalRepositoryURL: repositoryUrl,
     tagFormat: `v\${version}`,
     tagAnnotate: false,
     tagSign: false,

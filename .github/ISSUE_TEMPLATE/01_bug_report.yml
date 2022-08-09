@@ -1,0 +1,51 @@
+name: Bug Report
+description: Something not working as expected
+body:
+  - type: textarea
+    attributes:
+      label: Current behavior
+      description: Describe how the issue manifests.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Expected behavior
+      description: Describe what the desired behavior would be.
+    validations:
+      required: true
+
+  - type: input
+    attributes:
+      label: "`semantic-release` version"
+      description: Version set in `package.json` `devDpendencies`.
+    validations:
+      required: true
+
+  - type: input
+    attributes:
+      label: CI environment
+      description: CI service name.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Plugins used
+      description: List `semantic-release` plugin used, if any.
+    validations:
+      required: false
+
+  - type: textarea
+    attributes:
+      label: "`semantic-release` configuration"
+      description: Link to your repository or relevant part of the `semantic-release` config.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: CI logs
+      description: Link to your CI logs or `semantic-release` logs.
+    validations:
+      required: true

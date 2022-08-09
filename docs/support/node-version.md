@@ -1,6 +1,6 @@
 # Node version requirement
 
-**semantic-release** is written using the latest [ECMAScript 2017](https://www.ecma-international.org/publications/standards/Ecma-262.htm) features, without transpilation which requires **requires Node version 14.17 or higher**.
+**semantic-release** is written using the latest [ECMAScript 2017](https://www.ecma-international.org/publications/standards/Ecma-262.htm) features, without transpilation which **requires Node version 14.17 or higher**.
 
 **semantic-release** is meant to be used in a CI environment as a development support tool, not as a production dependency.
 Therefore, the only constraint is to run the `semantic-release` in a CI environment providing version of Node that meets our version requirement.

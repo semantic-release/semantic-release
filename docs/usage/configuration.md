@@ -69,8 +69,8 @@ The branches on which releases should happen. By default **semantic-release** wi
 - regular releases to a distribution channel matching the branch name from any existing branch with a name matching a maintenance release range (`N.N.x` or `N.x.x` or `N.x` with `N` being a number)
 - regular releases to the `next` distribution channel from the branch `next` if it exists
 - regular releases  to the `next-major` distribution channel from the branch `next-major` if it exists
-- prereleases to the `beta` distribution channel from the branch `beta` if it exists
-- prereleases to the `alpha` distribution channel from the branch `alpha` if it exists
+- pre-releases to the `beta` distribution channel from the branch `beta` if it exists
+- pre-releases to the `alpha` distribution channel from the branch `alpha` if it exists
 
 **Note**: If your repository does not have a release branch, then **semantic-release** will fail with an `ERELEASEBRANCHES` error message. If you are using the default configuration, you can fix this error by pushing a `master` branch.
 
@@ -146,7 +146,7 @@ Type: `Boolean`<br>
 Default: `false` if running in a CI environment, `true` otherwise<br>
 CLI arguments: `-d`, `--dry-run`
 
-The objective of the dry-run mode is to get a preview of the pending release. Dry-run mode skips the following steps: prepare, publish, success and fail. In addition to this it prints the next version and release notes to the console.
+The objective of the dry-run mode is to get a preview of the pending release. Dry-run mode skips the following steps: prepare, publish, addChannel, success and fail. In addition to this it prints the next version and release notes to the console.
 
 **Note**: The Dry-run mode verifies the repository push permission, even though nothing will be pushed. The verification is done to help user to figure out potential configuration issues.
 
