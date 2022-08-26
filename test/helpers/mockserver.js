@@ -4,7 +4,7 @@ const got = require('got');
 const pRetry = require('p-retry');
 const {mockServerClient} = require('mockserver-client');
 
-const IMAGE = 'jamesdbloom/mockserver:latest';
+const IMAGE = 'mockserver/mockserver:latest';
 const MOCK_SERVER_PORT = 1080;
 const MOCK_SERVER_HOST = 'localhost';
 const docker = new Docker();
