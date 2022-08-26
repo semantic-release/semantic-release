@@ -3,7 +3,7 @@ const {format} = require('util');
 const test = require('ava');
 const {writeFile, outputJson} = require('fs-extra');
 const {omit} = require('lodash');
-const proxyquire = require('proxyquire');
+const td = require('testdouble');
 const {stub} = require('sinon');
 const yaml = require('js-yaml');
 const {gitRepo, gitTagVersion, gitCommits, gitShallowClone, gitAddConfig} = require('./helpers/git-utils');
@@ -17,7 +17,8 @@ const DEFAULT_PLUGINS = [
 
 test.beforeEach((t) => {
   t.context.plugins = stub().returns({});
-  t.context.getConfig = proxyquire('../lib/get-config', {'./plugins': t.context.plugins});
+  td.replace('../lib/plugins', t.context.plugins);
+  t.context.getConfig = require('../lib/get-config');
 });
 
 test('Default values, reading repositoryUrl from package.json', async (t) => {

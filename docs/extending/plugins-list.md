@@ -163,3 +163,6 @@
   - `publish` Starts a JetBrains Space Deployment.
   - `success` Marks the JetBrains Space Deployment as completed.
   - `fail` Marks the JetBrains Space Deployment as failed.
+- [semantic-release-react-native](https://github.com/alexandermendes/semantic-release-react-native)
+  - `verifyConditions` Validate configuration.
+  - `prepare` Version native iOS and Android files.
