@@ -1,8 +1,11 @@
 const test = require('ava');
 const {escapeRegExp} = require('lodash');
-const proxyquire = require('proxyquire').noPreserveCache();
+const td = require('testdouble');
 const {stub} = require('sinon');
 const {SECRET_REPLACEMENT} = require('../lib/definitions/constants');
+
+let previousArgv;
+let previousEnv;
 
 test.beforeEach((t) => {
   t.context.logs = '';
@@ -13,11 +16,17 @@ test.beforeEach((t) => {
   t.context.stderr = stub(process.stderr, 'write').callsFake((value) => {
     t.context.errors += value.toString();
   });
+
+  previousArgv = process.argv;
+  previousEnv = process.env;
 });
 
 test.afterEach.always((t) => {
   t.context.stdout.restore();
   t.context.stderr.restore();
+
+  process.argv = previousArgv;
+  process.env = previousEnv;
 });
 
 test.serial('Pass options to semantic-release API', async (t) => {
@@ -63,7 +72,9 @@ test.serial('Pass options to semantic-release API', async (t) => {
     '--debug',
     '-d',
   ];
-  const cli = proxyquire('../cli', {'.': run, process: {...process, argv}});
+  td.replace('..', run);
+  process.argv = argv;
+  const cli = require('../cli');
 
   const exitCode = await cli();
 
@@ -105,7 +116,9 @@ test.serial('Pass options to semantic-release API with alias arguments', async (
     'config2',
     '--dry-run',
   ];
-  const cli = proxyquire('../cli', {'.': run, process: {...process, argv}});
+  td.replace('..', run);
+  process.argv = argv;
+  const cli = require('../cli');
 
   const exitCode = await cli();
 
@@ -122,7 +135,9 @@ test.serial('Pass options to semantic-release API with alias arguments', async (
 test.serial('Pass unknown options to semantic-release API', async (t) => {
   const run = stub().resolves(true);
   const argv = ['', '', '--bool', '--first-option', 'value1', '--second-option', 'value2', '--second-option', 'value3'];
-  const cli = proxyquire('../cli', {'.': run, process: {...process, argv}});
+  td.replace('..', run);
+  process.argv = argv;
+  const cli = require('../cli');
 
   const exitCode = await cli();
 
@@ -136,7 +151,9 @@ test.serial('Pass unknown options to semantic-release API', async (t) => {
 test.serial('Pass empty Array to semantic-release API for list option set to "false"', async (t) => {
   const run = stub().resolves(true);
   const argv = ['', '', '--publish', 'false'];
-  const cli = proxyquire('../cli', {'.': run, process: {...process, argv}});
+  td.replace('..', run);
+  process.argv = argv;
+  const cli = require('../cli');
 
   const exitCode = await cli();
 
@@ -148,7 +165,9 @@ test.serial('Pass empty Array to semantic-release API for list option set to "fa
 test.serial('Do not set properties in option for which arg is not in command line', async (t) => {
   const run = stub().resolves(true);
   const argv = ['', '', '-b', 'master'];
-  const cli = proxyquire('../cli', {'.': run, process: {...process, argv}});
+  td.replace('..', run);
+  process.argv = argv;
+  const cli = require('../cli');
 
   await cli();
 
@@ -165,7 +184,9 @@ test.serial('Do not set properties in option for which arg is not in command lin
 test.serial('Display help', async (t) => {
   const run = stub().resolves(true);
   const argv = ['', '', '--help'];
-  const cli = proxyquire('../cli', {'.': run, process: {...process, argv}});
+  td.replace('..', run);
+  process.argv = argv;
+  const cli = require('../cli');
 
   const exitCode = await cli();
 
@@ -176,7 +197,9 @@ test.serial('Display help', async (t) => {
 test.serial('Return error exitCode and prints help if called with a command', async (t) => {
   const run = stub().resolves(true);
   const argv = ['', '', 'pre'];
-  const cli = proxyquire('../cli', {'.': run, process: {...process, argv}});
+  td.replace('..', run);
+  process.argv = argv;
+  const cli = require('../cli');
 
   const exitCode = await cli();
 
@@ -188,7 +211,9 @@ test.serial('Return error exitCode and prints help if called with a command', as
 test.serial('Return error exitCode if multiple plugin are set for single plugin', async (t) => {
   const run = stub().resolves(true);
   const argv = ['', '', '--analyze-commits', 'analyze1', 'analyze2'];
-  const cli = proxyquire('../cli', {'.': run, process: {...process, argv}});
+  td.replace('..', run);
+  process.argv = argv;
+  const cli = require('../cli');
 
   const exitCode = await cli();
 
@@ -200,7 +225,9 @@ test.serial('Return error exitCode if multiple plugin are set for single plugin'
 test.serial('Return error exitCode if semantic-release throw error', async (t) => {
   const run = stub().rejects(new Error('semantic-release error'));
   const argv = ['', ''];
-  const cli = proxyquire('../cli', {'.': run, process: {...process, argv}});
+  td.replace('..', run);
+  process.argv = argv;
+  const cli = require('../cli');
 
   const exitCode = await cli();
 
@@ -212,7 +239,10 @@ test.serial('Hide sensitive environment variable values from the logs', async (t
   const env = {MY_TOKEN: 'secret token'};
   const run = stub().rejects(new Error(`Throw error: Exposing token ${env.MY_TOKEN}`));
   const argv = ['', ''];
-  const cli = proxyquire('../cli', {'.': run, process: {...process, argv, env: {...process.env, ...env}}});
+  td.replace('..', run);
+  process.argv = argv;
+  process.env = {...process.env, ...env};
+  const cli = require('../cli');
 
   const exitCode = await cli();
 

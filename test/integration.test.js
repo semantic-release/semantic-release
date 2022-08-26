@@ -1,6 +1,6 @@
 const path = require('path');
 const test = require('ava');
-const proxyquire = require('proxyquire');
+const td = require('testdouble');
 const {escapeRegExp} = require('lodash');
 const {writeJson, readJson} = require('fs-extra');
 const execa = require('execa');
@@ -25,8 +25,6 @@ const mockServer = require('./helpers/mockserver');
 const npmRegistry = require('./helpers/npm-registry');
 
 /* eslint camelcase: ["error", {properties: "never"}] */
-
-const requireNoCache = proxyquire.noPreserveCache();
 
 // Environment variables used with semantic-release cli (similar to what a user would setup)
 const {GITHUB_ACTION, GITHUB_TOKEN, ...processEnvWithoutGitHubActionsVariables} = process.env;
@@ -509,10 +507,9 @@ test('Pass options via CLI arguments', async (t) => {
 });
 
 test('Run via JS API', async (t) => {
-  const semanticRelease = requireNoCache('..', {
-    './lib/logger': {log: () => {}, error: () => {}, stdout: () => {}},
-    'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
-  });
+  td.replace('../lib/logger', {log: () => {}, error: () => {}, stdout: () => {}});
+  td.replace('env-ci', () => ({isCi: true, branch: 'master', isPr: false}));
+  const semanticRelease = require('..');
   const packageName = 'test-js-api';
   const owner = 'git';
   // Create a git repository, set the current working directory at the root of the repo
