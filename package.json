@@ -51,6 +51,7 @@
   },
   "devDependencies": {
     "ava": "3.15.0",
+    "c8": "7.12.0",
     "clear-module": "4.1.2",
     "codecov": "3.8.3",
     "delay": "5.0.0",
@@ -61,7 +62,6 @@
     "js-yaml": "4.1.0",
     "mockserver-client": "5.11.2",
     "nock": "13.2.1",
-    "nyc": "15.1.0",
     "p-retry": "4.6.1",
     "sinon": "12.0.1",
     "stream-buffers": "3.0.2",
@@ -93,7 +93,7 @@
   ],
   "license": "MIT",
   "main": "index.js",
-  "nyc": {
+  "c8": {
     "include": [
       "lib/**/*.js",
       "index.js",
@@ -122,8 +122,8 @@
     "lint": "xo",
     "pretest": "npm run lint",
     "semantic-release": "./bin/semantic-release.js",
-    "test": "nyc ava -v",
-    "test:ci": "nyc ava -v"
+    "test": "c8 ava -v",
+    "test:ci": "c8 ava -v"
   },
   "xo": {
     "prettier": true,
