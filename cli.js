@@ -1,6 +1,7 @@
-const {argv, env, stderr} = require('process'); // eslint-disable-line node/prefer-global/process
-const util = require('util');
-const hideSensitive = require('./lib/hide-sensitive');
+import util from 'node:util';
+import yargs from 'yargs';
+import {hideBin} from 'yargs/helpers';
+import hideSensitive from './lib/hide-sensitive.js';
 
 const stringList = {
   type: 'string',
@@ -11,8 +12,8 @@ const stringList = {
       : values.reduce((values, value) => values.concat(value.split(',').map((value) => value.trim())), []),
 };
 
-module.exports = async () => {
-  const cli = require('yargs')
+export default async () => {
+  const cli = yargs(hideBin(process.argv))
     .command('$0', 'Run automated package publishing', (yargs) => {
       yargs.demandCommand(0, 0).usage(`Run automated package publishing
 
@@ -36,12 +37,11 @@ Usage:
     .option('debug', {describe: 'Output debugging information', type: 'boolean', group: 'Options'})
     .option('d', {alias: 'dry-run', describe: 'Skip publishing', type: 'boolean', group: 'Options'})
     .option('h', {alias: 'help', group: 'Options'})
-    .option('v', {alias: 'version', group: 'Options'})
     .strict(false)
     .exitProcess(false);
 
   try {
-    const {help, version, ...options} = cli.parse(argv.slice(2));
+    const {help, version, ...options} = cli.parse(process.argv.slice(2));
 
     if (Boolean(help) || Boolean(version)) {
       return 0;
@@ -49,16 +49,16 @@ Usage:
 
     if (options.debug) {
       // Debug must be enabled before other requires in order to work
-      require('debug').enable('semantic-release:*');
+      (await import('debug')).enable('semantic-release:*');
     }
 
-    await require('.')(options);
+    await (await import('./index.js')).default(options);
     return 0;
   } catch (error) {
     if (error.name !== 'YError') {
-      stderr.write(hideSensitive(env)(util.inspect(error, {colors: true})));
+      process.stderr.write(hideSensitive(process.env)(util.inspect(error, {colors: true})));
     }
 
     return 1;
   }
-};
+}
