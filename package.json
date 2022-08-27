@@ -8,6 +8,10 @@
     "files": [
       "test/**/*.test.js"
     ],
+    "nodeArguments": [
+      "--loader=testdouble",
+      "--no-warnings"
+    ],
     "timeout": "2m"
   },
   "bin": {

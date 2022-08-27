@@ -17,10 +17,10 @@ const DEFAULT_PLUGINS = [
   '@semantic-release/github',
 ];
 
-test.beforeEach((t) => {
+test.beforeEach(async (t) => {
   t.context.plugins = stub().returns({});
-  td.replace('../lib/plugins', t.context.plugins);
-  t.context.getConfig = require('../lib/get-config');
+  await td.replaceEsm('../lib/plugins.js', null, t.context.plugins);
+  t.context.getConfig = (await import('../lib/get-config.js')).default;
 });
 
 test('Default values, reading repositoryUrl from package.json', async (t) => {
