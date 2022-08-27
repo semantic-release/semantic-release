@@ -1,12 +1,14 @@
-const path = require('path');
-const {format} = require('util');
-const test = require('ava');
-const {writeFile, outputJson} = require('fs-extra');
-const {omit} = require('lodash');
-const td = require('testdouble');
-const {stub} = require('sinon');
-const yaml = require('js-yaml');
-const {gitRepo, gitTagVersion, gitCommits, gitShallowClone, gitAddConfig} = require('./helpers/git-utils');
+import path from 'node:path';
+import {format} from 'node:util';
+import test from 'ava';
+import fsExtra from 'fs-extra';
+import {omit} from 'lodash-es';
+import * as td from 'testdouble';
+import {stub} from 'sinon';
+import yaml from 'js-yaml';
+import {gitAddConfig, gitCommits, gitRepo, gitShallowClone, gitTagVersion} from './helpers/git-utils.js';
+
+const {outputJson, writeFile} = fsExtra;
 
 const DEFAULT_PLUGINS = [
   '@semantic-release/commit-analyzer',

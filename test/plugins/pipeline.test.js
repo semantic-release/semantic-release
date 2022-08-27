@@ -1,7 +1,7 @@
-const test = require('ava');
-const {stub} = require('sinon');
-const AggregateError = require('aggregate-error');
-const pipeline = require('../../lib/plugins/pipeline');
+import test from 'ava';
+import {stub} from 'sinon';
+import AggregateError from 'aggregate-error';
+import pipeline from '../../lib/plugins/pipeline.js';
 
 test('Execute each function in series passing the same input', async (t) => {
   const step1 = stub().resolves(1);

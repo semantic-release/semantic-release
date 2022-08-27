@@ -1,7 +1,7 @@
-const test = require('ava');
-const {union} = require('lodash');
-const semver = require('semver');
-const td = require('testdouble');
+import test from 'ava';
+import {union} from 'lodash-es';
+import semver from 'semver';
+import * as td from 'testdouble';
 
 const getBranch = (branches, branch) => branches.find(({name}) => name === branch);
 const release = (branches, name, version) => getBranch(branches, name).tags.push({version});

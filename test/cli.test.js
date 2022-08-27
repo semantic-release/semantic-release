@@ -1,8 +1,8 @@
-const test = require('ava');
-const {escapeRegExp} = require('lodash');
-const td = require('testdouble');
-const {stub} = require('sinon');
-const {SECRET_REPLACEMENT} = require('../lib/definitions/constants');
+import test from 'ava';
+import {escapeRegExp} from 'lodash-es';
+import * as td from 'testdouble';
+import {stub} from 'sinon';
+import {SECRET_REPLACEMENT} from '../lib/definitions/constants.js';
 
 let previousArgv;
 let previousEnv;

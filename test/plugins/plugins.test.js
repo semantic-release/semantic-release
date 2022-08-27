@@ -1,11 +1,11 @@
-const path = require('path');
-const test = require('ava');
-const {copy, outputFile} = require('fs-extra');
-const {stub} = require('sinon');
-const tempy = require('tempy');
-const getPlugins = require('../../lib/plugins');
+import path from 'path';
+import test from 'ava';
+import {copy, outputFile} from 'fs-extra';
+import {stub} from 'sinon';
+import tempy from 'tempy';
+import getPlugins from '../../lib/plugins/index.js';
 
-// Save the current working diretory
+// Save the current working directory
 const cwd = process.cwd();
 
 test.beforeEach((t) => {

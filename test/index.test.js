@@ -1,29 +1,28 @@
-const test = require('ava');
-const {escapeRegExp, isString, sortBy, omit} = require('lodash');
-const td = require('testdouble');
-const {spy, stub} = require('sinon');
-const {WritableStreamBuffer} = require('stream-buffers');
-const AggregateError = require('aggregate-error');
-const SemanticReleaseError = require('@semantic-release/error');
-const {COMMIT_NAME, COMMIT_EMAIL, SECRET_REPLACEMENT} = require('../lib/definitions/constants');
-const {
-  gitHead: getGitHead,
+import test from 'ava';
+import {escapeRegExp, isString, omit, sortBy} from 'lodash-es';
+import * as td from 'testdouble';
+import {spy, stub} from 'sinon';
+import {WritableStreamBuffer} from 'stream-buffers';
+import AggregateError from 'aggregate-error';
+import SemanticReleaseError from '@semantic-release/error';
+import {COMMIT_EMAIL, COMMIT_NAME, SECRET_REPLACEMENT} from '../lib/definitions/constants.js';
+import {
+  gitAddNote,
   gitCheckout,
-  gitTagHead,
-  gitRepo,
   gitCommits,
-  gitTagVersion,
-  gitRemoteTagHead,
+  gitGetNote,
+  gitHead as getGitHead,
   gitPush,
+  gitRemoteTagHead,
+  gitRepo,
   gitShallowClone,
+  gitTagHead,
+  gitTagVersion,
   merge,
   mergeFf,
-  rebase,
-  gitAddNote,
-  gitGetNote,
-} = require('./helpers/git-utils');
-
-const pluginNoop = require.resolve('./fixtures/plugin-noop');
+  rebase
+} from './helpers/git-utils.js';
+import pluginNoop from './fixtures/plugin-noop.js';
 
 test.beforeEach((t) => {
   // Stub the logger functions
