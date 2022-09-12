@@ -4,7 +4,7 @@ const got = require('got');
 const pRetry = require('p-retry');
 const {mockServerClient} = require('mockserver-client');
 
-const IMAGE = 'jamesdbloom/mockserver:latest';
+const IMAGE = 'mockserver/mockserver:latest';
 const MOCK_SERVER_PORT = 1080;
 const MOCK_SERVER_HOST = 'localhost';
 const docker = new Docker();
@@ -30,13 +30,13 @@ async function start() {
       minTimeout: 1000,
       factor: 2,
     });
-  } catch (_) {
+  } catch {
     throw new Error(`Couldn't start mock-server after 2 min`);
   }
 }
 
 /**
- * Stop and remote the `mockserver` Docker container.
+ * Stop and remove the `mockserver` Docker container.
  */
 async function stop() {
   await container.stop();
@@ -91,7 +91,7 @@ async function mock(
 }
 
 /**
- * Verify the `mockserver` has been called with a requestion matching expectations. The `expectation` is created with the `mock` function.
+ * Verify the `mockserver` has been called with a request matching expectations. The `expectation` is created with the `mock` function.
  *
  * @param {Object} expectation The expectation created with `mock` function.
  * @return {Promise} A Promise that resolves if the expectation is met or reject otherwise.

@@ -20,10 +20,10 @@
     "Pierre Vanduynslager (https://twitter.com/@pvdlg_)"
   ],
   "dependencies": {
-    "@semantic-release/commit-analyzer": "^9.0.0",
+    "@semantic-release/commit-analyzer": "^9.0.2",
     "@semantic-release/error": "^3.0.0",
     "@semantic-release/github": "^8.0.0",
-    "@semantic-release/npm": "^8.0.0",
+    "@semantic-release/npm": "^9.0.0",
     "@semantic-release/release-notes-generator": "^10.0.0",
     "aggregate-error": "^3.0.0",
     "cosmiconfig": "^7.0.0",
@@ -37,8 +37,8 @@
     "hook-std": "^2.0.0",
     "hosted-git-info": "^4.0.0",
     "lodash": "^4.17.21",
-    "marked": "^2.0.0",
-    "marked-terminal": "^4.1.1",
+    "marked": "^4.0.10",
+    "marked-terminal": "^5.0.0",
     "micromatch": "^4.0.2",
     "p-each-series": "^2.1.0",
     "p-reduce": "^2.0.0",
@@ -51,26 +51,26 @@
   },
   "devDependencies": {
     "ava": "3.15.0",
+    "c8": "7.12.0",
     "clear-module": "4.1.2",
     "codecov": "3.8.3",
     "delay": "5.0.0",
-    "dockerode": "3.3.1",
+    "dockerode": "3.3.4",
     "file-url": "3.0.0",
     "fs-extra": "9.1.0",
-    "got": "11.8.3",
+    "got": "11.8.5",
     "js-yaml": "4.1.0",
-    "mockserver-client": "5.11.2",
-    "nock": "13.2.1",
-    "nyc": "15.1.0",
-    "p-retry": "4.6.1",
-    "proxyquire": "2.1.3",
+    "mockserver-client": "5.14.0",
+    "nock": "13.2.9",
+    "p-retry": "4.6.2",
     "sinon": "12.0.1",
     "stream-buffers": "3.0.2",
     "tempy": "1.0.1",
-    "xo": "0.29.1"
+    "testdouble": "3.16.6",
+    "xo": "0.32.1"
   },
   "engines": {
-    "node": ">=14.17"
+    "node": ">=16 || ^14.17"
   },
   "files": [
     "bin",
@@ -93,7 +93,7 @@
   ],
   "license": "MIT",
   "main": "index.js",
-  "nyc": {
+  "c8": {
     "include": [
       "lib/**/*.js",
       "index.js",
@@ -122,13 +122,14 @@
     "lint": "xo",
     "pretest": "npm run lint",
     "semantic-release": "./bin/semantic-release.js",
-    "test": "nyc ava -v",
-    "test:ci": "nyc ava -v"
+    "test": "c8 ava -v",
+    "test:ci": "c8 ava -v"
   },
   "xo": {
     "prettier": true,
     "space": true,
     "rules": {
+      "unicorn/no-reduce": "off",
       "unicorn/string-content": "off"
     }
   },

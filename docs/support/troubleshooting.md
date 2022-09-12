@@ -63,7 +63,7 @@ After a git history rewrite due to a `git push --force`, the git tags and notes 
 
 To recover from that situation, do the following:
 
-1. Delete the tag(s) for the release(s) that have been lost from the git history. You can delete each tag from remote using `git push origin :[TAG NAME]`, e.g. `git push origin :v2.0.0-beta.1`. You can delete tags locally using `git tag -d [TAG NAME]`, e.g. `git tag -d v2.0.0-beta.1`.
+1. Delete the tag(s) for the release(s) that have been lost from the git history. You can delete each tag from remote using `git push origin -d :[TAG NAME]`, e.g. `git push origin -d :v2.0.0-beta.1`. You can delete tags locally using `git tag -d [TAG NAME]`, e.g. `git tag -d v2.0.0-beta.1`.
 2. Re-create the tags locally: `git tag [TAG NAME] [COMMIT HASH]`, where `[COMMIT HASH]` is the new commit that created the release for the lost tag. E.g. `git tag v2.0.0-beta.1 abcdef0`
 3. Re-create the git notes for each release tag, e.g. `git notes --ref semantic-release add -f -m '{"channels":["beta"]}' v2.0.0-beta.1`. If the release was also published in the default channel (usually `master`), then set the first channel to `null`, e.g. `git notes --ref semantic-release add -f -m '{"channels":[null, "beta"]}'`
 4. Push the local notes: `git push --force origin refs/notes/semantic-release`. The `--force` is needed after the rebase. Be careful.

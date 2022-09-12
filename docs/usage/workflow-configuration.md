@@ -1,7 +1,7 @@
 # Workflow configuration
 
 **semantic-release** allow to manage and automate complex release workflow, based on multiple Git branches and distribution channels. This allow to:
-- Distributes certain releases to a particular group of users via distribution channels
+- Distribute certain releases to a particular group of users via distribution channels
 - Manage the availability of releases on distribution channels via branches merge
 - Maintain multiple lines of releases in parallel
 - Work on large future releases outside the normal flow of one version increment per Git push
@@ -91,7 +91,7 @@ For example the configuration `['master', {name: 'pre/rc', prerelease: '${name.r
   branches: [
     {name: 'master'},
     {name: 'pre/rc', channel: 'pre/rc', prerelease: 'rc'}, // `prerelease` is built with the template `${name.replace(/^pre\\//g, "")}`
-    {name: 'beta', channel: 'beta', prerelease: 'beta'}, // `prerelease` is set to `beta` as it is the value of `name`
+    {name: 'beta', channel: 'beta', prerelease: true}, // `prerelease` is set to `beta` as it is the value of `name`
   ]
 }
 ```

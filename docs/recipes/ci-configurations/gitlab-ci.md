@@ -14,7 +14,7 @@ GitLab CI supports [Pipelines](https://docs.gitlab.com/ee/ci/pipelines.html) all
 
 ### `.gitlab-ci.yml` configuration for Node projects
 
-This example is a minimal configuration for **semantic-release** with a build running Node 10 and 12. See [GitLab CI - Configuration of your jobs with .gitlab-ci.yml](https://docs.gitlab.com/ee/ci/yaml/README.html) for additional configuration options.
+This example is a minimal configuration for **semantic-release** with a build running Node 10 and 12. See [GitLab CI - Configuration of your jobs with `.gitlab-ci.yml`](https://docs.gitlab.com/ee/ci/yaml/README.html) for additional configuration options.
 
 **Note**: The`semantic-release` execution command varies depending on whether you are using a [local](../../usage/installation.md#local-installation) or [global](../../usage/installation.md#global-installation) **semantic-release** installation.
 
@@ -48,7 +48,7 @@ publish:
 
 ### `.gitlab-ci.yml` configuration for all projects
 
-This example is a minimal configuration for **semantic-release** with a build running Node 10 and 12. See [GitLab CI - Configuration of your jobs with .gitlab-ci.yml](https://docs.gitlab.com/ee/ci/yaml/README.html) for additional configuration options.
+This example is a minimal configuration for **semantic-release** with a build running Node 10 and 12. See [GitLab CI - Configuration of your jobs with `.gitlab-ci.yml`](https://docs.gitlab.com/ee/ci/yaml/README.html) for additional configuration options.
 
 **Note**: The`semantic-release` execution command varies depending if you are using a [local](../../usage/installation.md#local-installation) or [global](../../usage/installation.md#global-installation) **semantic-release** installation.
 
@@ -66,8 +66,8 @@ release:
     - npm install -g semantic-release @semantic-release/gitlab
   script:
     - semantic-release
-  only:
-    - master
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
 
 release:
   image: node:12-buster-slim
@@ -77,8 +77,8 @@ release:
     - npm install -g semantic-release @semantic-release/gitlab
   script:
     - semantic-release
-  only:
-    - master
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
 ```
 
 ### `package.json` configuration
