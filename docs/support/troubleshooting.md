@@ -30,7 +30,7 @@ When [squashing commits](https://git-scm.com/book/en/v2/Git-Tools-Rewriting-Hist
 
 When squashing commits make sure to rewrite the resulting commit message to be compliant with the project's commit message convention.
 
-**Note**: if the resulting squashed commit would encompasses multiple changes (for example multiple unrelated features or fixes) then it's probably not a good idea to squash those commits together. A commit should contain exactly one self-contained functional change and a functional change should be contained in exactly one commit. See [atomic commits](https://en.wikipedia.org/wiki/Atomic_commit).
+**Note**: if the resulting squashed commit encompasses multiple changes (for example multiple unrelated features or fixes) then it's probably not a good idea to squash those commits together. A commit should contain exactly one self-contained functional change and a functional change should be contained in exactly one commit. See [atomic commits](https://en.wikipedia.org/wiki/Atomic_commit).
 
 ## `reference already exists` error when pushing tag
 
