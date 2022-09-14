@@ -3,7 +3,7 @@
 ## Run `semantic-release` only after all tests succeeded
 
 The `semantic-release` command must be executed only after all the tests in the CI build pass. If the build runs multiple jobs (for example to test on multiple Operating Systems or Node versions) the CI has to be configured to guarantee that the `semantic-release` command is executed only after all jobs are successful.
-Here is a few example of the CI services that can be used to achieve this:
+Here are a few examples of the CI services that can be used to achieve this:
 - [Travis Build Stages](https://docs.travis-ci.com/user/build-stages)
 - [CircleCI Workflows](https://circleci.com/docs/2.0/workflows)
 - [GitHub Actions](https://github.com/features/actions)
