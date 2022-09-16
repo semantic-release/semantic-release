@@ -268,10 +268,12 @@ test('Throws an error if the plugin return an object without the expected plugin
 });
 
 test('Throws an error if the plugin is not found', async (t) => {
-  await t.throwsAsync(() => normalize({cwd, options: {}, logger: t.context.logger}, 'inexistantPlugin', 'non-existing-path', {}),
+  await t.throwsAsync(
+    () => normalize({cwd, options: {}, logger: t.context.logger}, 'inexistantPlugin', 'non-existing-path', {}),
     {
-    message: /Cannot find module 'non-existing-path'/,
-    code: 'MODULE_NOT_FOUND',
-    instanceOf: Error,
-  });
+      message: /Cannot find module 'non-existing-path'/,
+      code: 'MODULE_NOT_FOUND',
+      instanceOf: Error,
+    }
+  );
 });

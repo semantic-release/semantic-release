@@ -38,8 +38,7 @@ test('Export plugins based on steps config', async (t) => {
         verifyConditions: ['./test/fixtures/plugin-noop', {path: './test/fixtures/plugin-noop'}],
         generateNotes: './test/fixtures/plugin-noop',
         analyzeCommits: {path: './test/fixtures/plugin-noop'},
-        verifyRelease: () => {
-        },
+        verifyRelease: () => {},
       },
     },
     {}
@@ -63,7 +62,6 @@ test('Export plugins based on "plugins" config (array)', async (t) => {
     {cwd, logger: t.context.logger, options: {plugins: [plugin1, [plugin2, {}]], verifyRelease: () => {}}},
     {}
   );
-console.dir(plugins, {depth: null})
   await plugins.verifyConditions({options: {}});
   t.true(plugin1.verifyConditions.calledOnce);
   t.true(plugin2.verifyConditions.calledOnce);
@@ -256,7 +254,7 @@ test('Merge global options with plugin options', async (t) => {
 
 test('Throw an error for each invalid plugin configuration', async (t) => {
   const errors = [
-    ...await t.throwsAsync(() =>
+    ...(await t.throwsAsync(() =>
       getPlugins(
         {
           cwd,
@@ -271,7 +269,7 @@ test('Throw an error for each invalid plugin configuration', async (t) => {
         },
         {}
       )
-    ),
+    )),
   ];
 
   t.is(errors[0].name, 'SemanticReleaseError');
@@ -286,7 +284,7 @@ test('Throw an error for each invalid plugin configuration', async (t) => {
 
 test('Throw EPLUGINSCONF error if the "plugins" option contains an old plugin definition (returns a function)', async (t) => {
   const errors = [
-    ...await t.throwsAsync(() =>
+    ...(await t.throwsAsync(() =>
       getPlugins(
         {
           cwd,
@@ -295,7 +293,7 @@ test('Throw EPLUGINSCONF error if the "plugins" option contains an old plugin de
         },
         {}
       )
-    ),
+    )),
   ];
 
   t.is(errors[0].name, 'SemanticReleaseError');
@@ -306,9 +304,9 @@ test('Throw EPLUGINSCONF error if the "plugins" option contains an old plugin de
 
 test('Throw EPLUGINSCONF error for each invalid definition if the "plugins" option', async (t) => {
   const errors = [
-    ...await t.throwsAsync(() =>
+    ...(await t.throwsAsync(() =>
       getPlugins({cwd, logger: t.context.logger, options: {plugins: [1, {path: 1}, [() => {}, {}, {}]]}}, {})
-    ),
+    )),
   ];
 
   t.is(errors[0].name, 'SemanticReleaseError');
