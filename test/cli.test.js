@@ -27,6 +27,8 @@ test.afterEach.always((t) => {
 
   process.argv = previousArgv;
   process.env = previousEnv;
+
+  td.reset();
 });
 
 test.serial('Pass options to semantic-release API', async (t) => {
@@ -99,8 +101,8 @@ test.serial('Pass options to semantic-release API', async (t) => {
     'analyze-commits': 'analyze',
     verifyRelease: ['verify1', 'verify2'],
     'verify-release': ['verify1', 'verify2'],
-    generateNotes: 'notes',
-    'generate-notes': 'notes',
+    generateNotes: ['notes'],
+    'generate-notes': ['notes'],
     prepare: ['prepare1', 'prepare2'],
     publish: ['publish1', 'publish2'],
     success: ['success1', 'success2'],
@@ -257,7 +259,7 @@ test.serial('Return error exitCode if multiple plugin are set for single plugin'
 test.serial('Return error exitCode if semantic-release throw error', async (t) => {
   const argv = ['', ''];
   const index = await td.replaceEsm('../index.js');
-  td.when(index.default()).thenReject(new Error('semantic-release error'));
+  td.when(index.default({_: [], '$0': ''})).thenReject(new Error('semantic-release error'));
   process.argv = argv;
   const cli = (await import('../cli.js')).default;
 

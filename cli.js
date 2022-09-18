@@ -49,7 +49,7 @@ Usage:
 
     if (options.debug) {
       // Debug must be enabled before other requires in order to work
-      (await import('debug')).enable('semantic-release:*');
+      (await import('debug')).default.enable('semantic-release:*');
     }
 
     await (await import('./index.js')).default(options);
