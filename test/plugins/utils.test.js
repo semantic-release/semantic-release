@@ -1,5 +1,6 @@
 import test from 'ava';
 import {loadPlugin, parseConfig, validatePlugin, validateStep} from '../../lib/plugins/utils.js';
+import {imitate} from 'testdouble';
 
 test('validatePlugin', (t) => {
   const path = 'plugin-module';
@@ -189,17 +190,17 @@ test('validateStep: required plugin configuration', (t) => {
   );
 });
 
-test('loadPlugin', (t) => {
+test('loadPlugin', async (t) => {
   const cwd = process.cwd();
   const func = () => {};
 
-  t.is(require('../fixtures/plugin-noop'), loadPlugin({cwd: './test/fixtures'}, './plugin-noop', {}), 'From cwd');
+  t.is((await import('../fixtures/plugin-noop.js')).default, await loadPlugin({cwd: './test/fixtures'}, './plugin-noop', {}), 'From cwd');
   t.is(
-    require('../fixtures/plugin-noop'),
-    loadPlugin({cwd}, './plugin-noop', {'./plugin-noop': './test/fixtures'}),
+    (await import('../fixtures/plugin-noop.js')).default,
+    await loadPlugin({cwd}, './plugin-noop', {'./plugin-noop': './test/fixtures'}),
     'From a shareable config context'
   );
-  t.is(func, loadPlugin({cwd}, func, {}), 'Defined as a function');
+  t.is(func, await loadPlugin({cwd}, func, {}), 'Defined as a function');
 });
 
 test('parseConfig', (t) => {
