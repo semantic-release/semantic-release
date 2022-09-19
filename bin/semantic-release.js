@@ -5,9 +5,9 @@
 
 /* eslint-disable no-var */
 
+import findVersions from 'find-versions';
 var semver = require('semver');
 var execa = require('execa');
-var findVersions = require('find-versions');
 var pkg = require('../package.json');
 
 var MIN_GIT_VERSION = '2.7.1';
