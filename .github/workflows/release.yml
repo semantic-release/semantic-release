@@ -6,6 +6,8 @@ name: Release
       - next
       - beta
       - "*.x"
+permissions:
+  contents: write # for release publishing
 jobs:
   release:
     name: release
