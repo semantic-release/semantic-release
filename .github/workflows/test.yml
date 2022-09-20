@@ -12,6 +12,9 @@ on:
       - opened
       - synchronize
 
+permissions:
+  contents: read # to fetch code (actions/checkout)
+
 jobs:
   test_matrix:
     strategy:
