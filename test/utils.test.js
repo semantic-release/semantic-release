@@ -1,21 +1,21 @@
-const test = require('ava');
-const AggregateError = require('aggregate-error');
-const {
+import test from 'ava';
+import AggregateError from 'aggregate-error';
+import {
   extractErrors,
-  tagsToVersions,
-  isMajorRange,
-  isMaintenanceRange,
-  getUpperBound,
-  getLowerBound,
-  highest,
-  lowest,
-  getLatestVersion,
   getEarliestVersion,
   getFirstVersion,
+  getLatestVersion,
+  getLowerBound,
   getRange,
-  makeTag,
+  getUpperBound,
+  highest,
+  isMaintenanceRange,
+  isMajorRange,
   isSameChannel,
-} = require('../lib/utils');
+  lowest,
+  makeTag,
+  tagsToVersions
+} from '../lib/utils.js';
 
 test('extractErrors', (t) => {
   const errors = [new Error('Error 1'), new Error('Error 2')];

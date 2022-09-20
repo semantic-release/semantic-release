@@ -1,7 +1,7 @@
-const test = require('ava');
-const {union} = require('lodash');
-const semver = require('semver');
-const td = require('testdouble');
+import test from 'ava';
+import {union} from 'lodash-es';
+import semver from 'semver';
+import * as td from 'testdouble';
 
 const getBranch = (branches, branch) => branches.find(({name}) => name === branch);
 const release = (branches, name, version) => getBranch(branches, name).tags.push({version});
@@ -22,14 +22,17 @@ test('Enforce ranges with branching release workflow', async (t) => {
     {name: 'beta', prerelease: true, tags: []},
     {name: 'alpha', prerelease: true, tags: []},
   ];
-  td.replace('../../lib/branches/get-tags', () => branches);
-  td.replace('../../lib/branches/expand', () => []);
-  const getBranches = require('../../lib/branches');
+  const getTags = await td.replaceEsm('../../lib/branches/get-tags.js');
+  const expand = await td.replaceEsm('../../lib/branches/expand.js');
+  const remoteBranches = [];
+  const context = {options: {branches}};
+  td.when(expand.default()).thenResolve(remoteBranches);
+  td.when(getTags.default(context, remoteBranches)).thenResolve(branches);
 
-  let result = (await getBranches('repositoryUrl', 'master', {options: {branches}})).map(({name, range}) => ({
-    name,
-    range,
-  }));
+  const getBranches = (await import('../../lib/branches/index.js')).default;
+  const result = (await getBranches('repositoryUrl', 'master', context))
+    .map(({name, range}) => ({name, range,}));
+
   t.is(getBranch(result, '1.0.x').range, '>=1.0.0 <1.0.0', 'Cannot release on 1.0.x before a releasing on master');
   t.is(getBranch(result, '1.x').range, '>=1.1.0 <1.0.0', 'Cannot release on 1.x before a releasing on master');
   t.is(getBranch(result, 'master').range, '>=1.0.0');
@@ -203,7 +206,7 @@ test('Throw SemanticReleaseError for invalid configurations', async (t) => {
   ];
   td.replace('../../lib/branches/get-tags', () => branches);
   td.replace('../../lib/branches/expand', () => []);
-  const getBranches = require('../../lib/branches');
+  const getBranches = (await import('../../lib/branches/index.js')).default;
   const errors = [...(await t.throwsAsync(getBranches('repositoryUrl', 'master', {options: {branches}})))];
 
   t.is(errors[0].name, 'SemanticReleaseError');
@@ -233,11 +236,15 @@ test('Throw a SemanticReleaseError if there is duplicate branches', async (t) =>
     {name: 'master', tags: []},
     {name: 'master', tags: []},
   ];
-  td.replace('../../lib/branches/get-tags', () => branches);
-  td.replace('../../lib/branches/expand', () => []);
-  const getBranches = require('../../lib/branches');
+  const getTags = await td.replaceEsm('../../lib/branches/get-tags.js');
+  const expand = await td.replaceEsm('../../lib/branches/expand.js');
+  const context = {options: {branches}};
+  const remoteBranches = [];
+  td.when(expand.default()).thenResolve(remoteBranches);
+  td.when(getTags.default(context, remoteBranches)).thenResolve(branches);
+  const getBranches = (await import('../../lib/branches/index.js')).default;
 
-  const errors = [...(await t.throwsAsync(getBranches('repositoryUrl', 'master', {options: {branches}})))];
+  const errors = [...(await t.throwsAsync(getBranches('repositoryUrl', 'master', context)))];
 
   t.is(errors[0].name, 'SemanticReleaseError');
   t.is(errors[0].code, 'EDUPLICATEBRANCHES');
@@ -250,11 +257,15 @@ test('Throw a SemanticReleaseError for each invalid branch name', async (t) => {
     {name: '~master', tags: []},
     {name: '^master', tags: []},
   ];
-  td.replace('../../lib/branches/get-tags', () => branches);
-  td.replace('../../lib/branches/expand', () => []);
-  const getBranches = require('../../lib/branches');
+  const getTags = await td.replaceEsm('../../lib/branches/get-tags.js');
+  const expand = await td.replaceEsm('../../lib/branches/expand.js');
+  const context = {options: {branches}};
+  const remoteBranches = [];
+  td.when(expand.default()).thenResolve(remoteBranches);
+  td.when(getTags.default(context, remoteBranches)).thenResolve(branches);
+  const getBranches = (await import('../../lib/branches/index.js')).default;
 
-  const errors = [...(await t.throwsAsync(getBranches('repositoryUrl', 'master', {options: {branches}})))];
+  const errors = [...(await t.throwsAsync(getBranches('repositoryUrl', 'master', context)))];
 
   t.is(errors[0].name, 'SemanticReleaseError');
   t.is(errors[0].code, 'EINVALIDBRANCHNAME');

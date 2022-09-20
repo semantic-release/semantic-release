@@ -1,8 +1,8 @@
-const test = require('ava');
-const {escapeRegExp} = require('lodash');
-const td = require('testdouble');
-const {stub} = require('sinon');
-const {SECRET_REPLACEMENT} = require('../lib/definitions/constants');
+import test from 'ava';
+import {escapeRegExp} from 'lodash-es';
+import * as td from 'testdouble';
+import {stub} from 'sinon';
+import {SECRET_REPLACEMENT} from '../lib/definitions/constants.js';
 
 let previousArgv;
 let previousEnv;
@@ -27,10 +27,11 @@ test.afterEach.always((t) => {
 
   process.argv = previousArgv;
   process.env = previousEnv;
+
+  td.reset();
 });
 
 test.serial('Pass options to semantic-release API', async (t) => {
-  const run = stub().resolves(true);
   const argv = [
     '',
     '',
@@ -72,33 +73,49 @@ test.serial('Pass options to semantic-release API', async (t) => {
     '--debug',
     '-d',
   ];
-  td.replace('..', run);
+  const index = await td.replaceEsm('../index.js');
   process.argv = argv;
-  const cli = require('../cli');
+  const cli = (await import('../cli.js')).default;
 
   const exitCode = await cli();
 
-  t.deepEqual(run.args[0][0].branches, ['master', 'next']);
-  t.is(run.args[0][0].repositoryUrl, 'https://github/com/owner/repo.git');
-  t.is(run.args[0][0].tagFormat, `v\${version}`);
-  t.deepEqual(run.args[0][0].plugins, ['plugin1', 'plugin2']);
-  t.deepEqual(run.args[0][0].extends, ['config1', 'config2']);
-  t.deepEqual(run.args[0][0].verifyConditions, ['condition1', 'condition2']);
-  t.is(run.args[0][0].analyzeCommits, 'analyze');
-  t.deepEqual(run.args[0][0].verifyRelease, ['verify1', 'verify2']);
-  t.deepEqual(run.args[0][0].generateNotes, ['notes']);
-  t.deepEqual(run.args[0][0].prepare, ['prepare1', 'prepare2']);
-  t.deepEqual(run.args[0][0].publish, ['publish1', 'publish2']);
-  t.deepEqual(run.args[0][0].success, ['success1', 'success2']);
-  t.deepEqual(run.args[0][0].fail, ['fail1', 'fail2']);
-  t.is(run.args[0][0].debug, true);
-  t.is(run.args[0][0].dryRun, true);
+  td.verify(index.default({
+    branches: ['master', 'next'],
+    b: ['master', 'next'],
+    'repository-url': 'https://github/com/owner/repo.git',
+    repositoryUrl: 'https://github/com/owner/repo.git',
+    r: 'https://github/com/owner/repo.git',
+    'tag-format': `v\${version}`,
+    tagFormat: `v\${version}`,
+    t: `v\${version}`,
+    plugins: ['plugin1', 'plugin2'],
+    p: ['plugin1', 'plugin2'],
+    extends: ['config1', 'config2'],
+    e: ['config1', 'config2'],
+    'dry-run': true,
+    dryRun: true,
+    d: true,
+    verifyConditions: ['condition1', 'condition2'],
+    'verify-conditions': ['condition1', 'condition2'],
+    analyzeCommits: 'analyze',
+    'analyze-commits': 'analyze',
+    verifyRelease: ['verify1', 'verify2'],
+    'verify-release': ['verify1', 'verify2'],
+    generateNotes: ['notes'],
+    'generate-notes': ['notes'],
+    prepare: ['prepare1', 'prepare2'],
+    publish: ['publish1', 'publish2'],
+    success: ['success1', 'success2'],
+    fail: ['fail1', 'fail2'],
+    debug: true,
+    _: [],
+    '$0': ''
+  }));
 
   t.is(exitCode, 0);
 });
 
 test.serial('Pass options to semantic-release API with alias arguments', async (t) => {
-  const run = stub().resolves(true);
   const argv = [
     '',
     '',
@@ -116,48 +133,65 @@ test.serial('Pass options to semantic-release API with alias arguments', async (
     'config2',
     '--dry-run',
   ];
-  td.replace('..', run);
+  const index = await td.replaceEsm('../index.js');
   process.argv = argv;
-  const cli = require('../cli');
+  const cli = (await import('../cli.js')).default;
 
   const exitCode = await cli();
 
-  t.deepEqual(run.args[0][0].branches, ['master']);
-  t.is(run.args[0][0].repositoryUrl, 'https://github/com/owner/repo.git');
-  t.is(run.args[0][0].tagFormat, `v\${version}`);
-  t.deepEqual(run.args[0][0].plugins, ['plugin1', 'plugin2']);
-  t.deepEqual(run.args[0][0].extends, ['config1', 'config2']);
-  t.is(run.args[0][0].dryRun, true);
+  td.verify(index.default({
+    branches: ['master'],
+    b: ['master'],
+    'repository-url': 'https://github/com/owner/repo.git',
+    repositoryUrl: 'https://github/com/owner/repo.git',
+    r: 'https://github/com/owner/repo.git',
+    'tag-format': `v\${version}`,
+    tagFormat: `v\${version}`,
+    t: `v\${version}`,
+    plugins: ['plugin1', 'plugin2'],
+    p: ['plugin1', 'plugin2'],
+    extends: ['config1', 'config2'],
+    e: ['config1', 'config2'],
+    'dry-run': true,
+    dryRun: true,
+    d: true,
+    _: [],
+    '$0': ''
+  }));
 
   t.is(exitCode, 0);
 });
 
 test.serial('Pass unknown options to semantic-release API', async (t) => {
-  const run = stub().resolves(true);
   const argv = ['', '', '--bool', '--first-option', 'value1', '--second-option', 'value2', '--second-option', 'value3'];
-  td.replace('..', run);
+  const index = await td.replaceEsm('../index.js');
   process.argv = argv;
-  const cli = require('../cli');
+  const cli = (await import('../cli.js')).default;
 
   const exitCode = await cli();
 
-  t.is(run.args[0][0].bool, true);
-  t.is(run.args[0][0].firstOption, 'value1');
-  t.deepEqual(run.args[0][0].secondOption, ['value2', 'value3']);
+  td.verify(index.default({
+    bool: true,
+    firstOption: 'value1',
+    'first-option': 'value1',
+    secondOption: ['value2', 'value3'],
+    'second-option': ['value2', 'value3'],
+    _: [],
+    '$0': ''
+  }));
 
   t.is(exitCode, 0);
 });
 
 test.serial('Pass empty Array to semantic-release API for list option set to "false"', async (t) => {
-  const run = stub().resolves(true);
   const argv = ['', '', '--publish', 'false'];
-  td.replace('..', run);
+  const index = await td.replaceEsm('../index.js');
   process.argv = argv;
-  const cli = require('../cli');
+  const cli = (await import('../cli.js')).default;
 
   const exitCode = await cli();
 
-  t.deepEqual(run.args[0][0].publish, []);
+  td.verify(index.default({publish: [], _: [], '$0': ''}));
 
   t.is(exitCode, 0);
 });
@@ -165,9 +199,9 @@ test.serial('Pass empty Array to semantic-release API for list option set to "fa
 test.serial('Do not set properties in option for which arg is not in command line', async (t) => {
   const run = stub().resolves(true);
   const argv = ['', '', '-b', 'master'];
-  td.replace('..', run);
+  await td.replaceEsm('../index.js', null, run);
   process.argv = argv;
-  const cli = require('../cli');
+  const cli = (await import('../cli.js')).default;
 
   await cli();
 
@@ -184,9 +218,9 @@ test.serial('Do not set properties in option for which arg is not in command lin
 test.serial('Display help', async (t) => {
   const run = stub().resolves(true);
   const argv = ['', '', '--help'];
-  td.replace('..', run);
+  await td.replaceEsm('../index.js', null, run);
   process.argv = argv;
-  const cli = require('../cli');
+  const cli = (await import('../cli.js')).default;
 
   const exitCode = await cli();
 
@@ -197,9 +231,9 @@ test.serial('Display help', async (t) => {
 test.serial('Return error exitCode and prints help if called with a command', async (t) => {
   const run = stub().resolves(true);
   const argv = ['', '', 'pre'];
-  td.replace('..', run);
+  await td.replaceEsm('../index.js', null, run);
   process.argv = argv;
-  const cli = require('../cli');
+  const cli = (await import('../cli.js')).default;
 
   const exitCode = await cli();
 
@@ -211,9 +245,9 @@ test.serial('Return error exitCode and prints help if called with a command', as
 test.serial('Return error exitCode if multiple plugin are set for single plugin', async (t) => {
   const run = stub().resolves(true);
   const argv = ['', '', '--analyze-commits', 'analyze1', 'analyze2'];
-  td.replace('..', run);
+  await td.replaceEsm('../index.js', null, run);
   process.argv = argv;
-  const cli = require('../cli');
+  const cli = (await import('../cli.js')).default;
 
   const exitCode = await cli();
 
@@ -223,11 +257,11 @@ test.serial('Return error exitCode if multiple plugin are set for single plugin'
 });
 
 test.serial('Return error exitCode if semantic-release throw error', async (t) => {
-  const run = stub().rejects(new Error('semantic-release error'));
   const argv = ['', ''];
-  td.replace('..', run);
+  const index = await td.replaceEsm('../index.js');
+  td.when(index.default({_: [], '$0': ''})).thenReject(new Error('semantic-release error'));
   process.argv = argv;
-  const cli = require('../cli');
+  const cli = (await import('../cli.js')).default;
 
   const exitCode = await cli();
 
@@ -237,12 +271,12 @@ test.serial('Return error exitCode if semantic-release throw error', async (t) =
 
 test.serial('Hide sensitive environment variable values from the logs', async (t) => {
   const env = {MY_TOKEN: 'secret token'};
-  const run = stub().rejects(new Error(`Throw error: Exposing token ${env.MY_TOKEN}`));
   const argv = ['', ''];
-  td.replace('..', run);
+  const index = await td.replaceEsm('../index.js');
+  td.when(index.default({_: [], '$0': ''})).thenReject(new Error(`Throw error: Exposing token ${env.MY_TOKEN}`));
   process.argv = argv;
   process.env = {...process.env, ...env};
-  const cli = require('../cli');
+  const cli = (await import('../cli.js')).default;
 
   const exitCode = await cli();
 

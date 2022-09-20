@@ -2,10 +2,15 @@
   "name": "semantic-release",
   "description": "Automated semver compliant package publishing",
   "version": "0.0.0-development",
+  "type": "module",
   "author": "Stephan Bönnemann <stephan@boennemann.me> (http://boennemann.me)",
   "ava": {
     "files": [
       "test/**/*.test.js"
+    ],
+    "nodeArguments": [
+      "--loader=testdouble",
+      "--no-warnings"
     ],
     "timeout": "2m"
   },
@@ -36,7 +41,7 @@
     "git-log-parser": "^1.2.0",
     "hook-std": "^2.0.0",
     "hosted-git-info": "^4.0.0",
-    "lodash": "^4.17.21",
+    "lodash-es": "^4.17.21",
     "marked": "^4.0.10",
     "marked-terminal": "^5.0.0",
     "micromatch": "^4.0.2",
@@ -47,7 +52,7 @@
     "semver": "^7.3.2",
     "semver-diff": "^3.1.1",
     "signale": "^1.2.1",
-    "yargs": "^16.2.0"
+    "yargs": "^17.5.1"
   },
   "devDependencies": {
     "ava": "3.15.0",
@@ -122,8 +127,8 @@
     "lint": "xo",
     "pretest": "npm run lint",
     "semantic-release": "./bin/semantic-release.js",
-    "test": "c8 ava -v",
-    "test:ci": "c8 ava -v"
+    "test": "c8 ava --verbose",
+    "test:ci": "c8 ava --verbose"
   },
   "xo": {
     "prettier": true,
