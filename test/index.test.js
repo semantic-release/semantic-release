@@ -59,6 +59,9 @@ test('Plugins are called with expected values', async (t) => {
     gitHead: commits[commits.length - 1].hash,
     gitTag: 'v1.0.0',
     name: 'v1.0.0',
+    major: 1,
+    minor: 0,
+    patch: 0,
     channels: ['next'],
   };
   const nextRelease = {
@@ -67,6 +70,9 @@ test('Plugins are called with expected values', async (t) => {
     version: '1.1.0',
     gitHead: await getGitHead({cwd}),
     gitTag: 'v1.1.0',
+    major: 1,
+    minor: 1,
+    patch: 0,
     channel: null,
   };
   const notes1 = 'Release notes 1';
@@ -138,6 +144,9 @@ test('Plugins are called with expected values', async (t) => {
       gitTag: 'v1.0.0',
       notes: `${notes1}\n\n${notes2}\n\n${notes3}`,
       pluginName: '[Function: functionStub]',
+      major: 1,
+      minor: 0,
+      patch: 0,
     },
     {...nextRelease, ...release2, notes: `${notes1}\n\n${notes2}\n\n${notes3}`, pluginName: '[Function: functionStub]'},
     {...nextRelease, notes: `${notes1}\n\n${notes2}\n\n${notes3}`, pluginName: pluginNoop},
@@ -189,6 +198,9 @@ test('Plugins are called with expected values', async (t) => {
     channel: null,
     gitTag: 'v1.0.0',
     name: 'v1.0.0',
+    major: 1,
+    minor: 0,
+    patch: 0,
   });
   t.deepEqual(generateNotes2.args[0][1].envCi, envCi);
 
@@ -208,6 +220,9 @@ test('Plugins are called with expected values', async (t) => {
     gitTag: 'v1.0.0',
     name: 'v1.0.0',
     notes: notes1,
+    major: 1,
+    minor: 0,
+    patch: 0,
   });
   t.deepEqual(generateNotes2.args[0][1].envCi, envCi);
 
@@ -226,6 +241,9 @@ test('Plugins are called with expected values', async (t) => {
     channel: null,
     gitTag: 'v1.0.0',
     name: 'v1.0.0',
+    major: 1,
+    minor: 0,
+    patch: 0,
     notes: `${notes1}\n\n${notes2}`,
   });
   t.deepEqual(generateNotes3.args[0][1].envCi, envCi);
@@ -252,6 +270,9 @@ test('Plugins are called with expected values', async (t) => {
     channel: null,
     gitTag: 'v1.0.0',
     name: 'v1.0.0',
+    major: 1,
+    minor: 0,
+    patch: 0,
     notes: `${notes1}\n\n${notes2}\n\n${notes3}`,
   });
   t.deepEqual(addChannel.args[0][1].commits[0].hash, commits[1].hash);
@@ -354,6 +375,9 @@ test('Plugins are called with expected values', async (t) => {
     channel: null,
     gitTag: 'v1.0.0',
     name: 'v1.0.0',
+    major: 1,
+    minor: 0,
+    patch: 0,
     notes: `${notes1}\n\n${notes2}\n\n${notes3}`,
   });
   t.deepEqual(success.args[0][1].releases, [releases[0]]);
@@ -402,6 +426,9 @@ test('Use custom tag format', async (t) => {
     version: '2.0.0',
     gitHead: await getGitHead({cwd}),
     gitTag: 'test-2.0.0',
+    major: 2,
+    minor: 0,
+    patch: 0,
   };
   const notes = 'Release notes';
   const config = {branches: 'master', repositoryUrl, globalOpt: 'global', tagFormat: `test-\${version}`};
@@ -452,6 +479,9 @@ test('Use new gitHead, and recreate release notes if a prepare plugin create a c
     version: '2.0.0',
     gitHead: await getGitHead({cwd}),
     gitTag: 'v2.0.0',
+    major: 2,
+    minor: 0,
+    patch: 0,
     channel: null,
   };
   const notes = 'Release notes';
@@ -858,6 +888,9 @@ test('Call all "success" plugins even if one errors out', async (t) => {
     gitHead: await getGitHead({cwd}),
     gitTag: 'v2.0.0',
     channel: null,
+    major: 2,
+    minor: 0,
+    patch: 0,
   };
   const notes = 'Release notes';
   const verifyConditions1 = stub().resolves();
@@ -1288,6 +1321,9 @@ test('Accept "undefined" value returned by "generateNotes" and "false" by "publi
     version: '1.2.0',
     gitHead: await getGitHead({cwd}),
     gitTag: 'v1.2.0',
+    major: 1,
+    minor: 2,
+    patch: 0,
     channel: null,
   };
   const analyzeCommits = stub().resolves(nextRelease.type);
