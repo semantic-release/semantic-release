@@ -21,6 +21,7 @@ test('Export default plugins', async (t) => {
   // Verify the module returns a function for each plugin
   t.is(typeof plugins.verifyConditions, 'function');
   t.is(typeof plugins.analyzeCommits, 'function');
+  t.is(typeof plugins.getLastRelease, 'function');
   t.is(typeof plugins.verifyRelease, 'function');
   t.is(typeof plugins.generateNotes, 'function');
   t.is(typeof plugins.prepare, 'function');
