@@ -1,5 +1,5 @@
 import tempy from 'tempy';
-import execa from 'execa';
+import {execa} from 'execa';
 import fileUrl from 'file-url';
 import pEachSeries from 'p-each-series';
 import gitLogParser from 'git-log-parser';
