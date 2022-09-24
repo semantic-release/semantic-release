@@ -1,5 +1,5 @@
 import test from 'ava';
-import tempy from 'tempy';
+import {temporaryDirectory} from 'tempy';
 import {
   addNote,
   fetch,
@@ -268,7 +268,7 @@ test('Return "true" if in a Git repository', async (t) => {
 });
 
 test('Return falsy if not in a Git repository', async (t) => {
-  const cwd = tempy.directory();
+  const cwd = temporaryDirectory();
 
   t.falsy(await isGitRepo({cwd}));
 });
@@ -288,7 +288,7 @@ test('Return falsy for invalid tag names', async (t) => {
 });
 
 test('Throws error if obtaining the tags fails', async (t) => {
-  const cwd = tempy.directory();
+  const cwd = temporaryDirectory();
 
   await t.throwsAsync(getTags('master', {cwd}));
 });

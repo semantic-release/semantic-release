@@ -1,5 +1,5 @@
 import test from 'ava';
-import tempy from 'tempy';
+import {temporaryDirectory} from 'tempy';
 import verify from '../lib/verify.js';
 import {gitRepo} from './helpers/git-utils.js';
 
@@ -28,7 +28,7 @@ test('Throw a AggregateError', async (t) => {
 });
 
 test('Throw a SemanticReleaseError if does not run on a git repository', async (t) => {
-  const cwd = tempy.directory();
+  const cwd = temporaryDirectory();
   const options = {branches: []};
 
   const errors = [...(await t.throwsAsync(verify({cwd, options})))];

@@ -1,4 +1,4 @@
-import tempy from 'tempy';
+import {temporaryDirectory} from 'tempy';
 import {execa} from 'execa';
 import fileUrl from 'file-url';
 import pEachSeries from 'p-each-series';
@@ -24,7 +24,7 @@ import {GIT_NOTE_REF} from '../../lib/definitions/constants.js';
  * @return {String} The path of the repository
  */
 export async function initGit(withRemote) {
-  const cwd = tempy.directory();
+  const cwd = temporaryDirectory();
   const args = withRemote ? ['--bare', '--initial-branch=master'] : ['--initial-branch=master'];
 
   await execa('git', ['init', ...args], {cwd}).catch(() => {
@@ -71,7 +71,7 @@ export async function gitRepo(withRemote, branch = 'master') {
  * @param {String} [branch='master'] the branch to initialize.
  */
 export async function initBareRepo(repositoryUrl, branch = 'master') {
-  const cwd = tempy.directory();
+  const cwd = temporaryDirectory();
   await execa('git', ['clone', '--no-hardlinks', repositoryUrl, cwd], {cwd});
   await gitCheckout(branch, true, {cwd});
   await gitCommits(['Initial commit'], {cwd});
@@ -172,7 +172,7 @@ export async function gitTagVersion(tagName, sha, execaOptions) {
  * @return {String} The path of the cloned repository.
  */
 export async function gitShallowClone(repositoryUrl, branch = 'master', depth = 1) {
-  const cwd = tempy.directory();
+  const cwd = temporaryDirectory();
 
   await execa('git', ['clone', '--no-hardlinks', '--no-tags', '-b', branch, '--depth', depth, repositoryUrl, cwd], {
     cwd,
@@ -188,7 +188,7 @@ export async function gitShallowClone(repositoryUrl, branch = 'master', depth = 
  * @return {String} The path of the new repository.
  */
 export async function gitDetachedHead(repositoryUrl, head) {
-  const cwd = tempy.directory();
+  const cwd = temporaryDirectory();
 
   await execa('git', ['init'], {cwd});
   await execa('git', ['remote', 'add', 'origin', repositoryUrl], {cwd});
@@ -198,7 +198,7 @@ export async function gitDetachedHead(repositoryUrl, head) {
 }
 
 export async function gitDetachedHeadFromBranch(repositoryUrl, branch, head) {
-  const cwd = tempy.directory();
+  const cwd = temporaryDirectory();
 
   await execa('git', ['init'], {cwd});
   await execa('git', ['remote', 'add', 'origin', repositoryUrl], {cwd});
