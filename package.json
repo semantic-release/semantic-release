@@ -63,7 +63,7 @@
     "mockserver-client": "5.14.0",
     "nock": "13.2.9",
     "p-retry": "4.6.2",
-    "sinon": "12.0.1",
+    "sinon": "14.0.0",
     "stream-buffers": "3.0.2",
     "tempy": "1.0.1",
     "testdouble": "3.16.6",
