@@ -1,11 +1,11 @@
-const path = require('path');
-const test = require('ava');
-const {copy, outputFile} = require('fs-extra');
-const {stub} = require('sinon');
-const tempy = require('tempy');
-const getPlugins = require('../../lib/plugins');
+import path from 'path';
+import test from 'ava';
+import {copy, outputFile} from 'fs-extra';
+import {stub} from 'sinon';
+import {temporaryDirectory} from 'tempy';
+import getPlugins from '../../lib/plugins/index.js';
 
-// Save the current working diretory
+// Save the current working directory
 const cwd = process.cwd();
 
 test.beforeEach((t) => {
@@ -137,7 +137,7 @@ test('Unknown steps of plugins configured in "plugins" are ignored', async (t) =
 });
 
 test('Export plugins loaded from the dependency of a shareable config module', async (t) => {
-  const cwd = tempy.directory();
+  const cwd = temporaryDirectory();
   await copy(
     './test/fixtures/plugin-noop.js',
     path.resolve(cwd, 'node_modules/shareable-config/node_modules/custom-plugin/index.js')
@@ -170,7 +170,7 @@ test('Export plugins loaded from the dependency of a shareable config module', a
 });
 
 test('Export plugins loaded from the dependency of a shareable config file', async (t) => {
-  const cwd = tempy.directory();
+  const cwd = temporaryDirectory();
   await copy('./test/fixtures/plugin-noop.js', path.resolve(cwd, 'plugin/plugin-noop.js'));
   await outputFile(path.resolve(cwd, 'shareable-config.js'), '');
 

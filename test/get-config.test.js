@@ -1,12 +1,14 @@
-const path = require('path');
-const {format} = require('util');
-const test = require('ava');
-const {writeFile, outputJson} = require('fs-extra');
-const {omit} = require('lodash');
-const td = require('testdouble');
-const {stub} = require('sinon');
-const yaml = require('js-yaml');
-const {gitRepo, gitTagVersion, gitCommits, gitShallowClone, gitAddConfig} = require('./helpers/git-utils');
+import path from 'node:path';
+import {format} from 'node:util';
+import test from 'ava';
+import fsExtra from 'fs-extra';
+import {omit} from 'lodash-es';
+import * as td from 'testdouble';
+import {stub} from 'sinon';
+import yaml from 'js-yaml';
+import {gitAddConfig, gitCommits, gitRepo, gitShallowClone, gitTagVersion} from './helpers/git-utils.js';
+
+const {outputJson, writeFile} = fsExtra;
 
 const DEFAULT_PLUGINS = [
   '@semantic-release/commit-analyzer',
@@ -15,10 +17,10 @@ const DEFAULT_PLUGINS = [
   '@semantic-release/github',
 ];
 
-test.beforeEach((t) => {
+test.beforeEach(async (t) => {
   t.context.plugins = stub().returns({});
-  td.replace('../lib/plugins', t.context.plugins);
-  t.context.getConfig = require('../lib/get-config');
+  await td.replaceEsm('../lib/plugins.js', null, t.context.plugins);
+  t.context.getConfig = (await import('../lib/get-config.js')).default;
 });
 
 test('Default values, reading repositoryUrl from package.json', async (t) => {

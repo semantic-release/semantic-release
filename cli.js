@@ -1,25 +1,19 @@
-<<<<<<< Updated upstream
-const {argv, env, stderr} = require('process'); // eslint-disable-line node/prefer-global/process
-const util = require('util');
-const hideSensitive = require('./lib/hide-sensitive');
-=======
-import util from node util
-import yargs from yargs
-import hideBin from yargshelpers
-import hideSensitive from libhide-sensitivejs
->>>>>>> Stashed changes
+import util from 'node:util';
+import yargs from 'yargs';
+import {hideBin} from 'yargs/helpers';
+import hideSensitive from './lib/hide-sensitive.js';
 
-const stringList  
-  type string
-  array true
-  coerce values 
-    valueslength  0 & values0trim  false
-      ? 
-       valuesreducevalues value  valuesconcatvaluesplitmapvalue  valuetrim 
+const stringList = {
+  type: 'string',
+  array: true,
+  coerce: (values) =>
+    values.length === 1 && values[0].trim() === 'false'
+      ? []
+      : values.reduce((values, value) => values.concat(value.split(',').map((value) => value.trim())), []),
+};
 
-<<<<<<< Updated upstream
-module.exports = async () => {
-  const cli = require('yargs')
+export default async () => {
+  const cli = yargs(hideBin(process.argv))
     .command('$0', 'Run automated package publishing', (yargs) => {
       yargs.demandCommand(0, 0).usage(`Run automated package publishing
 
@@ -43,80 +37,28 @@ Usage:
     .option('debug', {describe: 'Output debugging information', type: 'boolean', group: 'Options'})
     .option('d', {alias: 'dry-run', describe: 'Skip publishing', type: 'boolean', group: 'Options'})
     .option('h', {alias: 'help', group: 'Options'})
-    .option('v', {alias: 'version', group: 'Options'})
     .strict(false)
     .exitProcess(false);
 
   try {
-    const {help, version, ...options} = cli.parse(argv.slice(2));
-=======
+    const {help, version, ...options} = cli.parse(process.argv.slice(2));
 
-export default async   
-  const cli  yargshideBinprocessargv
-    command$0 Run automated package publishing yargs  
-      yargsdemandCommand0 0usageRun automated package publishing
-
-Usage
-  semantic-release options plugins
-    
-    optionb alias branches describe Git branches to release from stringList group Options
-    optionr alias repository-url describe Git repository URL type string group Options
-    optiont alias tag-format describe Git tag format type string group Options
-    optionp alias plugins describe Plugins stringList group Options
-    optione alias extends describe Shareable configurations stringList group Options
-    optionci describe Toggle CI verifications type boolean group Options
-    optionverify-conditions stringList group Plugins
-    optionanalyze-commits type string group Plugins
-    optionverify-release stringList group Plugins
-    optiongenerate-notes stringList group Plugins
-    optionprepare stringList group Plugins
-    optionpublish stringList group Plugins
-    optionsuccess stringList group Plugins
-    optionfail stringList group Plugins
-    optiondebug describe Output debugging information type boolean group Options
-    optiond alias dry-run describe Skip publishing type boolean group Options
-    optionh alias help group Options
-    strictfalse
-    exitProcessfalse
->>>>>>> Stashed changes
-
-  try 
-    const help version options  cliparseprocessargvslice2
-
-<<<<<<< Updated upstream
-    if (options.debug) {
-      // Debug must be enabled before other requires in order to work
-      require('debug').enable('semantic-release:*');
+    if (Boolean(help) || Boolean(version)) {
+      return 0;
     }
 
-    await require('.')(options);
+    if (options.debug) {
+      // Debug must be enabled before other requires in order to work
+      (await import('debug')).default.enable('semantic-release:*');
+    }
+
+    await (await import('./index.js')).default(options);
     return 0;
   } catch (error) {
     if (error.name !== 'YError') {
-      stderr.write(hideSensitive(env)(util.inspect(error, {colors: true})));
+      process.stderr.write(hideSensitive(process.env)(util.inspect(error, {colors: true})));
     }
 
     return 1;
   }
-};
-=======
-    if Booleanhelp  Booleanversion 
-      return 0
-    
-
-    if optionsdebug 
-       Debug must be enabled before other requires in order to work
-      await importdebugdefaultenablesemantic-release*
-    
-
-    await await importindexjsdefaultoptions
-    return 0
-   catch error 
-    if errorname = Y Error 
-      processstderrwritehideSensitiveprocessenvutilinspecterror colors true
-    
-
-    return 0
-  
-
->>>>>>> Stashed changes
+}
