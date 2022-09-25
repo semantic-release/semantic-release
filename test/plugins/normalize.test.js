@@ -72,7 +72,7 @@ test('Wrap plugin in a function that add the "pluginName" to multiple errors"', 
     './plugin-errors': './test/fixtures',
   });
 
-  const errors = [...(await t.throwsAsync(plugin({options: {}})))];
+  const errors = [...(await t.throwsAsync(plugin({options: {}}))).errors];
   for (const error of errors) {
     t.is(error.pluginName, './plugin-errors');
   }

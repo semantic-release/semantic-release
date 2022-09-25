@@ -269,7 +269,7 @@ test('Throw an error for each invalid plugin configuration', async (t) => {
         },
         {}
       )
-    )),
+    )).errors,
   ];
 
   t.is(errors[0].name, 'SemanticReleaseError');
@@ -293,7 +293,7 @@ test('Throw EPLUGINSCONF error if the "plugins" option contains an old plugin de
         },
         {}
       )
-    )),
+    )).errors,
   ];
 
   t.is(errors[0].name, 'SemanticReleaseError');
@@ -306,7 +306,7 @@ test('Throw EPLUGINSCONF error for each invalid definition if the "plugins" opti
   const errors = [
     ...(await t.throwsAsync(() =>
       getPlugins({cwd, logger: t.context.logger, options: {plugins: [1, {path: 1}, [() => {}, {}, {}]]}}, {})
-    )),
+    )).errors,
   ];
 
   t.is(errors[0].name, 'SemanticReleaseError');
