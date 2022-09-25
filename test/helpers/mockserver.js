@@ -4,7 +4,7 @@ import got from 'got';
 import pRetry from 'p-retry';
 import {mockServerClient} from 'mockserver-client';
 
-const IMAGE = 'jamesdbloom/mockserver:latest';
+const IMAGE = 'mockserver/mockserver:latest';
 const MOCK_SERVER_PORT = 1080;
 const MOCK_SERVER_HOST = 'localhost';
 const docker = new Docker();
@@ -13,7 +13,7 @@ let container;
 /**
  * Download the `mockserver` Docker image, create a new container and start it.
  */
-async function start() {
+export async function start() {
   await getStream(await docker.pull(IMAGE));
 
   container = await docker.createContainer({
@@ -30,15 +30,15 @@ async function start() {
       minTimeout: 1000,
       factor: 2,
     });
-  } catch (error) {
+  } catch {
     throw new Error(`Couldn't start mock-server after 2 min`);
   }
 }
 
 /**
- * Stop and remote the `mockserver` Docker container.
+ * Stop and remove the `mockserver` Docker container.
  */
-async function stop() {
+export async function stop() {
   await container.stop();
   await container.remove();
 }
@@ -50,7 +50,7 @@ const client = mockServerClient(MOCK_SERVER_HOST, MOCK_SERVER_PORT);
 /**
  * @type {string} the url of the `mockserver` instance
  */
-const url = `http://${MOCK_SERVER_HOST}:${MOCK_SERVER_PORT}`;
+export const url = `http://${MOCK_SERVER_HOST}:${MOCK_SERVER_PORT}`;
 
 /**
  * Set up the `mockserver` instance response for a specific request.
@@ -65,7 +65,7 @@ const url = `http://${MOCK_SERVER_HOST}:${MOCK_SERVER_PORT}`;
  * @param {Object} response.body The JSON object to respond in the response body.
  * @return {Object} An object representation the expectation. Pass to the `verify` function to validate the `mockserver` has been called with a `request` matching the expectations.
  */
-async function mock(
+export async function mock(
   path,
   {body: requestBody, headers: requestHeaders},
   {method = 'POST', statusCode = 200, body: responseBody}
@@ -91,13 +91,11 @@ async function mock(
 }
 
 /**
- * Verify the `mockserver` has been called with a requestion matching expectations. The `expectation` is created with the `mock` function.
+ * Verify the `mockserver` has been called with a request matching expectations. The `expectation` is created with the `mock` function.
  *
  * @param {Object} expectation The expectation created with `mock` function.
  * @return {Promise} A Promise that resolves if the expectation is met or reject otherwise.
  */
-function verify(expectation) {
+export function verify(expectation) {
   return client.verify(expectation);
 }
-
-export default {start, stop, mock, verify, url};

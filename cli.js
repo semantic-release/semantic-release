@@ -1,25 +1,26 @@
-const {argv, env, stderr} = require('process'); // eslint-disable-line node/prefer-global/process
-const util = require('util');
-const hideSensitive = require('./lib/hide-sensitive');
+import util from 'node:util';
+import yargs from 'yargs';
+import {hideBin} from 'yargs/helpers';
+import hideSensitive from './lib/hide-sensitive.js';
 
 const stringList = {
   type: 'string',
   array: true,
-  coerce: values =>
+  coerce: (values) =>
     values.length === 1 && values[0].trim() === 'false'
       ? []
-      : values.reduce((values, value) => values.concat(value.split(',').map(value => value.trim())), []),
+      : values.reduce((values, value) => values.concat(value.split(',').map((value) => value.trim())), []),
 };
 
-module.exports = async () => {
-  const cli = require('yargs')
-    .command('$0', 'Run automated package publishing', yargs => {
+export default async () => {
+  const cli = yargs(hideBin(process.argv))
+    .command('$0', 'Run automated package publishing', (yargs) => {
       yargs.demandCommand(0, 0).usage(`Run automated package publishing
 
 Usage:
   semantic-release [options] [plugins]`);
     })
-    .option('b', {alias: 'branch', describe: 'Git branch to release from', type: 'string', group: 'Options'})
+    .option('b', {alias: 'branches', describe: 'Git branches to release from', ...stringList, group: 'Options'})
     .option('r', {alias: 'repository-url', describe: 'Git repository URL', type: 'string', group: 'Options'})
     .option('t', {alias: 'tag-format', describe: 'Git tag format', type: 'string', group: 'Options'})
     .option('p', {alias: 'plugins', describe: 'Plugins', ...stringList, group: 'Options'})
@@ -36,29 +37,28 @@ Usage:
     .option('debug', {describe: 'Output debugging information', type: 'boolean', group: 'Options'})
     .option('d', {alias: 'dry-run', describe: 'Skip publishing', type: 'boolean', group: 'Options'})
     .option('h', {alias: 'help', group: 'Options'})
-    .option('v', {alias: 'version', group: 'Options'})
     .strict(false)
     .exitProcess(false);
 
   try {
-    const {help, version, ...opts} = cli.parse(argv.slice(2));
+    const {help, version, ...options} = cli.parse(process.argv.slice(2));
 
     if (Boolean(help) || Boolean(version)) {
       return 0;
     }
 
-    if (opts.debug) {
+    if (options.debug) {
       // Debug must be enabled before other requires in order to work
-      require('debug').enable('semantic-release:*');
+      (await import('debug')).default.enable('semantic-release:*');
     }
 
-    await require('.')(opts);
+    await (await import('./index.js')).default(options);
     return 0;
   } catch (error) {
     if (error.name !== 'YError') {
-      stderr.write(hideSensitive(env)(util.inspect(error, {colors: true})));
+      process.stderr.write(hideSensitive(process.env)(util.inspect(error, {colors: true})));
     }
 
     return 1;
   }
-};
+}

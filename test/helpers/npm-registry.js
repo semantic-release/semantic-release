@@ -1,15 +1,13 @@
+import path from 'node:path';
 import Docker from 'dockerode';
 import getStream from 'get-stream';
 import got from 'got';
 import delay from 'delay';
 import pRetry from 'p-retry';
 
-const IMAGE = 'semanticrelease/npm-registry-docker:latest';
-const SERVER_PORT = 15986;
-const COUCHDB_PORT = 5984;
-const SERVER_HOST = 'localhost';
-const COUCHDB_USER = 'admin';
-const COUCHDB_PASSWORD = 'password';
+const IMAGE = 'verdaccio/verdaccio:4';
+const REGISTRY_PORT = 4873;
+const REGISTRY_HOST = 'localhost';
 const NPM_USERNAME = 'integration';
 const NPM_PASSWORD = 'suchsecure';
 const NPM_EMAIL = 'integration@test.com';
@@ -19,14 +17,14 @@ let container;
 /**
  * Download the `npm-registry-docker` Docker image, create a new container and start it.
  */
-async function start() {
+export async function start() {
   await getStream(await docker.pull(IMAGE));
 
   container = await docker.createContainer({
     Tty: true,
     Image: IMAGE,
-    PortBindings: {[`${COUCHDB_PORT}/tcp`]: [{HostPort: `${SERVER_PORT}`}]},
-    Env: [`COUCHDB_USER=${COUCHDB_USER}`, `COUCHDB_PASSWORD=${COUCHDB_PASSWORD}`],
+    PortBindings: {[`${REGISTRY_PORT}/tcp`]: [{HostPort: `${REGISTRY_PORT}`}]},
+    Binds: [`${path.join(__dirname, 'config.yaml')}:/verdaccio/conf/config.yaml`],
   });
 
   await container.start();
@@ -34,21 +32,19 @@ async function start() {
 
   try {
     // Wait for the registry to be ready
-    await pRetry(() => got(`http://${SERVER_HOST}:${SERVER_PORT}/registry/_design/app`, {cache: false}), {
+    await pRetry(() => got(`http://${REGISTRY_HOST}:${REGISTRY_PORT}/`, {cache: false}), {
       retries: 7,
       minTimeout: 1000,
       factor: 2,
     });
-  } catch (error) {
+  } catch {
     throw new Error(`Couldn't start npm-registry-docker after 2 min`);
   }
 
   // Create user
-  await got(`http://${SERVER_HOST}:${SERVER_PORT}/_users/org.couchdb.user:${NPM_USERNAME}`, {
-    json: true,
-    auth: `${COUCHDB_USER}:${COUCHDB_PASSWORD}`,
+  await got(`http://${REGISTRY_HOST}:${REGISTRY_PORT}/-/user/org.couchdb.user:${NPM_USERNAME}`, {
     method: 'PUT',
-    body: {
+    json: {
       _id: `org.couchdb.user:${NPM_USERNAME}`,
       name: NPM_USERNAME,
       roles: [],
@@ -59,9 +55,9 @@ async function start() {
   });
 }
 
-const url = `http://${SERVER_HOST}:${SERVER_PORT}/registry/_design/app/_rewrite/`;
+export const url = `http://${REGISTRY_HOST}:${REGISTRY_PORT}/`;
 
-const authEnv = {
+export const authEnv = {
   npm_config_registry: url, // eslint-disable-line camelcase
   NPM_USERNAME,
   NPM_PASSWORD,
@@ -71,9 +67,7 @@ const authEnv = {
 /**
  * Stop and remote the `npm-registry-docker` Docker container.
  */
-async function stop() {
+export async function stop() {
   await container.stop();
   await container.remove();
 }
-
-export default {start, stop, authEnv, url};

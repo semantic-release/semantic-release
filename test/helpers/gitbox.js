@@ -1,9 +1,9 @@
 import Docker from 'dockerode';
 import getStream from 'get-stream';
 import pRetry from 'p-retry';
-import {initBareRepo, gitShallowClone} from './git-utils';
+import {gitShallowClone, initBareRepo} from './git-utils.js';
 
-const IMAGE = 'pvdlg/docker-gitbox';
+const IMAGE = 'semanticrelease/docker-gitbox:latest';
 const SERVER_PORT = 80;
 const HOST_PORT = 2080;
 const SERVER_HOST = 'localhost';
@@ -12,12 +12,12 @@ const GIT_PASSWORD = 'suchsecure';
 const docker = new Docker();
 let container;
 
-const gitCredential = `${GIT_USERNAME}:${GIT_PASSWORD}`;
+export const gitCredential = `${GIT_USERNAME}:${GIT_PASSWORD}`;
 
 /**
  * Download the `gitbox` Docker image, create a new container and start it.
  */
-async function start() {
+export async function start() {
   await getStream(await docker.pull(IMAGE));
 
   container = await docker.createContainer({
@@ -38,7 +38,7 @@ async function start() {
 /**
  * Stop and remote the `mockserver` Docker container.
  */
-async function stop() {
+export async function stop() {
   await container.stop();
   await container.remove();
 }
@@ -51,7 +51,7 @@ async function stop() {
  * @param {String} [description=`Repository ${name}`] The repository description.
  * @return {Object} The `repositoryUrl` (URL without auth) and `authUrl` (URL with auth).
  */
-async function createRepo(name, branch = 'master', description = `Repository ${name}`) {
+export async function createRepo(name, branch = 'master', description = `Repository ${name}`) {
   const exec = await container.exec({
     Cmd: ['repo-admin', '-n', name, '-d', description],
     AttachStdout: true,
@@ -63,10 +63,8 @@ async function createRepo(name, branch = 'master', description = `Repository ${n
   const authUrl = `http://${gitCredential}@${SERVER_HOST}:${HOST_PORT}/git/${name}.git`;
 
   // Retry as the server might take a few ms to make the repo available push
-  await pRetry(() => initBareRepo(authUrl, branch), {retries: 3, minTimeout: 500, factor: 2});
+  await pRetry(() => initBareRepo(authUrl, branch), {retries: 5, minTimeout: 500, factor: 2});
   const cwd = await gitShallowClone(authUrl);
 
   return {cwd, repositoryUrl, authUrl};
 }
-
-export default {start, stop, gitCredential, createRepo};
