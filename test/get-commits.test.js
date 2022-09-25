@@ -1,16 +1,16 @@
 import test from 'ava';
 import {stub} from 'sinon';
-import getCommits from '../lib/get-commits';
-import {gitRepo, gitCommits, gitDetachedHead} from './helpers/git-utils';
+import getCommits from '../lib/get-commits.js';
+import {gitCommits, gitDetachedHead, gitRepo} from './helpers/git-utils.js';
 
-test.beforeEach(t => {
+test.beforeEach((t) => {
   // Stub the logger functions
   t.context.log = stub();
   t.context.error = stub();
   t.context.logger = {log: t.context.log, error: t.context.error};
 });
 
-test('Get all commits when there is no last release', async t => {
+test('Get all commits when there is no last release', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
   // Add commits to the master branch
@@ -24,7 +24,7 @@ test('Get all commits when there is no last release', async t => {
   t.deepEqual(result, commits);
 });
 
-test('Get all commits since gitHead (from lastRelease)', async t => {
+test('Get all commits since gitHead (from lastRelease)', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
   // Add commits to the master branch
@@ -42,7 +42,7 @@ test('Get all commits since gitHead (from lastRelease)', async t => {
   t.deepEqual(result, commits.slice(0, 2));
 });
 
-test('Get all commits since gitHead (from lastRelease) on a detached head repo', async t => {
+test('Get all commits since gitHead (from lastRelease) on a detached head repo', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   let {cwd, repositoryUrl} = await gitRepo();
   // Add commits to the master branch
@@ -66,7 +66,26 @@ test('Get all commits since gitHead (from lastRelease) on a detached head repo',
   t.truthy(result[0].committer.name);
 });
 
-test('Return empty array if lastRelease.gitHead is the last commit', async t => {
+test('Get all commits between lastRelease.gitHead and a shas', async (t) => {
+  // Create a git repository, set the current working directory at the root of the repo
+  const {cwd} = await gitRepo();
+  // Add commits to the master branch
+  const commits = await gitCommits(['First', 'Second', 'Third'], {cwd});
+
+  // Retrieve the commits with the commits module, between commit 'First' and 'Third'
+  const result = await getCommits({
+    cwd,
+    lastRelease: {gitHead: commits[commits.length - 1].hash},
+    nextRelease: {gitHead: commits[1].hash},
+    logger: t.context.logger,
+  });
+
+  // Verify the commits created and retrieved by the module are identical
+  t.is(result.length, 1);
+  t.deepEqual(result, commits.slice(1, -1));
+});
+
+test('Return empty array if lastRelease.gitHead is the last commit', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
   // Add commits to the master branch
@@ -83,7 +102,7 @@ test('Return empty array if lastRelease.gitHead is the last commit', async t => 
   t.deepEqual(result, []);
 });
 
-test('Return empty array if there is no commits', async t => {
+test('Return empty array if there is no commits', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
 

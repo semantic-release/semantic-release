@@ -20,7 +20,7 @@
   - `publish`: Publish the package on the npm registry
 - [@semantic-release/gitlab](https://github.com/semantic-release/gitlab)
   - `verifyConditions`: Verify the presence and the validity of the GitLab authentication and release configuration
-  - `publish`: Publish a [GitLab release](https://docs.gitlab.com/ce/workflow/releases.html)
+  - `publish`: Publish a [GitLab release](https://docs.gitlab.com/ee/user/project/releases/)
 - [@semantic-release/git](https://github.com/semantic-release/git)
   - `verifyConditions`: Verify the presence and the validity of the Git authentication and release configuration
   - `prepare`: Push a release commit and tag, including configurable files
@@ -52,11 +52,15 @@
 - [semantic-release-docker](https://github.com/felixfbecker/semantic-release-docker)
   - `verifyConditions`: Verify that all needed configuration is present and login to the Docker registry.
   - `publish`: Tag the image specified by `name` with the new version, push it to Docker Hub and update the latest tag
+- [@semantic-release-plus/docker](https://github.com/semantic-release-plus/semantic-release-plus/tree/master/packages/plugins/docker)
+  - `verifyConditions`: Verify that all needed configuration is present and login to the configured docker registry.
+  - `publish`: Tag the image specified by `name` with the new version and channel and push it to the configured docker registry.
+  - `addChannel`: Updates a release published on one channel with the destinations channel tag and pushes to the registry i.e.: next to latest.
 - [semantic-release-gcr](https://github.com/carlos-cubas/semantic-release-gcr)
   - `verifyConditions`: Verify that all needed configuration is present and login to the Docker registry
   - `publish`: Tag the image specified by `name` with the new version, push it to Docker Hub and update the latest tag
 - [semantic-release-vsce](https://github.com/raix/semantic-release-vsce)
-  - `verifyConditions`: Verify the presence and the validity of the vsce authentication and release configuration
+  - `verifyConditions`: Verify the presence and the validity of the "VS Code extension" authentication and release configuration
   - `prepare`: Create a `.vsix` for distribution
   - `publish`: Publish the package to the Visual Studio Code marketplace
 - [semantic-release-verify-deps](https://github.com/piercus/semantic-release-verify-deps)
@@ -65,10 +69,10 @@
   - `verifyConditions`: Verify the presence of the authentication (set via environment variables)
   - `prepare`: Write the correct version to the `manifest.json` and creates a zip file of the whole dist folder
   - `publish`: Uploads the generated zip file to the webstore, and publish the item
-- [semantic-release-firefox](https://github.com/felixfbecker/semantic-release-firefox)
-  - `verifyConditions`: Verify the presence of the authentication (set via environment variables)
-  - `prepare`: Write the correct version to the `manifest.json`, creates a `xpi` file of the dist folder and a zip of the sources
-  - `publish`: Submit the generated archives to the webstore for review, and publish the item including release notes
+- [semantic-release-firefox-add-on](https://github.com/tophat/semantic-release-firefox-add-on)
+  - `verifyConditions`: Verify that all required options are present and authentication is set via environment variables
+  - `prepare`: Write the correct version to the `manifest.json`
+  - `publish`: Creates an unsigned `.xpi` file, and submits it to the Mozilla Add On store for signing. Once the package is signed, downloads the signed `.xpi` to a local directory
 - [semantic-release-gerrit](https://github.com/pascalMN/semantic-release-gerrit)
   - `generateNotes`: Generate release notes with Gerrit reviews URL
 - [semantic-release-expo](https://github.com/bycedric/semantic-release-expo)
@@ -80,7 +84,7 @@
   - `prepare`: Changes the version number in the `pom.xml` (or all `pom.xml` files in maven projects with multiple `pom.xml` files) and optionally creates a commit with this version number and pushes it to `master`
   - `publish`: Runs `mvn deploy` to deploy to maven central and optionally will update to next snapshot version and merge changes to development branch
 - [semantic-release-ado](https://github.com/lluchmk/semantic-release-ado)
-  - `prepare`: Stores the version number as an Azure DevOps pipeline variable availabe to downstream steps on the job
+  - `prepare`: Stores the version number as an Azure DevOps pipeline variable available to downstream steps on the job
 - [gradle-semantic-release](https://github.com/KengoTODA/gradle-semantic-release-plugin)
   - `verifyConditions`: Verify that project has a Gradle wrapper script, and `build.gradle` contains a task to publish artifacts.
   - `prepare`: Changes the version number in the `gradle.properties`
@@ -91,3 +95,74 @@
 - [semantic-release-github-pages](https://github.com/qiwi/semantic-release-gh-pages-plugin)
   - `verifyConditions`: Verify the presence of the auth token set via environment variables.
   - `publish`: Pushes commit to the documentation branch.
+- [semantic-release-github-pullrequest](https://github.com/asbiin/semantic-release-github-pullrequest)
+  - `verifyConditions`: Verify the presence and the validity of the GitHub authentication and other configuration.
+  - `publish`: Create a branch to upload all assets and create the pull request on the base branch on GitHub.
+- [leiningen-semantic-release](https://github.com/NoxHarmonium/leiningen-semantic-release)
+  - `verifyConditions`: Checks the project.clj is syntactically valid.
+  - `prepare`: Update the project.clj version and package the output jar file.
+  - `publish`: Publish the jar (and generated Maven metadata) to a maven repository (or clojars).
+- [@saithodev/semantic-release-gitea](https://github.com/saitho/semantic-release-gitea)
+  - `verifyConditions`: Verify the presence and the validity of the authentication and the assets option configuration.
+  - `publish`: Publish a Gitea release, optionally uploading file assets.
+  - `addChannel`: Update a Gitea release's pre-release field.
+- [@google/semantic-release-replace-plugin](https://github.com/google/semantic-release-replace-plugin)
+  - `prepare`: Replace version strings in files using regex and glob.
+- [semantic-release-rubygem](https://github.com/Gusto/semantic-release-rubygem)
+  - `verifyConditions`: Locate and validate a `.gemspec` file, locate and validate a `lib/**/version.rb` file, verify the presence of the `GEM_HOST_API_KEY` environment variable, and create a credentials file with the API key.
+  - `prepare`: Update the version in the `lib/**/version.rb` version file and [build](https://guides.rubygems.org/command-reference/#gem-build) the gem.
+  - `publish`: [Push the Ruby gem](https://guides.rubygems.org/command-reference/#gem-push) to the gem server. 
+- [semantic-release-npm-deprecate-old-versions](https://github.com/ghusse/semantic-release-npm-deprecate-old-versions)
+  - `verifyConditions`: Validates configuration.
+  - `publish`: Deprecates old versions, based on the declaration of supported versions in the config. 
+- [amanda-mitchell/semantic-release-npm-multiple](https://github.com/amanda-mitchell/semantic-release-npm-multiple)
+  - **Note**: this is a thin wrapper around the built-in npm plugin that can target multiple registries
+  - `verifyConditions`: Verify the presence and the validity of the npm authentication and release configuration for multiple registries
+  - `prepare`: Update the package.json version and create the npm package tarball
+  - `publish`: Publish the package on the npm registry for multiple registries
+- [semantic-release-license](https://github.com/cbhq/semantic-release-license) Automatically update dates and more in your license file for new releases.
+  - `verifyConditions`: Verify the presence of a license file
+  - `prepare`: Update the license file based on its type
+- [semantic-release-pypi](https://github.com/abichinger/semantic-release-pypi)
+  - `verifyConditions`: Verify the environment variable ```PYPI_TOKEN``` and installation of build tools
+  - `prepare`: Update the version in ```setup.cfg``` and create the distribution packages
+  - `publish`: Publish the python package to a repository (default: pypi)
+- [semantic-release-helm](https://github.com/m1pl/semantic-release-helm)
+  - `verifyConditions`: Validate configuration and (if present) credentials
+  - `prepare`: Update version and appVersion in ```Chart.yaml```
+  - `publish`: Publish the chart to a registry (if configured)
+- [semantic-release-codeartifact](https://github.com/ryansonshine/semantic-release-codeartifact)
+  - `verifyConditions`: Validate configuration, get AWS CodeArtifact authentication and repository, validate `publishConfig` or `.npmrc` (if they exist), then pass the configuration to the associated plugins.
+- [semantic-release-telegram](https://github.com/pustovitDmytro/semantic-release-telegram)
+  - `verifyConditions`: Validate configuration and verify ```TELEGRAM_BOT_ID``` and ```TELEGRAM_BOT_TOKEN```
+  - `success`: Publish a message about the successful release to a telegram chat
+  - `fail`: publish a message about failure to a telegram chat
+- [semantic-release-heroku](https://github.com/pustovitDmytro/semantic-release-heroku)
+  - `verifyConditions`: Validate configuration and verify ```HEROKU_API_KEY```
+  - `prepare`: Update the package.json version and create release tarball
+  - `publish`: Publish version to heroku
+- [semantic-release-mattermost](https://github.com/ttrobisch/semantic-release-mattermost)
+  - `verifyConditions`: Verify that the webhook is setup and release-notes-generator is present.
+  - `success`: Send a message about the new release and its notes to a [mattermost](https://mattermost.com/) webhook.
+- [semantic-release-github-milestones](https://github.com/nitzano/semantic-release-github-milestones)
+  - `verifyConditions`: Verify github tokens are present and valid.
+  - `verifyRelease`: Display information regarding the matching github milestone.
+- [semantic-release-telegram-bot](https://github.com/skoropadas/semantic-release-telegram-bot)
+  - `verifyConditions`: Validate configuration and verify `TELEGRAM_BOT_TOKEN` and package name
+  - `success`: Publish a success message to certain telegram chats
+  - `fail`: Publish a fail message to certain telegram chats
+- [semantic-release-npm-deprecate](https://github.com/jpoehnelt/semantic-release-npm-deprecate)
+  - `publish`: Automatically mark old versions as deprecated.
+- [@eshepelyuk/semantic-release-helm-oci](https://github.com/eshepelyuk/semantic-release-helm-oci)
+  - `verifyConditions`: Verify plugin configuration and login to Helm registry
+  - `prepare`: Package Helm chart to local folder
+  - `publish`: Publish Helm chart to OCI registry
+- [semantic-release-space](https://github.com/123FLO321/semantic-release-space)
+  - `verifyConditions` Verifies that all required options are set.
+  - `prepare` Creates a JetBrains Space Deployment Target if it does not yet exist.
+  - `publish` Starts a JetBrains Space Deployment.
+  - `success` Marks the JetBrains Space Deployment as completed.
+  - `fail` Marks the JetBrains Space Deployment as failed.
+- [semantic-release-react-native](https://github.com/alexandermendes/semantic-release-react-native)
+  - `verifyConditions` Validate configuration.
+  - `prepare` Version native iOS and Android files.

@@ -10,7 +10,7 @@ var execa = require('execa');
 var findVersions = require('find-versions');
 var pkg = require('../package.json');
 
-var MIN_GIT_VERSION = '2.0.0';
+var MIN_GIT_VERSION = '2.7.1';
 
 if (!semver.satisfies(process.version, pkg.engines.node)) {
   console.error(
@@ -21,26 +21,26 @@ See https://github.com/semantic-release/semantic-release/blob/master/docs/suppor
   process.exit(1);
 }
 
-execa
-  .stdout('git', ['--version'])
-  .then(stdout => {
+execa('git', ['--version'])
+  .then(({stdout}) => {
     var gitVersion = findVersions(stdout)[0];
     if (semver.lt(gitVersion, MIN_GIT_VERSION)) {
       console.error(`[semantic-release]: Git version ${MIN_GIT_VERSION} is required. Found ${gitVersion}.`);
       process.exit(1);
     }
   })
-  .catch(error => {
+  .catch((error) => {
     console.error(`[semantic-release]: Git version ${MIN_GIT_VERSION} is required. No git binary found.`);
     console.error(error);
     process.exit(1);
   });
 
-// Node 8+ from this point on
+// Node 10+ from this point on
 require('../cli')()
-  .then(exitCode => {
+  .then((exitCode) => {
     process.exitCode = exitCode;
   })
-  .catch(() => {
+  .catch((error) => {
+    console.error(error);
     process.exitCode = 1;
   });

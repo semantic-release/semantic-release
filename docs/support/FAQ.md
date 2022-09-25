@@ -2,11 +2,13 @@
 
 ## Why is the `package.json`’s version not updated in my repository?
 
-**semantic-release** takes care of updating the `package.json`’s version before publishing to [npm](https://www.npmjs.com).
+[`@semantic-release/npm`](https://github.com/semantic-release/npm) takes care of updating the `package.json`’s version before publishing to [npm](https://www.npmjs.com).
 
-By default, only the published package will contains the version, which is the only place where it is *really* required, but the updated `package.json` will not be pushed to the Git repository
+By default, only the published package will contain the version, which is the only place where it is *really* required, but the updated `package.json` will not be pushed to the Git repository
 
 However, the [`@semantic-release/git`](https://github.com/semantic-release/git) plugin can be used to push the updated `package.json` as well as other files to the Git repository.
+
+If you wish to only update the `package.json` and push via Git you can set the project to `"private": true,` within your `package.json` to prevent publishing to [the npm registry](https://www.npmjs.com).
 
 ## How can I use a npm build script that requires the `package.json`’s version ?
 
@@ -36,48 +38,18 @@ If using npm hook scripts is not possible, and alternative solution is to [`@sem
 
 Yes with the [dry-run options](../usage/configuration.md#dryrun) which prints to the console the next version to be published and the release notes.
 
-## Can I use semantic-release with Yarn?
-
-If you are using a [local](../usage/installation.md#local-installation) **semantic-release** installation and run multiple CI jobs with different versions, the `yarn install` command will fail on jobs running with Node < 8 as **semantic-release** requires [Node >= 8.3](#why-does-semantic-release-require-node-version--83) and specifies it in its `package.json`s [`engines`](https://docs.npmjs.com/files/package.json#engines) key.
-
-The recommended solution is to use the [Yarn](https://yarnpkg.com) [--ignore-engines](https://yarnpkg.com/en/docs/cli/install#toc-yarn-install-ignore-engines) option to install the project dependencies on the CI environment, so Yarn will ignore the **semantic-release**'s `engines` key:
-
-```bash
-$ yarn install --ignore-engines
-```
-
-**Note**: Several CI services use Yarn by default if your repository contains a `yarn.lock` file. So you should override the install step to specify `yarn install --ignore-engines`.
-
-Alternatively you can use a [global](../usage/installation.md#global-installation) **semantic-release** installation and make sure to install and run the `semantic-release` command only in a CI jobs running with Node >= 8.3.
-
-If your CI environment provides [nvm](https://github.com/creationix/nvm) you can switch to Node 8 before installing and running the `semantic-release` command:
-
-```bash
-$ nvm install 8 && yarn global add semantic-release && semantic-release
-```
-
-See the [CI configuration recipes](../recipes/README.md#ci-configurations) for more details on specific CI environments.
-
-As `semantic-release` is recommended to be executed with [`npx`](https://www.npmjs.com/package/npx) an alternative is required for usage with Yarn. Even though it is possible to install npx with Yarn, it's not recommended. Yarn and npx would be using different cache locations.
-
-For [local installation](../usage/installation.md#local-installation) replace
-`npx semantic-release` with `yarn run semantic-release`.
-
-For [global installation](../usage/installation.md#global-installation) replace
-`npx semantic-release` with `yarn global add semantic-release && semantic-release`.
-
 ## Can I use semantic-release to publish non-JavaScript packages?
 
-Yes, **semantic-release** is a Node CLI application but it can be used to publish any type of packages.
+Yes, **semantic-release** is a Node CLI application, but it can be used to publish any type of packages.
 
 To publish a non-Node package (without a `package.json`) you would need to:
 - Use a [global](../usage/installation.md#global-installation) **semantic-release** installation
-- Set **semantic-release** [options](../usage/configuration.md#options) via [CLI arguments or rc file](../usage/configuration.md#configuration)
-- Make sure your CI job executing the `semantic-release` command has access to [Node >= 8](#why-does-semantic-release-require-node-version--83) to execute the `semantic-release` command
+- Set **semantic-release** [options](../usage/configuration.md#options) via [CLI arguments or `.rc` file](../usage/configuration.md#configuration)
+- Make sure your CI job executing the `semantic-release` command has access to a version of Node that [meets our version requirement](./node-version.md) to execute the `semantic-release` command
 
-See the [CI configuration recipes](../recipes/README.md#ci-configurations) for more details on specific CI environments.
+See the [CI configuration recipes](../recipes/release-workflow/README.md#ci-configurations) for more details on specific CI environments.
 
-In addition you will need to configure the **semantic-release** [plugins](../usage/plugins.md#plugins) to disable the [`@semantic-release/npm`](https://github.com/semantic-release/npm) plugin which is used by default and use a plugin for your project type.
+In addition, you will need to configure the **semantic-release** [plugins](../usage/plugins.md#plugins) to disable the [`@semantic-release/npm`](https://github.com/semantic-release/npm) plugin which is used by default and use a plugin for your project type.
 
 If there is no specific plugin for your project type you can use the [`@semantic-release/exec`](https://github.com/semantic-release/exec) plugin to publish the release with a shell command.
 
@@ -99,7 +71,7 @@ Here is a basic example to create [GitHub releases](https://help.github.com/arti
 
 **Note**: This is a theoretical example where the command `set-version` update the project version with the value passed as its first argument and `publish-package` publishes the package to a registry.
 
-See the [package managers and languages recipes](../recipes/README.md#package-managers-and-languages) for more details on specific project types.
+See the [package managers and languages recipes](../recipes/release-workflow/README.md#package-managers-and-languages) for more details on specific project types.
 
 ## Can I use semantic-release with any CI service?
 
@@ -107,7 +79,7 @@ Yes, **semantic-release** can be used with any CI service, as long as it provide
 - A way to set [authentication](../usage/ci-configuration.md#authentication) via environment variables
 - A way to guarantee that the `semantic-release` command is [executed only after all the tests of all the jobs in the CI build pass](../usage/ci-configuration.md#run-semantic-release-only-after-all-tests-succeeded)
 
-See the [CI configuration recipes](../recipes/README.md#ci-configurations) for more details on specific CI environments.
+See the [CI configuration recipes](../recipes/release-workflow/README.md#ci-configurations) for more details on specific CI environments.
 
 ## Can I run semantic-release on my local machine rather than on a CI server?
 
@@ -123,7 +95,7 @@ However this is not the recommended approach, as running unit and integration te
 
 Yes, with the [`@semantic-release/gitlab-config`](https://github.com/semantic-release/gitlab-config) shareable configuration.
 
-See the [GitLab CI recipes](../recipes/gitlab-ci.md#using-semantic-release-with-gitlab-ci) for the CI configuration.
+See the [GitLab CI recipes](../recipes/ci-configurations/gitlab-ci.md#using-semantic-release-with-gitlab-ci) for the CI configuration.
 
 ## Can I use semantic-release with any Git hosted environment?
 
@@ -141,11 +113,11 @@ See the [`@semantic-release/npm`](https://github.com/semantic-release/npm#semant
 
 If you have introduced a breaking bug in a release you have 2 options:
 - If you have a fix immediately ready, commit and push it (or merge it via a pull request) to the release branch
-- Otherwise [revert the commit](https://git-scm.com/docs/git-revert) that introduced the bug and push the revert commit (or merge it via a pull request) to the release branch
+- Otherwise, [revert the commit](https://git-scm.com/docs/git-revert) that introduced the bug and push the revert commit (or merge it via a pull request) to the release branch
 
-In both cases **semantic-release** will publish a new release, so your package users' will get the fixed/reverted version.
+In both cases **semantic-release** will publish a new release, so your package users will get the fixed/reverted version.
 
-Depending on the package manager you are using, you might be able to un-publish or deprecate a release, in order to prevent users from downloading it by accident. For example npm allows you to [un-publish](https://docs.npmjs.com/cli/unpublish) [within 72 hours](https://www.npmjs.com/policies/unpublish) after releasing. You may also [deprecate](https://docs.npmjs.com/cli/deprecate) a release if you would rather avoid un-publishing.
+Depending on the package manager you are using, you might be able to un-publish or deprecate a release, in order to prevent users from downloading it by accident. For example, npm allows you to [un-publish](https://docs.npmjs.com/cli/unpublish) [within 72 hours](https://www.npmjs.com/policies/unpublish) after release. You may also [deprecate](https://docs.npmjs.com/cli/deprecate) a release if you would rather avoid un-publishing.
 
 In any case **do not remove the Git tag associated with the buggy version**, otherwise **semantic-release** will later try to republish that version. Publishing a version after un-publishing is not supported by most package managers.
 
@@ -181,7 +153,7 @@ Any npm compatible registry is supported with the [`@semantic-release/npm`](http
 
 See [npm registry authentication](https://github.com/semantic-release/npm#npm-registry-authentication) for more details.
 
-See [Artifactory - npm Registry](https://www.jfrog.com/confluence/display/RTF/Npm+Registry#NpmRegistry-AuthenticatingthenpmClient) documentation for Artifactiry configuration.
+See [Artifactory - npm Registry](https://www.jfrog.com/confluence/display/RTF/Npm+Registry#NpmRegistry-AuthenticatingthenpmClient) documentation for Artifactory configuration.
 
 ## Can I manually trigger the release of a specific version?
 
@@ -222,21 +194,15 @@ If you need more control over the timing of releases, see [Triggering a release]
 
 This is not supported by **semantic-release** as it's not considered a good practice, mostly because [Semantic Versioning](https://semver.org) rules applies differently to major version zero.
 
-In early development phase when your package is not ready for production yet we recommend to publish releases on a distribution channel (for example npm’s [dist-tags](https://docs.npmjs.com/cli/dist-tag)) or to develop on a `dev` branch and merge it to `master` periodically. See [Triggering a release](../../README.md#triggering-a-release) for more details on those solutions.
+If your project is under heavy development, with frequent breaking changes, and is not production ready yet we recommend [publishing pre-releases](../recipes/release-workflow/pre-releases.md#publishing-pre-releases).
 
 See [“Introduction to SemVer” - Irina Gebauer](https://blog.greenkeeper.io/introduction-to-semver-d272990c44f2) for more details on [Semantic Versioning](https://semver.org) and the recommendation to start at version `1.0.0`.
 
 ## Can I trust semantic-release with my releases?
 
-**semantic-release** has a full unit and integration test suite that tests `npm` publishes against the [npm-registry-couchapp](https://github.com/npm/npm-registry-couchapp).
+**semantic-release** has a full unit and integration test suite that tests `npm` publishes against the [verdaccio](https://www.npmjs.com/package/verdaccio).
 
-In addition the [verify conditions step](../../README.md#release-steps) verifies that all necessary conditions for proceeding with a release are met, and a new release will be performed [only if all your tests pass](../usage/ci-configuration.md#run-semantic-release-only-after-all-tests-succeeded).
-
-## Why does semantic-release require Node version >= 8.3?
-
-**semantic-release** is written using the latest [ECMAScript 2017](https://www.ecma-international.org/publications/standards/Ecma-262.htm) features, without transpilation which **requires Node version 8.3 or higher**.
-
-See [Node version requirement](../support/node-version.md#node-version-requirement) for more details and solutions.
+In addition, the [verify conditions step](../../README.md#release-steps) verifies that all necessary conditions for proceeding with a release are met, and a new release will be performed [only if all your tests pass](../usage/ci-configuration.md#run-semantic-release-only-after-all-tests-succeeded).
 
 ## What is npx?
 
