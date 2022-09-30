@@ -19,8 +19,8 @@ test.beforeEach((t) => {
   };
 });
 
-test('Normalize and load plugin from string', (t) => {
-  const plugin = normalize(
+test('Normalize and load plugin from string', async (t) => {
+  const plugin = await normalize(
     {cwd, options: {}, logger: t.context.logger},
     'verifyConditions',
     './test/fixtures/plugin-noop',
@@ -32,8 +32,8 @@ test('Normalize and load plugin from string', (t) => {
   t.deepEqual(t.context.success.args[0], ['Loaded plugin "verifyConditions" from "./test/fixtures/plugin-noop"']);
 });
 
-test('Normalize and load plugin from object', (t) => {
-  const plugin = normalize(
+test('Normalize and load plugin from object', async (t) => {
+  const plugin = await normalize(
     {cwd, options: {}, logger: t.context.logger},
     'publish',
     {path: './test/fixtures/plugin-noop'},
@@ -45,8 +45,8 @@ test('Normalize and load plugin from object', (t) => {
   t.deepEqual(t.context.success.args[0], ['Loaded plugin "publish" from "./test/fixtures/plugin-noop"']);
 });
 
-test('Normalize and load plugin from a base file path', (t) => {
-  const plugin = normalize({cwd, options: {}, logger: t.context.logger}, 'verifyConditions', './plugin-noop', {
+test('Normalize and load plugin from a base file path', async (t) => {
+  const plugin = await normalize({cwd, options: {}, logger: t.context.logger}, 'verifyConditions', './plugin-noop', {
     './plugin-noop': './test/fixtures',
   });
 
@@ -58,7 +58,7 @@ test('Normalize and load plugin from a base file path', (t) => {
 });
 
 test('Wrap plugin in a function that add the "pluginName" to the error"', async (t) => {
-  const plugin = normalize({cwd, options: {}, logger: t.context.logger}, 'verifyConditions', './plugin-error', {
+  const plugin = await normalize({cwd, options: {}, logger: t.context.logger}, 'verifyConditions', './plugin-error', {
     './plugin-error': './test/fixtures',
   });
 
@@ -68,7 +68,7 @@ test('Wrap plugin in a function that add the "pluginName" to the error"', async 
 });
 
 test('Wrap plugin in a function that add the "pluginName" to multiple errors"', async (t) => {
-  const plugin = normalize({cwd, options: {}, logger: t.context.logger}, 'verifyConditions', './plugin-errors', {
+  const plugin = await normalize({cwd, options: {}, logger: t.context.logger}, 'verifyConditions', './plugin-errors', {
     './plugin-errors': './test/fixtures',
   });
 
@@ -78,16 +78,16 @@ test('Wrap plugin in a function that add the "pluginName" to multiple errors"', 
   }
 });
 
-test('Normalize and load plugin from function', (t) => {
+test('Normalize and load plugin from function', async (t) => {
   const pluginFunction = () => {};
-  const plugin = normalize({cwd, options: {}, logger: t.context.logger}, '', pluginFunction, {});
+  const plugin = await normalize({cwd, options: {}, logger: t.context.logger}, '', pluginFunction, {});
 
   t.is(plugin.pluginName, '[Function: pluginFunction]');
   t.is(typeof plugin, 'function');
 });
 
-test('Normalize and load plugin that retuns multiple functions', (t) => {
-  const plugin = normalize(
+test('Normalize and load plugin that retuns multiple functions', async (t) => {
+  const plugin = await normalize(
     {cwd, options: {}, logger: t.context.logger},
     'verifyConditions',
     './test/fixtures/multi-plugin',
@@ -100,7 +100,7 @@ test('Normalize and load plugin that retuns multiple functions', (t) => {
 
 test('Wrap "analyzeCommits" plugin in a function that validate the output of the plugin', async (t) => {
   const analyzeCommits = stub().resolves(2);
-  const plugin = normalize(
+  const plugin = await normalize(
     {cwd, options: {}, stderr: t.context.stderr, logger: t.context.logger},
     'analyzeCommits',
     analyzeCommits,
@@ -118,7 +118,7 @@ test('Wrap "analyzeCommits" plugin in a function that validate the output of the
 
 test('Wrap "generateNotes" plugin in a function that validate the output of the plugin', async (t) => {
   const generateNotes = stub().resolves(2);
-  const plugin = normalize(
+  const plugin = await normalize(
     {cwd, options: {}, stderr: t.context.stderr, logger: t.context.logger},
     'generateNotes',
     generateNotes,
@@ -136,7 +136,7 @@ test('Wrap "generateNotes" plugin in a function that validate the output of the 
 
 test('Wrap "publish" plugin in a function that validate the output of the plugin', async (t) => {
   const publish = stub().resolves(2);
-  const plugin = normalize(
+  const plugin = await normalize(
     {cwd, options: {}, stderr: t.context.stderr, logger: t.context.logger},
     'publish',
     publish,
@@ -154,7 +154,7 @@ test('Wrap "publish" plugin in a function that validate the output of the plugin
 
 test('Wrap "addChannel" plugin in a function that validate the output of the plugin', async (t) => {
   const addChannel = stub().resolves(2);
-  const plugin = normalize(
+  const plugin = await normalize(
     {cwd, options: {}, stderr: t.context.stderr, logger: t.context.logger},
     'addChannel',
     addChannel,
@@ -174,7 +174,7 @@ test('Plugin is called with "pluginConfig" (with object definition) and input', 
   const pluginFunction = stub().resolves();
   const pluginConf = {path: pluginFunction, conf: 'confValue'};
   const options = {global: 'globalValue'};
-  const plugin = normalize({cwd, options, logger: t.context.logger}, '', pluginConf, {});
+  const plugin = await normalize({cwd, options, logger: t.context.logger}, '', pluginConf, {});
   await plugin({options: {}, param: 'param'});
 
   t.true(
@@ -189,7 +189,7 @@ test('Plugin is called with "pluginConfig" (with array definition) and input', a
   const pluginFunction = stub().resolves();
   const pluginConf = [pluginFunction, {conf: 'confValue'}];
   const options = {global: 'globalValue'};
-  const plugin = normalize({cwd, options, logger: t.context.logger}, '', pluginConf, {});
+  const plugin = await normalize({cwd, options, logger: t.context.logger}, '', pluginConf, {});
   await plugin({options: {}, param: 'param'});
 
   t.true(
@@ -206,7 +206,7 @@ test('Prevent plugins to modify "pluginConfig"', async (t) => {
   });
   const pluginConf = {path: pluginFunction, conf: {subConf: 'originalConf'}};
   const options = {globalConf: {globalSubConf: 'originalGlobalConf'}};
-  const plugin = normalize({cwd, options, logger: t.context.logger}, '', pluginConf, {});
+  const plugin = await normalize({cwd, options, logger: t.context.logger}, '', pluginConf, {});
   await plugin({options: {}});
 
   t.is(pluginConf.conf.subConf, 'originalConf');
@@ -218,21 +218,21 @@ test('Prevent plugins to modify its input', async (t) => {
     options.param.subParam = 'otherParam';
   });
   const input = {param: {subParam: 'originalSubParam'}, options: {}};
-  const plugin = normalize({cwd, options: {}, logger: t.context.logger}, '', pluginFunction, {});
+  const plugin = await normalize({cwd, options: {}, logger: t.context.logger}, '', pluginFunction, {});
   await plugin(input);
 
   t.is(input.param.subParam, 'originalSubParam');
 });
 
-test('Return noop if the plugin is not defined', (t) => {
-  const plugin = normalize({cwd, options: {}, logger: t.context.logger});
+test('Return noop if the plugin is not defined', async (t) => {
+  const plugin = await normalize({cwd, options: {}, logger: t.context.logger});
 
   t.is(plugin, noop);
 });
 
 test('Always pass a defined "pluginConfig" for plugin defined with string', async (t) => {
   // Call the normalize function with the path of a plugin that returns its config
-  const plugin = normalize(
+  const plugin = await normalize(
     {cwd, options: {}, logger: t.context.logger},
     '',
     './test/fixtures/plugin-result-config',
@@ -245,7 +245,7 @@ test('Always pass a defined "pluginConfig" for plugin defined with string', asyn
 
 test('Always pass a defined "pluginConfig" for plugin defined with path', async (t) => {
   // Call the normalize function with the path of a plugin that returns its config
-  const plugin = normalize(
+  const plugin = await normalize(
     {cwd, options: {}, logger: t.context.logger},
     '',
     {path: './test/fixtures/plugin-result-config'},
@@ -256,8 +256,8 @@ test('Always pass a defined "pluginConfig" for plugin defined with path', async 
   t.deepEqual(pluginResult.pluginConfig, {});
 });
 
-test('Throws an error if the plugin return an object without the expected plugin function', (t) => {
-  const error = t.throws(() =>
+test('Throws an error if the plugin return an object without the expected plugin function', async (t) => {
+  const error = await t.throwsAsync(() =>
     normalize({cwd, options: {}, logger: t.context.logger}, 'inexistantPlugin', './test/fixtures/multi-plugin', {})
   );
 
@@ -267,10 +267,13 @@ test('Throws an error if the plugin return an object without the expected plugin
   t.truthy(error.details);
 });
 
-test('Throws an error if the plugin is not found', (t) => {
-  t.throws(() => normalize({cwd, options: {}, logger: t.context.logger}, 'inexistantPlugin', 'non-existing-path', {}), {
-    message: /Cannot find module 'non-existing-path'/,
-    code: 'MODULE_NOT_FOUND',
-    instanceOf: Error,
-  });
+test('Throws an error if the plugin is not found', async (t) => {
+  await t.throwsAsync(
+    () => normalize({cwd, options: {}, logger: t.context.logger}, 'inexistantPlugin', 'non-existing-path', {}),
+    {
+      message: /Cannot find module 'non-existing-path'/,
+      code: 'MODULE_NOT_FOUND',
+      instanceOf: Error,
+    }
+  );
 });

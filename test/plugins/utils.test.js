@@ -189,17 +189,17 @@ test('validateStep: required plugin configuration', (t) => {
   );
 });
 
-test('loadPlugin', (t) => {
+test('loadPlugin', async (t) => {
   const cwd = process.cwd();
   const func = () => {};
 
-  t.is(require('../fixtures/plugin-noop'), loadPlugin({cwd: './test/fixtures'}, './plugin-noop', {}), 'From cwd');
+  t.is(require('../fixtures/plugin-noop'), await loadPlugin({cwd: './test/fixtures'}, './plugin-noop', {}), 'From cwd');
   t.is(
     require('../fixtures/plugin-noop'),
-    loadPlugin({cwd}, './plugin-noop', {'./plugin-noop': './test/fixtures'}),
+    await loadPlugin({cwd}, './plugin-noop', {'./plugin-noop': './test/fixtures'}),
     'From a shareable config context'
   );
-  t.is(func, loadPlugin({cwd}, func, {}), 'Defined as a function');
+  t.is(func, await loadPlugin({cwd}, func, {}), 'Defined as a function');
 });
 
 test('parseConfig', (t) => {
