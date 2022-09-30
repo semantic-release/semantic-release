@@ -50,7 +50,7 @@
     "yargs": "^16.2.0"
   },
   "devDependencies": {
-    "ava": "3.15.0",
+    "ava": "4.3.3",
     "c8": "7.12.0",
     "clear-module": "4.1.2",
     "codecov": "3.8.3",
@@ -63,7 +63,7 @@
     "mockserver-client": "5.14.0",
     "nock": "13.2.9",
     "p-retry": "4.6.2",
-    "sinon": "12.0.1",
+    "sinon": "14.0.0",
     "stream-buffers": "3.0.2",
     "tempy": "1.0.1",
     "testdouble": "3.16.6",
