@@ -23,37 +23,37 @@ test('Normalize and load plugin from string', async (t) => {
   const plugin = await normalize(
     {cwd, options: {}, logger: t.context.logger},
     'verifyConditions',
-    './test/fixtures/plugin-noop',
+    './test/fixtures/plugin-noop.cjs',
     {}
   );
 
-  t.is(plugin.pluginName, './test/fixtures/plugin-noop');
+  t.is(plugin.pluginName, './test/fixtures/plugin-noop.cjs');
   t.is(typeof plugin, 'function');
-  t.deepEqual(t.context.success.args[0], ['Loaded plugin "verifyConditions" from "./test/fixtures/plugin-noop"']);
+  t.deepEqual(t.context.success.args[0], ['Loaded plugin "verifyConditions" from "./test/fixtures/plugin-noop.cjs"']);
 });
 
 test('Normalize and load plugin from object', async (t) => {
   const plugin = await normalize(
     {cwd, options: {}, logger: t.context.logger},
     'publish',
-    {path: './test/fixtures/plugin-noop'},
+    {path: './test/fixtures/plugin-noop.cjs'},
     {}
   );
 
-  t.is(plugin.pluginName, './test/fixtures/plugin-noop');
+  t.is(plugin.pluginName, './test/fixtures/plugin-noop.cjs');
   t.is(typeof plugin, 'function');
-  t.deepEqual(t.context.success.args[0], ['Loaded plugin "publish" from "./test/fixtures/plugin-noop"']);
+  t.deepEqual(t.context.success.args[0], ['Loaded plugin "publish" from "./test/fixtures/plugin-noop.cjs"']);
 });
 
 test('Normalize and load plugin from a base file path', async (t) => {
-  const plugin = await normalize({cwd, options: {}, logger: t.context.logger}, 'verifyConditions', './plugin-noop', {
-    './plugin-noop': './test/fixtures',
+  const plugin = await normalize({cwd, options: {}, logger: t.context.logger}, 'verifyConditions', './plugin-noop.cjs', {
+    './plugin-noop.cjs': './test/fixtures',
   });
 
-  t.is(plugin.pluginName, './plugin-noop');
+  t.is(plugin.pluginName, './plugin-noop.cjs');
   t.is(typeof plugin, 'function');
   t.deepEqual(t.context.success.args[0], [
-    'Loaded plugin "verifyConditions" from "./plugin-noop" in shareable config "./test/fixtures"',
+    'Loaded plugin "verifyConditions" from "./plugin-noop.cjs" in shareable config "./test/fixtures"',
   ]);
 });
 
@@ -90,12 +90,12 @@ test('Normalize and load plugin that retuns multiple functions', async (t) => {
   const plugin = await normalize(
     {cwd, options: {}, logger: t.context.logger},
     'verifyConditions',
-    './test/fixtures/multi-plugin',
+    './test/fixtures/multi-plugin.cjs',
     {}
   );
 
   t.is(typeof plugin, 'function');
-  t.deepEqual(t.context.success.args[0], ['Loaded plugin "verifyConditions" from "./test/fixtures/multi-plugin"']);
+  t.deepEqual(t.context.success.args[0], ['Loaded plugin "verifyConditions" from "./test/fixtures/multi-plugin.cjs"']);
 });
 
 test('Wrap "analyzeCommits" plugin in a function that validate the output of the plugin', async (t) => {
@@ -258,7 +258,7 @@ test('Always pass a defined "pluginConfig" for plugin defined with path', async 
 
 test('Throws an error if the plugin return an object without the expected plugin function', async (t) => {
   const error = await t.throwsAsync(() =>
-    normalize({cwd, options: {}, logger: t.context.logger}, 'inexistantPlugin', './test/fixtures/multi-plugin', {})
+    normalize({cwd, options: {}, logger: t.context.logger}, 'nonExistentPlugin', './test/fixtures/multi-plugin.cjs', {})
   );
 
   t.is(error.code, 'EPLUGIN');
@@ -269,7 +269,7 @@ test('Throws an error if the plugin return an object without the expected plugin
 
 test('Throws an error if the plugin is not found', async (t) => {
   await t.throwsAsync(
-    () => normalize({cwd, options: {}, logger: t.context.logger}, 'inexistantPlugin', 'non-existing-path', {}),
+    () => normalize({cwd, options: {}, logger: t.context.logger}, 'nonExistentPlugin', 'non-existing-path', {}),
     {
       message: /Cannot find module 'non-existing-path'/,
       code: 'MODULE_NOT_FOUND',
