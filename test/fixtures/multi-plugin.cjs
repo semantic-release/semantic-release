@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   verifyConditions: () => {},
   getLastRelease: () => {},
   analyzeCommits: () => {},
