@@ -166,3 +166,5 @@
 - [semantic-release-react-native](https://github.com/alexandermendes/semantic-release-react-native)
   - `verifyConditions` Validate configuration.
   - `prepare` Version native iOS and Android files.
+- [semantic-release-github-actions-tags](https://github.com/davelosert/semantic-release-github-actions-tags)
+  - `publish` Create or update additional Tags `vX` and `vX.Y` (e.g. `v1` and `V1.2`) pointing to the original `gitTag` so your action can be referenced easier
