@@ -22,7 +22,7 @@ import {
   mergeFf,
   rebase
 } from './helpers/git-utils.js';
-import pluginNoop from './fixtures/plugin-noop.js';
+import pluginNoop from './fixtures/plugin-noop.cjs';
 
 test.beforeEach((t) => {
   // Stub the logger functions

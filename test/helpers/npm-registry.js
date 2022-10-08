@@ -1,4 +1,5 @@
-import path from 'node:path';
+import path, {dirname} from 'node:path';
+import {fileURLToPath} from 'node:url';
 import Docker from 'dockerode';
 import getStream from 'get-stream';
 import got from 'got';
@@ -12,6 +13,7 @@ const NPM_USERNAME = 'integration';
 const NPM_PASSWORD = 'suchsecure';
 const NPM_EMAIL = 'integration@test.com';
 const docker = new Docker();
+const __dirname = dirname(fileURLToPath(import.meta.url));
 let container;
 
 /**

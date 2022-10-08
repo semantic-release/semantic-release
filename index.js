@@ -2,7 +2,7 @@ import {createRequire} from 'node:module';
 import {pick} from 'lodash-es';
 import * as marked from 'marked';
 import envCi from 'env-ci';
-import hookStd from 'hook-std';
+import {hookStdout} from 'hook-std';
 import semver from 'semver';
 import AggregateError from 'aggregate-error';
 import hideSensitive from './lib/hide-sensitive.js';
@@ -44,7 +44,7 @@ async function run(context, plugins) {
     logger.warn('This run was not triggered in a known CI environment, running in dry-run mode.');
     options.dryRun = true;
   } else {
-    // When running on CI, set the commits author and commiter info and prevent the `git` CLI to prompt for username/password. See #703.
+    // When running on CI, set the commits author and committer info and prevent the `git` CLI to prompt for username/password. See #703.
     Object.assign(env, {
       GIT_AUTHOR_NAME: COMMIT_NAME,
       GIT_AUTHOR_EMAIL: COMMIT_EMAIL,
@@ -251,7 +251,7 @@ async function callFail(context, plugins, err) {
 }
 
 export default async (cliOptions = {}, {cwd = process.cwd(), env = process.env, stdout, stderr} = {}) => {
-  const {unhook} = hookStd(
+  const {unhook} = hookStdout(
     {silent: false, streams: [process.stdout, process.stderr, stdout, stderr].filter(Boolean)},
     hideSensitive(env)
   );
