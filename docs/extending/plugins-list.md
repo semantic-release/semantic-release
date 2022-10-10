@@ -167,6 +167,6 @@
   - `verifyConditions` Validate configuration.
   - `prepare` Version native iOS and Android files.
 - [semantic-release-cargo](https://github.com/buehler/semantic-release-cargo)
-  - `verifyConditions` Validate configuration, `Cargo.toml`, and local cargo executable. Also, logs into into `crates.io`.
-  - `prepare` Version new version number into `Cargo.toml` file and perform `cargo check` if configured.
+  - `verifyConditions` Validate configuration, `Cargo.toml`, and local cargo executable. Also, logs in into `crates.io`.
+  - `prepare` Write the new version number into `Cargo.toml` file and perform `cargo check` if configured.
   - `publish` Publish the Rust crate to `crates.io`
