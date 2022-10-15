@@ -59,18 +59,7 @@ stages:
   - release
 
 release:
-  image: node:10-buster-slim
-  stage: release
-  before_script:
-    - apt-get update && apt-get install -y --no-install-recommends git-core ca-certificates
-    - npm install -g semantic-release @semantic-release/gitlab
-  script:
-    - semantic-release
-  rules:
-    - if: $CI_COMMIT_BRANCH == "master"
-
-release:
-  image: node:12-buster-slim
+  image: node:16-buster-slim
   stage: release
   before_script:
     - apt-get update && apt-get install -y --no-install-recommends git-core ca-certificates
