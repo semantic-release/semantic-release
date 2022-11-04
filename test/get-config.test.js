@@ -4,11 +4,12 @@ import test from 'ava';
 import fsExtra from 'fs-extra';
 import {omit} from 'lodash-es';
 import * as td from 'testdouble';
-import {stub} from 'sinon';
 import yaml from 'js-yaml';
 import {gitAddConfig, gitCommits, gitRepo, gitShallowClone, gitTagVersion} from './helpers/git-utils.js';
 
 const {outputJson, writeFile} = fsExtra;
+const pluginsConfig = {foo: 'bar', baz: 'qux'};
+let plugins;
 
 const DEFAULT_PLUGINS = [
   '@semantic-release/commit-analyzer',
@@ -18,9 +19,12 @@ const DEFAULT_PLUGINS = [
 ];
 
 test.beforeEach(async (t) => {
-  t.context.plugins = stub().returns({});
-  await td.replaceEsm('../lib/plugins.js', null, t.context.plugins);
+  plugins = (await td.replaceEsm('../lib/plugins/index.js')).default;
   t.context.getConfig = (await import('../lib/get-config.js')).default;
+});
+
+test.afterEach.always((t) => {
+  td.reset();
 });
 
 test('Default values, reading repositoryUrl from package.json', async (t) => {
@@ -116,19 +120,19 @@ test('Read options from package.json', async (t) => {
     tagFormat: `v\${version}`,
     plugins: false,
   };
+  const context = {cwd};
+  // Verify the plugins module is called with the plugin options from package.json
+  td.when(plugins({context, options}, {})).thenResolve(pluginsConfig);
   // Create package.json in repository root
   await outputJson(path.resolve(cwd, 'package.json'), {release: options});
 
-  const {options: result} = await t.context.getConfig({cwd});
+  const result = await t.context.getConfig(context);
 
-  const expected = {...options, branches: ['test_branch']};
   // Verify the options contains the plugin config from package.json
-  t.deepEqual(result, expected);
-  // Verify the plugins module is called with the plugin options from package.json
-  t.deepEqual(t.context.plugins.args[0][0], {options: expected, cwd});
+  t.deepEqual(result, {options, plugins: pluginsConfig});
 });
 
-test('Read options from .releaserc.yml', async (t) => {
+test.serial('Read options from .releaserc.yml', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
   const options = {
@@ -140,17 +144,16 @@ test('Read options from .releaserc.yml', async (t) => {
   };
   // Create package.json in repository root
   await writeFile(path.resolve(cwd, '.releaserc.yml'), yaml.dump(options));
-
-  const {options: result} = await t.context.getConfig({cwd});
-
-  const expected = {...options, branches: ['test_branch']};
-  // Verify the options contains the plugin config from package.json
-  t.deepEqual(result, expected);
   // Verify the plugins module is called with the plugin options from package.json
-  t.deepEqual(t.context.plugins.args[0][0], {options: expected, cwd});
+  td.when(plugins({cwd, options}, {})).thenResolve(pluginsConfig);
+
+  const result = await t.context.getConfig({cwd});
+
+  // Verify the options contains the plugin config from package.json
+  t.deepEqual(result, {options, plugins: pluginsConfig});
 });
 
-test('Read options from .releaserc.json', async (t) => {
+test.serial('Read options from .releaserc.json', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
   const options = {
@@ -162,17 +165,16 @@ test('Read options from .releaserc.json', async (t) => {
   };
   // Create package.json in repository root
   await outputJson(path.resolve(cwd, '.releaserc.json'), options);
-
-  const {options: result} = await t.context.getConfig({cwd});
-
-  const expected = {...options, branches: ['test_branch']};
-  // Verify the options contains the plugin config from package.json
-  t.deepEqual(result, expected);
   // Verify the plugins module is called with the plugin options from package.json
-  t.deepEqual(t.context.plugins.args[0][0], {options: expected, cwd});
+  td.when(plugins({cwd, options}, {})).thenResolve(pluginsConfig);
+
+  const result = await t.context.getConfig({cwd});
+
+  // Verify the options contains the plugin config from package.json
+  t.deepEqual(result, {options, plugins: pluginsConfig});
 });
 
-test('Read options from .releaserc.js', async (t) => {
+test.serial('Read options from .releaserc.js', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
   const options = {
@@ -184,17 +186,16 @@ test('Read options from .releaserc.js', async (t) => {
   };
   // Create package.json in repository root
   await writeFile(path.resolve(cwd, '.releaserc.js'), `module.exports = ${JSON.stringify(options)}`);
-
-  const {options: result} = await t.context.getConfig({cwd});
-
-  const expected = {...options, branches: ['test_branch']};
-  // Verify the options contains the plugin config from package.json
-  t.deepEqual(result, expected);
   // Verify the plugins module is called with the plugin options from package.json
-  t.deepEqual(t.context.plugins.args[0][0], {options: expected, cwd});
+  td.when(plugins({cwd, options}, {})).thenResolve(pluginsConfig);
+
+  const result = await t.context.getConfig({cwd});
+
+  // Verify the options contains the plugin config from package.json
+  t.deepEqual(result, {options, plugins: pluginsConfig});
 });
 
-test('Read options from .releaserc.cjs', async (t) => {
+test.serial('Read options from .releaserc.cjs', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
   const options = {
@@ -206,17 +207,16 @@ test('Read options from .releaserc.cjs', async (t) => {
   };
   // Create .releaserc.cjs in repository root
   await writeFile(path.resolve(cwd, '.releaserc.cjs'), `module.exports = ${JSON.stringify(options)}`);
-
-  const {options: result} = await t.context.getConfig({cwd});
-
-  const expected = {...options, branches: ['test_branch']};
-  // Verify the options contains the plugin config from .releaserc.cjs
-  t.deepEqual(result, expected);
   // Verify the plugins module is called with the plugin options from .releaserc.cjs
-  t.deepEqual(t.context.plugins.args[0][0], {options: expected, cwd});
+  td.when(plugins({cwd, options}, {})).thenResolve(pluginsConfig);
+
+  const result = await t.context.getConfig({cwd});
+
+  // Verify the options contains the plugin config from .releaserc.cjs
+  t.deepEqual(result, {options, plugins: pluginsConfig});
 });
 
-test('Read options from release.config.js', async (t) => {
+test.serial('Read options from release.config.js', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
   const options = {
@@ -228,17 +228,16 @@ test('Read options from release.config.js', async (t) => {
   };
   // Create package.json in repository root
   await writeFile(path.resolve(cwd, 'release.config.js'), `module.exports = ${JSON.stringify(options)}`);
-
-  const {options: result} = await t.context.getConfig({cwd});
-
-  const expected = {...options, branches: ['test_branch']};
-  // Verify the options contains the plugin config from package.json
-  t.deepEqual(result, expected);
   // Verify the plugins module is called with the plugin options from package.json
-  t.deepEqual(t.context.plugins.args[0][0], {options: expected, cwd});
+  td.when(plugins({cwd, options}, {})).thenResolve(pluginsConfig);
+
+  const result = await t.context.getConfig({cwd});
+
+  // Verify the options contains the plugin config from package.json
+  t.deepEqual(result, {options, plugins: pluginsConfig});
 });
 
-test('Read options from release.config.cjs', async (t) => {
+test.serial('Read options from release.config.cjs', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const {cwd} = await gitRepo();
   const options = {
@@ -248,19 +247,18 @@ test('Read options from release.config.cjs', async (t) => {
     tagFormat: `v\${version}`,
     plugins: false,
   };
+  // Verify the plugins module is called with the plugin options from release.config.cjs
+  td.when(plugins({cwd, options}, {})).thenResolve(pluginsConfig);
   // Create release.config.cjs in repository root
   await writeFile(path.resolve(cwd, 'release.config.cjs'), `module.exports = ${JSON.stringify(options)}`);
 
-  const {options: result} = await t.context.getConfig({cwd});
+  const result = await t.context.getConfig({cwd});
 
-  const expected = {...options, branches: ['test_branch']};
   // Verify the options contains the plugin config from release.config.cjs
-  t.deepEqual(result, expected);
-  // Verify the plugins module is called with the plugin options from release.config.cjs
-  t.deepEqual(t.context.plugins.args[0][0], {options: expected, cwd});
+  t.deepEqual(result, {options, plugins: pluginsConfig});
 });
 
-test('Prioritise CLI/API parameters over file configuration and git repo', async (t) => {
+test.serial('Prioritise CLI/API parameters over file configuration and git repo', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   let {cwd, repositoryUrl} = await gitRepo();
   await gitCommits(['First'], {cwd});
@@ -277,17 +275,17 @@ test('Prioritise CLI/API parameters over file configuration and git repo', async
     tagFormat: `cli\${version}`,
     plugins: false,
   };
+  const context = {cwd};
+  // Verify the plugins module is called with the plugin options from CLI/API
+  td.when(plugins({context, options}, {})).thenResolve(pluginsConfig);
   const pkg = {release: pkgOptions, repository: 'git@host.null:owner/module.git'};
   // Create package.json in repository root
   await outputJson(path.resolve(cwd, 'package.json'), pkg);
 
   const result = await t.context.getConfig({cwd}, options);
 
-  const expected = {...options, branches: ['branch_cli']};
   // Verify the options contains the plugin config from CLI/API
-  t.deepEqual(result.options, expected);
-  // Verify the plugins module is called with the plugin options from CLI/API
-  t.deepEqual(t.context.plugins.args[0][0], {options: expected, cwd});
+  t.deepEqual(result, {options, plugins: pluginsConfig});
 });
 
 test('Read configuration from file path in "extends"', async (t) => {
@@ -305,20 +303,21 @@ test('Read configuration from file path in "extends"', async (t) => {
   // Create package.json and shareable.json in repository root
   await outputJson(path.resolve(cwd, 'package.json'), {release: pkgOptions});
   await outputJson(path.resolve(cwd, 'shareable.json'), options);
-
-  const {options: result} = await t.context.getConfig({cwd});
-
-  const expected = {...options, branches: ['test_branch']};
-  // Verify the options contains the plugin config from shareable.json
-  t.deepEqual(result, expected);
   // Verify the plugins module is called with the plugin options from shareable.json
-  t.deepEqual(t.context.plugins.args[0][0], {options: expected, cwd});
-  t.deepEqual(t.context.plugins.args[0][1], {
-    analyzeCommits: './shareable.json',
-    generateNotes: './shareable.json',
-    'plugin-1': './shareable.json',
-    'plugin-2': './shareable.json',
-  });
+  td.when(plugins(
+    {cwd, options},
+    {
+      analyzeCommits: './shareable.json',
+      generateNotes: './shareable.json',
+      'plugin-1': './shareable.json',
+      'plugin-2': './shareable.json',
+    }
+  )).thenResolve(pluginsConfig);
+
+  const result = await t.context.getConfig({cwd});
+
+  // Verify the options contains the plugin config from shareable.json
+  t.deepEqual(result, {options, plugins: pluginsConfig});
 });
 
 test('Read configuration from module path in "extends"', async (t) => {
@@ -372,21 +371,23 @@ test('Read configuration from an array of paths in "extends"', async (t) => {
   await outputJson(path.resolve(cwd, 'package.json'), {release: pkgOptions});
   await outputJson(path.resolve(cwd, 'shareable1.json'), options1);
   await outputJson(path.resolve(cwd, 'shareable2.json'), options2);
-
-  const {options: result} = await t.context.getConfig({cwd});
-
-  const expected = {...options1, ...options2, branches: ['test_branch']};
-  // Verify the options contains the plugin config from shareable1.json and shareable2.json
-  t.deepEqual(result, expected);
+  const expectedOptions = {...options1, ...options2, branches: ['test_branch']};
   // Verify the plugins module is called with the plugin options from shareable1.json and shareable2.json
-  t.deepEqual(t.context.plugins.args[0][0], {options: expected, cwd});
-  t.deepEqual(t.context.plugins.args[0][1], {
-    verifyRelease1: './shareable1.json',
-    verifyRelease2: './shareable2.json',
-    generateNotes2: './shareable2.json',
-    analyzeCommits1: './shareable1.json',
-    analyzeCommits2: './shareable2.json',
-  });
+  td.when(plugins(
+    {options: expectedOptions, cwd},
+    {
+      verifyRelease1: './shareable1.json',
+      verifyRelease2: './shareable2.json',
+      generateNotes2: './shareable2.json',
+      analyzeCommits1: './shareable1.json',
+      analyzeCommits2: './shareable2.json',
+    }
+  )).thenResolve(pluginsConfig);
+
+  const result = await t.context.getConfig({cwd});
+
+  // Verify the options contains the plugin config from shareable1.json and shareable2.json
+  t.deepEqual(result, {options: expectedOptions, plugins: pluginsConfig});
 });
 
 test('Prioritize configuration from config file over "extends"', async (t) => {
@@ -458,14 +459,14 @@ test('Prioritize configuration from cli/API options over "extends"', async (t) =
   await outputJson(path.resolve(cwd, 'package.json'), {release: pkgOptions});
   await outputJson(path.resolve(cwd, 'shareable1.json'), options1);
   await outputJson(path.resolve(cwd, 'shareable2.json'), options2);
-
-  const {options: result} = await t.context.getConfig({cwd}, cliOptions);
-
-  const expected = omit({...options2, ...pkgOptions, ...cliOptions, branches: ['branch_opts']}, 'extends');
-  // Verify the options contains the plugin config from package.json and shareable2.json
-  t.deepEqual(result, expected);
+  const expectedOptions = omit({...options2, ...pkgOptions, ...cliOptions, branches: ['branch_opts']}, 'extends');
   // Verify the plugins module is called with the plugin options from package.json and shareable2.json
-  t.deepEqual(t.context.plugins.args[0][0], {options: expected, cwd});
+  td.when(plugins({cwd, options: expectedOptions}, {})).thenResolve(pluginsConfig);
+
+  const result = await t.context.getConfig({cwd}, cliOptions);
+
+  // Verify the options contains the plugin config from package.json and shareable2.json
+  t.deepEqual(result, {options: expectedOptions, plugins: pluginsConfig});
 });
 
 test('Allow to unset properties defined in shareable config with "null"', async (t) => {
@@ -528,25 +529,24 @@ test('Allow to unset properties defined in shareable config with "undefined"', a
     tagFormat: `v\${version}`,
     plugins: false,
   };
-  // Create package.json and release.config.js in repository root
+  // Create release.config.js and shareable.json in repository root
   await writeFile(path.resolve(cwd, 'release.config.js'), `module.exports = ${format(pkgOptions)}`);
   await outputJson(path.resolve(cwd, 'shareable.json'), options1);
-
-  const {options: result} = await t.context.getConfig({cwd});
-
-  const expected = {
+  const expectedOptions = {
     ...omit(options1, 'analyzeCommits'),
     ...omit(pkgOptions, ['extends', 'analyzeCommits']),
     branches: ['test_branch'],
   };
-  // Verify the options contains the plugin config from shareable.json
-  t.deepEqual(result, expected);
   // Verify the plugins module is called with the plugin options from shareable.json
-  t.deepEqual(t.context.plugins.args[0][0], {options: expected, cwd});
-  t.deepEqual(t.context.plugins.args[0][1], {
-    generateNotes: './shareable.json',
-    analyzeCommits: './shareable.json',
-  });
+  td.when(plugins(
+    {options: expectedOptions, cwd},
+    {generateNotes: './shareable.json', analyzeCommits: './shareable.json'}
+  )).thenResolve(pluginsConfig);
+
+  const result = await t.context.getConfig({cwd});
+
+  // Verify the options contains the plugin config from shareable.json
+  t.deepEqual(result, {options: expectedOptions, plugins: pluginsConfig});
 });
 
 test('Throw an Error if one of the shareable config cannot be found', async (t) => {
