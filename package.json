@@ -22,7 +22,8 @@
   },
   "contributors": [
     "Gregor Martynus (https://twitter.com/gr2m)",
-    "Pierre Vanduynslager (https://twitter.com/@pvdlg_)"
+    "Pierre Vanduynslager (https://twitter.com/@pvdlg_)",
+    "Matt Travi <npm@travi.org> (https://matt.travi.org/)"
   ],
   "dependencies": {
     "@semantic-release/commit-analyzer": "^9.0.2",
