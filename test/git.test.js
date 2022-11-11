@@ -1,40 +1,40 @@
-const test = require('ava');
-const tempy = require('tempy');
-const {
-  getTagHead,
-  isRefExists,
+import test from 'ava';
+import {temporaryDirectory} from 'tempy';
+import {
+  addNote,
   fetch,
+  fetchNotes,
+  getBranches,
   getGitHead,
+  getNote,
+  getTagHead,
+  getTags,
+  isBranchUpToDate,
+  isGitRepo,
+  isRefExists,
+  push,
   repoUrl,
   tag,
-  push,
-  getTags,
-  getBranches,
-  isGitRepo,
-  verifyTagName,
-  isBranchUpToDate,
-  getNote,
-  addNote,
-  fetchNotes,
-} = require('../lib/git');
-const {
-  gitRepo,
-  gitCommits,
-  gitCheckout,
-  gitTagVersion,
-  gitShallowClone,
-  gitGetCommits,
+  verifyTagName
+} from '../lib/git.js';
+import {
   gitAddConfig,
+  gitAddNote,
+  gitCheckout,
+  gitCommits,
   gitCommitTag,
-  gitRemoteTagHead,
-  gitPush,
   gitDetachedHead,
   gitDetachedHeadFromBranch,
-  gitAddNote,
-  gitGetNote,
   gitFetch,
-  initGit,
-} = require('./helpers/git-utils');
+  gitGetCommits,
+  gitGetNote,
+  gitPush,
+  gitRemoteTagHead,
+  gitRepo,
+  gitShallowClone,
+  gitTagVersion,
+  initGit
+} from './helpers/git-utils.js';
 
 test('Get the last commit sha', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
@@ -268,7 +268,7 @@ test('Return "true" if in a Git repository', async (t) => {
 });
 
 test('Return falsy if not in a Git repository', async (t) => {
-  const cwd = tempy.directory();
+  const cwd = temporaryDirectory();
 
   t.falsy(await isGitRepo({cwd}));
 });
@@ -288,7 +288,7 @@ test('Return falsy for invalid tag names', async (t) => {
 });
 
 test('Throws error if obtaining the tags fails', async (t) => {
-  const cwd = tempy.directory();
+  const cwd = temporaryDirectory();
 
   await t.throwsAsync(getTags('master', {cwd}));
 });

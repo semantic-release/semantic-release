@@ -1,28 +1,31 @@
-const path = require('path');
-const test = require('ava');
-const td = require('testdouble');
-const {escapeRegExp} = require('lodash');
-const {writeJson, readJson} = require('fs-extra');
-const execa = require('execa');
-const {WritableStreamBuffer} = require('stream-buffers');
-const delay = require('delay');
-const getAuthUrl = require('../lib/get-git-auth-url');
-const {SECRET_REPLACEMENT} = require('../lib/definitions/constants');
-const {
-  gitHead,
-  gitTagHead,
-  gitRepo,
-  gitCommits,
-  gitRemoteTagHead,
-  gitPush,
+import path from 'path';
+import test from 'ava';
+import * as td from 'testdouble';
+import {escapeRegExp} from 'lodash-es';
+import fsExtra from 'fs-extra';
+import {execa} from 'execa';
+import {WritableStreamBuffer} from 'stream-buffers';
+import delay from 'delay';
+
+import getAuthUrl from '../lib/get-git-auth-url.js';
+import {SECRET_REPLACEMENT} from '../lib/definitions/constants.js';
+import {
   gitCheckout,
-  merge,
+  gitCommits,
   gitGetNote,
-} = require('./helpers/git-utils');
-const {npmView} = require('./helpers/npm-utils');
-const gitbox = require('./helpers/gitbox');
-const mockServer = require('./helpers/mockserver');
-const npmRegistry = require('./helpers/npm-registry');
+  gitHead,
+  gitPush,
+  gitRemoteTagHead,
+  gitRepo,
+  gitTagHead,
+  merge
+} from './helpers/git-utils.js';
+import {npmView} from './helpers/npm-utils.js';
+import * as gitbox from './helpers/gitbox.js';
+import * as mockServer from './helpers/mockserver.js';
+import * as npmRegistry from './helpers/npm-registry.js';
+
+const {readJson, writeJson} = fsExtra;
 
 /* eslint camelcase: ["error", {properties: "never"}] */
 
@@ -47,10 +50,10 @@ const npmTestEnv = {
   LEGACY_TOKEN: Buffer.from(`${env.NPM_USERNAME}:${env.NPM_PASSWORD}`, 'utf8').toString('base64'),
 };
 
-const cli = require.resolve('../bin/semantic-release');
-const pluginError = require.resolve('./fixtures/plugin-error');
-const pluginInheritedError = require.resolve('./fixtures/plugin-error-inherited');
-const pluginLogEnv = require.resolve('./fixtures/plugin-log-env');
+const cli = path.resolve('./bin/semantic-release.js');
+const pluginError = path.resolve('./test/fixtures/plugin-error');
+const pluginInheritedError = path.resolve('./test/fixtures/plugin-error-inherited');
+const pluginLogEnv = path.resolve('./test/fixtures/plugin-log-env');
 
 test.before(async () => {
   await Promise.all([gitbox.start(), npmRegistry.start(), mockServer.start()]);
@@ -509,7 +512,7 @@ test('Pass options via CLI arguments', async (t) => {
 test('Run via JS API', async (t) => {
   td.replace('../lib/logger', {log: () => {}, error: () => {}, stdout: () => {}});
   td.replace('env-ci', () => ({isCi: true, branch: 'master', isPr: false}));
-  const semanticRelease = require('..');
+  const semanticRelease = (await import('../index.js')).default;
   const packageName = 'test-js-api';
   const owner = 'git';
   // Create a git repository, set the current working directory at the root of the repo
@@ -655,6 +658,8 @@ test('Hide sensitive environment variable values from the logs', async (t) => {
     reject: false,
     extendEnv: false,
   });
+
+  console.log({stderr})
 
   t.regex(stdout, new RegExp(`Console: Exposing token ${escapeRegExp(SECRET_REPLACEMENT)}`));
   t.regex(stdout, new RegExp(`Log: Exposing token ${escapeRegExp(SECRET_REPLACEMENT)}`));
