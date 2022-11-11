@@ -36,8 +36,8 @@ async function terminalOutput(text) {
 
 /* eslint complexity: off */
 async function run(context, plugins) {
-  const {cwd, env, options, logger} = context;
-  const {isCi, branch, prBranch, isPr} = context.envCi;
+  const {cwd, env, options, logger, envCi} = context;
+  const {isCi, branch, prBranch, isPr} = envCi;
   const ciBranch = isPr ? prBranch : branch;
 
   if (!isCi && !options.dryRun && !options.noCi) {

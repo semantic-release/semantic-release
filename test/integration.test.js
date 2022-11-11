@@ -659,8 +659,6 @@ test('Hide sensitive environment variable values from the logs', async (t) => {
     extendEnv: false,
   });
 
-  console.log({stderr})
-
   t.regex(stdout, new RegExp(`Console: Exposing token ${escapeRegExp(SECRET_REPLACEMENT)}`));
   t.regex(stdout, new RegExp(`Log: Exposing token ${escapeRegExp(SECRET_REPLACEMENT)}`));
   t.regex(stderr, new RegExp(`Error: Console token ${escapeRegExp(SECRET_REPLACEMENT)}`));
