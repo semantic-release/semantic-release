@@ -75,6 +75,9 @@
     "testdouble": "3.16.6",
     "xo": "0.32.1"
   },
+  "overrides": {
+    "semantic-release": "20.0.0-beta.1"
+  },
   "engines": {
     "node": ">=16 || ^14.17"
   },
