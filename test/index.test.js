@@ -139,7 +139,7 @@ test('Plugins are called with expected values', async (t) => {
       pluginName: '[Function: functionStub]',
     },
     {...nextRelease, ...release2, notes: `${notes1}\n\n${notes2}\n\n${notes3}`, pluginName: '[Function: functionStub]'},
-    {...nextRelease, notes: `${notes1}\n\n${notes2}\n\n${notes3}`, pluginName: pluginNoop},
+    {...nextRelease, notes: `${notes1}\n\n${notes2}\n\n${notes3}`, pluginName: '[Function: noop]'},
   ];
 
   await td.replaceEsm('../lib/get-logger.js', null, () => t.context.logger);
