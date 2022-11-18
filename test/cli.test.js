@@ -71,6 +71,7 @@ test.serial('Pass options to semantic-release API', async (t) => {
     'fail2',
     '--debug',
     '-d',
+    '--allow-outdated-branch',
   ];
   td.replace('..', run);
   process.argv = argv;
@@ -93,6 +94,7 @@ test.serial('Pass options to semantic-release API', async (t) => {
   t.deepEqual(run.args[0][0].fail, ['fail1', 'fail2']);
   t.is(run.args[0][0].debug, true);
   t.is(run.args[0][0].dryRun, true);
+  t.is(run.args[0][0].allowOutdatedBranch, true);
 
   t.is(exitCode, 0);
 });
@@ -171,6 +173,7 @@ test.serial('Do not set properties in option for which arg is not in command lin
 
   await cli();
 
+  t.false('allow-outdated-branch' in run.args[0][0]);
   t.false('ci' in run.args[0][0]);
   t.false('d' in run.args[0][0]);
   t.false('dry-run' in run.args[0][0]);

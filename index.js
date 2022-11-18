@@ -16,7 +16,18 @@ const {extractErrors, makeTag} = require('./lib/utils');
 const getGitAuthUrl = require('./lib/get-git-auth-url');
 const getBranches = require('./lib/branches');
 const getLogger = require('./lib/get-logger');
-const {verifyAuth, isBranchUpToDate, getGitHead, tag, push, pushNotes, getTagHead, addNote} = require('./lib/git');
+const {
+  verifyAuth,
+  isAncestor,
+  getNoMergeTags,
+  getGitHead,
+  getGitRemoteHead,
+  tag,
+  push,
+  pushNotes,
+  getTagHead,
+  addNote,
+} = require('./lib/git');
 const getError = require('./lib/get-error');
 const {COMMIT_NAME, COMMIT_EMAIL} = require('./lib/definitions/constants');
 
@@ -81,24 +92,17 @@ async function run(context, plugins) {
   );
 
   try {
-    try {
-      await verifyAuth(options.repositoryUrl, context.branch.name, {cwd, env});
-    } catch (error) {
-      if (!(await isBranchUpToDate(options.repositoryUrl, context.branch.name, {cwd, env}))) {
-        logger.log(
-          `The local branch ${context.branch.name} is behind the remote one, therefore a new version won't be published.`
-        );
-        return false;
-      }
-
-      throw error;
-    }
+    await verifyAuth(options.repositoryUrl, context.branch.name, {cwd, env});
   } catch (error) {
     logger.error(`The command "${error.command}" failed with the error message ${error.stderr}.`);
     throw getError('EGITNOPERMISSION', context);
   }
 
   logger.success(`Allowed to push to the Git repository`);
+
+  if (!(await validateBranch(context, {cwd, env}))) {
+    return false;
+  }
 
   await plugins.verifyConditions(context);
 
@@ -245,6 +249,32 @@ async function callFail(context, plugins, err) {
       await logErrors(context, error);
     }
   }
+}
+
+async function validateBranch(context, execaOptions) {
+  const localHead = await getGitHead(execaOptions);
+  const remoteHead = await getGitRemoteHead(context.options.repositoryUrl, context.branch.name, execaOptions);
+
+  if (!(await isAncestor(localHead, remoteHead, execaOptions))) {
+    throw getError('ELOCALCOMMIT', context);
+  }
+
+  if (!context.options.allowOutdatedBranch && localHead !== remoteHead) {
+    context.logger.log(
+      `The local branch ${context.branch.name} is behind the remote one, therefore a new version won't be published.`
+    );
+    return false;
+  }
+
+  const tagsNotLocal = await getNoMergeTags(localHead, execaOptions);
+  const tagsNotRemote = await getNoMergeTags(remoteHead, execaOptions);
+  const localMissingTags = tagsNotLocal.filter((value) => !tagsNotRemote.includes(value));
+
+  if (localMissingTags.length !== 0) {
+    throw getError('EREMOTETAG', context);
+  }
+
+  return true;
 }
 
 module.exports = async (cliOptions = {}, {cwd = process.cwd(), env = process.env, stdout, stderr} = {}) => {
