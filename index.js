@@ -2,7 +2,7 @@ import {createRequire} from 'node:module';
 import {pick} from 'lodash-es';
 import * as marked from 'marked';
 import envCi from 'env-ci';
-import {hookStdout} from 'hook-std';
+import {hookStd} from 'hook-std';
 import semver from 'semver';
 import AggregateError from 'aggregate-error';
 import hideSensitive from './lib/hide-sensitive.js';
@@ -251,7 +251,7 @@ async function callFail(context, plugins, err) {
 }
 
 export default async (cliOptions = {}, {cwd = process.cwd(), env = process.env, stdout, stderr} = {}) => {
-  const {unhook} = hookStdout(
+  const {unhook} = hookStd(
     {silent: false, streams: [process.stdout, process.stderr, stdout, stderr].filter(Boolean)},
     hideSensitive(env)
   );
