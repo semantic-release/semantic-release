@@ -79,7 +79,7 @@
     "semantic-release": "20.0.0-beta.1"
   },
   "engines": {
-    "node": ">=16 || ^14.17"
+    "node": ">=18"
   },
   "files": [
     "bin",
