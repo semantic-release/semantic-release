@@ -37,7 +37,6 @@ execa('git', ['--version'])
     process.exit(1);
   });
 
-// Node 10+ from this point on
 cli()
   .then((exitCode) => {
     process.exitCode = exitCode;
