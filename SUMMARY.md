@@ -1,6 +1,7 @@
 # Summary
 
 ## Usage
+
 - [Getting started](docs/usage/getting-started.md#getting-started)
 - [Installation](docs/usage/installation.md#installation)
 - [CI Configuration](docs/usage/ci-configuration.md#ci-configuration)
@@ -10,10 +11,12 @@
 - [Shareable configurations](docs/usage/shareable-configurations.md)
 
 ## Extending
+
 - [Plugins](docs/extending/plugins-list.md)
 - [Shareable configuration](docs/extending/shareable-configurations-list.md)
 
 ## Recipes
+
 - [CI configurations](docs/recipes/ci-configurations/README.md)
   - [CircleCI 2.0](docs/recipes/ci-configurations/circleci-workflows.md)
   - [Travis CI](docs/recipes/ci-configurations/travis.md)
@@ -28,11 +31,13 @@
   - [Publishing pre-releases](docs/recipes/release-workflow/pre-releases.md)
 
 ## Developer guide
+
 - [JavaScript API](docs/developer-guide/js-api.md)
 - [Plugin development](docs/developer-guide/plugin.md)
 - [Shareable configuration development](docs/developer-guide/shareable-configuration.md)
 
 ## Support
+
 - [Resources](docs/support/resources.md)
 - [Frequently Asked Questions](docs/support/FAQ.md)
 - [Troubleshooting](docs/support/troubleshooting.md)

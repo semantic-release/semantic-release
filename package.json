@@ -69,11 +69,11 @@
     "mockserver-client": "5.14.0",
     "nock": "13.2.9",
     "p-retry": "^5.1.1",
+    "prettier": "^2.7.1",
     "sinon": "14.0.0",
     "stream-buffers": "3.0.2",
     "tempy": "^3.0.0",
-    "testdouble": "3.16.6",
-    "xo": "0.32.1"
+    "testdouble": "3.16.6"
   },
   "overrides": {
     "semantic-release": "20.0.0-beta.1"
@@ -128,19 +128,12 @@
   },
   "scripts": {
     "codecov": "codecov -f coverage/coverage-final.json",
-    "lint": "xo",
+    "lint": "prettier --check \"*.{js,json,md}\" \".github/**/*.{md,yml}\" \"docs/**/*.md\" \"{bin,lib,test}/*.js\"",
+    "lint:fix": "prettier --write \"*.{js,json,md}\" \".github/**/*.{md,yml}\" \"docs/**/*.md\" \"{bin,lib,test}/*.js\"",
     "pretest": "npm run lint",
     "semantic-release": "./bin/semantic-release.js",
     "test": "c8 ava --verbose",
     "test:ci": "c8 ava --verbose"
-  },
-  "xo": {
-    "prettier": true,
-    "space": true,
-    "rules": {
-      "unicorn/no-reduce": "off",
-      "unicorn/string-content": "off"
-    }
   },
   "renovate": {
     "extends": [

@@ -2,17 +2,17 @@
 
 /* eslint-disable no-var */
 
-import semver from 'semver';
-import { execa } from 'execa';
-import findVersions from 'find-versions';
-import cli from '../cli.js';
-import {createRequire} from 'node:module';
+import semver from "semver";
+import { execa } from "execa";
+import findVersions from "find-versions";
+import cli from "../cli.js";
+import { createRequire } from "node:module";
 
 const require = createRequire(import.meta.url);
-const { engines } = require('../package.json');
+const { engines } = require("../package.json");
 const { satisfies, lt } = semver;
 
-const MIN_GIT_VERSION = '2.7.1';
+const MIN_GIT_VERSION = "2.7.1";
 
 if (!satisfies(process.version, engines.node)) {
   console.error(
@@ -23,8 +23,8 @@ See https://github.com/semantic-release/semantic-release/blob/master/docs/suppor
   process.exit(1);
 }
 
-execa('git', ['--version'])
-  .then(({stdout}) => {
+execa("git", ["--version"])
+  .then(({ stdout }) => {
     const gitVersion = findVersions(stdout)[0];
     if (lt(gitVersion, MIN_GIT_VERSION)) {
       console.error(`[semantic-release]: Git version ${MIN_GIT_VERSION} is required. Found ${gitVersion}.`);
