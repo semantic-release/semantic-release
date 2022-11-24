@@ -21,8 +21,8 @@ This example is a minimal configuration for **semantic-release** with a build ru
 ```yaml
 # The release pipeline will run only if all jobs in the test pipeline are successful
 stages:
-    - test
-    - release
+  - test
+  - release
 
 before_script:
   - npm install
@@ -51,7 +51,6 @@ publish:
 This example is a minimal configuration for **semantic-release** with a build running Node 10 and 12. See [GitLab CI - Configuration of your jobs with `.gitlab-ci.yml`](https://docs.gitlab.com/ee/ci/yaml/README.html) for additional configuration options.
 
 **Note**: The`semantic-release` execution command varies depending if you are using a [local](../../usage/installation.md#local-installation) or [global](../../usage/installation.md#global-installation) **semantic-release** installation.
-
 
 ```yaml
 # The release pipeline will run only on the master branch a commit is triggered
