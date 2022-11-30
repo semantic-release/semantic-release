@@ -72,7 +72,7 @@ With this configuration **semantic-release** will:
 - execute the `prepare` implementation of `@semantic-release/npm` then `@semantic-release/git`
 - execute the `publish` implementation of `@semantic-release/npm`
 
-Order is first determined by release steps (such as `verifyConditions` → `anayzeCommits`). At each release step, plugins are executed in the order in which they are defined.
+Order is first determined by release steps (such as `verifyConditions` → `analyzeCommits`). At each release step, plugins are executed in the order in which they are defined.
 
 ## Plugin options configuration
 
