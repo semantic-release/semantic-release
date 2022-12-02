@@ -30,7 +30,7 @@ const { readJson, writeJson } = fsExtra;
 /* eslint camelcase: ["error", {properties: "never"}] */
 
 // Environment variables used with semantic-release cli (similar to what a user would setup)
-const { GITHUB_ACTIONS, GITHUB_TOKEN, ...processEnvWithoutGitHubActionsVariables } = process.env;
+const { GITHUB_ACTION, GITHUB_ACTIONS, GITHUB_TOKEN, ...processEnvWithoutGitHubActionsVariables } = process.env;
 const env = {
   ...processEnvWithoutGitHubActionsVariables,
   ...npmRegistry.authEnv,
