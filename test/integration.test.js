@@ -63,7 +63,7 @@ test.after.always(async () => {
   await Promise.all([gitbox.stop(), npmRegistry.stop(), mockServer.stop()]);
 });
 
-test("Release patch, minor and major versions", async (t) => {
+test.serial("Release patch, minor and major versions", async (t) => {
   const packageName = "test-release";
   const owner = "git";
   // Create a git repository, set the current working directory at the root of the repo
@@ -312,7 +312,7 @@ test("Release patch, minor and major versions", async (t) => {
   await mockServer.verify(updateReleaseMock);
 });
 
-test("Exit with 1 if a plugin is not found", async (t) => {
+test.serial("Exit with 1 if a plugin is not found", async (t) => {
   const packageName = "test-plugin-not-found";
   const owner = "test-repo";
   // Create a git repository, set the current working directory at the root of the repo
@@ -330,7 +330,7 @@ test("Exit with 1 if a plugin is not found", async (t) => {
   t.regex(stderr, /Cannot find module/);
 });
 
-test("Exit with 1 if a shareable config is not found", async (t) => {
+test.serial("Exit with 1 if a shareable config is not found", async (t) => {
   const packageName = "test-config-not-found";
   const owner = "test-repo";
   // Create a git repository, set the current working directory at the root of the repo
@@ -348,7 +348,7 @@ test("Exit with 1 if a shareable config is not found", async (t) => {
   t.regex(stderr, /Cannot find module/);
 });
 
-test("Exit with 1 if a shareable config reference a not found plugin", async (t) => {
+test.serial("Exit with 1 if a shareable config reference a not found plugin", async (t) => {
   const packageName = "test-config-ref-not-found";
   const owner = "test-repo";
   const shareable = { analyzeCommits: "non-existing-path" };
@@ -369,7 +369,7 @@ test("Exit with 1 if a shareable config reference a not found plugin", async (t)
   t.regex(stderr, /Cannot find module/);
 });
 
-test("Dry-run", async (t) => {
+test.serial("Dry-run", async (t) => {
   const packageName = "test-dry-run";
   const owner = "git";
   // Create a git repository, set the current working directory at the root of the repo
@@ -405,7 +405,7 @@ test("Dry-run", async (t) => {
   await mockServer.verify(verifyMock);
 });
 
-test('Allow local releases with "noCi" option', async (t) => {
+test.serial('Allow local releases with "noCi" option', async (t) => {
   const envNoCi = { ...env };
   delete envNoCi.CI;
   const packageName = "test-no-ci";
@@ -463,7 +463,7 @@ test('Allow local releases with "noCi" option', async (t) => {
   await mockServer.verify(createReleaseMock);
 });
 
-test("Pass options via CLI arguments", async (t) => {
+test.serial("Pass options via CLI arguments", async (t) => {
   const packageName = "test-cli";
   // Create a git repository, set the current working directory at the root of the repo
   t.log("Create git repository and package.json");
@@ -512,7 +512,7 @@ test("Pass options via CLI arguments", async (t) => {
   t.log(`+ released ${releasedVersion} with head ${releasedGitHead}`);
 });
 
-test("Run via JS API", async (t) => {
+test.serial("Run via JS API", async (t) => {
   td.replace("../lib/logger", { log: () => {}, error: () => {}, stdout: () => {} });
   td.replace("env-ci", () => ({ isCi: true, branch: "master", isPr: false }));
   const semanticRelease = (await import("../index.js")).default;
@@ -575,7 +575,7 @@ test("Run via JS API", async (t) => {
   await mockServer.verify(createReleaseMock);
 });
 
-test("Log unexpected errors from plugins and exit with 1", async (t) => {
+test.serial("Log unexpected errors from plugins and exit with 1", async (t) => {
   const packageName = "test-unexpected-error";
   // Create a git repository, set the current working directory at the root of the repo
   t.log("Create git repository and package.json");
@@ -602,7 +602,7 @@ test("Log unexpected errors from plugins and exit with 1", async (t) => {
   t.is(exitCode, 1);
 });
 
-test("Log errors inheriting SemanticReleaseError and exit with 1", async (t) => {
+test.serial("Log errors inheriting SemanticReleaseError and exit with 1", async (t) => {
   const packageName = "test-inherited-error";
   // Create a git repository, set the current working directory at the root of the repo
   t.log("Create git repository and package.json");
@@ -625,7 +625,7 @@ test("Log errors inheriting SemanticReleaseError and exit with 1", async (t) => 
   t.is(exitCode, 1);
 });
 
-test("Exit with 1 if missing permission to push to the remote repository", async (t) => {
+test.serial("Exit with 1 if missing permission to push to the remote repository", async (t) => {
   const packageName = "unauthorized";
   // Create a git repository, set the current working directory at the root of the repo
   t.log("Create git repository");
@@ -647,7 +647,7 @@ test("Exit with 1 if missing permission to push to the remote repository", async
   t.is(exitCode, 1);
 });
 
-test("Hide sensitive environment variable values from the logs", async (t) => {
+test.serial("Hide sensitive environment variable values from the logs", async (t) => {
   const packageName = "log-secret";
   // Create a git repository, set the current working directory at the root of the repo
   t.log("Create git repository");
@@ -673,7 +673,7 @@ test("Hide sensitive environment variable values from the logs", async (t) => {
   t.regex(stderr, new RegExp(`Throw error: Exposing ${escapeRegExp(SECRET_REPLACEMENT)}`));
 });
 
-test("Use the valid git credentials when multiple are provided", async (t) => {
+test.serial("Use the valid git credentials when multiple are provided", async (t) => {
   const { cwd, authUrl } = await gitbox.createRepo("test-auth");
 
   t.is(
@@ -693,7 +693,7 @@ test("Use the valid git credentials when multiple are provided", async (t) => {
   );
 });
 
-test("Use the repository URL as is if none of the given git credentials are valid", async (t) => {
+test.serial("Use the repository URL as is if none of the given git credentials are valid", async (t) => {
   const { cwd } = await gitbox.createRepo("test-invalid-auth");
   const dummyUrl = "http://toto@localhost:2080/git/test-invalid-auth.git";
 
