@@ -18,10 +18,16 @@ const {
 } = require('../lib/utils');
 
 test('extractErrors', (t) => {
-  const errors = [new Error('Error 1'), new Error('Error 2')];
+  const errors = [new Error("Error 1"), new Error("Error 2")];
 
   t.deepEqual(extractErrors(new AggregateError(errors)), errors);
   t.deepEqual(extractErrors(errors[0]), [errors[0]]);
+
+  // aggregate-error v4 stores errors in a `errors` property
+  // See https://github.com/sindresorhus/aggregate-error/issues/4
+  const aggregateErrorv4 = new Error();
+  aggregateErrorv4.errors = errors;
+  t.deepEqual(extractErrors(aggregateErrorv4), errors);
 });
 
 test('tagsToVersions', (t) => {
