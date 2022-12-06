@@ -75,9 +75,6 @@
     "tempy": "^3.0.0",
     "testdouble": "3.16.6"
   },
-  "overrides": {
-    "semantic-release": "20.0.0-beta.1"
-  },
   "engines": {
     "node": ">=18"
   },
