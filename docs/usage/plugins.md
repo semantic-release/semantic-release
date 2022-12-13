@@ -88,7 +88,10 @@ Global plugin configuration can be defined at the root of the **semantic-release
     ["@semantic-release/github", {
       "assets": ["dist/**"]
       }],
-    "@semantic-release/git"
+    {
+      "path": "@semantic-release/git",
+      "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+    }
   ],
   "preset": "angular"
 }
@@ -97,3 +100,16 @@ Global plugin configuration can be defined at the root of the **semantic-release
 With this configuration:
 - All plugins will receive the `preset` option, which will be used by both `@semantic-release/commit-analyzer` and `@semantic-release/release-notes-generator` (and ignored by `@semantic-release/github` and `@semantic-release/git`)
 - The `@semantic-release/github` plugin will receive the `assets` options (`@semantic-release/git` will not receive it and therefore will use it's default value for that option)
+- `@semantic-release/git` uses the `path` option which is an alternative way of defining a plugin. This especially helps with the YAML representation:
+
+```yaml
+preset: angular
+plugins:
+  - path: "@semantic-release/commit-analyzer"
+  - path: "@semantic-release/release-notes-generator"
+  - path: "@semantic-release/github"
+    assets:
+      - "dist/**"
+  - path: "@semantic-release/git"
+    message: "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+```
