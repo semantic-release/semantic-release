@@ -173,7 +173,7 @@ async function run(context, plugins) {
   }
 
   context.nextRelease = nextRelease;
-  nextRelease.version = getNextVersion(context);
+  nextRelease.version = await getNextVersion(context);
   nextRelease.gitTag = makeTag(options.tagFormat, nextRelease.version);
   nextRelease.name = nextRelease.gitTag;
 
