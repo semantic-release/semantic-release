@@ -31,23 +31,13 @@ const { readJson, writeJson } = fsExtra;
 
 // Environment variables used with semantic-release cli (similar to what a user would setup)
 const { GITHUB_ACTION, GITHUB_ACTIONS, GITHUB_TOKEN, ...processEnvWithoutGitHubActionsVariables } = process.env;
-const env = {
-  ...processEnvWithoutGitHubActionsVariables,
-  ...npmRegistry.authEnv,
-  CI: "true",
-  GH_TOKEN: gitbox.gitCredential,
-  TRAVIS: "true",
-  TRAVIS_BRANCH: "master",
-  TRAVIS_PULL_REQUEST: "false",
-  GITHUB_API_URL: mockServer.url,
-};
+let env;
 
 // Environment variables used only for the local npm command used to do verification
 const npmTestEnv = {
   ...process.env,
-  ...npmRegistry.authEnv,
+  ...npmRegistry.authEnv(),
   npm_config_registry: npmRegistry.url,
-  LEGACY_TOKEN: Buffer.from(`${env.NPM_USERNAME}:${env.NPM_PASSWORD}`, "utf8").toString("base64"),
 };
 
 const cli = path.resolve("./bin/semantic-release.js");
@@ -57,6 +47,17 @@ const pluginLogEnv = path.resolve("./test/fixtures/plugin-log-env");
 
 test.before(async () => {
   await Promise.all([gitbox.start(), npmRegistry.start(), mockServer.start()]);
+
+  env = {
+    ...processEnvWithoutGitHubActionsVariables,
+    ...npmRegistry.authEnv(),
+    CI: "true",
+    GH_TOKEN: gitbox.gitCredential,
+    TRAVIS: "true",
+    TRAVIS_BRANCH: "master",
+    TRAVIS_PULL_REQUEST: "false",
+    GITHUB_API_URL: mockServer.url,
+  };
 });
 
 test.after.always(async () => {
