@@ -25,7 +25,7 @@
     "@semantic-release/github": "^8.0.0",
     "@semantic-release/npm": "^9.0.0",
     "@semantic-release/release-notes-generator": "^10.0.0",
-    "aggregate-error": "^3.0.0",
+    "aggregate-error": "^4.0.0",
     "cosmiconfig": "^7.0.0",
     "debug": "^4.0.0",
     "env-ci": "^5.0.0",
