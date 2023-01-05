@@ -1357,6 +1357,62 @@ test('Returns false if triggered by a PR', async (t) => {
   );
 });
 
+test('Does not throw "EINVALIDNEXTVERSION" if next release is in range with the current maintenance branch', async (t) => {
+  async function release(repositoryUrl, t, cwd, branchToRelease) {
+    const verifyConditions = stub().resolves();
+    const verifyRelease = stub().resolves();
+    const addChannel = stub().resolves();
+    const prepare = stub().resolves();
+    const publish = stub().resolves();
+    const success = stub().resolves();
+
+    const config = {
+      branches: [{name: '+([0-9])?(.{+([0-9]),x}).x'}, {name: 'develop', prerelease: true}, {name: 'master'}],
+      repositoryUrl,
+      tagFormat: `v\${version}`,
+    };
+
+    const options = {
+      ...config,
+      verifyConditions,
+      verifyRelease,
+      addChannel,
+      prepare,
+      publish,
+      success,
+    };
+
+    const semanticRelease = proxyquire('..', {
+      './lib/logger': t.context.logger,
+      'env-ci': () => ({isCi: true, branch: branchToRelease, isPr: false}),
+    });
+
+    return semanticRelease(options, {cwd, env: {}, stdout: {write: () => {}}, stderr: {write: () => {}}});
+  }
+
+  const {cwd, repositoryUrl} = await gitRepo(true);
+  await gitCheckout('master', false, {cwd});
+  await gitCommits(['feat: initial commit'], {cwd});
+  await gitPush('origin', 'master', {cwd});
+  await release(repositoryUrl, t, cwd, 'master');
+
+  await gitCheckout('1.0.x', true, {cwd});
+  await gitCheckout('develop', true, {cwd});
+  await gitCommits(['feat: next feature'], {cwd});
+  await gitPush('origin', 'develop', {cwd});
+  await release(repositoryUrl, t, cwd, 'develop');
+
+  await gitCheckout('1.0.x', false, {cwd});
+  await gitCommits(['fix: maintenance fix'], {cwd});
+  await gitPush('origin', '1.0.x', {cwd});
+
+  const result = await release(repositoryUrl, t, cwd, '1.0.x');
+
+  t.is(result.nextRelease.gitTag, 'v1.0.1');
+  t.is(result.nextRelease.channel, '1.0.x');
+  t.is(result.nextRelease.type, 'patch');
+});
+
 test('Throws "EINVALIDNEXTVERSION" if next release is out of range of the current maintenance branch', async (t) => {
   const {cwd, repositoryUrl} = await gitRepo(true);
   await gitCommits(['feat: initial commit'], {cwd});
