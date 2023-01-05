@@ -71,6 +71,7 @@ test.serial('Pass options to semantic-release API', async (t) => {
     'fail2',
     '--debug',
     '-d',
+    '--skip-remote-check',
   ];
   td.replace('..', run);
   process.argv = argv;
@@ -93,6 +94,7 @@ test.serial('Pass options to semantic-release API', async (t) => {
   t.deepEqual(run.args[0][0].fail, ['fail1', 'fail2']);
   t.is(run.args[0][0].debug, true);
   t.is(run.args[0][0].dryRun, true);
+  t.is(run.args[0][0].skipRemoteCheck, true);
 
   t.is(exitCode, 0);
 });

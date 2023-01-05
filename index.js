@@ -58,6 +58,11 @@ async function run(context, plugins) {
     return false;
   }
 
+  if (options.skipRemoteCheck && !options.dryRun) {
+    logger.error('--skip-remote-check can only be specified in dry run mode.');
+    return false;
+  }
+
   // Verify config
   await verify(context);
 
@@ -80,25 +85,29 @@ async function run(context, plugins) {
     }`
   );
 
-  try {
+  if (options.skipRemoteCheck) {
+    logger.warn('Skipping up-to-date check for branch %s because skip-remote-check is set', context.branch.name);
+  } else {
     try {
-      await verifyAuth(options.repositoryUrl, context.branch.name, {cwd, env});
-    } catch (error) {
-      if (!(await isBranchUpToDate(options.repositoryUrl, context.branch.name, {cwd, env}))) {
-        logger.log(
-          `The local branch ${context.branch.name} is behind the remote one, therefore a new version won't be published.`
-        );
-        return false;
+      try {
+        await verifyAuth(options.repositoryUrl, context.branch.name, {cwd, env});
+      } catch (error) {
+        if (!(await isBranchUpToDate(options.repositoryUrl, context.branch.name, {cwd, env}))) {
+          logger.log(
+            `The local branch ${context.branch.name} is behind the remote one, therefore a new version won't be published.`
+          );
+          return false;
+        }
+
+        throw error;
       }
-
-      throw error;
+    } catch (error) {
+      logger.error(`The command "${error.command}" failed with the error message ${error.stderr}.`);
+      throw getError('EGITNOPERMISSION', context);
     }
-  } catch (error) {
-    logger.error(`The command "${error.command}" failed with the error message ${error.stderr}.`);
-    throw getError('EGITNOPERMISSION', context);
-  }
 
-  logger.success(`Allowed to push to the Git repository`);
+    logger.success(`Allowed to push to the Git repository`);
+  }
 
   await plugins.verifyConditions(context);
 

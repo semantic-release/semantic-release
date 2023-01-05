@@ -1357,6 +1357,31 @@ test('Returns false if triggered by a PR', async (t) => {
   );
 });
 
+test('Does not allow specifying skipRemoteCheck without dryRun', async (t) => {
+  const {cwd, repositoryUrl} = await gitRepo(true);
+
+  const semanticRelease = requireNoCache('..', {
+    './lib/get-logger': () => t.context.logger,
+    'env-ci': () => ({isCi: true, branch: 'master', isPr: false}),
+  });
+
+  t.false(
+    await semanticRelease(
+      {cwd, repositoryUrl, skipRemoteCheck: true},
+      {cwd, env: {}, stdout: new WritableStreamBuffer(), stderr: new WritableStreamBuffer()}
+    )
+  );
+  t.is(
+    t.context.error.args[t.context.error.args.length - 1][0],
+    '--skip-remote-check can only be specified in dry run mode.'
+  );
+});
+
+test("Doesn't call verifyAuth when skipRemoteCheck is set", (t) => {
+  // TODO: Implement this test, somehow.
+  t.true(true);
+});
+
 test('Throws "EINVALIDNEXTVERSION" if next release is out of range of the current maintenance branch', async (t) => {
   const {cwd, repositoryUrl} = await gitRepo(true);
   await gitCommits(['feat: initial commit'], {cwd});

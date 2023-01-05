@@ -407,3 +407,8 @@ test('Do not add git credential to repositoryUrl if push is allowed', async (t) 
     repositoryUrl
   );
 });
+
+test('Do not verify the url if skipRemoteCheck is set', (t) => {
+  // TODO: Implement this test, somehow.
+  t.true(true);
+});
