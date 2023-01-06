@@ -70,7 +70,7 @@
     "nock": "13.2.9",
     "p-retry": "^5.1.1",
     "prettier": "^2.7.1",
-    "sinon": "14.0.0",
+    "sinon": "14.0.2",
     "stream-buffers": "3.0.2",
     "tempy": "^3.0.0",
     "testdouble": "3.16.6"
