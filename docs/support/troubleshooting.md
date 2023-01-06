@@ -15,6 +15,7 @@ This is most likely related to a misconfiguration of the [npm registry authentic
 It might also happen if the package name you are trying to publish already exists (in the case of npm, you may be trying to publish a new version of a package that is not yours, hence the permission error).
 
 To verify if your package name is available you can use [npm-name-cli](https://github.com/sindresorhus/npm-name-cli):
+
 ```bash
 $ npm install --global npm-name-cli
 $ npm-name <package-name>
