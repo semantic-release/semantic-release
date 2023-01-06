@@ -73,7 +73,7 @@
     "sinon": "14.0.2",
     "stream-buffers": "3.0.2",
     "tempy": "^3.0.0",
-    "testdouble": "3.16.6"
+    "testdouble": "3.16.8"
   },
   "engines": {
     "node": ">=18"
