@@ -36,14 +36,14 @@ It can be defined as a [glob](https://github.com/micromatch/micromatch#matching-
 
 If `name` doesn't match to any branch existing in the repository, the definition will be ignored. For example the default configuration includes the definition `next` and `next-major` which will become active only when the branches `next` and/or `next-major` are created in the repository. This allow to define your workflow once with all potential branches you might use and have the effective configuration evolving as you create new branches.
 
-For example the configuration `['+([0-9])?(.{+([0-9]),x}).x', 'master', 'next']` will be expanded as:
+For example the configuration `['+([0-9])?(.{+([0-9]),x}).x', 'main', 'next']` will be expanded as:
 
 ```js
 {
   branches: [
     { name: "1.x", range: "1.x", channel: "1.x" }, // Only after the `1.x` is created in the repo
     { name: "2.x", range: "2.x", channel: "2.x" }, // Only after the `2.x` is created in the repo
-    { name: "master" },
+    { name: "main" },
     { name: "next", channel: "next" }, // Only after the `next` is created in the repo
   ];
 }
@@ -56,12 +56,12 @@ If the `channel` property is set to `false` the default channel will be used.
 
 The value of `channel`, if defined as a string, is generated with [Lodash template](https://lodash.com/docs#template) with the variable `name` available.
 
-For example the configuration `['master', {name: 'next', channel: 'channel-${name}'}]` will be expanded as:
+For example the configuration `['main', {name: 'next', channel: 'channel-${name}'}]` will be expanded as:
 
 ```js
 {
   branches: [
-    { name: "master" }, // `channel` is undefined so the default distribution channel will be used
+    { name: "main" }, // `channel` is undefined so the default distribution channel will be used
     { name: "next", channel: "channel-next" }, // `channel` is built with the template `channel-${name}`
   ];
 }
@@ -71,14 +71,14 @@ For example the configuration `['master', {name: 'next', channel: 'channel-${nam
 
 A `range` only applies to maintenance branches, is required and must be formatted like `N.N.x` or `N.x` (`N` is a number). In case the `name` is formatted as a range (for example `1.x` or `1.5.x`) the branch will be considered a maintenance branch and the `name` value will be used for the `range`.
 
-For example the configuration `['1.1.x', '1.2.x', 'master']` will be expanded as:
+For example the configuration `['1.1.x', '1.2.x', 'main']` will be expanded as:
 
 ```js
 {
   branches: [
     { name: "1.1.x", range: "1.1.x", channel: "1.1.x" },
     { name: "1.2.x", range: "1.2.x", channel: "1.2.x" },
-    { name: "master" },
+    { name: "main" },
   ];
 }
 ```
@@ -90,12 +90,12 @@ If the `prerelease` property is set to `true` the `name` value will be used.
 
 The value of `prerelease`, if defined as a string, is generated with [Lodash template](https://lodash.com/docs#template) with the variable `name` available.
 
-For example the configuration `['master', {name: 'pre/rc', prerelease: '${name.replace(/^pre\\//g, "")}'}, {name: 'beta', prerelease: true}]` will be expanded as:
+For example the configuration `['main', {name: 'pre/rc', prerelease: '${name.replace(/^pre\\//g, "")}'}, {name: 'beta', prerelease: true}]` will be expanded as:
 
 ```js
 {
   branches: [
-    { name: "master" },
+    { name: "main" },
     { name: "pre/rc", channel: "pre/rc", prerelease: "rc" }, // `prerelease` is built with the template `${name.replace(/^pre\\//g, "")}`
     { name: "beta", channel: "beta", prerelease: true }, // `prerelease` is set to `beta` as it is the value of `name`
   ];
@@ -118,19 +118,19 @@ See [publishing on distribution channels recipe](../recipes/release-workflow/dis
 
 #### Pushing to a release branch
 
-With the configuration `"branches": ["master", "next"]`, if the last release published from `master` is `1.0.0` and the last one from `next` is `2.0.0` then:
+With the configuration `"branches": ["main", "next"]`, if the last release published from `main` is `1.0.0` and the last one from `next` is `2.0.0` then:
 
-- Only versions in range `1.x.x` can be published from `master`, so only `fix` and `feat` commits can be pushed to `master`
-- Once `next` get merged into `master` the release `2.0.0` will be made available on the channel associated with `master` and both `master` and `next` will accept any commit type
+- Only versions in range `1.x.x` can be published from `main`, so only `fix` and `feat` commits can be pushed to `main`
+- Once `next` get merged into `main` the release `2.0.0` will be made available on the channel associated with `main` and both `main` and `next` will accept any commit type
 
 This verification prevent scenario such as:
 
 1. Create a `feat` commit on `next` which triggers the release of version `1.0.0` on the `next` channel
-2. Merge `next` into `master` which adds `1.0.0` on the default channel
+2. Merge `next` into `main` which adds `1.0.0` on the default channel
 3. Create a `feat` commit on `next` which triggers the release of version `1.1.0` on the `next` channel
-4. Create a `feat` commit on `master` which would attempt to release the version `1.1.0` on the default channel
+4. Create a `feat` commit on `main` which would attempt to release the version `1.1.0` on the default channel
 
-In step 4 **semantic-release** will throw an `EINVALIDNEXTVERSION` error to prevent the attempt at releasing version `1.1.0` which was already released on step 3 with a different codebase. The error will indicate that the commit should be created on `next` instead. Alternatively if the `next` branch is merged into `master`, the version `1.1.0` will be made available on the default channel and the `feat` commit would be allowed on `master` to release `1.2.0`.
+In step 4 **semantic-release** will throw an `EINVALIDNEXTVERSION` error to prevent the attempt at releasing version `1.1.0` which was already released on step 3 with a different codebase. The error will indicate that the commit should be created on `next` instead. Alternatively if the `next` branch is merged into `main`, the version `1.1.0` will be made available on the default channel and the `feat` commit would be allowed on `main` to release `1.2.0`.
 
 #### Merging into a release branch
 
@@ -154,19 +154,19 @@ See [publishing maintenance releases recipe](../recipes/release-workflow/mainten
 
 #### Pushing to a maintenance branch
 
-With the configuration `"branches": ["1.0.x", "1.x", "master"]`, if the last release published from `master` is `1.5.0` then:
+With the configuration `"branches": ["1.0.x", "1.x", "main"]`, if the last release published from `main` is `1.5.0` then:
 
 - Only versions in range `>=1.0.0 <1.1.0` can be published from `1.0.x`, so only `fix` commits can be pushed to `1.0.x`
 - Only versions in range `>=1.1.0 <1.5.0` can be published from `1.x`, so only `fix` and `feat` commits can be pushed to `1.x` as long the resulting release is lower than `1.5.0`
-- Once `2.0.0` is released from `master`, versions in range `>=1.1.0 <2.0.0` can be published from `1.x`, so any number of `fix` and `feat` commits can be pushed to `1.x`
+- Once `2.0.0` is released from `main`, versions in range `>=1.1.0 <2.0.0` can be published from `1.x`, so any number of `fix` and `feat` commits can be pushed to `1.x`
 
 #### Merging into a maintenance branch
 
-With the configuration `"branches": ["1.0.x", "1.x", "master"]`, if the last release published from `master` is `1.0.0` then:
+With the configuration `"branches": ["1.0.x", "1.x", "main"]`, if the last release published from `main` is `1.0.0` then:
 
-- Creating the branch `1.0.x` from `master` will make the `1.0.0` release available on the `1.0.x` distribution channel
+- Creating the branch `1.0.x` from `main` will make the `1.0.0` release available on the `1.0.x` distribution channel
 - Pushing a `fix` commit on the `1.0.x` branch will release the version `1.0.1` on the `1.0.x` distribution channel
-- Creating the branch `1.x` from `master` will make the `1.0.0` release available on the `1.x` distribution channel
+- Creating the branch `1.x` from `main` will make the `1.0.0` release available on the `1.x` distribution channel
 - Merging the branch `1.0.x` into `1.x` will make the version `1.0.1` available on the `1.x` distribution channel
 
 ### Pre-release branches
@@ -185,14 +185,14 @@ See [publishing pre-releases recipe](../recipes/release-workflow/pre-releases.md
 
 #### Pushing to a pre-release branch
 
-With the configuration `"branches": ["master", {"name": "beta", "prerelease": true}]`, if the last release published from `master` is `1.0.0` then:
+With the configuration `"branches": ["main", {"name": "beta", "prerelease": true}]`, if the last release published from `main` is `1.0.0` then:
 
 - Pushing a `BREAKING CHANGE` commit on the `beta` branch will release the version `2.0.0-beta.1` on the `beta` distribution channel
 - Pushing either a `fix`, `feat` or a `BREAKING CHANGE` commit on the `beta` branch will release the version `2.0.0-beta.2` (then `2.0.0-beta.3`, `2.0.0-beta.4`, etc...) on the `beta` distribution channel
 
 #### Merging into a pre-release branch
 
-With the configuration `"branches": ["master", {"name": "beta", "prerelease": true}]`, if the last release published from `master` is `1.0.0` and the last one published from `beta` is `2.0.0-beta.1` then:
+With the configuration `"branches": ["main", {"name": "beta", "prerelease": true}]`, if the last release published from `main` is `1.0.0` and the last one published from `beta` is `2.0.0-beta.1` then:
 
-- Pushing a `fix` commit on the `master` branch will release the version `1.0.1` on the default distribution channel
-- Merging the branch `master` into `beta` will release the version `2.0.0-beta.2` on the `beta` distribution channel
+- Pushing a `fix` commit on the `main` branch will release the version `1.0.1` on the default distribution channel
+- Merging the branch `main` into `beta` will release the version `2.0.0-beta.2` on the `beta` distribution channel
