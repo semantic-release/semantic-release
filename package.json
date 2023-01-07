@@ -32,7 +32,7 @@
     "@semantic-release/npm": "^9.0.0",
     "@semantic-release/release-notes-generator": "^10.0.0",
     "aggregate-error": "^4.0.1",
-    "cosmiconfig": "^7.0.0",
+    "cosmiconfig": "^8.0.0",
     "debug": "^4.0.0",
     "env-ci": "^8.0.0",
     "execa": "^6.1.0",
