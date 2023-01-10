@@ -1,5 +1,5 @@
-const test = require('ava');
-const {maintenance, prerelease, release} = require('../../lib/definitions/branches');
+import test from 'ava';
+import {maintenance, prerelease, release} from '../../lib/definitions/branches.js';
 
 test('A "maintenance" branch is identified by having a "range" property or a "name" formatted like "N.x", "N.x.x" or "N.N.x"', (t) => {
   /* eslint-disable unicorn/no-fn-reference-in-iterator */

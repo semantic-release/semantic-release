@@ -1,11 +1,11 @@
-const path = require('path');
-const test = require('ava');
-const {copy, outputFile} = require('fs-extra');
-const {stub} = require('sinon');
-const tempy = require('tempy');
-const getPlugins = require('../../lib/plugins');
+import path from 'path';
+import test from 'ava';
+import {copy, outputFile} from 'fs-extra';
+import {stub} from 'sinon';
+import {temporaryDirectory} from 'tempy';
+import getPlugins from '../../lib/plugins/index.js';
 
-// Save the current working diretory
+// Save the current working directory
 const cwd = process.cwd();
 
 test.beforeEach((t) => {
@@ -35,9 +35,9 @@ test('Export plugins based on steps config', async (t) => {
       cwd,
       logger: t.context.logger,
       options: {
-        verifyConditions: ['./test/fixtures/plugin-noop', {path: './test/fixtures/plugin-noop'}],
-        generateNotes: './test/fixtures/plugin-noop',
-        analyzeCommits: {path: './test/fixtures/plugin-noop'},
+        verifyConditions: ['./test/fixtures/plugin-noop.cjs', {path: './test/fixtures/plugin-noop.cjs'}],
+        generateNotes: './test/fixtures/plugin-noop.cjs',
+        analyzeCommits: {path: './test/fixtures/plugin-noop.cjs'},
         verifyRelease: () => {},
       },
     },
@@ -137,9 +137,9 @@ test('Unknown steps of plugins configured in "plugins" are ignored', async (t) =
 });
 
 test('Export plugins loaded from the dependency of a shareable config module', async (t) => {
-  const cwd = tempy.directory();
+  const cwd = temporaryDirectory();
   await copy(
-    './test/fixtures/plugin-noop.js',
+    './test/fixtures/plugin-noop.cjs',
     path.resolve(cwd, 'node_modules/shareable-config/node_modules/custom-plugin/index.js')
   );
   await outputFile(path.resolve(cwd, 'node_modules/shareable-config/index.js'), '');
@@ -170,8 +170,8 @@ test('Export plugins loaded from the dependency of a shareable config module', a
 });
 
 test('Export plugins loaded from the dependency of a shareable config file', async (t) => {
-  const cwd = tempy.directory();
-  await copy('./test/fixtures/plugin-noop.js', path.resolve(cwd, 'plugin/plugin-noop.js'));
+  const cwd = temporaryDirectory();
+  await copy('./test/fixtures/plugin-noop.cjs', path.resolve(cwd, 'plugin/plugin-noop.cjs'));
   await outputFile(path.resolve(cwd, 'shareable-config.js'), '');
 
   const plugins = await getPlugins(
@@ -179,9 +179,9 @@ test('Export plugins loaded from the dependency of a shareable config file', asy
       cwd,
       logger: t.context.logger,
       options: {
-        verifyConditions: ['./plugin/plugin-noop', {path: './plugin/plugin-noop'}],
-        generateNotes: './plugin/plugin-noop',
-        analyzeCommits: {path: './plugin/plugin-noop'},
+        verifyConditions: ['./plugin/plugin-noop.cjs', {path: './plugin/plugin-noop.cjs'}],
+        generateNotes: './plugin/plugin-noop.cjs',
+        analyzeCommits: {path: './plugin/plugin-noop.cjs'},
         verifyRelease: () => {},
       },
     },
@@ -269,7 +269,7 @@ test('Throw an error for each invalid plugin configuration', async (t) => {
         },
         {}
       )
-    )),
+    )).errors,
   ];
 
   t.is(errors[0].name, 'SemanticReleaseError');
@@ -289,11 +289,11 @@ test('Throw EPLUGINSCONF error if the "plugins" option contains an old plugin de
         {
           cwd,
           logger: t.context.logger,
-          options: {plugins: ['./test/fixtures/multi-plugin', './test/fixtures/plugin-noop', () => {}]},
+          options: {plugins: ['./test/fixtures/multi-plugin.cjs', './test/fixtures/plugin-noop.cjs', () => {}]},
         },
         {}
       )
-    )),
+    )).errors,
   ];
 
   t.is(errors[0].name, 'SemanticReleaseError');
@@ -306,7 +306,7 @@ test('Throw EPLUGINSCONF error for each invalid definition if the "plugins" opti
   const errors = [
     ...(await t.throwsAsync(() =>
       getPlugins({cwd, logger: t.context.logger, options: {plugins: [1, {path: 1}, [() => {}, {}, {}]]}}, {})
-    )),
+    )).errors,
   ];
 
   t.is(errors[0].name, 'SemanticReleaseError');
