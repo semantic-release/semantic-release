@@ -66,7 +66,7 @@
     "fs-extra": "^11.0.0",
     "got": "^12.5.0",
     "js-yaml": "4.1.0",
-    "mockserver-client": "5.14.0",
+    "mockserver-client": "5.15.0",
     "nock": "13.3.0",
     "p-retry": "^5.1.1",
     "prettier": "^2.7.1",
