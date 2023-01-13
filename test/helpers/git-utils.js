@@ -1,10 +1,10 @@
-import {temporaryDirectory} from 'tempy';
-import {execa} from 'execa';
-import fileUrl from 'file-url';
-import pEachSeries from 'p-each-series';
-import gitLogParser from 'git-log-parser';
-import getStream from 'get-stream';
-import {GIT_NOTE_REF} from '../../lib/definitions/constants.js';
+import { temporaryDirectory } from "tempy";
+import { execa } from "execa";
+import fileUrl from "file-url";
+import pEachSeries from "p-each-series";
+import gitLogParser from "git-log-parser";
+import getStream from "get-stream";
+import { GIT_NOTE_REF } from "../../lib/definitions/constants.js";
 
 /**
  * Commit message information.
@@ -25,14 +25,14 @@ import {GIT_NOTE_REF} from '../../lib/definitions/constants.js';
  */
 export async function initGit(withRemote) {
   const cwd = temporaryDirectory();
-  const args = withRemote ? ['--bare', '--initial-branch=master'] : ['--initial-branch=master'];
+  const args = withRemote ? ["--bare", "--initial-branch=master"] : ["--initial-branch=master"];
 
-  await execa('git', ['init', ...args], {cwd}).catch(() => {
-    const args = withRemote ? ['--bare'] : [];
-    return execa('git', ['init', ...args], {cwd});
+  await execa("git", ["init", ...args], { cwd }).catch(() => {
+    const args = withRemote ? ["--bare"] : [];
+    return execa("git", ["init", ...args], { cwd });
   });
   const repositoryUrl = fileUrl(cwd);
-  return {cwd, repositoryUrl};
+  return { cwd, repositoryUrl };
 }
 
 /**
@@ -45,18 +45,18 @@ export async function initGit(withRemote) {
  * @param {String} [branch='master'] The branch to initialize.
  * @return {String} The path of the clone if `withRemote` is `true`, the path of the repository otherwise.
  */
-export async function gitRepo(withRemote, branch = 'master') {
-  let {cwd, repositoryUrl} = await initGit(withRemote);
+export async function gitRepo(withRemote, branch = "master") {
+  let { cwd, repositoryUrl } = await initGit(withRemote);
   if (withRemote) {
     await initBareRepo(repositoryUrl, branch);
     cwd = await gitShallowClone(repositoryUrl, branch);
   } else {
-    await gitCheckout(branch, true, {cwd});
+    await gitCheckout(branch, true, { cwd });
   }
 
-  await execa('git', ['config', 'commit.gpgsign', false], {cwd});
+  await execa("git", ["config", "commit.gpgsign", false], { cwd });
 
-  return {cwd, repositoryUrl};
+  return { cwd, repositoryUrl };
 }
 
 /**
@@ -70,12 +70,12 @@ export async function gitRepo(withRemote, branch = 'master') {
  * @param {String} repositoryUrl The URL of the bare repository.
  * @param {String} [branch='master'] the branch to initialize.
  */
-export async function initBareRepo(repositoryUrl, branch = 'master') {
+export async function initBareRepo(repositoryUrl, branch = "master") {
   const cwd = temporaryDirectory();
-  await execa('git', ['clone', '--no-hardlinks', repositoryUrl, cwd], {cwd});
-  await gitCheckout(branch, true, {cwd});
-  await gitCommits(['Initial commit'], {cwd});
-  await execa('git', ['push', repositoryUrl, branch], {cwd});
+  await execa("git", ["clone", "--no-hardlinks", repositoryUrl, cwd], { cwd });
+  await gitCheckout(branch, true, { cwd });
+  await gitCommits(["Initial commit"], { cwd });
+  await execa("git", ["push", repositoryUrl, branch], { cwd });
 }
 
 /**
@@ -90,7 +90,9 @@ export async function gitCommits(messages, execaOptions) {
   await pEachSeries(
     messages,
     async (message) =>
-      (await execa('git', ['commit', '-m', message, '--allow-empty', '--no-gpg-sign'], execaOptions)).stdout
+      (
+        await execa("git", ["commit", "-m", message, "--allow-empty", "--no-gpg-sign"], execaOptions)
+      ).stdout
   );
   return (await gitGetCommits(undefined, execaOptions)).slice(0, messages.length);
 }
@@ -104,12 +106,17 @@ export async function gitCommits(messages, execaOptions) {
  * @return {Array<Object>} The list of parsed commits.
  */
 export async function gitGetCommits(from, execaOptions) {
-  Object.assign(gitLogParser.fields, {hash: 'H', message: 'B', gitTags: 'd', committerDate: {key: 'ci', type: Date}});
+  Object.assign(gitLogParser.fields, {
+    hash: "H",
+    message: "B",
+    gitTags: "d",
+    committerDate: { key: "ci", type: Date },
+  });
   return (
     await getStream.array(
       gitLogParser.parse(
-        {_: `${from ? from + '..' : ''}HEAD`},
-        {...execaOptions, env: {...process.env, ...execaOptions.env}}
+        { _: `${from ? from + ".." : ""}HEAD` },
+        { ...execaOptions, env: { ...process.env, ...execaOptions.env } }
       )
     )
   ).map((commit) => {
@@ -127,7 +134,7 @@ export async function gitGetCommits(from, execaOptions) {
  * @param {Object} [execaOpts] Options to pass to `execa`.
  */
 export async function gitCheckout(branch, create, execaOptions) {
-  await execa('git', create ? ['checkout', '-b', branch] : ['checkout', branch], execaOptions);
+  await execa("git", create ? ["checkout", "-b", branch] : ["checkout", branch], execaOptions);
 }
 
 /**
@@ -137,7 +144,7 @@ export async function gitCheckout(branch, create, execaOptions) {
  * @param {Object} [execaOpts] Options to pass to `execa`.
  */
 export async function gitFetch(repositoryUrl, execaOptions) {
-  await execa('git', ['fetch', repositoryUrl], execaOptions);
+  await execa("git", ["fetch", repositoryUrl], execaOptions);
 }
 
 /**
@@ -148,7 +155,7 @@ export async function gitFetch(repositoryUrl, execaOptions) {
  * @return {String} The sha of the head commit in the current git repository.
  */
 export async function gitHead(execaOptions) {
-  return (await execa('git', ['rev-parse', 'HEAD'], execaOptions)).stdout;
+  return (await execa("git", ["rev-parse", "HEAD"], execaOptions)).stdout;
 }
 
 /**
@@ -159,7 +166,7 @@ export async function gitHead(execaOptions) {
  * @param {Object} [execaOpts] Options to pass to `execa`.
  */
 export async function gitTagVersion(tagName, sha, execaOptions) {
-  await execa('git', sha ? ['tag', '-f', tagName, sha] : ['tag', tagName], execaOptions);
+  await execa("git", sha ? ["tag", "-f", tagName, sha] : ["tag", tagName], execaOptions);
 }
 
 /**
@@ -171,10 +178,10 @@ export async function gitTagVersion(tagName, sha, execaOptions) {
  * @param {Number} [depth=1] The number of commit to clone.
  * @return {String} The path of the cloned repository.
  */
-export async function gitShallowClone(repositoryUrl, branch = 'master', depth = 1) {
+export async function gitShallowClone(repositoryUrl, branch = "master", depth = 1) {
   const cwd = temporaryDirectory();
 
-  await execa('git', ['clone', '--no-hardlinks', '--no-tags', '-b', branch, '--depth', depth, repositoryUrl, cwd], {
+  await execa("git", ["clone", "--no-hardlinks", "--no-tags", "-b", branch, "--depth", depth, repositoryUrl, cwd], {
     cwd,
   });
   return cwd;
@@ -190,21 +197,21 @@ export async function gitShallowClone(repositoryUrl, branch = 'master', depth = 
 export async function gitDetachedHead(repositoryUrl, head) {
   const cwd = temporaryDirectory();
 
-  await execa('git', ['init'], {cwd});
-  await execa('git', ['remote', 'add', 'origin', repositoryUrl], {cwd});
-  await execa('git', ['fetch', repositoryUrl], {cwd});
-  await execa('git', ['checkout', head], {cwd});
+  await execa("git", ["init"], { cwd });
+  await execa("git", ["remote", "add", "origin", repositoryUrl], { cwd });
+  await execa("git", ["fetch", repositoryUrl], { cwd });
+  await execa("git", ["checkout", head], { cwd });
   return cwd;
 }
 
 export async function gitDetachedHeadFromBranch(repositoryUrl, branch, head) {
   const cwd = temporaryDirectory();
 
-  await execa('git', ['init'], {cwd});
-  await execa('git', ['remote', 'add', 'origin', repositoryUrl], {cwd});
-  await execa('git', ['fetch', '--force', repositoryUrl, `${branch}:remotes/origin/${branch}`], {cwd});
-  await execa('git', ['reset', '--hard', head], {cwd});
-  await execa('git', ['checkout', '-q', '-B', branch], {cwd});
+  await execa("git", ["init"], { cwd });
+  await execa("git", ["remote", "add", "origin", repositoryUrl], { cwd });
+  await execa("git", ["fetch", "--force", repositoryUrl, `${branch}:remotes/origin/${branch}`], { cwd });
+  await execa("git", ["reset", "--hard", head], { cwd });
+  await execa("git", ["checkout", "-q", "-B", branch], { cwd });
   return cwd;
 }
 
@@ -216,7 +223,7 @@ export async function gitDetachedHeadFromBranch(repositoryUrl, branch, head) {
  * @param {Object} [execaOpts] Options to pass to `execa`.
  */
 export async function gitAddConfig(name, value, execaOptions) {
-  await execa('git', ['config', '--add', name, value], execaOptions);
+  await execa("git", ["config", "--add", name, value], execaOptions);
 }
 
 /**
@@ -228,7 +235,7 @@ export async function gitAddConfig(name, value, execaOptions) {
  * @return {String} The sha of the commit associated with `tagName` on the local repository.
  */
 export async function gitTagHead(tagName, execaOptions) {
-  return (await execa('git', ['rev-list', '-1', tagName], execaOptions)).stdout;
+  return (await execa("git", ["rev-list", "-1", tagName], execaOptions)).stdout;
 }
 
 /**
@@ -241,8 +248,8 @@ export async function gitTagHead(tagName, execaOptions) {
  * @return {String} The sha of the commit associated with `tagName` on the remote repository.
  */
 export async function gitRemoteTagHead(repositoryUrl, tagName, execaOptions) {
-  return (await execa('git', ['ls-remote', '--tags', repositoryUrl, tagName], execaOptions)).stdout
-    .split('\n')
+  return (await execa("git", ["ls-remote", "--tags", repositoryUrl, tagName], execaOptions)).stdout
+    .split("\n")
     .filter((tag) => Boolean(tag))
     .map((tag) => tag.match(/^(?<tag>\S+)/)[1])[0];
 }
@@ -256,7 +263,7 @@ export async function gitRemoteTagHead(repositoryUrl, tagName, execaOptions) {
  * @return {String} The tag associatedwith the sha in parameter or `null`.
  */
 export async function gitCommitTag(gitHead, execaOptions) {
-  return (await execa('git', ['describe', '--tags', '--exact-match', gitHead], execaOptions)).stdout;
+  return (await execa("git", ["describe", "--tags", "--exact-match", gitHead], execaOptions)).stdout;
 }
 
 /**
@@ -269,7 +276,7 @@ export async function gitCommitTag(gitHead, execaOptions) {
  * @throws {Error} if the push failed.
  */
 export async function gitPush(repositoryUrl, branch, execaOptions) {
-  await execa('git', ['push', '--tags', repositoryUrl, `HEAD:${branch}`], execaOptions);
+  await execa("git", ["push", "--tags", repositoryUrl, `HEAD:${branch}`], execaOptions);
 }
 
 /**
@@ -279,7 +286,7 @@ export async function gitPush(repositoryUrl, branch, execaOptions) {
  * @param {Object} [execaOpts] Options to pass to `execa`.
  */
 export async function merge(ref, execaOptions) {
-  await execa('git', ['merge', '--no-ff', ref], execaOptions);
+  await execa("git", ["merge", "--no-ff", ref], execaOptions);
 }
 
 /**
@@ -289,7 +296,7 @@ export async function merge(ref, execaOptions) {
  * @param {Object} [execaOpts] Options to pass to `execa`.
  */
 export async function mergeFf(ref, execaOptions) {
-  await execa('git', ['merge', '--ff', ref], execaOptions);
+  await execa("git", ["merge", "--ff", ref], execaOptions);
 }
 
 /**
@@ -299,7 +306,7 @@ export async function mergeFf(ref, execaOptions) {
  * @param {Object} [execaOpts] Options to pass to `execa`.
  */
 export async function rebase(ref, execaOptions) {
-  await execa('git', ['rebase', ref], execaOptions);
+  await execa("git", ["rebase", ref], execaOptions);
 }
 
 /**
@@ -310,7 +317,7 @@ export async function rebase(ref, execaOptions) {
  * @param {Object} [execaOpts] Options to pass to `execa`.
  */
 export async function gitAddNote(note, ref, execaOptions) {
-  await execa('git', ['notes', '--ref', GIT_NOTE_REF, 'add', '-m', note, ref], execaOptions);
+  await execa("git", ["notes", "--ref", GIT_NOTE_REF, "add", "-m", note, ref], execaOptions);
 }
 
 /**
@@ -320,5 +327,5 @@ export async function gitAddNote(note, ref, execaOptions) {
  * @param {Object} [execaOpts] Options to pass to `execa`.
  */
 export async function gitGetNote(ref, execaOptions) {
-  return (await execa('git', ['notes', '--ref', GIT_NOTE_REF, 'show', ref], execaOptions)).stdout;
+  return (await execa("git", ["notes", "--ref", GIT_NOTE_REF, "show", ref], execaOptions)).stdout;
 }
