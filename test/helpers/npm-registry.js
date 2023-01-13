@@ -1,23 +1,25 @@
-const Docker = require('dockerode');
-const getStream = require('get-stream');
-const got = require('got');
-const path = require('path');
-const delay = require('delay');
-const pRetry = require('p-retry');
+import path, {dirname} from 'node:path';
+import {fileURLToPath} from 'node:url';
+import Docker from 'dockerode';
+import getStream from 'get-stream';
+import got from 'got';
+import delay from 'delay';
+import pRetry from 'p-retry';
 
-const IMAGE = 'verdaccio/verdaccio:4';
+const IMAGE = 'verdaccio/verdaccio:5';
 const REGISTRY_PORT = 4873;
 const REGISTRY_HOST = 'localhost';
 const NPM_USERNAME = 'integration';
 const NPM_PASSWORD = 'suchsecure';
 const NPM_EMAIL = 'integration@test.com';
 const docker = new Docker();
-let container;
+const __dirname = dirname(fileURLToPath(import.meta.url));
+let container, npmToken;
 
 /**
  * Download the `npm-registry-docker` Docker image, create a new container and start it.
  */
-async function start() {
+export async function start() {
   await getStream(await docker.pull(IMAGE));
 
   container = await docker.createContainer({
@@ -53,23 +55,28 @@ async function start() {
       email: NPM_EMAIL,
     },
   });
+
+  // Create token for user
+  ({token: npmToken} = await got(`http://${REGISTRY_HOST}:${REGISTRY_PORT}/-/npm/v1/tokens`, {
+    username: NPM_USERNAME,
+    password: NPM_PASSWORD,
+    method: 'POST',
+    headers: {'content-type': 'application/json'},
+    json: {password: NPM_PASSWORD, readonly: false, cidr_whitelist: []}
+  }).json());
 }
 
-const url = `http://${REGISTRY_HOST}:${REGISTRY_PORT}/`;
+export const url = `http://${REGISTRY_HOST}:${REGISTRY_PORT}/`;
 
-const authEnv = {
+export const authEnv = () => ({
   npm_config_registry: url, // eslint-disable-line camelcase
-  NPM_USERNAME,
-  NPM_PASSWORD,
-  NPM_EMAIL,
-};
+  NPM_TOKEN: npmToken,
+});
 
 /**
  * Stop and remote the `npm-registry-docker` Docker container.
  */
-async function stop() {
+export async function stop() {
   await container.stop();
   await container.remove();
 }
-
-module.exports = {start, stop, authEnv, url};

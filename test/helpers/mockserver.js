@@ -1,8 +1,8 @@
-const Docker = require('dockerode');
-const getStream = require('get-stream');
-const got = require('got');
-const pRetry = require('p-retry');
-const {mockServerClient} = require('mockserver-client');
+import Docker from 'dockerode';
+import getStream from 'get-stream';
+import got from 'got';
+import pRetry from 'p-retry';
+import {mockServerClient} from 'mockserver-client';
 
 const IMAGE = 'mockserver/mockserver:latest';
 const MOCK_SERVER_PORT = 1080;
@@ -13,7 +13,7 @@ let container;
 /**
  * Download the `mockserver` Docker image, create a new container and start it.
  */
-async function start() {
+export async function start() {
   await getStream(await docker.pull(IMAGE));
 
   container = await docker.createContainer({
@@ -38,7 +38,7 @@ async function start() {
 /**
  * Stop and remove the `mockserver` Docker container.
  */
-async function stop() {
+export async function stop() {
   await container.stop();
   await container.remove();
 }
@@ -50,7 +50,7 @@ const client = mockServerClient(MOCK_SERVER_HOST, MOCK_SERVER_PORT);
 /**
  * @type {string} the url of the `mockserver` instance
  */
-const url = `http://${MOCK_SERVER_HOST}:${MOCK_SERVER_PORT}`;
+export const url = `http://${MOCK_SERVER_HOST}:${MOCK_SERVER_PORT}`;
 
 /**
  * Set up the `mockserver` instance response for a specific request.
@@ -65,7 +65,7 @@ const url = `http://${MOCK_SERVER_HOST}:${MOCK_SERVER_PORT}`;
  * @param {Object} response.body The JSON object to respond in the response body.
  * @return {Object} An object representation the expectation. Pass to the `verify` function to validate the `mockserver` has been called with a `request` matching the expectations.
  */
-async function mock(
+export async function mock(
   path,
   {body: requestBody, headers: requestHeaders},
   {method = 'POST', statusCode = 200, body: responseBody}
@@ -96,8 +96,6 @@ async function mock(
  * @param {Object} expectation The expectation created with `mock` function.
  * @return {Promise} A Promise that resolves if the expectation is met or reject otherwise.
  */
-function verify(expectation) {
+export function verify(expectation) {
   return client.verify(expectation);
 }
-
-module.exports = {start, stop, mock, verify, url};
