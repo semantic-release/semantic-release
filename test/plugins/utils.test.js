@@ -199,7 +199,18 @@ test('loadPlugin', async (t) => {
     await loadPlugin({cwd}, './plugin-noop.cjs', {'./plugin-noop.cjs': './test/fixtures'}),
     'From a shareable config context'
   );
-  t.is(func, await loadPlugin({cwd}, func, {}), 'Defined as a function');
+  t.is(
+    (await import("../fixtures/plugin-noop.cjs")).default,
+    await loadPlugin({ cwd }, "./plugin-noop.cjs", { "./plugin-noop.cjs": "./test/fixtures" }),
+    "From a shareable config context"
+  );
+  const { ...namedExports } = await import("../fixtures/plugin-esm-named-exports.js");
+  const plugin = await loadPlugin({ cwd }, "./plugin-esm-named-exports.js", {
+    "./plugin-esm-named-exports.js": "./test/fixtures",
+  });
+
+  t.deepEqual(namedExports, plugin, "ESM with named exports");
+  t.is(func, await loadPlugin({ cwd }, func, {}), "Defined as a function");
 });
 
 test('parseConfig', (t) => {
