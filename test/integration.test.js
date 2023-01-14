@@ -44,6 +44,7 @@ const cli = path.resolve("./bin/semantic-release.js");
 const pluginError = path.resolve("./test/fixtures/plugin-error");
 const pluginInheritedError = path.resolve("./test/fixtures/plugin-error-inherited");
 const pluginLogEnv = path.resolve("./test/fixtures/plugin-log-env");
+const pluginEsmNamedExports = path.resolve("./test/fixtures/plugin-esm-named-exports");
 
 test.before(async () => {
   await Promise.all([gitbox.start(), npmRegistry.start(), mockServer.start()]);
@@ -712,4 +713,27 @@ test("Use the repository URL as is if none of the given git credentials are vali
     }),
     dummyUrl
   );
+});
+
+test("ESM Plugin with named exports", async (t) => {
+  const packageName = "log-secret";
+  // Create a git repository, set the current working directory at the root of the repo
+  t.log("Create git repository");
+  const { cwd, repositoryUrl } = await gitbox.createRepo(packageName);
+  await writeJson(path.resolve(cwd, "package.json"), {
+    name: packageName,
+    version: "0.0.0-dev",
+    repository: { url: repositoryUrl },
+    release: { plugins: [pluginEsmNamedExports] },
+  });
+
+  t.log("$ semantic-release");
+  const { stdout, stderr } = await execa(cli, [], {
+    env: { ...env, MY_TOKEN: "secret token" },
+    cwd,
+    reject: false,
+    extendEnv: false,
+  });
+
+  t.regex(stdout, new RegExp(`verifyConditions called`));
 });
