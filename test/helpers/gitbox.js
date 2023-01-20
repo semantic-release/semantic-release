@@ -20,11 +20,15 @@ export const gitCredential = `${GIT_USERNAME}:${GIT_PASSWORD}`;
 export async function start() {
   await getStream(await docker.pull(IMAGE));
 
-  container = await docker.createContainer({
+  const options = {
     Tty: true,
     Image: IMAGE,
-    PortBindings: {[`${SERVER_PORT}/tcp`]: [{HostPort: `${HOST_PORT}`}]},
-  });
+  };
+  const portKey = `"${SERVER_PORT}/tcp"`;
+  options.HostConfig = JSON.parse(`{"PortBindings": {${portKey} : [{"HostPort" : "${HOST_PORT}"}]}}`);
+  options.ExposedPorts = JSON.parse(`{${portKey} : {}}`)
+  container = await docker.createContainer( options );
+
   await container.start();
 
   const exec = await container.exec({

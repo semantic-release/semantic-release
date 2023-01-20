@@ -16,12 +16,16 @@ let container;
 export async function start() {
   await getStream(await docker.pull(IMAGE));
 
-  container = await docker.createContainer({
+  const options = {
     Tty: true,
     Image: IMAGE,
-    PortBindings: {[`${MOCK_SERVER_PORT}/tcp`]: [{HostPort: `${MOCK_SERVER_PORT}`}]},
-  });
-  await container.start();
+  };
+  const portKey = `"${MOCK_SERVER_PORT}/tcp"`;
+  options.HostConfig = JSON.parse(`{"PortBindings": {${portKey} : [{"HostPort" : "${MOCK_SERVER_PORT}"}]}}`);
+  options.ExposedPorts = JSON.parse(`{${portKey} : {}}`)
+  container = await docker.createContainer( options );
+
+  await container.start( );
 
   try {
     // Wait for the mock server to be ready

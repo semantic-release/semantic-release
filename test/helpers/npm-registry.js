@@ -22,12 +22,15 @@ let container, npmToken;
 export async function start() {
   await getStream(await docker.pull(IMAGE));
 
-  container = await docker.createContainer({
+  const options = {
     Tty: true,
     Image: IMAGE,
-    PortBindings: {[`${REGISTRY_PORT}/tcp`]: [{HostPort: `${REGISTRY_PORT}`}]},
     Binds: [`${path.join(__dirname, 'config.yaml')}:/verdaccio/conf/config.yaml`],
-  });
+  };
+  const portKey = `"${REGISTRY_PORT}/tcp"`;
+  options.HostConfig = JSON.parse(`{"PortBindings": {${portKey} : [{"HostPort" : "${REGISTRY_PORT}"}]}}`);
+  options.ExposedPorts = JSON.parse(`{${portKey} : {}}`)
+  container = await docker.createContainer( options );
 
   await container.start();
   await delay(4000);
