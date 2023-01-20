@@ -39,7 +39,7 @@ test.beforeEach((t) => {
   };
 });
 
-test("Plugins are called with expected values", async (t) => {
+test.serial("Plugins are called with expected values", async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const { cwd, repositoryUrl } = await gitRepo(true);
   // Add commits to the master branch
