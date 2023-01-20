@@ -515,8 +515,8 @@ test("Pass options via CLI arguments", async (t) => {
 });
 
 test("Run via JS API", async (t) => {
-  td.replace("../lib/logger", { log: () => {}, error: () => {}, stdout: () => {} });
-  td.replace("env-ci", () => ({ isCi: true, branch: "master", isPr: false }));
+  await td.replaceEsm("../lib/logger", null, { log: () => {}, error: () => {}, stdout: () => {} });
+  await td.replaceEsm("env-ci", null, () => ({ isCi: true, branch: "master", isPr: false }));
   const semanticRelease = (await import("../index.js")).default;
   const packageName = "test-js-api";
   const owner = "git";
