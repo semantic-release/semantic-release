@@ -66,7 +66,7 @@ test.after.always(async () => {
 });
 
 test("Release patch, minor and major versions", async (t) => {
-  const packageName = "test-release";
+  const packageName = "sr-test-release";
   const owner = "git";
   // Create a git repository, set the current working directory at the root of the repo
   t.log("Create git repository and package.json");
