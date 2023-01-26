@@ -103,6 +103,7 @@ typings/
 # dotenv environment variables file
 .env
 
+.idea
 
 ### Windows ###
 # Windows thumbnail cache files
