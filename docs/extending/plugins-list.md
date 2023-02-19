@@ -171,3 +171,6 @@
   - `verifyConditions` Validate configuration, `Cargo.toml`, and local cargo executable. Also, logs in into `crates.io`.
   - `prepare` Write the new version number into `Cargo.toml` file and perform `cargo check` if configured.
   - `publish` Publish the Rust crate to `crates.io`
+- [semantic-release-coralogix](https://github.com/adobe/semantic-release-coralogix)
+  - `verifyConditions` Verified that required credentials are provided and API is accessible
+  - `publish` add a release tag to Coralogix
