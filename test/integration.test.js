@@ -716,7 +716,7 @@ test("Use the repository URL as is if none of the given git credentials are vali
 });
 
 test("ESM Plugin with named exports", async (t) => {
-  const packageName = "log-secret";
+  const packageName = "plugin-exports";
   // Create a git repository, set the current working directory at the root of the repo
   t.log("Create git repository");
   const { cwd, repositoryUrl } = await gitbox.createRepo(packageName);
