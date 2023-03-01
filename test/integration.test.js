@@ -598,7 +598,7 @@ test("Log unexpected errors from plugins and exit with 1", async (t) => {
   // Verify the type and message are logged
   t.regex(stderr, /Error: a/);
   // Verify the the stacktrace is logged
-  t.regex(stderr, new RegExp(pluginError));
+  t.regex(stderr, new RegExp(process.platform != "win32" ? pluginError : pluginError.replace(/\\/g, "\\\\")));
   // Verify the Error properties are logged
   t.regex(stderr, /errorProperty: 'errorProperty'/);
   t.is(exitCode, 1);
