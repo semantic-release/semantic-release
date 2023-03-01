@@ -4,7 +4,7 @@
 
 - [Getting started](docs/usage/getting-started.md#getting-started)
 - [Installation](docs/usage/installation.md#installation)
-- [CI Configuration](docs/usage/ci-configuration.md#ci-configuration)
+- [CI Configuration](docs/usage/ci-configuration.md)
 - [Configuration](docs/usage/configuration.md#configuration)
 - [Plugins](docs/usage/plugins.md)
 - [Workflow configuration](docs/usage/workflow-configuration.md)
