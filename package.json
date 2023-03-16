@@ -70,10 +70,10 @@
     "nock": "13.3.0",
     "p-retry": "^5.1.1",
     "prettier": "^2.7.1",
-    "sinon": "15.0.1",
+    "sinon": "15.0.2",
     "stream-buffers": "3.0.2",
     "tempy": "^3.0.0",
-    "testdouble": "3.16.8"
+    "testdouble": "3.17.0"
   },
   "engines": {
     "node": ">=18"

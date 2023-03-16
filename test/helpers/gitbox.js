@@ -23,7 +23,10 @@ export async function start() {
   container = await docker.createContainer({
     Tty: true,
     Image: IMAGE,
-    PortBindings: {[`${SERVER_PORT}/tcp`]: [{HostPort: `${HOST_PORT}`}]},
+    HostConfig: {
+        PortBindings: {[`${SERVER_PORT}/tcp`]: [{HostPort: `${HOST_PORT}`}]}
+    },
+    ExposedPorts: {[`${SERVER_PORT}/tcp`]: {}}
   });
   await container.start();
 
