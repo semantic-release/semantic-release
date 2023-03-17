@@ -29,7 +29,7 @@ test.serial('Enforce ranges with branching release workflow', async (t) => {
   const branches = [
     {name: '1.x', tags: []},
     {name: '1.0.x', tags: []},
-    {name: 'master', tags: []},
+    { name: 'main', tags: [] }, //  just break a test for now
     {name: 'next', tags: []},
     {name: 'next-major', tags: []},
     {name: 'beta', prerelease: true, tags: []},
