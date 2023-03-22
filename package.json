@@ -35,7 +35,7 @@
     "cosmiconfig": "^8.0.0",
     "debug": "^4.0.0",
     "env-ci": "^8.0.0",
-    "execa": "^6.1.0",
+    "execa": "^7.0.0",
     "figures": "^5.0.0",
     "find-versions": "^5.1.0",
     "get-stream": "^6.0.0",
@@ -56,12 +56,12 @@
     "yargs": "^17.5.1"
   },
   "devDependencies": {
-    "ava": "5.1.0",
-    "c8": "7.12.0",
+    "ava": "5.2.0",
+    "c8": "7.13.0",
     "clear-module": "4.1.2",
     "codecov": "3.8.3",
     "delay": "5.0.0",
-    "dockerode": "3.3.4",
+    "dockerode": "3.3.5",
     "file-url": "^4.0.0",
     "fs-extra": "^11.0.0",
     "got": "^12.5.0",
@@ -70,10 +70,10 @@
     "nock": "13.3.0",
     "p-retry": "^5.1.1",
     "prettier": "^2.7.1",
-    "sinon": "15.0.1",
+    "sinon": "15.0.2",
     "stream-buffers": "3.0.2",
     "tempy": "^3.0.0",
-    "testdouble": "3.16.8"
+    "testdouble": "3.17.0"
   },
   "engines": {
     "node": ">=18"

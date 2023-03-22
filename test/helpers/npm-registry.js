@@ -25,8 +25,11 @@ export async function start() {
   container = await docker.createContainer({
     Tty: true,
     Image: IMAGE,
-    PortBindings: { [`${REGISTRY_PORT}/tcp`]: [{ HostPort: `${REGISTRY_PORT}` }] },
-    Binds: [`${path.join(__dirname, "config.yaml")}:/verdaccio/conf/config.yaml`],
+    HostConfig: {
+      PortBindings: { [`${REGISTRY_PORT}/tcp`]: [{ HostPort: `${REGISTRY_PORT}` }] },
+      Binds: [`${path.join(__dirname, "config.yaml")}:/verdaccio/conf/config.yaml`],
+    },
+    ExposedPorts: { [`${REGISTRY_PORT}/tcp`]: {} },
   });
 
   await container.start();

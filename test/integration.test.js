@@ -598,7 +598,7 @@ test("Log unexpected errors from plugins and exit with 1", async (t) => {
   // Verify the type and message are logged
   t.regex(stderr, /Error: a/);
   // Verify the the stacktrace is logged
-  t.regex(stderr, new RegExp(pluginError));
+  t.regex(stderr, new RegExp(process.platform === "win32" ? pluginError.replace(/\\/g, "\\\\") : pluginError));
   // Verify the Error properties are logged
   t.regex(stderr, /errorProperty: 'errorProperty'/);
   t.is(exitCode, 1);
@@ -687,6 +687,7 @@ test("Use the valid git credentials when multiple are provided", async (t) => {
         BB_TOKEN_BASIC_AUTH: gitbox.gitCredential,
         GIT_ASKPASS: "echo",
         GIT_TERMINAL_PROMPT: 0,
+        GIT_CONFIG_PARAMETERS: "'credential.helper='",
       },
       branch: { name: "master" },
       options: { repositoryUrl: "http://toto@localhost:2080/git/test-auth.git" },
@@ -707,6 +708,7 @@ test("Use the repository URL as is if none of the given git credentials are vali
         GITLAB_TOKEN: "trash",
         GIT_ASKPASS: "echo",
         GIT_TERMINAL_PROMPT: 0,
+        GIT_CONFIG_PARAMETERS: "'credential.helper='",
       },
       branch: { name: "master" },
       options: { repositoryUrl: dummyUrl },
@@ -716,7 +718,7 @@ test("Use the repository URL as is if none of the given git credentials are vali
 });
 
 test("ESM Plugin with named exports", async (t) => {
-  const packageName = "log-secret";
+  const packageName = "plugin-exports";
   // Create a git repository, set the current working directory at the root of the repo
   t.log("Create git repository");
   const { cwd, repositoryUrl } = await gitbox.createRepo(packageName);
