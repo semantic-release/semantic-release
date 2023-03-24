@@ -1,12 +1,12 @@
-import Docker from 'dockerode';
-import getStream from 'get-stream';
-import got from 'got';
-import pRetry from 'p-retry';
-import {mockServerClient} from 'mockserver-client';
+import Docker from "dockerode";
+import getStream from "get-stream";
+import got from "got";
+import pRetry from "p-retry";
+import { mockServerClient } from "mockserver-client";
 
-const IMAGE = 'mockserver/mockserver:latest';
+const IMAGE = "mockserver/mockserver:latest";
 const MOCK_SERVER_PORT = 1080;
-const MOCK_SERVER_HOST = 'localhost';
+const MOCK_SERVER_HOST = "localhost";
 const docker = new Docker();
 let container;
 
@@ -20,15 +20,15 @@ export async function start() {
     Tty: true,
     Image: IMAGE,
     HostConfig: {
-        PortBindings: {[`${MOCK_SERVER_PORT}/tcp`]: [{HostPort: `${MOCK_SERVER_PORT}`}]}
+      PortBindings: { [`${MOCK_SERVER_PORT}/tcp`]: [{ HostPort: `${MOCK_SERVER_PORT}` }] },
     },
-    ExposedPorts: {[`${MOCK_SERVER_PORT}/tcp`]: {}}
+    ExposedPorts: { [`${MOCK_SERVER_PORT}/tcp`]: {} },
   });
   await container.start();
 
   try {
     // Wait for the mock server to be ready
-    await pRetry(() => got.put(`http://${MOCK_SERVER_HOST}:${MOCK_SERVER_PORT}/status`, {cache: false}), {
+    await pRetry(() => got.put(`http://${MOCK_SERVER_HOST}:${MOCK_SERVER_PORT}/status`, { cache: false }), {
       retries: 7,
       minTimeout: 1000,
       factor: 2,
@@ -70,17 +70,17 @@ export const url = `http://${MOCK_SERVER_HOST}:${MOCK_SERVER_PORT}`;
  */
 export async function mock(
   path,
-  {body: requestBody, headers: requestHeaders},
-  {method = 'POST', statusCode = 200, body: responseBody}
+  { body: requestBody, headers: requestHeaders },
+  { method = "POST", statusCode = 200, body: responseBody }
 ) {
   await client.mockAnyResponse({
-    httpRequest: {path, method},
+    httpRequest: { path, method },
     httpResponse: {
       statusCode,
-      headers: [{name: 'Content-Type', values: ['application/json; charset=utf-8']}],
+      headers: [{ name: "Content-Type", values: ["application/json; charset=utf-8"] }],
       body: JSON.stringify(responseBody),
     },
-    times: {remainingTimes: 1, unlimited: false},
+    times: { remainingTimes: 1, unlimited: false },
   });
 
   return {
@@ -88,7 +88,7 @@ export async function mock(
     path,
     headers: requestHeaders,
     body: requestBody
-      ? {type: 'JSON', json: JSON.stringify(requestBody), matchType: 'ONLY_MATCHING_FIELDS'}
+      ? { type: "JSON", json: JSON.stringify(requestBody), matchType: "ONLY_MATCHING_FIELDS" }
       : undefined,
   };
 }

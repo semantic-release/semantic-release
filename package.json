@@ -29,7 +29,7 @@
     "@semantic-release/commit-analyzer": "^9.0.2",
     "@semantic-release/error": "^3.0.0",
     "@semantic-release/github": "^8.0.0",
-    "@semantic-release/npm": "^9.0.0",
+    "@semantic-release/npm": "^10.0.2",
     "@semantic-release/release-notes-generator": "^10.0.0",
     "aggregate-error": "^4.0.1",
     "cosmiconfig": "^8.0.0",
@@ -117,7 +117,8 @@
     "trailingComma": "es5"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "provenance": true
   },
   "repository": {
     "type": "git",
@@ -125,8 +126,8 @@
   },
   "scripts": {
     "codecov": "codecov -f coverage/coverage-final.json",
-    "lint": "prettier --check \"*.{js,json,md}\" \".github/**/*.{md,yml}\" \"docs/**/*.md\" \"{bin,lib,test}/*.js\"",
-    "lint:fix": "prettier --write \"*.{js,json,md}\" \".github/**/*.{md,yml}\" \"docs/**/*.md\" \"{bin,lib,test}/*.js\"",
+    "lint": "prettier --check \"*.{js,json,md}\" \".github/**/*.{md,yml}\" \"docs/**/*.md\" \"{bin,lib,test}/**/*.js\"",
+    "lint:fix": "prettier --write \"*.{js,json,md}\" \".github/**/*.{md,yml}\" \"docs/**/*.md\" \"{bin,lib,test}/**/*.js\"",
     "pretest": "npm run lint",
     "semantic-release": "./bin/semantic-release.js",
     "test": "c8 ava --verbose",
