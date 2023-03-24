@@ -141,6 +141,16 @@ export async function gitFetch(repositoryUrl, execaOptions) {
 }
 
 /**
+ * Reset the current branch.
+ *
+ * @param {String} head A commit sha of the remote repo that will become the detached head of the new one.
+ * @param {Object} [execaOpts] Options to pass to `execa`.
+ */
+async function gitReset(head, execaOptions) {
+  await execa('git', ['reset', '--hard', head], execaOptions);
+}
+
+/**
  * Get the HEAD sha.
  *
  * @param {Object} [execaOpts] Options to pass to `execa`.

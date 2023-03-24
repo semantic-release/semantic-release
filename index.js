@@ -16,7 +16,18 @@ import { extractErrors, makeTag } from "./lib/utils.js";
 import getGitAuthUrl from "./lib/get-git-auth-url.js";
 import getBranches from "./lib/branches/index.js";
 import getLogger from "./lib/get-logger.js";
-import { addNote, getGitHead, getTagHead, isBranchUpToDate, push, pushNotes, tag, verifyAuth } from "./lib/git.js";
+import { 
+  verifyAuth,
+  isAncestor,
+  getNoMergeTags,
+  getGitHead,
+  getGitRemoteHead,
+  tag,
+  push,
+  pushNotes,
+  getTagHead,
+  addNote,
+ } from "./lib/git.js";
 import getError from "./lib/get-error.js";
 import { COMMIT_EMAIL, COMMIT_NAME } from "./lib/definitions/constants.js";
 
@@ -84,24 +95,17 @@ async function run(context, plugins) {
   );
 
   try {
-    try {
-      await verifyAuth(options.repositoryUrl, context.branch.name, { cwd, env });
-    } catch (error) {
-      if (!(await isBranchUpToDate(options.repositoryUrl, context.branch.name, { cwd, env }))) {
-        logger.log(
-          `The local branch ${context.branch.name} is behind the remote one, therefore a new version won't be published.`
-        );
-        return false;
-      }
-
-      throw error;
-    }
+    await verifyAuth(options.repositoryUrl, context.branch.name, {cwd, env});
   } catch (error) {
     logger.error(`The command "${error.command}" failed with the error message ${error.stderr}.`);
     throw getError("EGITNOPERMISSION", context);
   }
 
   logger.success(`Allowed to push to the Git repository`);
+
+  if (!(await validateBranch(context, {cwd, env}))) {
+    return false;
+  }
 
   await plugins.verifyConditions(context);
 
@@ -253,9 +257,35 @@ async function callFail(context, plugins, err) {
   }
 }
 
-export default async (cliOptions = {}, { cwd = process.cwd(), env = process.env, stdout, stderr } = {}) => {
-  const { unhook } = hookStd(
-    { silent: false, streams: [process.stdout, process.stderr, stdout, stderr].filter(Boolean) },
+async function validateBranch(context, execaOptions) {
+  const localHead = await getGitHead(execaOptions);
+  const remoteHead = await getGitRemoteHead(context.options.repositoryUrl, context.branch.name, execaOptions);
+
+  if (!(await isAncestor(localHead, remoteHead, execaOptions))) {
+    throw getError('ELOCALCOMMIT', context);
+  }
+
+  if (!context.options.allowOutdatedBranch && localHead !== remoteHead) {
+    context.logger.log(
+      `The local branch ${context.branch.name} is behind the remote one, therefore a new version won't be published.`
+    );
+    return false;
+  }
+
+  const tagsNotLocal = await getNoMergeTags(localHead, execaOptions);
+  const tagsNotRemote = await getNoMergeTags(remoteHead, execaOptions);
+  const localMissingTags = tagsNotLocal.filter((value) => !tagsNotRemote.includes(value));
+
+  if (localMissingTags.length !== 0) {
+    throw getError('EREMOTETAG', context);
+  }
+
+  return true;
+}
+
+module.exports = async (cliOptions = {}, {cwd = process.cwd(), env = process.env, stdout, stderr} = {}) => {
+  const {unhook} = hookStd(
+    {silent: false, streams: [process.stdout, process.stderr, stdout, stderr].filter(Boolean)},
     hideSensitive(env)
   );
   const context = {
