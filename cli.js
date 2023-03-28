@@ -37,6 +37,12 @@ Usage:
     .option("debug", { describe: "Output debugging information", type: "boolean", group: "Options" })
     .option("d", { alias: "dry-run", describe: "Skip publishing", type: "boolean", group: "Options" })
     .option("h", { alias: "help", group: "Options" })
+    .option("s", {
+      alias: "SquashMerge",
+      describe: "The repository uses a squash and merge strategy for its commits",
+      type: "boolean",
+      group: "Options",
+    })
     .strict(false)
     .exitProcess(false);
 
