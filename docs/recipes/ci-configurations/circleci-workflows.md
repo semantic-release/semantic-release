@@ -22,14 +22,12 @@ Finally, we call our release job with a `requires` parameter so that `release` w
 ```yaml
 version: 2.1
 orbs:
-  node: circleci/node@4.5
+  node: circleci/node@5.0.0
 jobs:
   release:
     executor: node/default
     steps:
       - checkout
-      - node/install
-          lts: true
       - node/install-packages # Install and automatically cache packages
       # Run optional required steps before releasing
       # - run: npm run build-script

@@ -12,26 +12,32 @@ on:
       - opened
       - synchronize
 
+permissions:
+  contents: read # to fetch code (actions/checkout)
+
 jobs:
   test_matrix:
     strategy:
       matrix:
         node-version:
-          - 14.17
-          - 16
+          - 18.0.0
+          - 19
 
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - run: git config --global user.name github-actions
       - run: git config --global user.email github-actions@github.com
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
           cache: npm
-      - run: npm ci
+      - run: npm clean-install
+      - name: Ensure dependencies are compatible with the version of node
+        run: npx ls-engines
       - run: npm run test:ci
 
   # separate job to set as required in branch protection,
@@ -40,12 +46,10 @@ jobs:
     runs-on: ubuntu-latest
     needs: test_matrix
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: lts/*
           cache: npm
-      - run: npm ci
-      - name: Ensure dependencies are compatible with the version of node
-        run: npx ls-engines@0.4
+      - run: npm clean-install
       - run: npm run lint

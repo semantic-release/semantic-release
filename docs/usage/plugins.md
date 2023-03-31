@@ -5,7 +5,7 @@ Each [release step](../../README.md#release-steps) is implemented by configurabl
 A plugin is a npm module that can implement one or more of the following steps:
 
 | Step               | Required | Description                                                                                                                                                                                                          |
-|--------------------|----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ------------------ | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `verifyConditions` | No       | Responsible for verifying conditions necessary to proceed with the release: configuration is correct, authentication token are valid, etc...                                                                         |
 | `analyzeCommits`   | Yes      | Responsible for determining the type of the next release (`major`, `minor` or `patch`). If multiple plugins with a `analyzeCommits` step are defined, the release type will be the highest one among plugins output. |
 | `verifyRelease`    | No       | Responsible for verifying the parameters (version, type, dist-tag etc...) of the release that is about to be published.                                                                                              |
@@ -25,6 +25,7 @@ Release steps will run in that order. At each step, **semantic-release** will ru
 ### Default plugins
 
 These four plugins are already part of **semantic-release** and are listed in order of execution. They do not have to be installed separately:
+
 ```
 "@semantic-release/commit-analyzer"
 "@semantic-release/release-notes-generator"
@@ -66,13 +67,14 @@ For each [release step](../../README.md#release-steps) the plugins that implemen
 ```
 
 With this configuration **semantic-release** will:
+
 - execute the `verifyConditions` implementation of `@semantic-release/npm` then `@semantic-release/git`
 - execute the `analyzeCommits` implementation of `@semantic-release/commit-analyzer`
 - execute the `generateNotes` implementation of `@semantic-release/release-notes-generator`
 - execute the `prepare` implementation of `@semantic-release/npm` then `@semantic-release/git`
 - execute the `publish` implementation of `@semantic-release/npm`
 
-Order is first determined by release steps (such as `verifyConditions` → `anayzeCommits`). At each release step, plugins are executed in the order in which they are defined.
+Order is first determined by release steps (such as `verifyConditions` → `analyzeCommits`). At each release step, plugins are executed in the order in which they are defined.
 
 ## Plugin options configuration
 
@@ -85,9 +87,12 @@ Global plugin configuration can be defined at the root of the **semantic-release
   "plugins": [
     "@semantic-release/commit-analyzer",
     "@semantic-release/release-notes-generator",
-    ["@semantic-release/github", {
-      "assets": ["dist/**"]
-      }],
+    [
+      "@semantic-release/github",
+      {
+        "assets": ["dist/**"]
+      }
+    ],
     "@semantic-release/git"
   ],
   "preset": "angular"
@@ -95,5 +100,6 @@ Global plugin configuration can be defined at the root of the **semantic-release
 ```
 
 With this configuration:
+
 - All plugins will receive the `preset` option, which will be used by both `@semantic-release/commit-analyzer` and `@semantic-release/release-notes-generator` (and ignored by `@semantic-release/github` and `@semantic-release/git`)
 - The `@semantic-release/github` plugin will receive the `assets` options (`@semantic-release/git` will not receive it and therefore will use it's default value for that option)

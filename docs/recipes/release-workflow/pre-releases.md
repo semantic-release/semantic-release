@@ -3,6 +3,7 @@
 This recipe will walk you through a simple example that uses pre-releases to publish beta versions while working on a future major release and then make only one release on the default distribution.
 
 This example uses the **semantic-release** default configuration:
+
 - [branches](../../usage/configuration.md#branches): `['+([0-9])?(.{+([0-9]),x}).x', 'master', 'next', 'next-major', {name: 'beta', prerelease: true}, {name: 'alpha', prerelease: true}]`
 - [plugins](../../usage/configuration.md#plugins): `['@semantic-release/commit-analyzer', '@semantic-release/release-notes-generator', '@semantic-release/npm', '@semantic-release/github']`
 
@@ -61,7 +62,7 @@ The Git history of the repository is now:
 
 We now decide to work on another future major release, in parallel of the beta one, which will also be composed of multiple features, some of them being breaking changes.
 
-To implement that workflow we can create the branch `alpha` from the branch `beta` and commit our first feature there. When pushing that commit, **semantic-release** will publish the pre-release version `3.0.0-alpha.1` on the dist-tag `@alpha`. That allow us to run integration tests by installing our module with `npm install example-module@alpha`. Other users installing with `npm install example-module` will still receive the version `1.0.0`.
+To implement that workflow we can create the branch `alpha` from the branch `beta` and commit our first feature there. When pushing that commit, **semantic-release** will publish the pre-release version `3.0.0-alpha.1` on the dist-tag `@alpha`. That allow us to run integration tests by installing our module with `npm install example-module@alpha`. Other users installing with `npm install example-module` will still receive the version `1.0.1`.
 
 The Git history of the repository is now:
 

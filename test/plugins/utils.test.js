@@ -1,5 +1,5 @@
-const test = require('ava');
-const {validatePlugin, validateStep, loadPlugin, parseConfig} = require('../../lib/plugins/utils');
+import test from 'ava';
+import {loadPlugin, parseConfig, validatePlugin, validateStep} from '../../lib/plugins/utils.js';
 
 test('validatePlugin', (t) => {
   const path = 'plugin-module';
@@ -189,17 +189,28 @@ test('validateStep: required plugin configuration', (t) => {
   );
 });
 
-test('loadPlugin', (t) => {
+test('loadPlugin', async (t) => {
   const cwd = process.cwd();
   const func = () => {};
 
-  t.is(require('../fixtures/plugin-noop'), loadPlugin({cwd: './test/fixtures'}, './plugin-noop', {}), 'From cwd');
+  t.is((await import('../fixtures/plugin-noop.cjs')).default, await loadPlugin({cwd: './test/fixtures'}, './plugin-noop.cjs', {}), 'From cwd');
   t.is(
-    require('../fixtures/plugin-noop'),
-    loadPlugin({cwd}, './plugin-noop', {'./plugin-noop': './test/fixtures'}),
+    (await import('../fixtures/plugin-noop.cjs')).default,
+    await loadPlugin({cwd}, './plugin-noop.cjs', {'./plugin-noop.cjs': './test/fixtures'}),
     'From a shareable config context'
   );
-  t.is(func, loadPlugin({cwd}, func, {}), 'Defined as a function');
+  t.is(
+    (await import("../fixtures/plugin-noop.cjs")).default,
+    await loadPlugin({ cwd }, "./plugin-noop.cjs", { "./plugin-noop.cjs": "./test/fixtures" }),
+    "From a shareable config context"
+  );
+  const { ...namedExports } = await import("../fixtures/plugin-esm-named-exports.js");
+  const plugin = await loadPlugin({ cwd }, "./plugin-esm-named-exports.js", {
+    "./plugin-esm-named-exports.js": "./test/fixtures",
+  });
+
+  t.deepEqual(namedExports, plugin, "ESM with named exports");
+  t.is(func, await loadPlugin({ cwd }, func, {}), "Defined as a function");
 });
 
 test('parseConfig', (t) => {
