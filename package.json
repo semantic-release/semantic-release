@@ -1,7 +1,7 @@
 {
-  "name": "semantic-release",
+  "name": "semantic-release-squash",
   "description": "Automated semver compliant package publishing",
-  "version": "0.0.0-development",
+  "version": "0.0.1",
   "type": "module",
   "author": "Stephan Bönnemann <stephan@boennemann.me> (http://boennemann.me)",
   "ava": {
