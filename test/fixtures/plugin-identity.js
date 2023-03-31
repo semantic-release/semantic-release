@@ -1,1 +1,1 @@
-export default (pluginConfig, context) => context
+export default (pluginConfig, context) => context;

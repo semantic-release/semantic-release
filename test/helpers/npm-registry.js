@@ -1,17 +1,17 @@
-import path, {dirname} from 'node:path';
-import {fileURLToPath} from 'node:url';
-import Docker from 'dockerode';
-import getStream from 'get-stream';
-import got from 'got';
-import delay from 'delay';
-import pRetry from 'p-retry';
+import path, { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+import Docker from "dockerode";
+import getStream from "get-stream";
+import got from "got";
+import delay from "delay";
+import pRetry from "p-retry";
 
-const IMAGE = 'verdaccio/verdaccio:5';
+const IMAGE = "verdaccio/verdaccio:5";
 const REGISTRY_PORT = 4873;
-const REGISTRY_HOST = 'localhost';
-const NPM_USERNAME = 'integration';
-const NPM_PASSWORD = 'suchsecure';
-const NPM_EMAIL = 'integration@test.com';
+const REGISTRY_HOST = "localhost";
+const NPM_USERNAME = "integration";
+const NPM_PASSWORD = "suchsecure";
+const NPM_EMAIL = "integration@test.com";
 const docker = new Docker();
 const __dirname = dirname(fileURLToPath(import.meta.url));
 let container, npmToken;
@@ -26,10 +26,10 @@ export async function start() {
     Tty: true,
     Image: IMAGE,
     HostConfig: {
-        PortBindings: {[`${REGISTRY_PORT}/tcp`]: [{HostPort: `${REGISTRY_PORT}`}]},
-        Binds: [`${path.join(__dirname, 'config.yaml')}:/verdaccio/conf/config.yaml`],
+      PortBindings: { [`${REGISTRY_PORT}/tcp`]: [{ HostPort: `${REGISTRY_PORT}` }] },
+      Binds: [`${path.join(__dirname, "config.yaml")}:/verdaccio/conf/config.yaml`],
     },
-    ExposedPorts: {[`${REGISTRY_PORT}/tcp`]: {}}
+    ExposedPorts: { [`${REGISTRY_PORT}/tcp`]: {} },
   });
 
   await container.start();
@@ -37,7 +37,7 @@ export async function start() {
 
   try {
     // Wait for the registry to be ready
-    await pRetry(() => got(`http://${REGISTRY_HOST}:${REGISTRY_PORT}/`, {cache: false}), {
+    await pRetry(() => got(`http://${REGISTRY_HOST}:${REGISTRY_PORT}/`, { cache: false }), {
       retries: 7,
       minTimeout: 1000,
       factor: 2,
@@ -48,24 +48,24 @@ export async function start() {
 
   // Create user
   await got(`http://${REGISTRY_HOST}:${REGISTRY_PORT}/-/user/org.couchdb.user:${NPM_USERNAME}`, {
-    method: 'PUT',
+    method: "PUT",
     json: {
       _id: `org.couchdb.user:${NPM_USERNAME}`,
       name: NPM_USERNAME,
       roles: [],
-      type: 'user',
+      type: "user",
       password: NPM_PASSWORD,
       email: NPM_EMAIL,
     },
   });
 
   // Create token for user
-  ({token: npmToken} = await got(`http://${REGISTRY_HOST}:${REGISTRY_PORT}/-/npm/v1/tokens`, {
+  ({ token: npmToken } = await got(`http://${REGISTRY_HOST}:${REGISTRY_PORT}/-/npm/v1/tokens`, {
     username: NPM_USERNAME,
     password: NPM_PASSWORD,
-    method: 'POST',
-    headers: {'content-type': 'application/json'},
-    json: {password: NPM_PASSWORD, readonly: false, cidr_whitelist: []}
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    json: { password: NPM_PASSWORD, readonly: false, cidr_whitelist: [] },
   }).json());
 }
 
