@@ -58,13 +58,13 @@ test("Throw error if the last commit sha cannot be found", async (t) => {
 
 test("Get the head commit on the remote", async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
-  const {cwd, repositoryUrl} = await gitRepo(true);
+  const { cwd, repositoryUrl } = await gitRepo(true);
   // Add commits to the master branch
-  const [commit] = await gitCommits(["First"], {cwd});
-  await gitPush(repositoryUrl, "master", {cwd});
-  await gitCommits(["Second"], {cwd});
+  const [commit] = await gitCommits(["First"], { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
+  await gitCommits(["Second"], { cwd });
 
-  const result = await getGitRemoteHead(repositoryUrl, "master", {cwd});
+  const result = await getGitRemoteHead(repositoryUrl, "master", { cwd });
 
   t.is(result, commit.hash);
 });
@@ -170,16 +170,16 @@ test("Fetch all tags on a detached head repository with outdated cached repo (Gi
 });
 
 test("Fetch all tags not present on the local branch", async (t) => {
-  const {cwd, repositoryUrl} = await gitRepo();
+  const { cwd, repositoryUrl } = await gitRepo();
 
-  await gitCommits(["First"], {cwd});
-  await gitTagVersion("v1.0.0", undefined, {cwd});
-  const [commit] = await gitCommits(["Second"], {cwd});
-  await gitCommits(["Third"], {cwd});
-  await gitTagVersion("v1.1.0", undefined, {cwd});
-  await gitPush(repositoryUrl, "master", {cwd});
+  await gitCommits(["First"], { cwd });
+  await gitTagVersion("v1.0.0", undefined, { cwd });
+  const [commit] = await gitCommits(["Second"], { cwd });
+  await gitCommits(["Third"], { cwd });
+  await gitTagVersion("v1.1.0", undefined, { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
 
-  t.deepEqual((await getNoMergeTags(commit.hash, {cwd})).sort(), ["v1.1.0"].sort());
+  t.deepEqual((await getNoMergeTags(commit.hash, { cwd })).sort(), ["v1.1.0"].sort());
 });
 
 test("Verify if a branch exists", async (t) => {
@@ -409,12 +409,12 @@ test("Fetch all notes on a detached head repository", async (t) => {
   t.is(await gitGetNote(commit.hash, { cwd }), '{"note":"note"}');
 });
 
-test('Validate that first commit is ancestor of second', async (t) => {
-  const {cwd, repositoryUrl} = await gitRepo(true);
-  const [first] = await gitCommits(['First'], {cwd});
-  const [second] = await gitCommits(['Second'], {cwd});
-  await gitPush(repositoryUrl, 'master', {cwd});
+test("Validate that first commit is ancestor of second", async (t) => {
+  const { cwd, repositoryUrl } = await gitRepo(true);
+  const [first] = await gitCommits(["First"], { cwd });
+  const [second] = await gitCommits(["Second"], { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
 
-  t.true(await isAncestor(first.hash, second.hash, {cwd}));
-  t.false(await isAncestor(second.hash, first.hash, {cwd}));
+  t.true(await isAncestor(first.hash, second.hash, { cwd }));
+  t.false(await isAncestor(second.hash, first.hash, { cwd }));
 });

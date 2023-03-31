@@ -119,6 +119,7 @@ test.serial("Read options from package.json", async (t) => {
     repositoryUrl: "https://host.null/owner/module.git",
     tagFormat: `v\${version}`,
     plugins: false,
+    allowOutdatedBranch: false,
   };
   // Verify the plugins module is called with the plugin options from package.json
   td.when(plugins({ cwd, options }, {})).thenResolve(pluginsConfig);

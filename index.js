@@ -16,7 +16,7 @@ import { extractErrors, makeTag } from "./lib/utils.js";
 import getGitAuthUrl from "./lib/get-git-auth-url.js";
 import getBranches from "./lib/branches/index.js";
 import getLogger from "./lib/get-logger.js";
-import { 
+import {
   verifyAuth,
   isAncestor,
   getNoMergeTags,
@@ -27,7 +27,7 @@ import {
   pushNotes,
   getTagHead,
   addNote,
- } from "./lib/git.js";
+} from "./lib/git.js";
 import getError from "./lib/get-error.js";
 import { COMMIT_EMAIL, COMMIT_NAME } from "./lib/definitions/constants.js";
 
@@ -95,7 +95,7 @@ async function run(context, plugins) {
   );
 
   try {
-    await verifyAuth(options.repositoryUrl, context.branch.name, {cwd, env});
+    await verifyAuth(options.repositoryUrl, context.branch.name, { cwd, env });
   } catch (error) {
     logger.error(`The command "${error.command}" failed with the error message ${error.stderr}.`);
     throw getError("EGITNOPERMISSION", context);
@@ -103,7 +103,7 @@ async function run(context, plugins) {
 
   logger.success(`Allowed to push to the Git repository`);
 
-  if (!(await validateBranch(context, {cwd, env}))) {
+  if (!(await validateBranch(context, { cwd, env }))) {
     return false;
   }
 
@@ -262,7 +262,7 @@ async function validateBranch(context, execaOptions) {
   const remoteHead = await getGitRemoteHead(context.options.repositoryUrl, context.branch.name, execaOptions);
 
   if (!(await isAncestor(localHead, remoteHead, execaOptions))) {
-    throw getError('ELOCALCOMMIT', context);
+    throw getError("ELOCALCOMMIT", context);
   }
 
   if (!context.options.allowOutdatedBranch && localHead !== remoteHead) {
@@ -277,15 +277,15 @@ async function validateBranch(context, execaOptions) {
   const localMissingTags = tagsNotLocal.filter((value) => !tagsNotRemote.includes(value));
 
   if (localMissingTags.length !== 0) {
-    throw getError('EREMOTETAG', context);
+    throw getError("EREMOTETAG", context);
   }
 
   return true;
 }
 
-module.exports = async (cliOptions = {}, {cwd = process.cwd(), env = process.env, stdout, stderr} = {}) => {
-  const {unhook} = hookStd(
-    {silent: false, streams: [process.stdout, process.stderr, stdout, stderr].filter(Boolean)},
+export default async (cliOptions = {}, { cwd = process.cwd(), env = process.env, stdout, stderr } = {}) => {
+  const { unhook } = hookStd(
+    { silent: false, streams: [process.stdout, process.stderr, stdout, stderr].filter(Boolean) },
     hideSensitive(env)
   );
   const context = {

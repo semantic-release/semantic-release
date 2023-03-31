@@ -1,10 +1,10 @@
-import {temporaryDirectory} from 'tempy';
-import {execa} from 'execa';
-import fileUrl from 'file-url';
-import pEachSeries from 'p-each-series';
-import gitLogParser from 'git-log-parser';
-import getStream from 'get-stream';
-import {GIT_NOTE_REF} from '../../lib/definitions/constants.js';
+import { temporaryDirectory } from "tempy";
+import { execa } from "execa";
+import fileUrl from "file-url";
+import pEachSeries from "p-each-series";
+import gitLogParser from "git-log-parser";
+import getStream from "get-stream";
+import { GIT_NOTE_REF } from "../../lib/definitions/constants.js";
 
 /**
  * Commit message information.
@@ -70,12 +70,12 @@ export async function gitRepo(withRemote, branch = 'master') {
  * @param {String} repositoryUrl The URL of the bare repository.
  * @param {String} [branch='master'] the branch to initialize.
  */
-export async function initBareRepo(repositoryUrl, branch = 'master') {
+export async function initBareRepo(repositoryUrl, branch = "master") {
   const cwd = temporaryDirectory();
-  await execa('git', ['clone', '--no-hardlinks', repositoryUrl, cwd], {cwd});
-  await gitCheckout(branch, true, {cwd});
-  await gitCommits(['Initial commit'], {cwd});
-  await execa('git', ['push', repositoryUrl, branch], {cwd});
+  await execa("git", ["clone", "--no-hardlinks", repositoryUrl, cwd], { cwd });
+  await gitCheckout(branch, true, { cwd });
+  await gitCommits(["Initial commit"], { cwd });
+  await execa("git", ["push", repositoryUrl, branch], { cwd });
 }
 
 /**
@@ -146,7 +146,7 @@ export async function gitFetch(repositoryUrl, execaOptions) {
  * @param {String} head A commit sha of the remote repo that will become the detached head of the new one.
  * @param {Object} [execaOpts] Options to pass to `execa`.
  */
-async function gitReset(head, execaOptions) {
+export async function gitReset(head, execaOptions) {
   await execa('git', ['reset', '--hard', head], execaOptions);
 }
 

@@ -72,7 +72,7 @@ test.serial("Pass options to semantic-release API", async (t) => {
     "fail2",
     "--debug",
     "-d",
-    "--allow-outdated-head",
+    "--allow-outdated-branch",
   ];
   const index = await td.replaceEsm("../index.js");
   process.argv = argv;
@@ -110,6 +110,7 @@ test.serial("Pass options to semantic-release API", async (t) => {
       success: ["success1", "success2"],
       fail: ["fail1", "fail2"],
       debug: true,
+      "allow-outdated-branch": true,
       allowOutdatedBranch: true,
       _: [],
       $0: "",

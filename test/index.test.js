@@ -678,7 +678,7 @@ test.serial("Publish releases from different branch on the same channel", async 
 
   await gitCheckout("master", false, { cwd });
   await merge("next", { cwd });
-  await gitPush(repositoryUrl, "master", {cwd});
+  await gitPush(repositoryUrl, "master", { cwd });
 
   await td.replaceEsm("../lib/get-logger.js", null, () => t.context.logger);
   await td.replaceEsm("env-ci", null, () => ({ isCi: true, branch: "master", isPr: false }));
@@ -1014,7 +1014,12 @@ test.serial('Log all "verifyRelease" errors', async (t) => {
   const error1 = new SemanticReleaseError("error 1", "ERR1");
   const error2 = new SemanticReleaseError("error 2", "ERR2");
   const fail = stub().resolves();
-  const config = { branches: [{ name: "master" }], repositoryUrl, tagFormat: `v\${version}`, allowOutdatedBranch: false };
+  const config = {
+    branches: [{ name: "master" }],
+    repositoryUrl,
+    tagFormat: `v\${version}`,
+    allowOutdatedBranch: false,
+  };
   const options = {
     ...config,
     verifyConditions: stub().resolves(),
@@ -1628,18 +1633,19 @@ test.serial("Returns false value if triggered on an outdated clone", async (t) =
   ]);
 });
 
-test('Allow to run on outdated version if "allowOutdatedBranch" is specified', async (t) => {
+test.serial('Allow to run on outdated version if "allowOutdatedBranch" is specified', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
-  let {cwd, repositoryUrl} = await gitRepo(true);
+  let { cwd, repositoryUrl } = await gitRepo(true);
   const repoDir = cwd;
   // Add commits to the master branch
-  await gitCommits(["First"], {cwd});
-  await gitTagVersion("v1.0.0", undefined, {cwd});
-  const [commit] = await gitCommits(["fix: Second"], {cwd});
-  await gitPush(repositoryUrl, "master", {cwd});
+  await gitCommits(["First"], { cwd });
+  await gitTagVersion("v1.0.0", undefined, { cwd });
+  const [commit] = await gitCommits(["fix: Second"], { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
+  // Update the repository from another location
   cwd = await gitShallowClone(repositoryUrl);
-  await gitCommits(["feat: Third"], {cwd});
-  await gitPush(repositoryUrl, "master", {cwd});
+  await gitCommits(["feat: Third"], { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
 
   const nextRelease = {
     name: "v1.0.1",
@@ -1648,7 +1654,7 @@ test('Allow to run on outdated version if "allowOutdatedBranch" is specified', a
     gitHead: commit.hash,
     gitTag: "v1.0.1",
   };
-  const config = {branches: "master", repositoryUrl, globalOpt: "global", allowOutdatedBranch: true};
+  const config = { branches: "master", repositoryUrl, globalOpt: "global", allowOutdatedBranch: true };
   const options = {
     ...config,
     verifyConditions: stub().resolves(),
@@ -1662,10 +1668,8 @@ test('Allow to run on outdated version if "allowOutdatedBranch" is specified', a
     fail: stub().resolves(),
   };
 
-  const semanticRelease = requireNoCache("..", {
-    "./lib/get-logger": () => t.context.logger,
-    "env-ci": () => ({isCi: true, branch: "master", isPr: false}),
-  });
+  await td.replaceEsm("env-ci", null, () => ({ isCi: true, branch: "master", isPr: false }));
+  const semanticRelease = (await import("../index.js")).default;
 
   t.truthy(
     await semanticRelease(options, {
@@ -1677,29 +1681,26 @@ test('Allow to run on outdated version if "allowOutdatedBranch" is specified', a
   );
 
   // Verify the tag has been created on the local and remote repo and reference the gitHead
-  t.is(await gitTagHead(nextRelease.gitTag, {cwd: repoDir}), nextRelease.gitHead);
-  t.is(await gitRemoteTagHead(repositoryUrl, nextRelease.gitTag, {cwd}), nextRelease.gitHead);
+  t.is(await gitTagHead(nextRelease.gitTag, { cwd: repoDir }), nextRelease.gitHead);
+  t.is(await gitRemoteTagHead(repositoryUrl, nextRelease.gitTag, { cwd }), nextRelease.gitHead);
 });
 
-test("Throw SemanticReleaseError if branch contains local commit", async (t) => {
+test.serial("Throw SemanticReleaseError if branch contains local commit", async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
-  const {cwd, repositoryUrl} = await gitRepo(true);
+  const { cwd, repositoryUrl } = await gitRepo(true);
   const repoDir = cwd;
   // Add commits to the master branch
-  await gitCommits(["First"], {cwd});
-  await gitCommits(["Second"], {cwd});
-  await gitPush(repositoryUrl, "master", {cwd});
-  await gitCommits(["Third"], {cwd});
+  await gitCommits(["First"], { cwd });
+  await gitCommits(["Second"], { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
+  await gitCommits(["Third"], { cwd });
 
-  const semanticRelease = requireNoCache("..", {
-    "./lib/get-logger": () => t.context.logger,
-    "env-ci": () => ({isCi: true, branch: "master", isPr: false}),
-  });
+  const semanticRelease = (await import("../index.js")).default;
 
   const error = await t.throwsAsync(
     semanticRelease(
-      {repositoryUrl},
-      {cwd: repoDir, env: {}, stdout: new WritableStreamBuffer(), stderr: new WritableStreamBuffer()}
+      { repositoryUrl },
+      { cwd: repoDir, env: {}, stdout: new WritableStreamBuffer(), stderr: new WritableStreamBuffer() }
     )
   );
 
@@ -1710,28 +1711,25 @@ test("Throw SemanticReleaseError if branch contains local commit", async (t) => 
   t.truthy(error.details);
 });
 
-test("Throw SemanticReleaseError if local branch does not contain remote tags", async (t) => {
+test.serial("Throw SemanticReleaseError if local branch does not contain remote tags", async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
-  const {cwd, repositoryUrl} = await gitRepo(true);
+  const { cwd, repositoryUrl } = await gitRepo(true);
   const repoDir = cwd;
   // Add commits to the master branch
-  const [commit] = await gitCommits(["First"], {cwd});
-  await gitTagVersion("v1.0.0", undefined, {cwd});
-  await gitCommits(["Second"], {cwd});
-  await gitTagVersion("v2.0.0", undefined, {cwd});
-  await gitPush(repositoryUrl, "master", {cwd});
-  await gitCommits(["Third"], {cwd});
-  await gitReset(commit.hash, {cwd});
+  const [commit] = await gitCommits(["First"], { cwd });
+  await gitTagVersion("v1.0.0", undefined, { cwd });
+  await gitCommits(["Second"], { cwd });
+  await gitTagVersion("v2.0.0", undefined, { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
+  await gitCommits(["Third"], { cwd });
+  await gitReset(commit.hash, { cwd });
 
-  const config = {branches: "master", repositoryUrl, globalOpt: "global", allowOutdatedBranch: true};
+  const config = { branches: "master", repositoryUrl, globalOpt: "global", allowOutdatedBranch: true };
   const options = {
     ...config,
   };
 
-  const semanticRelease = requireNoCache("..", {
-    "./lib/get-logger": () => t.context.logger,
-    "env-ci": () => ({isCi: true, branch: "master", isPr: false}),
-  });
+  const semanticRelease = (await import("../index.js")).default;
 
   const error = await t.throwsAsync(
     semanticRelease(options, {
@@ -1749,7 +1747,7 @@ test("Throw SemanticReleaseError if local branch does not contain remote tags", 
   t.truthy(error.details);
 });
 
-test("Returns false if not running from the configured branch", async (t) => {
+test.serial("Returns false if not running from the configured branch", async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const { cwd, repositoryUrl } = await gitRepo(true);
   const options = {
