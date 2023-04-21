@@ -27,7 +27,7 @@ The following three examples are the same.
 ```json
 {
   "release": {
-    "branches": ["master", "next"]
+    "branches": ["main", "next"]
   }
 }
 ```
@@ -36,7 +36,7 @@ The following three examples are the same.
 
 ```json
 {
-  "branches": ["master", "next"]
+  "branches": ["main", "next"]
 }
 ```
 
@@ -66,19 +66,19 @@ List of modules or file paths containing a [shareable configuration](shareable-c
 ### branches
 
 Type: `Array`, `String`, `Object`<br>
-Default: `['+([0-9])?(.{+([0-9]),x}).x', 'master', 'next', 'next-major', {name: 'beta', prerelease: true}, {name: 'alpha', prerelease: true}]`<br>
+Default: `['+([0-9])?(.{+([0-9]),x}).x', 'main', 'next', 'next-major', {name: 'beta', prerelease: true}, {name: 'alpha', prerelease: true}]`<br>
 CLI arguments: `--branches`
 
 The branches on which releases should happen. By default **semantic-release** will release:
 
-- regular releases to the default distribution channel from the branch `master`
+- regular releases to the default distribution channel from the branch `main`
 - regular releases to a distribution channel matching the branch name from any existing branch with a name matching a maintenance release range (`N.N.x` or `N.x.x` or `N.x` with `N` being a number)
 - regular releases to the `next` distribution channel from the branch `next` if it exists
 - regular releases to the `next-major` distribution channel from the branch `next-major` if it exists
 - pre-releases to the `beta` distribution channel from the branch `beta` if it exists
 - pre-releases to the `alpha` distribution channel from the branch `alpha` if it exists
 
-**Note**: If your repository does not have a release branch, then **semantic-release** will fail with an `ERELEASEBRANCHES` error message. If you are using the default configuration, you can fix this error by pushing a `master` branch.
+**Note**: If your repository does not have a release branch, then **semantic-release** will fail with an `ERELEASEBRANCHES` error message. If you are using the default configuration, you can fix this error by pushing a `main` branch.
 
 **Note**: Once **semantic-release** is configured, any user with the permission to push commits on one of those branches will be able to publish a release. It is recommended to protect those branches, for example with [GitHub protected branches](https://docs.github.com/github/administering-a-repository/about-protected-branches).
 
@@ -162,7 +162,7 @@ If a release has been published before setting up **semantic-release** you must 
 
 If the previous releases were published with [`npm publish`](https://docs.npmjs.com/cli/publish) this should already be the case.
 
-For example, if your release branch is `master`, the last release published on your project is `1.1.0` and the last commit included has the sha `1234567`, you must make sure this commit is in `master` history and is tagged with `v1.1.0`.
+For example, if your release branch is `main`, the last release published on your project is `1.1.0` and the last commit included has the sha `1234567`, you must make sure this commit is in `main` history and is tagged with `v1.1.0`.
 
 ```bash
 # Make sure the commit 1234567 is in the release branch history
