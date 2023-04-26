@@ -34,7 +34,7 @@
     "aggregate-error": "^4.0.1",
     "cosmiconfig": "^8.0.0",
     "debug": "^4.0.0",
-    "env-ci": "^8.0.0",
+    "env-ci": "^9.0.0",
     "execa": "^7.0.0",
     "figures": "^5.0.0",
     "find-versions": "^5.1.0",
@@ -70,10 +70,10 @@
     "nock": "13.3.0",
     "p-retry": "5.1.2",
     "prettier": "2.8.7",
-    "sinon": "15.0.3",
+    "sinon": "15.0.4",
     "stream-buffers": "3.0.2",
     "tempy": "3.0.0",
-    "testdouble": "3.17.1"
+    "testdouble": "3.17.2"
   },
   "engines": {
     "node": ">=18"
