@@ -36,7 +36,6 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: npm
       - run: npm clean-install
-      - run: npm audit signatures
       - name: Ensure dependencies are compatible with the version of node
         run: npx ls-engines
       - run: npm run test:ci
@@ -53,4 +52,5 @@ jobs:
           node-version: lts/*
           cache: npm
       - run: npm clean-install
+      - run: npm audit signatures
       - run: npm run lint
