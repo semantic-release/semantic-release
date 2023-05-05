@@ -174,3 +174,5 @@
 - [semantic-release-coralogix](https://github.com/adobe/semantic-release-coralogix)
   - `verifyConditions` Verified that required credentials are provided and API is accessible
   - `publish` add a release tag to Coralogix
+- [semantic-release-major-tag](https://github.com/doteric/semantic-release-major-tag)
+  - `success` Create major version tag, for example `v1`.
