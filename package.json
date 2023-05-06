@@ -69,7 +69,7 @@
     "mockserver-client": "5.15.0",
     "nock": "13.3.0",
     "p-retry": "5.1.2",
-    "prettier": "2.8.7",
+    "prettier": "2.8.8",
     "sinon": "15.0.4",
     "stream-buffers": "3.0.2",
     "tempy": "3.0.0",
