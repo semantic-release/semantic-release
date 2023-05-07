@@ -26,11 +26,14 @@ $ npx semantic-release
 
 ### Notes
 
-1. For a global installation, it's recommended to specify the major **semantic-release** version to install (for example with `npx semantic-release@18`).
-   This way your build will not automatically use the next major **semantic-release** release that could possibly break your build.
-   You will have to upgrade manually when a new major version is released.
-2. Specifying an exact version will make your releases even more deterministic, but requires regular maintenance to stay up to date when new versions of **semantic-release** become available.
-   In projects using [Renovate](https://docs.renovatebot.com/), a [regex manager](https://docs.renovatebot.com/modules/manager/regex/) can be defined to recommend version updates when new **semantic-release** versions are published:
+1. If you've globally installed **semantic-release** then we recommend that you set the major **semantic-release** version to install.
+For example, by using `npx semantic-release@18`.
+   This way you control which major version of **semantic-release** is used by your build, and thus avoid breaking the build when there's a new major version of **semantic-release**.
+   This also means you, or a bot, must upgrade **semantic-release** when a new major version is released.
+2. Pinning **semantic-release** to an exact version makes your releases even more deterministic.
+But pinning also means you, or a bot, must update to newer versions of **semantic-release** more often.
+   You can use [Renovate's regex manager](https://docs.renovatebot.com/modules/manager/regex/) to get updates for **semantic-release**.
+   Put this in your Renovate configuration file:
    ```json
    {
      "regexManagers": [
@@ -44,5 +47,5 @@ $ npx semantic-release
      ]
    }
    ```
-3. `npx` is a tool bundled with `npm@>=5.2.0`. It is used to conveniently install the semantic-release binary and to execute it.
+3. `npx` is a tool bundled with `npm@>=5.2.0`. You can use it to install (and run) the semantic-release binary.
    See [What is npx](../support/FAQ.md#what-is-npx) for more details.
