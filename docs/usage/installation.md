@@ -47,5 +47,5 @@ $ npx semantic-release
      ]
    }
    ```
-4. `npx` is a tool bundled with `npm@>=5.2.0`. You can use it to install (and run) the semantic-release binary.
+4. `npx` is a tool bundled with `npm@>=5.2.0`. You can use it to install (and run) the **semantic-release** binary.
    See [What is npx](../support/FAQ.md#what-is-npx) for more details.
