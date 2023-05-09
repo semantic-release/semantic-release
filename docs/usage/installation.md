@@ -32,7 +32,7 @@ $ npx semantic-release
    This also means you, or a bot, must upgrade **semantic-release** when a new major version is released.
 2. Pinning **semantic-release** to an exact version makes your releases even more deterministic.
    But pinning also means you, or a bot, must update to newer versions of **semantic-release** more often.
-   You can use [Renovate's regex manager](https://docs.renovatebot.com/modules/manager/regex/) to get updates for **semantic-release**.
+3. You can use [Renovate's regex manager](https://docs.renovatebot.com/modules/manager/regex/) to get automatic updates for **semantic-release** in either of the above scenarios.
    Put this in your Renovate configuration file:
    ```json
    {
@@ -47,5 +47,5 @@ $ npx semantic-release
      ]
    }
    ```
-3. `npx` is a tool bundled with `npm@>=5.2.0`. You can use it to install (and run) the semantic-release binary.
+4. `npx` is a tool bundled with `npm@>=5.2.0`. You can use it to install (and run) the semantic-release binary.
    See [What is npx](../support/FAQ.md#what-is-npx) for more details.
