@@ -174,3 +174,11 @@
 - [semantic-release-coralogix](https://github.com/adobe/semantic-release-coralogix)
   - `verifyConditions` Verified that required credentials are provided and API is accessible
   - `publish` add a release tag to Coralogix
+- [semantic-release-major-tag](https://github.com/doteric/semantic-release-major-tag)
+  - `success` Create major version tag, for example `v1`.
+- [semantic-release-yarn](https://github.com/hongaar/semantic-release-yarn)
+  - **Note**: this is an alternative to the default `@semantic-release/npm` plugin and adds support for monorepos.
+  - `verifyConditions` Verify Yarn 2 or higher is installed, verify the presence of a NPM auth token (either in an environment variable or a `.yarnrc.yml` file) and verify the authentication method is valid.
+  - `prepare` Update the `package.json` version and create the package tarball.
+  - `addChannel` Add a tag for the release.
+  - `publish` Publish to the npm registry.

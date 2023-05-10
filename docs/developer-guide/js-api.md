@@ -142,7 +142,7 @@ Information related to the last release found:
 | gitTag  | `String` | The [Git tag](https://git-scm.com/book/en/v2/Git-Basics-Tagging) associated with the last release.                                  |
 | channel | `String` | The distribution channel on which the last release was initially made available (`undefined` for the default distribution channel). |
 
-**Notes**: If no previous release is found, `lastRelease` will be an empty `Object`.
+**Note**: If no previous release is found, `lastRelease` will be an empty `Object`.
 
 Example:
 
