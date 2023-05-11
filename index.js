@@ -37,29 +37,8 @@ async function terminalOutput(text) {
 /* eslint complexity: off */
 async function run(context, plugins) {
   const { cwd, env, options, logger, envCi } = context;
-  const { isCi, branch, prBranch, isPr } = envCi;
+  const { branch, prBranch, isPr } = envCi;
   const ciBranch = isPr ? prBranch : branch;
-
-  if (!isCi && !options.dryRun && !options.noCi) {
-    logger.warn("This run was not triggered in a known CI environment, running in dry-run mode.");
-    options.dryRun = true;
-  } else {
-    // When running on CI, set the commits author and committer info and prevent the `git` CLI to prompt for username/password. See #703.
-    Object.assign(env, {
-      GIT_AUTHOR_NAME: COMMIT_NAME,
-      GIT_AUTHOR_EMAIL: COMMIT_EMAIL,
-      GIT_COMMITTER_NAME: COMMIT_NAME,
-      GIT_COMMITTER_EMAIL: COMMIT_EMAIL,
-      ...env,
-      GIT_ASKPASS: "echo",
-      GIT_TERMINAL_PROMPT: 0,
-    });
-  }
-
-  if (isCi && isPr && !options.noCi) {
-    logger.log("This run was triggered by a pull request and therefore a new version won't be published.");
-    return false;
-  }
 
   // Verify config
   await verify(context);
@@ -67,15 +46,6 @@ async function run(context, plugins) {
   options.repositoryUrl = await getGitAuthUrl({ ...context, branch: { name: ciBranch } });
   context.branches = await getBranches(options.repositoryUrl, ciBranch, context);
   context.branch = context.branches.find(({ name }) => name === ciBranch);
-
-  if (!context.branch) {
-    logger.log(
-      `This test run was triggered on the branch ${ciBranch}, while semantic-release is configured to only publish from ${context.branches
-        .map(({ name }) => name)
-        .join(", ")}, therefore a new version won’t be published.`
-    );
-    return false;
-  }
 
   logger[options.dryRun ? "warn" : "success"](
     `Run automated release from branch ${ciBranch} on repository ${options.originalRepositoryURL}${
