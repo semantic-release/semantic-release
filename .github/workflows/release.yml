@@ -25,6 +25,8 @@ jobs:
           node-version: lts/*
       - run: npm clean-install
       - run: npm audit signatures
+      # pinned version updated automatically by Renovate.
+      # details at https://semantic-release.gitbook.io/semantic-release/usage/installation#global-installation
       - run: npx semantic-release@21.0.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
