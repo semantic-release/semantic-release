@@ -60,7 +60,7 @@
     "c8": "7.13.0",
     "clear-module": "4.1.2",
     "codecov": "3.8.3",
-    "delay": "5.0.0",
+    "delay": "6.0.0",
     "dockerode": "3.3.5",
     "file-url": "4.0.0",
     "fs-extra": "11.1.1",
