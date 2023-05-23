@@ -1,11 +1,11 @@
-import path from "path";
+import path from "node:path";
+import { setTimeout } from "node:timers/promises";
 import test from "ava";
 import * as td from "testdouble";
 import { escapeRegExp } from "lodash-es";
 import fsExtra from "fs-extra";
 import { execa } from "execa";
 import { WritableStreamBuffer } from "stream-buffers";
-import delay from "delay";
 
 import getAuthUrl from "../lib/get-git-auth-url.js";
 import { SECRET_REPLACEMENT } from "../lib/definitions/constants.js";
@@ -295,7 +295,7 @@ test("Release patch, minor and major versions", async (t) => {
   t.is(exitCode, 0);
 
   // Wait for 3s as the change of dist-tag takes time to be reflected in the registry
-  await delay(3000);
+  await setTimeout(3000);
   // Retrieve the published package from the registry and check version and gitHead
   ({
     "dist-tags": { latest: releasedVersion },
