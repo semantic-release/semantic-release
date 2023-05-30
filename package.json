@@ -28,7 +28,7 @@
   "dependencies": {
     "@semantic-release/commit-analyzer": "^9.0.2",
     "@semantic-release/error": "^3.0.0",
-    "@semantic-release/github": "^8.0.0",
+    "@semantic-release/github": "9.0.0-beta.2",
     "@semantic-release/npm": "^10.0.2",
     "@semantic-release/release-notes-generator": "^11.0.0",
     "aggregate-error": "^4.0.1",
