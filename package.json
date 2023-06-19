@@ -57,7 +57,7 @@
   },
   "devDependencies": {
     "ava": "5.3.1",
-    "c8": "7.14.0",
+    "c8": "8.0.0",
     "clear-module": "4.1.2",
     "codecov": "3.8.3",
     "dockerode": "3.3.5",
