@@ -1,5 +1,4 @@
 import Docker from "dockerode";
-import getStream from "get-stream";
 import got from "got";
 import pRetry from "p-retry";
 import { mockServerClient } from "mockserver-client";
@@ -11,11 +10,20 @@ const docker = new Docker();
 let container;
 
 /**
- * Download the `mockserver` Docker image, create a new container and start it.
+ * Download the `mockserver` Docker image,
+ */
+export function pull() {
+  return docker.pull(IMAGE).then((stream) => {
+    return new Promise((resolve, reject) => {
+      docker.modem.followProgress(stream, (err, res) => (err ? reject(err) : resolve(res)));
+    });
+  });
+}
+
+/**
+ * create a new container and start it.
  */
 export async function start() {
-  await getStream(await docker.pull(IMAGE));
-
   container = await docker.createContainer({
     Tty: true,
     Image: IMAGE,
