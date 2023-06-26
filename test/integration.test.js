@@ -47,6 +47,7 @@ const pluginLogEnv = path.resolve("./test/fixtures/plugin-log-env");
 const pluginEsmNamedExports = path.resolve("./test/fixtures/plugin-esm-named-exports");
 
 test.before(async () => {
+  await Promise.all([gitbox.pull(), npmRegistry.pull(), mockServer.pull()]);
   await Promise.all([gitbox.start(), npmRegistry.start(), mockServer.start()]);
 
   env = {
