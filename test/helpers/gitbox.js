@@ -1,5 +1,4 @@
 import Docker from "dockerode";
-import getStream from "get-stream";
 import pRetry from "p-retry";
 import { gitShallowClone, initBareRepo } from "./git-utils.js";
 
@@ -15,11 +14,20 @@ let container;
 export const gitCredential = `${GIT_USERNAME}:${GIT_PASSWORD}`;
 
 /**
- * Download the `gitbox` Docker image, create a new container and start it.
+ * Download the `gitbox` Docker image
+ */
+export function pull() {
+  return docker.pull(IMAGE).then((stream) => {
+    return new Promise((resolve, reject) => {
+      docker.modem.followProgress(stream, (err, res) => (err ? reject(err) : resolve(res)));
+    });
+  });
+}
+
+/**
+ * create a new container and start it.
  */
 export async function start() {
-  await getStream(await docker.pull(IMAGE));
-
   container = await docker.createContainer({
     Tty: true,
     Image: IMAGE,
