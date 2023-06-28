@@ -275,3 +275,24 @@ test("Increase version for release on prerelease branch when there is no regular
     "1.0.0-beta.2"
   );
 });
+
+test("Increase patch when previous version shares HEAD with other releases", (t) => {
+  t.is(
+    getNextVersion({
+      branch: {
+        name: "alpha",
+        type: "prerelease",
+        prerelease: "alpha",
+        tags: [
+          { gitTag: "v1.0.0-beta.1", version: "1.0.0-beta.1", channels: ["beta"] },
+          { gitTag: "v1.0.0-beta.2", version: "1.0.0-beta.2", channels: ["alpha", "beta"] },
+          { gitTag: "v1.0.0-alpha.1", version: "1.0.0-alpha.1", channels: ["alpha", "beta"] },
+        ],
+      },
+      nextRelease: { type: "patch", channel: "alpha" },
+      lastRelease: { version: "v1.0.0-alpha.1", channels: ["alpha", "beta"] },
+      logger: t.context.logger,
+    }),
+    "1.0.0-alpha.2"
+  );
+});
