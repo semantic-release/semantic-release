@@ -90,9 +90,7 @@ export async function gitCommits(messages, execaOptions) {
   await pEachSeries(
     messages,
     async (message) =>
-      (
-        await execa("git", ["commit", "-m", message, "--allow-empty", "--no-gpg-sign"], execaOptions)
-      ).stdout
+      (await execa("git", ["commit", "-m", message, "--allow-empty", "--no-gpg-sign"], execaOptions)).stdout
   );
   return (await gitGetCommits(undefined, execaOptions)).slice(0, messages.length);
 }
