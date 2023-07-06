@@ -107,7 +107,7 @@
   - `verifyConditions`: Verify the presence and the validity of the authentication and the assets option configuration.
   - `publish`: Publish a Gitea release, optionally uploading file assets.
   - `addChannel`: Update a Gitea release's pre-release field.
-- [@google/semantic-release-replace-plugin](https://github.com/google/semantic-release-replace-plugin)
+- [semantic-release-replace-plugin](https://github.com/jpoehnelt/semantic-release-replace-plugin)
   - `prepare`: Replace version strings in files using regex and glob.
 - [semantic-release-rubygem](https://github.com/Gusto/semantic-release-rubygem)
   - `verifyConditions`: Locate and validate a `.gemspec` file, locate and validate a `lib/**/version.rb` file, verify the presence of the `GEM_HOST_API_KEY` environment variable, and create a credentials file with the API key.
