@@ -6,6 +6,11 @@ The [Authentication](../../usage/ci-configuration.md#authentication) environment
 
 **Note**: Make sure to configure your release branch as [protected](https://docs.gitlab.com/ce/user/project/protected_branches.html) in order for the CI/CD build to access the protected variables.
 
+## npm provenance
+
+Since GitLab CI is a [supported provider](https://docs.npmjs.com/generating-provenance-statements#provenance-limitations) for [npm provenance](https://docs.npmjs.com/generating-provenance-statements), it is recommended to enable this to increase supply-chain security for your npm packages.
+Find more detail about configuring npm to publish with provenance through semantic-release [in the documentation for our npm plugin](https://github.com/semantic-release/npm#npm-provenance).
+
 ## Node project configuration
 
 GitLab CI supports [Pipelines](https://docs.gitlab.com/ee/ci/pipelines.html) allowing to test on multiple Node versions and publishing a release only when all test pass.
