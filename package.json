@@ -38,7 +38,7 @@
     "execa": "^7.0.0",
     "figures": "^5.0.0",
     "find-versions": "^5.1.0",
-    "get-stream": "^6.0.0",
+    "get-stream": "^7.0.0",
     "git-log-parser": "^1.2.0",
     "hook-std": "^3.0.0",
     "hosted-git-info": "^6.0.0",
