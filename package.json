@@ -66,7 +66,7 @@
     "got": "13.0.0",
     "js-yaml": "4.1.0",
     "mockserver-client": "5.15.0",
-    "nock": "13.3.2",
+    "nock": "13.3.3",
     "p-retry": "5.1.2",
     "prettier": "3.0.2",
     "sinon": "15.2.0",
