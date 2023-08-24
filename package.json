@@ -81,6 +81,7 @@
     "bin",
     "docs",
     "lib",
+    "index.d.ts",
     "index.js",
     "cli.js"
   ],
