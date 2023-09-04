@@ -28,6 +28,10 @@ async function terminalOutput(text) {
   if (!markedOptionsSet) {
     const { default: TerminalRenderer } = await import("marked-terminal"); // eslint-disable-line node/no-unsupported-features/es-syntax
     marked.setOptions({ renderer: new TerminalRenderer() });
+    marked.use({
+      mangle: false,
+      headerIds: false,
+    });
     markedOptionsSet = true;
   }
 
