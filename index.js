@@ -277,7 +277,7 @@ export default async (cliOptions = {}, { cwd = process.cwd(), env = process.env,
     stderr: stderr || process.stderr,
     envCi: envCi({ env, cwd }),
   };
-  context.logger = getLogger(context);
+  context.logger = getLogger(context, cliOptions.silent);
   context.logger.log(`Running ${pkg.name} version ${pkg.version}`);
   try {
     const { plugins, options } = await getConfig(context, cliOptions);
