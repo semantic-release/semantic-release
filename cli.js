@@ -27,6 +27,7 @@ Usage:
     .option("e", { alias: "extends", describe: "Shareable configurations", ...stringList, group: "Options" })
     .option("ci", { describe: "Toggle CI verifications", type: "boolean", group: "Options" })
     .option("marked", { describe: "Enable printing Markdown to the Terminal", type: "boolean", group: "Options" })
+    .option("silent", { describe: "Disable logging output.", type: "boolean", group: "Options" })
     .option("verify-conditions", { ...stringList, group: "Plugins" })
     .option("analyze-commits", { type: "string", group: "Plugins" })
     .option("verify-release", { ...stringList, group: "Plugins" })
