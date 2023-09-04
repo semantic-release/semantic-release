@@ -224,7 +224,12 @@ async function run(context, plugins) {
   if (options.dryRun) {
     logger.log(`Release note for version ${nextRelease.version}:`);
     if (nextRelease.notes) {
-      context.stdout.write(await terminalOutput(nextRelease.notes));
+      if (options.marked) {
+        context.stdout.write(await terminalOutput(nextRelease.notes));
+      }
+      else {
+        context.stdout.write(nextRelease.notes);
+      }
     }
   }
 
