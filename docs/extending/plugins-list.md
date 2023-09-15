@@ -84,6 +84,11 @@
   - `verifyRelease`: Checks and warns (does not error by default) if the version numbers found on maven central and within the Git project differ by quite a bit
   - `prepare`: Changes the version number in the `pom.xml` (or all `pom.xml` files in maven projects with multiple `pom.xml` files) and optionally creates a commit with this version number and pushes it to `master`
   - `publish`: Runs `mvn deploy` to deploy to maven central and optionally will update to next snapshot version and merge changes to development branch
+- [maven-semantic-release](https://github.com/terrestris/maven-semantic-release) (alternative version)
+  - `verifyConditions`: Verifies that the `mvn` command exists.
+  - `prepare`: Changes version number in `pom.xml` and optionally in all child modules.
+  - `publish`: Runs one of the mvn targets `deploy`, `package jib:build` or `deploy jib:build`.
+  - `success`: Optionally sets new snapshot version and commits it.
 - [semantic-release-ado](https://github.com/lluchmk/semantic-release-ado)
   - `prepare`: Stores the version number as an Azure DevOps pipeline variable available to downstream steps on the job
 - [gradle-semantic-release](https://github.com/KengoTODA/gradle-semantic-release-plugin)
