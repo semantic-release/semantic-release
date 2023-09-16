@@ -76,7 +76,7 @@
     "testdouble": "3.19.0"
   },
   "engines": {
-    "node": "^18.17 || >=20.6"
+    "node": "^18.17 || >=20.6.1"
   },
   "exports": "./index.js",
   "files": [
