@@ -43,7 +43,7 @@ export async function initGit(withRemote) {
  *
  * @param {Boolean} withRemote `true` to create a shallow clone of a bare repository.
  * @param {String} [branch='master'] The branch to initialize.
- * @return {String} The path of the clone if `withRemote` is `true`, the path of the repository otherwise.
+ * @return {Promise<Object>} The path of the clone if `withRemote` is `true`, the path of the repository otherwise.
  */
 export async function gitRepo(withRemote, branch = "master") {
   let { cwd, repositoryUrl } = await initGit(withRemote);
