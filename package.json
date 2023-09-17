@@ -67,6 +67,7 @@
     "fs-extra": "11.1.1",
     "got": "13.0.0",
     "js-yaml": "4.1.0",
+    "lockfile-lint": "4.12.1",
     "mockserver-client": "5.15.0",
     "nock": "13.3.3",
     "npm-run-all2": "6.0.6",
@@ -116,6 +117,14 @@
     ],
     "all": true
   },
+  "lockfile-lint": {
+    "path": "package-lock.json",
+    "type": "npm",
+    "validate-https": true,
+    "allowed-hosts": [
+      "npm"
+    ]
+  },
   "prettier": {
     "printWidth": 120,
     "trailingComma": "es5"
@@ -132,6 +141,7 @@
     "codecov": "codecov -f coverage/coverage-final.json",
     "lint:js": "prettier --check \"*.{js,json,md}\" \".github/**/*.{md,yml}\" \"docs/**/*.md\" \"{bin,lib,test}/**/*.js\"",
     "lint:js:fix": "prettier --write \"*.{js,json,md}\" \".github/**/*.{md,yml}\" \"docs/**/*.md\" \"{bin,lib,test}/**/*.js\"",
+    "lint:lockfile": "lockfile-lint",
     "semantic-release": "./bin/semantic-release.js",
     "test": "npm-run-all --print-label --parallel lint:* --parallel test:*",
     "test:unit": "c8 ava --verbose",
