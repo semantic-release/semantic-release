@@ -140,8 +140,8 @@
   },
   "scripts": {
     "codecov": "codecov -f coverage/coverage-final.json",
-    "lint:js": "prettier --check \"*.{js,json,md}\" \".github/**/*.{md,yml}\" \"docs/**/*.md\" \"{bin,lib,test}/**/*.js\"",
-    "lint:js:fix": "prettier --write \"*.{js,json,md}\" \".github/**/*.{md,yml}\" \"docs/**/*.md\" \"{bin,lib,test}/**/*.js\"",
+    "lint:prettier": "prettier --check \"*.{js,json,md}\" \".github/**/*.{md,yml}\" \"docs/**/*.md\" \"{bin,lib,test}/**/*.js\"",
+    "lint:prettier:fix": "prettier --write \"*.{js,json,md}\" \".github/**/*.{md,yml}\" \"docs/**/*.md\" \"{bin,lib,test}/**/*.js\"",
     "lint:lockfile": "lockfile-lint",
     "lint:engines": "ls-engines",
     "semantic-release": "./bin/semantic-release.js",
