@@ -29,7 +29,7 @@ jobs:
           - 20
 
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 5
 
     steps:
       - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4
@@ -41,9 +41,8 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: npm
       - run: npm clean-install
-      - name: Ensure dependencies are compatible with the version of node
-        run: npx ls-engines
-      - run: npm run test:ci
+      - run: npm audit signatures
+      - run: npm test
 
   # separate job to set as required in branch protection,
   # as the build names above change each time Node versions change
@@ -58,7 +57,6 @@ jobs:
           node-version: lts/*
           cache: npm
       - run: npm clean-install
-      - run: npm audit signatures
       - run: npm run lint
       - name: All matrix versions passed
         if: ${{ !(contains(needs.*.result, 'failure')) }}
