@@ -247,6 +247,8 @@ $ npm install
 
 ### Lint
 
+[//]: # "TODO: rework these docs"
+
 All the [semantic-release](https://github.com/semantic-release) repositories use [XO](https://github.com/sindresorhus/xo) for linting and [Prettier](https://prettier.io) for formatting.
 Prettier formatting will be automatically verified and fixed by XO.
 
@@ -258,6 +260,8 @@ Before pushing your code changes make sure there are no linting errors with `npm
 - Install the [XO plugin](https://github.com/sindresorhus/xo#editor-plugins) for your editor to see linting errors directly in your editor and automatically fix them on save.
 
 ### Tests
+
+[//]: # "TODO: rework these docs too"
 
 Running the integration test requires you to install [Docker](https://docs.docker.com/engine/installation) on your machine.
 
@@ -276,6 +280,8 @@ $ npm run test
 - run only the test you are working on by adding [`.only` to the test definition](https://github.com/avajs/ava#running-specific-tests)
 
 ### Commits
+
+[//]: # "TODO: these docs are already out of date. i'd value cleaning up the commitizen support, but w/o a special script"
 
 All the [semantic-release](https://github.com/semantic-release) repositories use [Commitizen](https://github.com/commitizen/cz-cli) to help you create [valid commit messages](#commit-message-guidelines).
 
