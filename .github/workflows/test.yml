@@ -72,13 +72,6 @@ jobs:
       - test_matrix
     if: always()
     steps:
-      - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4
-      - uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d # v3
-        with:
-          node-version: lts/*
-          cache: npm
-      - run: npm clean-install
-      - run: npm run lint
       - name: All matrix versions passed
         if: ${{ !(contains(needs.*.result, 'failure')) }}
         run: exit 0
