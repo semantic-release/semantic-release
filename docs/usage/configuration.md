@@ -40,7 +40,7 @@ The following three examples are the same.
 }
 ```
 
-- Via `release.config.js` file:
+- Via `release.config.cjs` file:
 
 ```js
 /**
