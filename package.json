@@ -78,7 +78,6 @@
   "engines": {
     "node": "^18.17 || >=20.6.1"
   },
-  "exports": "./index.js",
   "files": [
     "bin",
     "docs",
