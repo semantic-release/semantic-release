@@ -14,7 +14,7 @@ const { satisfies, lt } = semver;
 
 const MIN_GIT_VERSION = "2.7.1";
 
-if (!satisfies(process.version, engines.node)) {
+if (!satisfies(process.version, engines.node) && typeof Bun === "undefined") {
   console.error(
     `[semantic-release]: node version ${engines.node} is required. Found ${process.version}.
 
