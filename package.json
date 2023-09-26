@@ -68,7 +68,7 @@
     "js-yaml": "4.1.0",
     "mockserver-client": "5.15.0",
     "nock": "13.3.3",
-    "p-retry": "6.0.0",
+    "p-retry": "6.1.0",
     "prettier": "3.0.3",
     "sinon": "16.0.0",
     "stream-buffers": "3.0.2",
