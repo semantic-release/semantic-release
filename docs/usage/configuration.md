@@ -47,8 +47,8 @@ The following three examples are the same.
  * @type {import('semantic-release').GlobalConfig}
  */
 module.exports = {
-  "branches": ["master", "next"]
-}
+  branches: ["master", "next"],
+};
 ```
 
 - Via CLI argument:
