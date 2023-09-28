@@ -187,3 +187,7 @@
   - `prepare` Update the `package.json` version and create the package tarball.
   - `addChannel` Add a tag for the release.
   - `publish` Publish to the npm registry.
+- [semantic-release-pub](https://github.com/zeshuaro/semantic-release-pub)
+  - `verifyConditions`: Verify the presence of the `pub.dev` authentication and release configuration
+  - `prepare`: Update the `pubspec.yaml` version
+  - `publish`: Publish the package onto the `pub.dev` registry
