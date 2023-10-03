@@ -195,7 +195,7 @@ If you need more control over the timing of releases, see [Triggering a release]
 
 ## Can I set the initial release version of my package to `0.0.1`?
 
-This is not supported by **semantic-release** as it's not considered a good practice, mostly because [Semantic Versioning](https://semver.org) rules applies differently to major version zero.
+This is not supported by semantic-release. [Semantic Versioning](https://semver.org/) rules apply differently to major version zero and supporting those differences is out of scope and not one of the goals of the semantic-release project.
 
 If your project is under heavy development, with frequent breaking changes, and is not production ready yet we recommend [publishing pre-releases](../recipes/release-workflow/pre-releases.md#publishing-pre-releases).
 
