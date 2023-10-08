@@ -6,7 +6,8 @@
   "author": "Stephan Bönnemann <stephan@boennemann.me> (http://boennemann.me)",
   "ava": {
     "files": [
-      "test/**/*.test.js"
+      "test/**/*.test.js",
+      "!test/integration.test.js"
     ],
     "failFast": true,
     "nodeArguments": [
@@ -61,15 +62,20 @@
     "c8": "8.0.1",
     "clear-module": "4.1.2",
     "codecov": "3.8.3",
+    "cz-conventional-changelog": "3.3.0",
     "dockerode": "3.3.5",
     "file-url": "4.0.0",
     "fs-extra": "11.1.1",
     "got": "13.0.0",
     "js-yaml": "4.1.0",
+    "lockfile-lint": "4.12.1",
+    "ls-engines": "0.9.0",
     "mockserver-client": "5.15.0",
     "nock": "13.3.3",
+    "npm-run-all2": "6.0.6",
     "p-retry": "6.1.0",
     "prettier": "3.0.3",
+    "publint": "0.2.2",
     "sinon": "16.1.0",
     "stream-buffers": "3.0.2",
     "tempy": "3.1.0",
@@ -114,6 +120,14 @@
     ],
     "all": true
   },
+  "lockfile-lint": {
+    "path": "package-lock.json",
+    "type": "npm",
+    "validate-https": true,
+    "allowed-hosts": [
+      "npm"
+    ]
+  },
   "prettier": {
     "printWidth": 120,
     "trailingComma": "es5"
@@ -126,14 +140,22 @@
     "type": "git",
     "url": "git+https://github.com/semantic-release/semantic-release.git"
   },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
   "scripts": {
     "codecov": "codecov -f coverage/coverage-final.json",
-    "lint": "prettier --check \"*.{js,json,md}\" \".github/**/*.{md,yml}\" \"docs/**/*.md\" \"{bin,lib,test}/**/*.js\"",
-    "lint:fix": "prettier --write \"*.{js,json,md}\" \".github/**/*.{md,yml}\" \"docs/**/*.md\" \"{bin,lib,test}/**/*.js\"",
-    "pretest": "npm run lint",
+    "lint:prettier": "prettier --check \"*.{js,json,md}\" \".github/**/*.{md,yml}\" \"docs/**/*.md\" \"{bin,lib,test}/**/*.js\"",
+    "lint:prettier:fix": "prettier --write \"*.{js,json,md}\" \".github/**/*.{md,yml}\" \"docs/**/*.md\" \"{bin,lib,test}/**/*.js\"",
+    "lint:lockfile": "lockfile-lint",
+    "lint:engines": "ls-engines",
+    "lint:publish": "publint --strict",
     "semantic-release": "./bin/semantic-release.js",
-    "test": "c8 ava --verbose",
-    "test:ci": "c8 ava --verbose"
+    "test": "npm-run-all --print-label --parallel lint:* --parallel test:*",
+    "test:unit": "c8 ava --verbose",
+    "test:integration": "ava --verbose test/integration.test.js"
   },
   "renovate": {
     "extends": [
