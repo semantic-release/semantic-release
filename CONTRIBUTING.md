@@ -146,7 +146,7 @@ If possible, make [atomic commits](https://en.wikipedia.org/wiki/Atomic_commit),
 
 - a commit should contain exactly one self-contained functional change
 - a functional change should be contained in exactly one commit
-- a commit should not create an inconsistent state (such as test errors, linting errors, partial fix, feature with documentation etc...)
+- a commit should not create an inconsistent state (such as test errors, linting errors, partial fix, feature without documentation, etc...)
 
 A complex feature can be broken down into multiple commits as long as each one maintains a consistent state and consists of a self-contained change.
 
@@ -317,8 +317,6 @@ $ npm run test:integration
 
 ### Commits
 
-[//]: # "TODO: these docs are already out of date. i'd value cleaning up the commitizen support, but w/o a special script"
-
 All the [semantic-release](https://github.com/semantic-release) repositories use [Commitizen](https://github.com/commitizen/cz-cli) to help you create [valid commit messages](#commit-message-guidelines).
 
-After staging your changes with `git add`, run `npm run cm` to start the interactive commit message CLI.
+Assuming you have [installed Commitizen](https://github.com/commitizen/cz-cli#installing-the-command-line-tool), run `git cz` to start the interactive commit message CLI rather than `git commit` when committing.

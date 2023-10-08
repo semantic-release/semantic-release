@@ -62,6 +62,7 @@
     "c8": "8.0.1",
     "clear-module": "4.1.2",
     "codecov": "3.8.3",
+    "cz-conventional-changelog": "3.3.0",
     "dockerode": "3.3.5",
     "file-url": "4.0.0",
     "fs-extra": "11.1.1",
@@ -138,6 +139,11 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/semantic-release/semantic-release.git"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   },
   "scripts": {
     "codecov": "codecov -f coverage/coverage-final.json",
