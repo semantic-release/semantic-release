@@ -146,7 +146,7 @@ If possible, make [atomic commits](https://en.wikipedia.org/wiki/Atomic_commit),
 
 - a commit should contain exactly one self-contained functional change
 - a functional change should be contained in exactly one commit
-- a commit should not create an inconsistent state (such as test errors, linting errors, partial fix, feature with documentation etc...)
+- a commit should not create an inconsistent state (such as test errors, linting errors, partial fix, feature without documentation, etc...)
 
 A complex feature can be broken down into multiple commits as long as each one maintains a consistent state and consists of a self-contained change.
 
@@ -241,42 +241,82 @@ $ git clone https://github.com/semantic-release/<repo-name>
 $ cd <repo-name>
 # Assign the original repo to a remote called "upstream"
 $ git remote add upstream https://github.com/semantic-release/<repo-name>
+# Switch your node version to the version defined by the project as the development version
+# This step assumes you have already installed and configured https://github.com/nvm-sh/nvm
+# You may need to run `nvm install` if you have not already installed the development node version
+$ nvm use
 # Install the dependencies
 $ npm install
 ```
 
-### Lint
+### Verification
 
-All the [semantic-release](https://github.com/semantic-release) repositories use [XO](https://github.com/sindresorhus/xo) for linting and [Prettier](https://prettier.io) for formatting.
-Prettier formatting will be automatically verified and fixed by XO.
+The `test` script is structured to execute as much of the verification for the project as possible.
+Ensuring that the `test` script fully passes in the node version defined as the development version in the `.nvmrc`
+minimizes the chances of the test workflow failing after pushing your changes.
 
-Before pushing your code changes make sure there are no linting errors with `npm run lint`.
+> [!IMPORTANT]
+> Before pushing your code changes, be sure to run the verification for the project with `npm test`.
 
-**Tips**:
+[npm-run-all2](https://www.npmjs.com/package/npm-run-all2) is used to enable running multiple independent lint and test
+scripts together from the `test` script.
+This enables the test script to not only run all scripts, but also parallelize some of the scripts to optimize the overall
+time required for verification.
 
-- Most linting errors can be automatically fixed with `npm run lint -- --fix`.
-- Install the [XO plugin](https://github.com/sindresorhus/xo#editor-plugins) for your editor to see linting errors directly in your editor and automatically fix them on save.
+When a failure occurs with the `test`, the output can be a bit confusing because there may be output from multiple parallel
+scripts mixed together.
+To investigate the failure with cleaner output, re-run the problematic script directly using the script name from the label
+included on the left side of the output
 
-### Tests
+```shell
+$ npm run <script-name>
+```
 
-Running the integration test requires you to install [Docker](https://docs.docker.com/engine/installation) on your machine.
+#### Lint
+
+##### Prettier
+
+All the [semantic-release](https://github.com/semantic-release) repositories use [Prettier](https://prettier.io) for formatting.
+Prettier formatting will be automatically verified by the `lint:prettier` script, included in the `test` script.
+
+> [!NOTE]
+> Most linting errors can be automatically fixed with `npm run lint:prettier:fix`.
+
+##### Other Lint Tools
+
+Other tools are used for specific compatibility concerns, but are less likely to result in failures in common contributions.
+Please follow the guidance of these tools if failures are encountered.
+
+#### Tests
+
+> [!NOTE]
+> Before pushing your code changes make sure all **tests pass** and the unit test **coverage is 100%**:
 
 All the [semantic-release](https://github.com/semantic-release) repositories use [AVA](https://github.com/avajs/ava) for writing and running tests.
 
-Before pushing your code changes make sure all **tests pass** and the **coverage is 100%**:
-
-```bash
-$ npm run test
-```
-
-**Tips:** During development you can:
+During development, you can:
 
 - run only a subset of test files with `ava <glob>`, for example `ava test/mytestfile.test.js`
 - run in watch mode with `ava -w` to automatically run a test file when you modify it
 - run only the test you are working on by adding [`.only` to the test definition](https://github.com/avajs/ava#running-specific-tests)
 
+##### Unit Tests
+
+```bash
+$ npm run test:unit
+```
+
+##### Integration Tests
+
+> [!IMPORTANT]
+> Running the integration test requires you to install [Docker](https://docs.docker.com/engine/installation) on your machine.
+
+```bash
+$ npm run test:integration
+```
+
 ### Commits
 
 All the [semantic-release](https://github.com/semantic-release) repositories use [Commitizen](https://github.com/commitizen/cz-cli) to help you create [valid commit messages](#commit-message-guidelines).
 
-After staging your changes with `git add`, run `npm run cm` to start the interactive commit message CLI.
+Assuming you have [installed Commitizen](https://github.com/commitizen/cz-cli#installing-the-command-line-tool), run `git cz` to start the interactive commit message CLI rather than `git commit` when committing.

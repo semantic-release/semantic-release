@@ -1853,10 +1853,19 @@ test.serial("Throw an Error if plugin returns an unexpected value", async (t) =>
   await td.replaceEsm("../lib/get-logger.js", null, () => t.context.logger);
   await td.replaceEsm("env-ci", null, () => ({ isCi: true, branch: "master", isPr: false }));
   const semanticRelease = (await import("../index.js")).default;
-  const error = await t.throwsAsync(
-    semanticRelease(options, { cwd, env: {}, stdout: new WritableStreamBuffer(), stderr: new WritableStreamBuffer() }),
-    { instanceOf: SemanticReleaseError }
-  );
+
+  let error;
+  try {
+    await semanticRelease(options, {
+      cwd,
+      env: {},
+      stdout: new WritableStreamBuffer(),
+      stderr: new WritableStreamBuffer(),
+    });
+  } catch (e) {
+    error = e;
+  }
+  t.is(error.code, "EANALYZECOMMITSOUTPUT");
   t.regex(error.details, /string/);
 });
 

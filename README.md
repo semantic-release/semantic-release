@@ -7,6 +7,9 @@
   <a href="https://github.com/semantic-release/semantic-release/actions?query=workflow%3ATest+branch%3Amaster">
     <img alt="Build states" src="https://github.com/semantic-release/semantic-release/workflows/Test/badge.svg">
   </a>
+  <a href="https://securityscorecards.dev/viewer/?uri=github.com/semantic-release/semantic-release">
+    <img alt="OpenSSF Scorecard" src="https://api.securityscorecards.dev/projects/github.com/semantic-release/semantic-release/badge">
+  </a>
   <a href="#badge">
     <img alt="semantic-release: angular" src="https://img.shields.io/badge/semantic--release-angular-e10079?logo=semantic-release">
   </a>
@@ -41,6 +44,7 @@ This removes the immediate connection between human emotions and version numbers
 - Avoid potential errors associated with manual releases
 - Support any [package managers and languages](docs/recipes/release-workflow/README.md#package-managers-and-languages) via [plugins](docs/usage/plugins.md)
 - Simple and reusable configuration via [shareable configurations](docs/usage/shareable-configurations.md)
+- Support for [npm package provenance](https://github.com/semantic-release/npm#npm-provenance) that promotes increased supply-chain security via signed attestations on GitHub Actions
 
 ## How does it work?
 

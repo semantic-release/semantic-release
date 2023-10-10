@@ -1,11 +1,11 @@
-import path from "path";
+import path from "node:path";
+import { setTimeout } from "node:timers/promises";
 import test from "ava";
 import * as td from "testdouble";
 import { escapeRegExp } from "lodash-es";
 import fsExtra from "fs-extra";
 import { execa } from "execa";
 import { WritableStreamBuffer } from "stream-buffers";
-import delay from "delay";
 
 import getAuthUrl from "../lib/get-git-auth-url.js";
 import { SECRET_REPLACEMENT } from "../lib/definitions/constants.js";
@@ -35,7 +35,7 @@ let env;
 
 // Environment variables used only for the local npm command used to do verification
 const npmTestEnv = {
-  ...process.env,
+  ...processEnvWithoutGitHubActionsVariables,
   ...npmRegistry.authEnv(),
   npm_config_registry: npmRegistry.url,
 };
@@ -47,6 +47,7 @@ const pluginLogEnv = path.resolve("./test/fixtures/plugin-log-env");
 const pluginEsmNamedExports = path.resolve("./test/fixtures/plugin-esm-named-exports");
 
 test.before(async () => {
+  await Promise.all([gitbox.pull(), npmRegistry.pull(), mockServer.pull()]);
   await Promise.all([gitbox.start(), npmRegistry.start(), mockServer.start()]);
 
   env = {
@@ -295,7 +296,7 @@ test("Release patch, minor and major versions", async (t) => {
   t.is(exitCode, 0);
 
   // Wait for 3s as the change of dist-tag takes time to be reflected in the registry
-  await delay(3000);
+  await setTimeout(3000);
   // Retrieve the published package from the registry and check version and gitHead
   ({
     "dist-tags": { latest: releasedVersion },
@@ -515,8 +516,8 @@ test("Pass options via CLI arguments", async (t) => {
 });
 
 test("Run via JS API", async (t) => {
-  td.replace("../lib/logger", { log: () => {}, error: () => {}, stdout: () => {} });
-  td.replace("env-ci", () => ({ isCi: true, branch: "master", isPr: false }));
+  await td.replaceEsm("../lib/logger", null, { log: () => {}, error: () => {}, stdout: () => {} });
+  await td.replaceEsm("env-ci", null, () => ({ isCi: true, branch: "master", isPr: false }));
   const semanticRelease = (await import("../index.js")).default;
   const packageName = "test-js-api";
   const owner = "git";

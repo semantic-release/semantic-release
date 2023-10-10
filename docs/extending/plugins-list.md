@@ -84,6 +84,11 @@
   - `verifyRelease`: Checks and warns (does not error by default) if the version numbers found on maven central and within the Git project differ by quite a bit
   - `prepare`: Changes the version number in the `pom.xml` (or all `pom.xml` files in maven projects with multiple `pom.xml` files) and optionally creates a commit with this version number and pushes it to `master`
   - `publish`: Runs `mvn deploy` to deploy to maven central and optionally will update to next snapshot version and merge changes to development branch
+- [maven-semantic-release](https://github.com/terrestris/maven-semantic-release) (alternative version)
+  - `verifyConditions`: Verifies that the `mvn` command exists.
+  - `prepare`: Changes version number in `pom.xml` and optionally in all child modules.
+  - `publish`: Runs one of the mvn targets `deploy`, `package jib:build` or `deploy jib:build`.
+  - `success`: Optionally sets new snapshot version and commits it.
 - [semantic-release-ado](https://github.com/lluchmk/semantic-release-ado)
   - `prepare`: Stores the version number as an Azure DevOps pipeline variable available to downstream steps on the job
 - [gradle-semantic-release](https://github.com/KengoTODA/gradle-semantic-release-plugin)
@@ -107,7 +112,7 @@
   - `verifyConditions`: Verify the presence and the validity of the authentication and the assets option configuration.
   - `publish`: Publish a Gitea release, optionally uploading file assets.
   - `addChannel`: Update a Gitea release's pre-release field.
-- [@google/semantic-release-replace-plugin](https://github.com/google/semantic-release-replace-plugin)
+- [semantic-release-replace-plugin](https://github.com/jpoehnelt/semantic-release-replace-plugin)
   - `prepare`: Replace version strings in files using regex and glob.
 - [semantic-release-rubygem](https://github.com/Gusto/semantic-release-rubygem)
   - `verifyConditions`: Locate and validate a `.gemspec` file, locate and validate a `lib/**/version.rb` file, verify the presence of the `GEM_HOST_API_KEY` environment variable, and create a credentials file with the API key.
@@ -179,3 +184,15 @@
   - `generateNotes`: Generate the release notes with links to JIRA issues.
 - [semantic-release-tags](https://github.com/iamludal/semantic-release-tags)
   - `success`: Update `major` and `minor` tags.
+- [semantic-release-major-tag](https://github.com/doteric/semantic-release-major-tag)
+  - `success` Create major version tag, for example `v1`.
+- [semantic-release-yarn](https://github.com/hongaar/semantic-release-yarn)
+  - **Note**: this is an alternative to the default `@semantic-release/npm` plugin and adds support for monorepos.
+  - `verifyConditions` Verify Yarn 2 or higher is installed, verify the presence of a NPM auth token (either in an environment variable or a `.yarnrc.yml` file) and verify the authentication method is valid.
+  - `prepare` Update the `package.json` version and create the package tarball.
+  - `addChannel` Add a tag for the release.
+  - `publish` Publish to the npm registry.
+- [semantic-release-pub](https://github.com/zeshuaro/semantic-release-pub)
+  - `verifyConditions`: Verify the presence of the `pub.dev` authentication and release configuration
+  - `prepare`: Update the `pubspec.yaml` version
+  - `publish`: Publish the package onto the `pub.dev` registry

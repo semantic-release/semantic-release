@@ -158,14 +158,6 @@ Or with the `publishConfig.access` key in your project's `package.json`:
 }
 ```
 
-## Can I use semantic-release to publish a package on Artifactory?
-
-Any npm compatible registry is supported with the [`@semantic-release/npm`](https://github.com/semantic-release/npm) plugin. For Artifactory versions prior to 5.4, the legacy authentication has to be used (with `NPM_USERNAME`, `NPM_PASSWORD` and `NPM_EMAIL` [environment variables](https://github.com/semantic-release/npm#environment-variables)).
-
-See [npm registry authentication](https://github.com/semantic-release/npm#npm-registry-authentication) for more details.
-
-See [Artifactory - npm Registry](https://www.jfrog.com/confluence/display/RTF/Npm+Registry#NpmRegistry-AuthenticatingthenpmClient) documentation for Artifactory configuration.
-
 ## Can I manually trigger the release of a specific version?
 
 You can trigger a release by pushing to your Git repository. You deliberately cannot trigger a _specific_ version release, because this is the whole point of semantic-release.
@@ -203,7 +195,7 @@ If you need more control over the timing of releases, see [Triggering a release]
 
 ## Can I set the initial release version of my package to `0.0.1`?
 
-This is not supported by **semantic-release** as it's not considered a good practice, mostly because [Semantic Versioning](https://semver.org) rules applies differently to major version zero.
+This is not supported by semantic-release. [Semantic Versioning](https://semver.org/) rules apply differently to major version zero and supporting those differences is out of scope and not one of the goals of the semantic-release project.
 
 If your project is under heavy development, with frequent breaking changes, and is not production ready yet we recommend [publishing pre-releases](../recipes/release-workflow/pre-releases.md#publishing-pre-releases).
 

@@ -1,9 +1,8 @@
 import path, { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { setTimeout } from "node:timers/promises";
 import Docker from "dockerode";
-import getStream from "get-stream";
 import got from "got";
-import delay from "delay";
 import pRetry from "p-retry";
 
 const IMAGE = "verdaccio/verdaccio:5";
@@ -17,11 +16,20 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 let container, npmToken;
 
 /**
- * Download the `npm-registry-docker` Docker image, create a new container and start it.
+ * Download the `npm-registry-docker` Docker image
+ */
+export function pull() {
+  return docker.pull(IMAGE).then((stream) => {
+    return new Promise((resolve, reject) => {
+      docker.modem.followProgress(stream, (err, res) => (err ? reject(err) : resolve(res)));
+    });
+  });
+}
+
+/**
+ * create a new container and start it.
  */
 export async function start() {
-  await getStream(await docker.pull(IMAGE));
-
   container = await docker.createContainer({
     Tty: true,
     Image: IMAGE,
@@ -33,7 +41,7 @@ export async function start() {
   });
 
   await container.start();
-  await delay(4000);
+  await setTimeout(4000);
 
   try {
     // Wait for the registry to be ready
