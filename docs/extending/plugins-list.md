@@ -182,8 +182,6 @@
 - [semantic-release-jira-notes](https://github.com/iamludal/semantic-release-jira-notes)
   - `verifyConditions`: Validate the config options.
   - `generateNotes`: Generate the release notes with links to JIRA issues.
-- [semantic-release-tags](https://github.com/iamludal/semantic-release-tags)
-  - `success`: Update `major` and `minor` tags.
 - [semantic-release-major-tag](https://github.com/doteric/semantic-release-major-tag)
   - `success` Create major version tag, for example `v1`.
 - [semantic-release-yarn](https://github.com/hongaar/semantic-release-yarn)
