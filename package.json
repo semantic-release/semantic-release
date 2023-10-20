@@ -9,7 +9,6 @@
       "test/**/*.test.js",
       "!test/integration.test.js"
     ],
-    "failFast": true,
     "nodeArguments": [
       "--loader=testdouble",
       "--no-warnings"
