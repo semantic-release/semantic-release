@@ -96,7 +96,7 @@ test("Normalize and load plugin from function", async (t) => {
   t.is(typeof plugin, "function");
 });
 
-test("Normalize and load plugin that retuns multiple functions", async (t) => {
+test("Normalize and load plugin that returns multiple functions", async (t) => {
   const plugin = await normalize(
     { cwd, options: {}, logger: t.context.logger },
     "verifyConditions",

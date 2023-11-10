@@ -389,6 +389,92 @@ test.serial('Read configuration from an array of paths in "extends"', async (t) 
   t.deepEqual(result, { options: expectedOptions, plugins: pluginsConfig });
 });
 
+test.serial('Read configuration from an array of CJS files in "extends"', async (t) => {
+  // Create a git repository, set the current working directory at the root of the repo
+  const { cwd } = await gitRepo();
+  const pkgOptions = { extends: ["./shareable1.cjs", "./shareable2.cjs"] };
+  const options1 = {
+    verifyRelease: "verifyRelease1",
+    analyzeCommits: { path: "analyzeCommits1", param: "analyzeCommits_param1" },
+    branches: ["test_branch"],
+    repositoryUrl: "https://host.null/owner/module.git",
+  };
+  const options2 = {
+    verifyRelease: "verifyRelease2",
+    generateNotes: "generateNotes2",
+    analyzeCommits: { path: "analyzeCommits2", param: "analyzeCommits_param2" },
+    branches: ["test_branch"],
+    tagFormat: `v\${version}`,
+    plugins: false,
+  };
+  // Create package.json and shareable.json in repository root
+  await outputJson(path.resolve(cwd, "package.json"), { release: pkgOptions });
+  await writeFile(path.resolve(cwd, "shareable1.cjs"), `module.exports = ${JSON.stringify(options1)}`);
+  await writeFile(path.resolve(cwd, "shareable2.cjs"), `module.exports = ${JSON.stringify(options2)}`);
+  const expectedOptions = { ...options1, ...options2, branches: ["test_branch"] };
+  // Verify the plugins module is called with the plugin options from shareable1.mjs and shareable2.mjs
+  td.when(
+    plugins(
+      { options: expectedOptions, cwd },
+      {
+        verifyRelease1: "./shareable1.cjs",
+        verifyRelease2: "./shareable2.cjs",
+        generateNotes2: "./shareable2.cjs",
+        analyzeCommits1: "./shareable1.cjs",
+        analyzeCommits2: "./shareable2.cjs",
+      }
+    )
+  ).thenResolve(pluginsConfig);
+
+  const result = await t.context.getConfig({ cwd });
+
+  // Verify the options contains the plugin config from shareable1.json and shareable2.json
+  t.deepEqual(result, { options: expectedOptions, plugins: pluginsConfig });
+});
+
+test.serial('Read configuration from an array of ESM files in "extends"', async (t) => {
+  // Create a git repository, set the current working directory at the root of the repo
+  const { cwd } = await gitRepo();
+  const pkgOptions = { extends: ["./shareable1.mjs", "./shareable2.mjs"] };
+  const options1 = {
+    verifyRelease: "verifyRelease1",
+    analyzeCommits: { path: "analyzeCommits1", param: "analyzeCommits_param1" },
+    branches: ["test_branch"],
+    repositoryUrl: "https://host.null/owner/module.git",
+  };
+  const options2 = {
+    verifyRelease: "verifyRelease2",
+    generateNotes: "generateNotes2",
+    analyzeCommits: { path: "analyzeCommits2", param: "analyzeCommits_param2" },
+    branches: ["test_branch"],
+    tagFormat: `v\${version}`,
+    plugins: false,
+  };
+  // Create package.json and shareable.json in repository root
+  await outputJson(path.resolve(cwd, "package.json"), { release: pkgOptions });
+  await writeFile(path.resolve(cwd, "shareable1.mjs"), `export default ${JSON.stringify(options1)}`);
+  await writeFile(path.resolve(cwd, "shareable2.mjs"), `export default ${JSON.stringify(options2)}`);
+  const expectedOptions = { ...options1, ...options2, branches: ["test_branch"] };
+  // Verify the plugins module is called with the plugin options from shareable1.mjs and shareable2.mjs
+  td.when(
+    plugins(
+      { options: expectedOptions, cwd },
+      {
+        verifyRelease1: "./shareable1.mjs",
+        verifyRelease2: "./shareable2.mjs",
+        generateNotes2: "./shareable2.mjs",
+        analyzeCommits1: "./shareable1.mjs",
+        analyzeCommits2: "./shareable2.mjs",
+      }
+    )
+  ).thenResolve(pluginsConfig);
+
+  const result = await t.context.getConfig({ cwd });
+
+  // Verify the options contains the plugin config from shareable1.json and shareable2.json
+  t.deepEqual(result, { options: expectedOptions, plugins: pluginsConfig });
+});
+
 test.serial('Prioritize configuration from config file over "extends"', async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const { cwd } = await gitRepo();
