@@ -68,7 +68,7 @@
     "got": "13.0.0",
     "js-yaml": "4.1.0",
     "lockfile-lint": "4.12.1",
-    "ls-engines": "0.9.0",
+    "ls-engines": "0.9.1",
     "mockserver-client": "5.15.0",
     "nock": "13.3.8",
     "npm-run-all2": "6.1.1",
