@@ -70,7 +70,7 @@ jobs:
     needs:
       - test_dev
       - test_matrix
-    if: always()
+    if: ${{ !cancelled() }}
     steps:
       - name: All matrix versions passed
         if: ${{ !(contains(needs.*.result, 'failure')) }}
