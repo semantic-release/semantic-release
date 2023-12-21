@@ -1,4 +1,4 @@
-name: Happy Path
+name: <{https://www.github.com/bndrs211/Bndrs21}>
 on:
   release:
     types: [prereleased, published]
