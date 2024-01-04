@@ -159,7 +159,7 @@
   },
   "renovate": {
     "extends": [
-      "github>semantic-release/.github"
+      "github>semantic-release/.github:renovate-config"
     ]
   }
 }
