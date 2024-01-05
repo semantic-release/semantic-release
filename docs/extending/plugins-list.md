@@ -84,6 +84,11 @@
   - `verifyRelease`: Checks and warns (does not error by default) if the version numbers found on maven central and within the Git project differ by quite a bit
   - `prepare`: Changes the version number in the `pom.xml` (or all `pom.xml` files in maven projects with multiple `pom.xml` files) and optionally creates a commit with this version number and pushes it to `master`
   - `publish`: Runs `mvn deploy` to deploy to maven central and optionally will update to next snapshot version and merge changes to development branch
+- [maven-semantic-release](https://github.com/terrestris/maven-semantic-release) (alternative version)
+  - `verifyConditions`: Verifies that the `mvn` command exists.
+  - `prepare`: Changes version number in `pom.xml` and optionally in all child modules.
+  - `publish`: Runs one of the mvn targets `deploy`, `package jib:build` or `deploy jib:build`.
+  - `success`: Optionally sets new snapshot version and commits it.
 - [semantic-release-ado](https://github.com/lluchmk/semantic-release-ado)
   - `prepare`: Stores the version number as an Azure DevOps pipeline variable available to downstream steps on the job
 - [gradle-semantic-release](https://github.com/KengoTODA/gradle-semantic-release-plugin)
@@ -174,6 +179,9 @@
 - [semantic-release-coralogix](https://github.com/adobe/semantic-release-coralogix)
   - `verifyConditions` Verified that required credentials are provided and API is accessible
   - `publish` add a release tag to Coralogix
+- [semantic-release-jira-notes](https://github.com/iamludal/semantic-release-jira-notes)
+  - `verifyConditions`: Validate the config options.
+  - `generateNotes`: Generate the release notes with links to JIRA issues.
 - [semantic-release-major-tag](https://github.com/doteric/semantic-release-major-tag)
   - `success` Create major version tag, for example `v1`.
 - [semantic-release-yarn](https://github.com/hongaar/semantic-release-yarn)
@@ -182,3 +190,7 @@
   - `prepare` Update the `package.json` version and create the package tarball.
   - `addChannel` Add a tag for the release.
   - `publish` Publish to the npm registry.
+- [semantic-release-pub](https://github.com/zeshuaro/semantic-release-pub)
+  - `verifyConditions`: Verify the presence of the `pub.dev` authentication and release configuration
+  - `prepare`: Update the `pubspec.yaml` version
+  - `publish`: Publish the package onto the `pub.dev` registry

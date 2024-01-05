@@ -69,7 +69,7 @@ The table below shows which commit message gets you which release type when `sem
 ### Automation with CI
 
 **semantic-release** is meant to be executed on the CI environment after every successful build on the release branch.
-This way no human is directly involved in the release process and the releases are guaranteed to be [unromantic and unsentimental](http://sentimentalversioning.org).
+This way no human is directly involved in the release process and the releases are guaranteed to be [unromantic and unsentimental](https://github.com/dominictarr/sentimental-versioning#readme).
 
 ### Triggering a release
 
@@ -110,9 +110,9 @@ In order to use **semantic-release** you need:
 ## Documentation
 
 - Usage
-  - [Getting started](docs/usage/getting-started.md#getting-started)
-  - [Installation](docs/usage/installation.md#installation)
-  - [CI Configuration](docs/usage/ci-configuration.md#ci-configuration)
+  - [Getting started](docs/usage/getting-started.md)
+  - [Installation](docs/usage/installation.md)
+  - [CI Configuration](docs/usage/ci-configuration.md)
   - [Configuration](docs/usage/configuration.md#configuration)
   - [Plugins](docs/usage/plugins.md)
   - [Workflow configuration](docs/usage/workflow-configuration.md)

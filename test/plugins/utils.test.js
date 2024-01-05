@@ -52,7 +52,7 @@ test("validateStep: optional plugin configuration", (t) => {
   t.true(validateStep(type, { path: () => {}, options: "value" }));
   t.false(validateStep(type, { path: null }));
 
-  // Considered as an Array of 2 definitions and not as one Array definition in case of a muliple plugin type
+  // Considered as an Array of 2 definitions and not as one Array definition in case of a multiple plugin type
   t.false(validateStep(type, [() => {}, { options: "value" }]));
   t.false(validateStep(type, ["plugin-path.js", { options: "value" }]));
 
@@ -134,7 +134,7 @@ test("validateStep: required plugin configuration", (t) => {
   t.true(validateStep(type, { path: () => {}, options: "value" }));
   t.false(validateStep(type, { path: null }));
 
-  // Considered as an Array of 2 definitions and not as one Array definition in the case of a muliple plugin type
+  // Considered as an Array of 2 definitions and not as one Array definition in the case of a multiple plugin type
   t.false(validateStep(type, [() => {}, { options: "value" }]));
   t.false(validateStep(type, ["plugin-path.js", { options: "value" }]));
 
