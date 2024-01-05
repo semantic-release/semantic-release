@@ -59,11 +59,11 @@
   },
   "devDependencies": {
     "ava": "6.0.1",
-    "c8": "8.0.1",
+    "c8": "9.0.0",
     "clear-module": "4.1.2",
     "codecov": "3.8.3",
     "cz-conventional-changelog": "3.3.0",
-    "dockerode": "4.0.0",
+    "dockerode": "4.0.2",
     "file-url": "4.0.0",
     "fs-extra": "11.2.0",
     "got": "14.0.0",
@@ -73,9 +73,9 @@
     "mockserver-client": "5.15.0",
     "nock": "13.4.0",
     "npm-run-all2": "6.1.1",
-    "p-retry": "6.1.0",
+    "p-retry": "6.2.0",
     "prettier": "3.1.1",
-    "publint": "0.2.6",
+    "publint": "0.2.7",
     "sinon": "17.0.1",
     "stream-buffers": "3.0.2",
     "tempy": "3.1.0",
@@ -159,7 +159,7 @@
   },
   "renovate": {
     "extends": [
-      "github>semantic-release/.github"
+      "github>semantic-release/.github:renovate-config"
     ]
   }
 }
