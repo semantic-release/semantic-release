@@ -25,9 +25,9 @@ jobs:
     strategy:
       matrix:
         node-version:
-          - 18.17.0
-          - 20.6.1
+          - 20.8.1
           - 20
+          - 21
 
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -70,7 +70,7 @@ jobs:
     needs:
       - test_dev
       - test_matrix
-    if: always()
+    if: ${{ !cancelled() }}
     steps:
       - name: All matrix versions passed
         if: ${{ !(contains(needs.*.result, 'failure')) }}
