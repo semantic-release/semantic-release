@@ -18,7 +18,7 @@ import getBranches from "./lib/branches/index.js";
 import getLogger from "./lib/get-logger.js";
 import { addNote, getGitHead, getTagHead, isBranchUpToDate, push, pushNotes, tag, verifyAuth } from "./lib/git.js";
 import getError from "./lib/get-error.js";
-import { COMMIT_EMAIL, COMMIT_NAME } from "./lib/definitions/constants.js";
+import { COMMIT_EMAIL, COMMIT_NAME, PREPARE_LIFECYCLE, PUBLISH_LIFECYCLE } from "./lib/definitions/constants.js";
 
 const require = createRequire(import.meta.url);
 const pkg = require("./package.json");
@@ -201,19 +201,17 @@ async function run(context, plugins) {
 
   await plugins.prepare(context);
 
-  if (options.dryRun) {
-    logger.warn(`Skip ${nextRelease.gitTag} tag creation in dry-run mode`);
-  } else {
-    // Create the tag before calling the publish plugins as some require the tag to exists
-    await tag(nextRelease.gitTag, nextRelease.gitHead, { cwd, env });
-    await addNote({ channels: [nextRelease.channel] }, nextRelease.gitTag, { cwd, env });
-    await push(options.repositoryUrl, { cwd, env });
-    await pushNotes(options.repositoryUrl, nextRelease.gitTag, { cwd, env });
-    logger.success(`Created tag ${nextRelease.gitTag}`);
+  // Legacy - some plugins were relying on the tag before publishing
+  if (options.tagReleaseAfter === PREPARE_LIFECYCLE) {
+    await applyTag(nextRelease, options, cwd, env, logger);
   }
 
   const releases = await plugins.publish(context);
   context.releases.push(...releases);
+
+  if (options.tagReleaseAfter === PUBLISH_LIFECYCLE) {
+    await applyTag(nextRelease, options, cwd, env, logger);
+  }
 
   await plugins.success({ ...context, releases });
 
@@ -253,6 +251,27 @@ async function callFail(context, plugins, err) {
     } catch (error) {
       await logErrors(context, error);
     }
+  }
+}
+
+/**
+ * Applies semantic-relesae tags to the current commit to mark the release as succeeded
+ *
+ * @param {*} nextRelease - the nextRelease object created after prepare
+ * @param {*} options - the options for semantic-release
+ * @param {*} cwd
+ * @param {*} env
+ */
+async function applyTag(nextRelease, options, cwd, env, logger) {
+  if (options.dryRun) {
+    logger.warn(`Skip ${nextRelease.gitTag} tag creation in dry-run mode`);
+  } else {
+    // Create the tag before calling the publish plugins as some require the tag to exists
+    await tag(nextRelease.gitTag, nextRelease.gitHead, { cwd, env });
+    await addNote({ channels: [nextRelease.channel] }, nextRelease.gitTag, { cwd, env });
+    await push(options.repositoryUrl, { cwd, env });
+    await pushNotes(options.repositoryUrl, nextRelease.gitTag, { cwd, env });
+    logger.success(`Created tag ${nextRelease.gitTag}`);
   }
 }
 

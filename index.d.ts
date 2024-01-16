@@ -638,6 +638,17 @@ declare module "semantic-release" {
     tagFormat?: string | undefined;
 
     /**
+     * When to tag our commit with the version tag.  Keep in mind, that tagging
+     * this commit means that semantic-release will not re-run on that commit.
+     * 
+     * By default, we tag right after prepare due to a legacy consideration for plugins
+     * that were publishing based off of the tag being there.  It is recommended 
+     * that you set this to 'publish' however, so that you can be sure that all appropriate
+     * actions were taken effectively.
+     */
+    tagReleaseAfter?: 'prepare' | 'publish'
+
+    /**
      * Define the list of plugins to use. Plugins will run in series, in
      * the order defined, for each [step](https://semantic-release.gitbook.io/semantic-release/#release-steps)
      * if they implement it.

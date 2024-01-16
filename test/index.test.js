@@ -5,13 +5,20 @@ import { spy, stub } from "sinon";
 import { WritableStreamBuffer } from "stream-buffers";
 import AggregateError from "aggregate-error";
 import SemanticReleaseError from "@semantic-release/error";
-import { COMMIT_EMAIL, COMMIT_NAME, SECRET_REPLACEMENT } from "../lib/definitions/constants.js";
+import {
+  COMMIT_EMAIL,
+  COMMIT_NAME,
+  PREPARE_LIFECYCLE,
+  PUBLISH_LIFECYCLE,
+  SECRET_REPLACEMENT,
+} from "../lib/definitions/constants.js";
 import {
   gitAddNote,
   gitCheckout,
   gitCommits,
   gitGetNote,
   gitHead as getGitHead,
+  gitCommitTag,
   gitPush,
   gitRemoteTagHead,
   gitRepo,
@@ -95,6 +102,7 @@ test.serial("Plugins are called with expected values", async (t) => {
     originalRepositoryURL: repositoryUrl,
     globalOpt: "global",
     tagFormat: `v\${version}`,
+    tagReleaseAfter: PREPARE_LIFECYCLE,
   };
   const branches = [
     {
@@ -413,7 +421,13 @@ test.serial("Use custom tag format", async (t) => {
     gitTag: "test-2.0.0",
   };
   const notes = "Release notes";
-  const config = { branches: "master", repositoryUrl, globalOpt: "global", tagFormat: `test-\${version}` };
+  const config = {
+    branches: "master",
+    repositoryUrl,
+    globalOpt: "global",
+    tagFormat: `test-\${version}`,
+    tagReleaseAfter: PREPARE_LIFECYCLE,
+  };
   const options = {
     ...config,
     verifyConditions: stub().resolves(),
@@ -424,6 +438,127 @@ test.serial("Use custom tag format", async (t) => {
     prepare: stub().resolves(),
     publish: stub().resolves(),
     success: stub().resolves(),
+    fail: stub().resolves(),
+  };
+
+  await td.replaceEsm("../lib/get-logger.js", null, () => t.context.logger);
+  await td.replaceEsm("env-ci", null, () => ({ isCi: true, branch: "master", isPr: false }));
+  const semanticRelease = (await import("../index.js")).default;
+  t.truthy(
+    await semanticRelease(options, {
+      cwd,
+      env: {},
+      stdout: new WritableStreamBuffer(),
+      stderr: new WritableStreamBuffer(),
+    })
+  );
+
+  // Verify the tag has been created on the local and remote repo and reference the gitHead
+  t.is(await gitTagHead(nextRelease.gitTag, { cwd }), nextRelease.gitHead);
+  t.is(await gitRemoteTagHead(repositoryUrl, nextRelease.gitTag, { cwd }), nextRelease.gitHead);
+});
+
+test.serial("Tags after successful prepare phase", async (t) => {
+  const { cwd, repositoryUrl } = await gitRepo(true);
+  await gitCommits(["First"], { cwd });
+  await gitTagVersion("test-1.0.0", undefined, { cwd });
+  await gitCommits(["Second"], { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
+
+  const nextRelease = {
+    name: "test-2.0.0",
+    type: "major",
+    version: "2.0.0",
+    gitHead: await getGitHead({ cwd }),
+    gitTag: "test-2.0.0",
+  };
+  const notes = "Release notes";
+  const config = {
+    branches: "master",
+    repositoryUrl,
+    globalOpt: "global",
+    tagFormat: `test-\${version}`,
+    tagReleaseAfter: PREPARE_LIFECYCLE,
+  };
+  const options = {
+    ...config,
+    verifyConditions: stub().resolves(),
+    analyzeCommits: stub().resolves(nextRelease.type),
+    verifyRelease: stub().resolves(),
+    generateNotes: stub().resolves(notes),
+    addChannel: stub().resolves(),
+    prepare: stub().callsFake(async () => {
+      // Verify no tag has been added to the head yet
+      t.is(await gitCommitTag(nextRelease.gitHead, { cwd }), "");
+    }),
+    publish: stub().callsFake(async () => {
+      // Verify the tag has been created on the local and remote repo and reference the gitHead
+      t.is(await gitTagHead(nextRelease.gitTag, { cwd }), nextRelease.gitHead);
+      t.is(await gitRemoteTagHead(repositoryUrl, nextRelease.gitTag, { cwd }), nextRelease.gitHead);
+    }),
+    success: stub().resolves(),
+    fail: stub().resolves(),
+  };
+
+  await td.replaceEsm("../lib/get-logger.js", null, () => t.context.logger);
+  await td.replaceEsm("env-ci", null, () => ({ isCi: true, branch: "master", isPr: false }));
+  const semanticRelease = (await import("../index.js")).default;
+  t.truthy(
+    await semanticRelease(options, {
+      cwd,
+      env: {},
+      stdout: new WritableStreamBuffer(),
+      stderr: new WritableStreamBuffer(),
+    })
+  );
+
+  // Verify the tag has been created on the local and remote repo and reference the gitHead
+  t.is(await gitTagHead(nextRelease.gitTag, { cwd }), nextRelease.gitHead);
+  t.is(await gitRemoteTagHead(repositoryUrl, nextRelease.gitTag, { cwd }), nextRelease.gitHead);
+});
+
+test.serial("Tags after successful publish phase when specified", async (t) => {
+  const { cwd, repositoryUrl } = await gitRepo(true);
+  await gitCommits(["First"], { cwd });
+  await gitTagVersion("test-1.0.0", undefined, { cwd });
+  await gitCommits(["Second"], { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
+
+  const nextRelease = {
+    name: "test-2.0.0",
+    type: "major",
+    version: "2.0.0",
+    gitHead: await getGitHead({ cwd }),
+    gitTag: "test-2.0.0",
+  };
+  const notes = "Release notes";
+  const config = {
+    branches: "master",
+    repositoryUrl,
+    globalOpt: "global",
+    tagFormat: `test-\${version}`,
+    tagReleaseAfter: PUBLISH_LIFECYCLE,
+  };
+  const options = {
+    ...config,
+    verifyConditions: stub().resolves(),
+    analyzeCommits: stub().resolves(nextRelease.type),
+    verifyRelease: stub().resolves(),
+    generateNotes: stub().resolves(notes),
+    addChannel: stub().resolves(),
+    prepare: stub().callsFake(async () => {
+      // Verify no tag has been added to the head yet
+      t.is(await gitCommitTag(nextRelease.gitHead, { cwd }), "");
+    }),
+    publish: stub().callsFake(async () => {
+      // Verify no tag has been added to the head yet
+      t.is(await gitCommitTag(nextRelease.gitHead, { cwd }), "");
+    }),
+    success: stub().callsFake(async () => {
+      // Verify the tag has been created on the local and remote repo and reference the gitHead
+      t.is(await gitTagHead(nextRelease.gitTag, { cwd }), nextRelease.gitHead);
+      t.is(await gitRemoteTagHead(repositoryUrl, nextRelease.gitTag, { cwd }), nextRelease.gitHead);
+    }),
     fail: stub().resolves(),
   };
 
@@ -540,7 +675,12 @@ test.serial("Make a new release when a commit is forward-ported to an upper bran
   const publish = stub().resolves();
   const success = stub().resolves();
 
-  const config = { branches: [{ name: "1.0.x" }, { name: "master" }], repositoryUrl, tagFormat: `v\${version}` };
+  const config = {
+    branches: [{ name: "1.0.x" }, { name: "master" }],
+    repositoryUrl,
+    tagFormat: `v\${version}`,
+    tagReleaseAfter: PREPARE_LIFECYCLE,
+  };
   const options = {
     ...config,
     verifyConditions,
@@ -768,6 +908,7 @@ test.serial("Do not add pre-releases to a different channel", async (t) => {
     branches: [{ name: "master" }, { name: "beta", prerelease: "beta" }],
     repositoryUrl,
     tagFormat: `v\${version}`,
+    tagReleaseAfter: PREPARE_LIFECYCLE,
   };
 
   const options = {
@@ -831,6 +972,7 @@ async function addChannelMacro(t, mergeFunction) {
     ],
     repositoryUrl,
     tagFormat: `v\${version}`,
+    tagReleaseAfter: PREPARE_LIFECYCLE,
   };
   const options = {
     ...config,
@@ -907,6 +1049,7 @@ test.serial('Call all "success" plugins even if one errors out', async (t) => {
     repositoryUrl,
     globalOpt: "global",
     tagFormat: `v\${version}`,
+    tagReleaseAfter: PREPARE_LIFECYCLE,
   };
   const options = {
     ...config,
@@ -957,6 +1100,7 @@ test.serial('Log all "verifyConditions" errors', async (t) => {
     repositoryUrl,
     originalRepositoryURL: repositoryUrl,
     tagFormat: `v\${version}`,
+    tagReleaseAfter: PREPARE_LIFECYCLE,
   };
   const options = {
     ...config,
@@ -1007,7 +1151,12 @@ test.serial('Log all "verifyRelease" errors', async (t) => {
   const error1 = new SemanticReleaseError("error 1", "ERR1");
   const error2 = new SemanticReleaseError("error 2", "ERR2");
   const fail = stub().resolves();
-  const config = { branches: [{ name: "master" }], repositoryUrl, tagFormat: `v\${version}` };
+  const config = {
+    branches: [{ name: "master" }],
+    repositoryUrl,
+    tagFormat: `v\${version}`,
+    tagReleaseAfter: PREPARE_LIFECYCLE,
+  };
   const options = {
     ...config,
     verifyConditions: stub().resolves(),
@@ -1444,6 +1593,7 @@ test.serial(
       branches: [{ name: "1.x" }, { name: "master" }],
       repositoryUrl,
       tagFormat: `v\${version}`,
+      tagReleaseAfter: PREPARE_LIFECYCLE,
     };
     const options = {
       ...config,
@@ -1498,6 +1648,7 @@ test.serial('Throws "EINVALIDNEXTVERSION" if next release is out of range of the
     branches: [{ name: "master" }, { name: "next" }, { name: "next-major" }],
     repositoryUrl,
     tagFormat: `v\${version}`,
+    tagReleaseAfter: PREPARE_LIFECYCLE,
   };
   const options = {
     ...config,
@@ -1554,7 +1705,12 @@ test.serial('Throws "EINVALIDMAINTENANCEMERGE" if merge an out of range release 
   const success = stub().resolves();
   const fail = stub().resolves();
 
-  const config = { branches: [{ name: "master" }, { name: "1.1.x" }], repositoryUrl, tagFormat: `v\${version}` };
+  const config = {
+    branches: [{ name: "master" }, { name: "1.1.x" }],
+    repositoryUrl,
+    tagFormat: `v\${version}`,
+    tagReleaseAfter: PREPARE_LIFECYCLE,
+  };
   const options = {
     ...config,
     verifyConditions,

@@ -72,6 +72,8 @@ test.serial("Pass options to semantic-release API", async (t) => {
     "fail2",
     "--debug",
     "-d",
+    "--tag-release-after",
+    "publish",
   ];
   const index = await td.replaceEsm("../index.js");
   process.argv = argv;
@@ -111,6 +113,8 @@ test.serial("Pass options to semantic-release API", async (t) => {
       debug: true,
       _: [],
       $0: "",
+      "tag-release-after": "publish",
+      tagReleaseAfter: "publish",
     })
   );
 

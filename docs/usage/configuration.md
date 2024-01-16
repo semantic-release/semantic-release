@@ -115,6 +115,19 @@ The [Git tag](https://git-scm.com/book/en/v2/Git-Basics-Tagging) format used by 
 
 **Note**: The `tagFormat` must contain the `version` variable exactly once and compile to a [valid Git reference](https://git-scm.com/docs/git-check-ref-format#_description).
 
+### tagReleaseAfter
+
+Type: `prepare | publish`<br>
+Default: `prepare`<br>
+CLI arguments: `--tag-release-after`
+
+After which [lifecycle](plugins.md) to apply this git tag to the commit that is being released. Keep in mind, that once a tag has been applied to a commit, it means that
+semantic-relesae will not re-run for that commit.
+
+Note, the default behavior is in line with a legacy pattern that was made to accomodate for some plugins that assumed the tag would already
+be there before their publish call. It is recommended that you set this to be after 'publish' to ensure that you do not create false positives
+for your releases, but will require you to confirm that your plugins' publish methods work.
+
 ### plugins
 
 Type: `Array`<br>

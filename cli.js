@@ -37,6 +37,7 @@ Usage:
     .option("debug", { describe: "Output debugging information", type: "boolean", group: "Options" })
     .option("d", { alias: "dry-run", describe: "Skip publishing", type: "boolean", group: "Options" })
     .option("h", { alias: "help", group: "Options" })
+    .option("tag-release-after", { describe: "After when to apply the release tag", type: "string", group: "Options" })
     .strict(false)
     .exitProcess(false);
 

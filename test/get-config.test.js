@@ -6,6 +6,7 @@ import { omit } from "lodash-es";
 import * as td from "testdouble";
 import yaml from "js-yaml";
 import { gitAddConfig, gitCommits, gitRepo, gitShallowClone, gitTagVersion } from "./helpers/git-utils.js";
+import { PREPARE_LIFECYCLE, PUBLISH_LIFECYCLE } from "../lib/definitions/constants.js";
 
 const { outputJson, writeFile } = fsExtra;
 const pluginsConfig = { foo: "bar", baz: "qux" };
@@ -118,6 +119,7 @@ test.serial("Read options from package.json", async (t) => {
     branches: ["test_branch"],
     repositoryUrl: "https://host.null/owner/module.git",
     tagFormat: `v\${version}`,
+    tagReleaseAfter: PUBLISH_LIFECYCLE,
     plugins: false,
   };
   // Verify the plugins module is called with the plugin options from package.json
@@ -139,6 +141,7 @@ test.serial("Read options from .releaserc.yml", async (t) => {
     branches: ["test_branch"],
     repositoryUrl: "https://host.null/owner/module.git",
     tagFormat: `v\${version}`,
+    tagReleaseAfter: PUBLISH_LIFECYCLE,
     plugins: false,
   };
   // Create package.json in repository root
@@ -160,6 +163,7 @@ test.serial("Read options from .releaserc.json", async (t) => {
     branches: ["test_branch"],
     repositoryUrl: "https://host.null/owner/module.git",
     tagFormat: `v\${version}`,
+    tagReleaseAfter: PUBLISH_LIFECYCLE,
     plugins: false,
   };
   // Create package.json in repository root
@@ -181,6 +185,7 @@ test.serial("Read options from .releaserc.js", async (t) => {
     branches: ["test_branch"],
     repositoryUrl: "https://host.null/owner/module.git",
     tagFormat: `v\${version}`,
+    tagReleaseAfter: PUBLISH_LIFECYCLE,
     plugins: false,
   };
   // Create package.json in repository root
@@ -202,6 +207,7 @@ test.serial("Read options from .releaserc.cjs", async (t) => {
     branches: ["test_branch"],
     repositoryUrl: "https://host.null/owner/module.git",
     tagFormat: `v\${version}`,
+    tagReleaseAfter: PUBLISH_LIFECYCLE,
     plugins: false,
   };
   // Create .releaserc.cjs in repository root
@@ -223,6 +229,7 @@ test.serial("Read options from release.config.js", async (t) => {
     branches: ["test_branch"],
     repositoryUrl: "https://host.null/owner/module.git",
     tagFormat: `v\${version}`,
+    tagReleaseAfter: PREPARE_LIFECYCLE,
     plugins: false,
   };
   // Create package.json in repository root
@@ -244,6 +251,7 @@ test.serial("Read options from release.config.cjs", async (t) => {
     branches: ["test_branch"],
     repositoryUrl: "https://host.null/owner/module.git",
     tagFormat: `v\${version}`,
+    tagReleaseAfter: PUBLISH_LIFECYCLE,
     plugins: false,
   };
   // Verify the plugins module is called with the plugin options from release.config.cjs
@@ -266,12 +274,14 @@ test.serial("Prioritise CLI/API parameters over file configuration and git repo"
   const pkgOptions = {
     analyzeCommits: { path: "analyzeCommits", param: "analyzeCommits_pkg" },
     branches: ["branch_pkg"],
+    tagReleaseAfter: PUBLISH_LIFECYCLE,
   };
   const options = {
     analyzeCommits: { path: "analyzeCommits", param: "analyzeCommits_cli" },
     branches: ["branch_cli"],
     repositoryUrl: "http://cli-url.com/owner/package",
     tagFormat: `cli\${version}`,
+    tagReleaseAfter: PREPARE_LIFECYCLE,
     plugins: false,
   };
   // Verify the plugins module is called with the plugin options from CLI/API
@@ -296,6 +306,7 @@ test.serial('Read configuration from file path in "extends"', async (t) => {
     branches: ["test_branch"],
     repositoryUrl: "https://host.null/owner/module.git",
     tagFormat: `v\${version}`,
+    tagReleaseAfter: PUBLISH_LIFECYCLE,
     plugins: ["plugin-1", ["plugin-2", { plugin2Opt: "value" }]],
   };
   // Create package.json and shareable.json in repository root
@@ -330,6 +341,7 @@ test.serial('Read configuration from module path in "extends"', async (t) => {
     branches: ["test_branch"],
     repositoryUrl: "https://host.null/owner/module.git",
     tagFormat: `v\${version}`,
+    tagReleaseAfter: PUBLISH_LIFECYCLE,
     plugins: false,
   };
   // Create package.json and shareable.json in repository root
@@ -362,6 +374,7 @@ test.serial('Read configuration from an array of paths in "extends"', async (t) 
     analyzeCommits: { path: "analyzeCommits2", param: "analyzeCommits_param2" },
     branches: ["test_branch"],
     tagFormat: `v\${version}`,
+    tagReleaseAfter: PUBLISH_LIFECYCLE,
     plugins: false,
   };
   // Create package.json and shareable.json in repository root
@@ -405,6 +418,7 @@ test.serial('Read configuration from an array of CJS files in "extends"', async 
     analyzeCommits: { path: "analyzeCommits2", param: "analyzeCommits_param2" },
     branches: ["test_branch"],
     tagFormat: `v\${version}`,
+    tagReleaseAfter: PUBLISH_LIFECYCLE,
     plugins: false,
   };
   // Create package.json and shareable.json in repository root
@@ -448,6 +462,7 @@ test.serial('Read configuration from an array of ESM files in "extends"', async 
     analyzeCommits: { path: "analyzeCommits2", param: "analyzeCommits_param2" },
     branches: ["test_branch"],
     tagFormat: `v\${version}`,
+    tagReleaseAfter: PUBLISH_LIFECYCLE,
     plugins: false,
   };
   // Create package.json and shareable.json in repository root
@@ -483,6 +498,7 @@ test.serial('Prioritize configuration from config file over "extends"', async (t
     branches: ["test_pkg"],
     generateNotes: "generateNotes",
     publish: [{ path: "publishPkg", param: "publishPkg_param" }],
+    tagReleaseAfter: PUBLISH_LIFECYCLE,
   };
   const options1 = {
     analyzeCommits: "analyzeCommits",
@@ -491,6 +507,7 @@ test.serial('Prioritize configuration from config file over "extends"', async (t
     branches: ["test_branch"],
     repositoryUrl: "https://host.null/owner/module.git",
     tagFormat: `v\${version}`,
+    tagReleaseAfter: PREPARE_LIFECYCLE,
     plugins: false,
   };
   // Create package.json and shareable.json in repository root
@@ -523,12 +540,14 @@ test.serial('Prioritize configuration from cli/API options over "extends"', asyn
     branches: ["branch_opts"],
     publish: [{ path: "publishOpts", param: "publishOpts_param" }],
     repositoryUrl: "https://host.null/owner/module.git",
+    tagReleaseAfter: PUBLISH_LIFECYCLE,
   };
   const pkgOptions = {
     extends: "./shareable1.json",
     branches: ["branch_pkg"],
     generateNotes: "generateNotes",
     publish: [{ path: "publishPkg", param: "publishPkg_param" }],
+    tagReleaseAfter: PREPARE_LIFECYCLE,
   };
   const options1 = {
     analyzeCommits: "analyzeCommits1",
@@ -577,6 +596,7 @@ test.serial('Allow to unset properties defined in shareable config with "null"',
     generateNotes: "generateNotes",
     analyzeCommits: { path: "analyzeCommits", param: "analyzeCommits_param" },
     tagFormat: `v\${version}`,
+    tagReleaseAfter: PREPARE_LIFECYCLE,
     plugins: ["test-plugin"],
   };
   // Create package.json and shareable.json in repository root
@@ -627,6 +647,7 @@ test.serial('Allow to unset properties defined in shareable config with "undefin
     generateNotes: "generateNotes",
     analyzeCommits: { path: "analyzeCommits", param: "analyzeCommits_param" },
     tagFormat: `v\${version}`,
+    tagReleaseAfter: PREPARE_LIFECYCLE,
     plugins: false,
   };
   // Create release.config.js and shareable.json in repository root

@@ -2,6 +2,17 @@ import test from "ava";
 import { temporaryDirectory } from "tempy";
 import verify from "../lib/verify.js";
 import { gitRepo } from "./helpers/git-utils.js";
+import {
+  ADD_CHANNLE_LIFECYCLE,
+  ANALYZE_COMMITS_LIFECYCLE,
+  FAIL_LIFECYCLE,
+  PREPARE_LIFECYCLE,
+  PUBLISH_LIFECYCLE,
+  SUCCESS_LIFECYCLE,
+  VERIFY_CONDITIONS_LIFECYCLE,
+  VERIFY_RELEASE_LIFECYCLE,
+  GENERATE_NOTES_LIFECYCLE,
+} from "../lib/definitions/constants.js";
 
 test("Throw a AggregateError", async (t) => {
   const { cwd } = await gitRepo();
@@ -41,7 +52,7 @@ test("Throw a SemanticReleaseError if does not run on a git repository", async (
 
 test('Throw a SemanticReleaseError if the "tagFormat" is not valid', async (t) => {
   const { cwd, repositoryUrl } = await gitRepo(true);
-  const options = { repositoryUrl, tagFormat: `?\${version}`, branches: [] };
+  const options = { repositoryUrl, tagFormat: `?\${version}`, tagReleaseAfter: PREPARE_LIFECYCLE, branches: [] };
 
   const errors = [...(await t.throwsAsync(verify({ cwd, options }))).errors];
 
@@ -53,7 +64,7 @@ test('Throw a SemanticReleaseError if the "tagFormat" is not valid', async (t) =
 
 test('Throw a SemanticReleaseError if the "tagFormat" does not contains the "version" variable', async (t) => {
   const { cwd, repositoryUrl } = await gitRepo(true);
-  const options = { repositoryUrl, tagFormat: "test", branches: [] };
+  const options = { repositoryUrl, tagFormat: "test", tagReleaseAfter: PUBLISH_LIFECYCLE, branches: [] };
 
   const errors = [...(await t.throwsAsync(verify({ cwd, options }))).errors];
 
@@ -65,7 +76,12 @@ test('Throw a SemanticReleaseError if the "tagFormat" does not contains the "ver
 
 test('Throw a SemanticReleaseError if the "tagFormat" contains multiple "version" variables', async (t) => {
   const { cwd, repositoryUrl } = await gitRepo(true);
-  const options = { repositoryUrl, tagFormat: `\${version}v\${version}`, branches: [] };
+  const options = {
+    repositoryUrl,
+    tagFormat: `\${version}v\${version}`,
+    tagReleaseAfter: PUBLISH_LIFECYCLE,
+    branches: [],
+  };
 
   const errors = [...(await t.throwsAsync(verify({ cwd, options }))).errors];
 
@@ -75,11 +91,38 @@ test('Throw a SemanticReleaseError if the "tagFormat" contains multiple "version
   t.truthy(errors[0].details);
 });
 
+test('Throw a SemanticReleaseError if the "tagReleaseAfter" does not contain allowed lifecycle', async (t) => {
+  const notAllowedLifecycles = [
+    FAIL_LIFECYCLE,
+    SUCCESS_LIFECYCLE,
+    VERIFY_CONDITIONS_LIFECYCLE,
+    VERIFY_RELEASE_LIFECYCLE,
+    ADD_CHANNLE_LIFECYCLE,
+    ANALYZE_COMMITS_LIFECYCLE,
+    GENERATE_NOTES_LIFECYCLE,
+    "somethingWrong",
+  ];
+  const { cwd, repositoryUrl } = await gitRepo(true);
+
+  await Promise.allSettled(
+    notAllowedLifecycles.map(async (lifecycle) => {
+      const options = { repositoryUrl, tagFormat: `v\${version}`, branches: [], tagReleaseAfter: lifecycle };
+      const errors = [...(await t.throwsAsync(verify({ cwd, options }))).errors];
+
+      t.is(errors[0].name, "SemanticReleaseError");
+      t.is(errors[0].code, "EINVALIDTAGRELEASEAFTER");
+      t.truthy(errors[0].message);
+      t.truthy(errors[0].details);
+    })
+  );
+});
+
 test("Throw a SemanticReleaseError for each invalid branch", async (t) => {
   const { cwd, repositoryUrl } = await gitRepo(true);
   const options = {
     repositoryUrl,
     tagFormat: `v\${version}`,
+    tagReleaseAfter: PREPARE_LIFECYCLE,
     branches: [{ name: "" }, { name: "  " }, { name: 1 }, {}, { name: "" }, 1, "master"],
   };
 
@@ -111,7 +154,12 @@ test("Throw a SemanticReleaseError for each invalid branch", async (t) => {
 
 test('Return "true" if all verification pass', async (t) => {
   const { cwd, repositoryUrl } = await gitRepo(true);
-  const options = { repositoryUrl, tagFormat: `v\${version}`, branches: [{ name: "master" }] };
+  const options = {
+    repositoryUrl,
+    tagFormat: `v\${version}`,
+    tagReleaseAfter: PREPARE_LIFECYCLE,
+    branches: [{ name: "master" }],
+  };
 
   await t.notThrowsAsync(verify({ cwd, options }));
 });

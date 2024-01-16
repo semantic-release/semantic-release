@@ -258,10 +258,10 @@ export async function gitRemoteTagHead(repositoryUrl, tagName, execaOptions) {
  * @param {String} gitHead The commit sha for which to retrieve the associated tag.
  * @param {Object} [execaOpts] Options to pass to `execa`.
  *
- * @return {String} The tag associatedwith the sha in parameter or `null`.
+ * @return {String} The tag associatedwith the sha in parameter or ''.
  */
 export async function gitCommitTag(gitHead, execaOptions) {
-  return (await execa("git", ["describe", "--tags", "--exact-match", gitHead], execaOptions)).stdout;
+  return (await execa("git", ["tag", "--contains", gitHead], execaOptions)).stdout;
 }
 
 /**
