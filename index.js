@@ -127,8 +127,8 @@ async function run(context, plugins) {
           cwd,
           env,
         });
-        await push(options.repositoryUrl, { cwd, env });
-        await pushNotes(options.repositoryUrl, nextRelease.gitTag, {
+        await push(options.repositoryUrl, options.gitPushOptions, { cwd, env });
+        await pushNotes(options.repositoryUrl, options.gitPushOptions, nextRelease.gitTag, {
           cwd,
           env,
         });
@@ -207,8 +207,8 @@ async function run(context, plugins) {
     // Create the tag before calling the publish plugins as some require the tag to exists
     await tag(nextRelease.gitTag, nextRelease.gitHead, { cwd, env });
     await addNote({ channels: [nextRelease.channel] }, nextRelease.gitTag, { cwd, env });
-    await push(options.repositoryUrl, { cwd, env });
-    await pushNotes(options.repositoryUrl, nextRelease.gitTag, { cwd, env });
+    await push(options.repositoryUrl, options.gitPushOptions, { cwd, env });
+    await pushNotes(options.repositoryUrl, options.gitPushOptions, nextRelease.gitTag, { cwd, env });
     logger.success(`Created tag ${nextRelease.gitTag}`);
   }
 
