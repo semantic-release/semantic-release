@@ -127,7 +127,7 @@ It allows to configure **semantic-release** to write errors to a specific stream
 
 Type: `Object` `Boolean`<br>
 
-And object with [`lastRelease`](#lastrelease), [`nextRelease`](#nextrelease), [`commits`](#commits) and [`releases`](#releases) if a release is published or `false` if no release was published.
+An object with [`lastRelease`](#lastrelease), [`nextRelease`](#nextrelease), [`commits`](#commits) and [`releases`](#releases) if a release is published or `false` if no release was published.
 
 #### lastRelease
 
@@ -159,7 +159,7 @@ Example:
 
 Type: `Array<Object>`
 
-The list of commit included in the new release.<br>
+The list of commit(s) included in the new release.<br>
 Each commit object has the following properties:
 
 | Name            | Type     | Description                                     |
