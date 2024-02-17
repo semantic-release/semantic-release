@@ -37,6 +37,7 @@ Usage:
     .option("debug", { describe: "Output debugging information", type: "boolean", group: "Options" })
     .option("d", { alias: "dry-run", describe: "Skip publishing", type: "boolean", group: "Options" })
     .option("h", { alias: "help", group: "Options" })
+    .option("prerelease-version", { describe: "Prerelease version number override", type: "string", group: "Options" })
     .strict(false)
     .exitProcess(false);
 
