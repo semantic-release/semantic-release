@@ -36,6 +36,11 @@ Usage:
     .option("fail", { ...stringList, group: "Plugins" })
     .option("debug", { describe: "Output debugging information", type: "boolean", group: "Options" })
     .option("d", { alias: "dry-run", describe: "Skip publishing", type: "boolean", group: "Options" })
+    .option("stopDir", {
+      describe: "Sets the stop path for recursive search of release config files",
+      type: "string",
+      group: "Options",
+    })
     .option("h", { alias: "help", group: "Options" })
     .strict(false)
     .exitProcess(false);

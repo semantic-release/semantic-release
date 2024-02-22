@@ -157,6 +157,14 @@ Output debugging information. This can also be enabled by setting the `DEBUG` en
 
 **Note**: The `debug` is used only supported via CLI argument. To enable debug mode from the [JS API](../developer-guide/js-api.md#javascript-api) use `require('debug').enable('semantic-release:*')`.
 
+### stopDir
+
+Type: `string`<br>
+Default: `cwd`<br>
+CLI argument: `--stopDir`
+
+Sets the stop path for recursive search of release config files.
+
 ## Git environment variables
 
 | Variable              | Description                                                                                                                                                                                                                    | Default                              |
