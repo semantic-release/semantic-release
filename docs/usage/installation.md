@@ -5,13 +5,13 @@
 For [Node modules projects](https://docs.npmjs.com/getting-started/creating-node-modules) we recommend installing **semantic-release** locally and running the `semantic-release` command with [npx](https://www.npmjs.com/package/npx):
 
 ```bash
-$ npm install --save-dev semantic-release
+npm install --save-dev semantic-release
 ```
 
 Then in the CI environment:
 
 ```bash
-$ npx semantic-release
+npx semantic-release
 ```
 
 **Note:** `npx` is a tool bundled with `npm@>=5.2.0`. It is used to conveniently find the semantic-release binary and to execute it. See [What is npx](../support/FAQ.md#what-is-npx) for more details.
@@ -21,7 +21,7 @@ $ npx semantic-release
 For other type of projects we recommend installing **semantic-release** directly in the CI environment, also with [npx](https://www.npmjs.com/package/npx):
 
 ```bash
-$ npx semantic-release
+npx semantic-release
 ```
 
 ### Notes
