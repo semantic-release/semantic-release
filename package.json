@@ -29,8 +29,8 @@
   "dependencies": {
     "@semantic-release/commit-analyzer": "^11.0.0",
     "@semantic-release/error": "^4.0.0",
-    "@semantic-release/github": "^9.0.0",
-    "@semantic-release/npm": "^11.0.0",
+    "@semantic-release/github": "^10.0.0",
+    "@semantic-release/npm": "^12.0.0",
     "@semantic-release/release-notes-generator": "^12.0.0",
     "aggregate-error": "^5.0.0",
     "cosmiconfig": "^9.0.0",
@@ -58,7 +58,7 @@
     "yargs": "^17.5.1"
   },
   "devDependencies": {
-    "ava": "6.1.1",
+    "ava": "6.1.2",
     "c8": "9.1.0",
     "clear-module": "4.1.2",
     "codecov": "3.8.3",
@@ -66,7 +66,7 @@
     "dockerode": "4.0.2",
     "file-url": "4.0.0",
     "fs-extra": "11.2.0",
-    "got": "14.2.0",
+    "got": "14.2.1",
     "js-yaml": "4.1.0",
     "lockfile-lint": "4.13.2",
     "ls-engines": "0.9.1",
@@ -161,5 +161,6 @@
     "extends": [
       "github>semantic-release/.github:renovate-config"
     ]
-  }
+  },
+  "packageManager": "npm@10.5.0+sha256.17ca6e08e7633b624e8f870db81a78f46afe119de62bcaf0a7407574139198fc"
 }
