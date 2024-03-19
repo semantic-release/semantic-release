@@ -412,3 +412,17 @@ test("Do not add git credential to repositoryUrl if push is allowed", async (t) 
     repositoryUrl
   );
 });
+
+test("Return the url trimmed", async (t) => {
+  const { cwd } = await gitRepo();
+
+  t.is(
+    await getAuthUrl({
+      cwd,
+      env,
+      branch: { name: "master" },
+      options: { repositoryUrl: "https://host.null/owner/repo.git\n" },
+    }),
+    "https://host.null/owner/repo.git"
+  );
+});
