@@ -194,3 +194,7 @@
   - `verifyConditions`: Verify the presence of the `pub.dev` authentication and release configuration
   - `prepare`: Update the `pubspec.yaml` version
   - `publish`: Publish the package onto the `pub.dev` registry
+- [semantic-release-hackage](https://github.com/stackbuilders/semantic-release-hackage)
+  - `verifyConditions`: Verify the environment variable `HACKAGE_TOKEN`
+  - `prepare`: Update the version of .cabal file and create the distribution package (.tar)
+  - `publish`: Publish the release candidate to the specified repository in Hackage
