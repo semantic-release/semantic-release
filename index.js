@@ -246,7 +246,7 @@ async function logErrors({ logger, stderr }, err) {
 }
 
 async function callFail(context, plugins, err) {
-  const errors = extractErrors(err).filter((err) => err.semanticRelease);
+  const errors = extractErrors(err);
   if (errors.length > 0) {
     try {
       await plugins.fail({ ...context, errors });
