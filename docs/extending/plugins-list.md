@@ -198,3 +198,7 @@
   - `verifyConditions`: Verify the environment variable `HACKAGE_TOKEN`
   - `prepare`: Update the version of .cabal file and create the distribution package (.tar)
   - `publish`: Publish the release candidate to the specified repository in Hackage
+- [semantic-release-pull-request-analyzer](https://github.com/bobvanderlinden/semantic-release-pull-request-analyzer)
+  - `verifyConditions` Verify configuration options and existance of GitHub token.
+  - `analyzeCommits` Determine the type of release by analyzing merged GitHub pull requests and their labels.
+  - `generateNotes` Generates release notes using [GitHub release notes generator](https://docs.github.com/en/repositories/releasing-projects-on-github/automatically-generated-release-notes).
