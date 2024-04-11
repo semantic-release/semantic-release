@@ -162,5 +162,5 @@
       "github>semantic-release/.github:renovate-config"
     ]
   },
-  "packageManager": "npm@10.5.1"
+  "packageManager": "npm@10.5.2"
 }
