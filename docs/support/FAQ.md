@@ -8,6 +8,20 @@
 By default, only the published package will contain the version, which is the only place where it is _really_ required, but the updated `package.json` will not be pushed to the Git repository.
 A git tag is added to track the new version, so committing the version is not necessary for semantic-release to pick up from there for the next release.
 
+### It can lead to confusion
+
+Some teams find value in being able to reference the repository to determine the current latest version available for the published package.
+Unfortunately, there are some failure scenarios where semantic-release might leave the committed version in the repository out of sync with the version that exists in the registry.
+The best way to determine available versions is to consult the registry that your package is published to, since it is the actual source of truth.
+The [npm CLI](https://docs.npmjs.com/cli/npm) can be used to consult the registry with the following command:
+
+```shell
+npm dist-tags ls <package-name>
+```
+
+When not committing updates to the version, a value that follows the semver guidelines is still required for the `version` property within the `package.json`.
+To make it clear to contributors that the version is not kept up to date, we recommend using a value like `0.0.0-development` or `0.0.0-semantically-released`.
+
 ### Making commits during the release process adds significant complexity
 
 While the [`@semantic-release/git`](https://github.com/semantic-release/git) enables committing such changes and pushing them back to the repository as part of a release, we strongly recommend against this practice.
@@ -26,7 +40,7 @@ You can set the project to `"private": true,` within your `package.json` to [pre
 
 However, if you are choosing to follow this path because you can't use the official npm registry and don't want to manage your own registry, consider [publishing to GitHub packages](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry) instead.
 
-## Should I commit changes to a `CHANGELOG.md` to my repository during a release?
+## Should release notes be committed to a `CHANGELOG.md` in my repository during a release?
 
 [`@semantic-release/changelog`](https://github.com/semantic-release/changelog) can be used to add release notes to a `CHANGELOG.md` file within your repository as part of each release.
 Committing changes to a `CHANGELOG.md` or similar file introduces the same [complexities](#making-commits-during-the-release-process-adds-significant-complexity) as committing an updated version within a `package.json` file.
