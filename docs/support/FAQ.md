@@ -2,13 +2,52 @@
 
 ## Why is the `package.json`’s version not updated in my repository?
 
-[`@semantic-release/npm`](https://github.com/semantic-release/npm) takes care of updating the `package.json`’s version before publishing to [npm](https://www.npmjs.com).
+### It is not needed for semantic-release to do its job
 
-By default, only the published package will contain the version, which is the only place where it is _really_ required, but the updated `package.json` will not be pushed to the Git repository
+[`@semantic-release/npm`](https://github.com/semantic-release/npm) takes care of updating the `package.json`’s version before publishing to [npm](https://www.npmjs.com) based on the previous version that was tracked as a git tag.
+By default, only the published package will contain the version, which is the only place where it is _really_ required, but the updated `package.json` will not be pushed to the Git repository.
+A git tag is added to track the new version, so committing the version is not necessary for semantic-release to pick up from there for the next release.
 
-However, the [`@semantic-release/git`](https://github.com/semantic-release/git) plugin can be used to push the updated `package.json` as well as other files to the Git repository.
+### It can lead to confusion
 
-If you wish to only update the `package.json` and push via Git you can set the project to `"private": true,` within your `package.json` to prevent publishing to [the npm registry](https://www.npmjs.com).
+Some teams find value in being able to reference the repository to determine the current latest version available for the published package.
+Unfortunately, there are some failure scenarios where semantic-release might leave the committed version in the repository out of sync with the version that exists in the registry.
+The best way to determine available versions is to consult the registry that your package is published to, since it is the actual source of truth.
+The [npm CLI](https://docs.npmjs.com/cli/npm) can be used to consult the registry with the following command:
+
+```shell
+npm dist-tags ls <package-name>
+```
+
+When not committing updates to the version, a value that follows the semver guidelines is still required for the `version` property within the `package.json`.
+To make it clear to contributors that the version is not kept up to date, we recommend using a value like `0.0.0-development` or `0.0.0-semantically-released`.
+
+### Making commits during the release process adds significant complexity
+
+While the [`@semantic-release/git`](https://github.com/semantic-release/git) enables committing such changes and pushing them back to the repository as part of a release, we strongly recommend against this practice.
+
+Making commits and pushing them back to the repository adds significant additional complexity to your release process that can be avoided:
+
+- Branch protection configuration must account for allowing the release user account to bypass restrictions enforced for human contributors, which might require elevating the access level of the release user beyond what would otherwise be desired/considered secure.
+- Pre-commit hooks configured for a project, which is a popular practice when enabling [commitlint](https://commitlint.js.org/) through [husky](https://typicode.github.io/husky/), for example, must be accounted for in the release process.
+  (We recommend disabling tools like this for automated commits, but you need to decide what is appropriate for your project)
+
+### There are valid reasons to commit during a release
+
+If you make your npm package available directly via a GitHub repository rather than publishing to a registry, for example, making a commit and pushing to the repository is a necessary step.
+In such a case you will want to use [`@semantic-release/git`](https://github.com/semantic-release/git) to coordinate the commit and push.
+You can set the project to `"private": true,` within your `package.json` to [prevent publishing to the registry](https://docs.npmjs.com/cli/v10/using-npm/registry#how-can-i-prevent-my-package-from-being-published-in-the-official-registry).
+
+However, if you are choosing to follow this path because you can't use the official npm registry and don't want to manage your own registry, consider [publishing to GitHub packages](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry) instead.
+
+## Should release notes be committed to a `CHANGELOG.md` in my repository during a release?
+
+[`@semantic-release/changelog`](https://github.com/semantic-release/changelog) can be used to add release notes to a `CHANGELOG.md` file within your repository as part of each release.
+Committing changes to a `CHANGELOG.md` or similar file introduces the same [complexities](#making-commits-during-the-release-process-adds-significant-complexity) as committing an updated version within a `package.json` file.
+In addition, the release notes that would be added to a changelog file are likely redundant with the release notes added as GitHub releases, if that is also configured for your project (enabled by default).
+
+Before deciding that a changelog file is necessary for your project, please consider whether the added complexity is worth it when GitHub releases (or similar for your host, if not GitHub) might accomplish the same goal.
+It could also be worth considering whether having a `CHANGELOG.md` in your repository that only contains a link to the project's GitHub releases could be an acceptable middle ground.
 
 ## How can I use a npm build script that requires the `package.json`’s version ?
 
