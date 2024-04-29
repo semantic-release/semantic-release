@@ -7,7 +7,7 @@
 - [CI Configuration](docs/usage/ci-configuration.md)
 - [Configuration](docs/usage/configuration.md)
 - [Plugins](docs/usage/plugins.md)
-- [Workflow configuration](docs/usage/workflow-configuration.md)
+- [Release Workflow configuration](docs/usage/workflow-configuration.md)
 - [Shareable configurations](docs/usage/shareable-configurations.md)
 
 ## Extending
