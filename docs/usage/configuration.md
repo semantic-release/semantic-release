@@ -40,6 +40,17 @@ The following three examples are the same.
 }
 ```
 
+- Via `release.config.cjs` file:
+
+```js
+/**
+ * @type {import('semantic-release').GlobalConfig}
+ */
+module.exports = {
+  branches: ["master", "next"],
+};
+```
+
 - Via CLI argument:
 
 ```bash

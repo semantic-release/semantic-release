@@ -11,7 +11,7 @@ test("Replace multiple sensitive environment variable values", (t) => {
   );
 });
 
-test("Replace multiple occurences of sensitive environment variable values", (t) => {
+test("Replace multiple occurrences of sensitive environment variable values", (t) => {
   const env = { secretKey: "secret" };
   t.is(
     hideSensitive(env)(`https://user:${env.secretKey}@host.com?token=${env.secretKey}`),

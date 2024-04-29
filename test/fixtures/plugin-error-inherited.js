@@ -1,4 +1,4 @@
-import SemanticReleaseError from '@semantic-release/error';
+import SemanticReleaseError from "@semantic-release/error";
 
 class InheritedError extends SemanticReleaseError {
   constructor(message, code) {
@@ -10,5 +10,5 @@ class InheritedError extends SemanticReleaseError {
 }
 
 export default () => {
-  throw new InheritedError('Inherited error', 'EINHERITED');
-}
+  throw new InheritedError("Inherited error", "EINHERITED");
+};

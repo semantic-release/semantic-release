@@ -1,34 +1,42 @@
-import Docker from 'dockerode';
-import getStream from 'get-stream';
-import got from 'got';
-import pRetry from 'p-retry';
-import {mockServerClient} from 'mockserver-client';
+import Docker from "dockerode";
+import got from "got";
+import pRetry from "p-retry";
+import { mockServerClient } from "mockserver-client";
 
-const IMAGE = 'mockserver/mockserver:latest';
+const IMAGE = "mockserver/mockserver:latest";
 const MOCK_SERVER_PORT = 1080;
-const MOCK_SERVER_HOST = 'localhost';
+const MOCK_SERVER_HOST = "localhost";
 const docker = new Docker();
 let container;
 
 /**
- * Download the `mockserver` Docker image, create a new container and start it.
+ * Download the `mockserver` Docker image,
+ */
+export function pull() {
+  return docker.pull(IMAGE).then((stream) => {
+    return new Promise((resolve, reject) => {
+      docker.modem.followProgress(stream, (err, res) => (err ? reject(err) : resolve(res)));
+    });
+  });
+}
+
+/**
+ * create a new container and start it.
  */
 export async function start() {
-  await getStream(await docker.pull(IMAGE));
-
   container = await docker.createContainer({
     Tty: true,
     Image: IMAGE,
     HostConfig: {
-        PortBindings: {[`${MOCK_SERVER_PORT}/tcp`]: [{HostPort: `${MOCK_SERVER_PORT}`}]}
+      PortBindings: { [`${MOCK_SERVER_PORT}/tcp`]: [{ HostPort: `${MOCK_SERVER_PORT}` }] },
     },
-    ExposedPorts: {[`${MOCK_SERVER_PORT}/tcp`]: {}}
+    ExposedPorts: { [`${MOCK_SERVER_PORT}/tcp`]: {} },
   });
   await container.start();
 
   try {
     // Wait for the mock server to be ready
-    await pRetry(() => got.put(`http://${MOCK_SERVER_HOST}:${MOCK_SERVER_PORT}/status`, {cache: false}), {
+    await pRetry(() => got.put(`http://${MOCK_SERVER_HOST}:${MOCK_SERVER_PORT}/status`, { cache: false }), {
       retries: 7,
       minTimeout: 1000,
       factor: 2,
@@ -70,17 +78,17 @@ export const url = `http://${MOCK_SERVER_HOST}:${MOCK_SERVER_PORT}`;
  */
 export async function mock(
   path,
-  {body: requestBody, headers: requestHeaders},
-  {method = 'POST', statusCode = 200, body: responseBody}
+  { body: requestBody, headers: requestHeaders },
+  { method = "POST", statusCode = 200, body: responseBody }
 ) {
   await client.mockAnyResponse({
-    httpRequest: {path, method},
+    httpRequest: { path, method },
     httpResponse: {
       statusCode,
-      headers: [{name: 'Content-Type', values: ['application/json; charset=utf-8']}],
+      headers: [{ name: "Content-Type", values: ["application/json; charset=utf-8"] }],
       body: JSON.stringify(responseBody),
     },
-    times: {remainingTimes: 1, unlimited: false},
+    times: { remainingTimes: 1, unlimited: false },
   });
 
   return {
@@ -88,7 +96,7 @@ export async function mock(
     path,
     headers: requestHeaders,
     body: requestBody
-      ? {type: 'JSON', json: JSON.stringify(requestBody), matchType: 'ONLY_MATCHING_FIELDS'}
+      ? { type: "JSON", json: JSON.stringify(requestBody), matchType: "ONLY_MATCHING_FIELDS" }
       : undefined,
   };
 }

@@ -1,9 +1,9 @@
-import path from 'path';
-import test from 'ava';
-import {copy, outputFile} from 'fs-extra';
-import {stub} from 'sinon';
-import {temporaryDirectory} from 'tempy';
-import getPlugins from '../../lib/plugins/index.js';
+import path from "path";
+import test from "ava";
+import { copy, outputFile } from "fs-extra";
+import { stub } from "sinon";
+import { temporaryDirectory } from "tempy";
+import getPlugins from "../../lib/plugins/index.js";
 
 // Save the current working directory
 const cwd = process.cwd();
@@ -12,32 +12,32 @@ test.beforeEach((t) => {
   // Stub the logger functions
   t.context.log = stub();
   t.context.success = stub();
-  t.context.logger = {log: t.context.log, success: t.context.success, scope: () => t.context.logger};
+  t.context.logger = { log: t.context.log, success: t.context.success, scope: () => t.context.logger };
 });
 
-test('Export default plugins', async (t) => {
-  const plugins = await getPlugins({cwd, options: {}, logger: t.context.logger}, {});
+test("Export default plugins", async (t) => {
+  const plugins = await getPlugins({ cwd, options: {}, logger: t.context.logger }, {});
 
   // Verify the module returns a function for each plugin
-  t.is(typeof plugins.verifyConditions, 'function');
-  t.is(typeof plugins.analyzeCommits, 'function');
-  t.is(typeof plugins.verifyRelease, 'function');
-  t.is(typeof plugins.generateNotes, 'function');
-  t.is(typeof plugins.prepare, 'function');
-  t.is(typeof plugins.publish, 'function');
-  t.is(typeof plugins.success, 'function');
-  t.is(typeof plugins.fail, 'function');
+  t.is(typeof plugins.verifyConditions, "function");
+  t.is(typeof plugins.analyzeCommits, "function");
+  t.is(typeof plugins.verifyRelease, "function");
+  t.is(typeof plugins.generateNotes, "function");
+  t.is(typeof plugins.prepare, "function");
+  t.is(typeof plugins.publish, "function");
+  t.is(typeof plugins.success, "function");
+  t.is(typeof plugins.fail, "function");
 });
 
-test('Export plugins based on steps config', async (t) => {
+test("Export plugins based on steps config", async (t) => {
   const plugins = await getPlugins(
     {
       cwd,
       logger: t.context.logger,
       options: {
-        verifyConditions: ['./test/fixtures/plugin-noop.cjs', {path: './test/fixtures/plugin-noop.cjs'}],
-        generateNotes: './test/fixtures/plugin-noop.cjs',
-        analyzeCommits: {path: './test/fixtures/plugin-noop.cjs'},
+        verifyConditions: ["./test/fixtures/plugin-noop.cjs", { path: "./test/fixtures/plugin-noop.cjs" }],
+        generateNotes: "./test/fixtures/plugin-noop.cjs",
+        analyzeCommits: { path: "./test/fixtures/plugin-noop.cjs" },
         verifyRelease: () => {},
       },
     },
@@ -45,161 +45,161 @@ test('Export plugins based on steps config', async (t) => {
   );
 
   // Verify the module returns a function for each plugin
-  t.is(typeof plugins.verifyConditions, 'function');
-  t.is(typeof plugins.analyzeCommits, 'function');
-  t.is(typeof plugins.verifyRelease, 'function');
-  t.is(typeof plugins.generateNotes, 'function');
-  t.is(typeof plugins.prepare, 'function');
-  t.is(typeof plugins.publish, 'function');
-  t.is(typeof plugins.success, 'function');
-  t.is(typeof plugins.fail, 'function');
+  t.is(typeof plugins.verifyConditions, "function");
+  t.is(typeof plugins.analyzeCommits, "function");
+  t.is(typeof plugins.verifyRelease, "function");
+  t.is(typeof plugins.generateNotes, "function");
+  t.is(typeof plugins.prepare, "function");
+  t.is(typeof plugins.publish, "function");
+  t.is(typeof plugins.success, "function");
+  t.is(typeof plugins.fail, "function");
 });
 
 test('Export plugins based on "plugins" config (array)', async (t) => {
-  const plugin1 = {verifyConditions: stub(), publish: stub()};
-  const plugin2 = {verifyConditions: stub(), verifyRelease: stub()};
+  const plugin1 = { verifyConditions: stub(), publish: stub() };
+  const plugin2 = { verifyConditions: stub(), verifyRelease: stub() };
   const plugins = await getPlugins(
-    {cwd, logger: t.context.logger, options: {plugins: [plugin1, [plugin2, {}]], verifyRelease: () => {}}},
+    { cwd, logger: t.context.logger, options: { plugins: [plugin1, [plugin2, {}]], verifyRelease: () => {} } },
     {}
   );
-  await plugins.verifyConditions({options: {}});
+  await plugins.verifyConditions({ options: {} });
   t.true(plugin1.verifyConditions.calledOnce);
   t.true(plugin2.verifyConditions.calledOnce);
 
-  await plugins.publish({options: {}});
+  await plugins.publish({ options: {} });
   t.true(plugin1.publish.calledOnce);
 
-  await plugins.verifyRelease({options: {}});
+  await plugins.verifyRelease({ options: {} });
   t.true(plugin2.verifyRelease.notCalled);
 
   // Verify the module returns a function for each plugin
-  t.is(typeof plugins.verifyConditions, 'function');
-  t.is(typeof plugins.analyzeCommits, 'function');
-  t.is(typeof plugins.verifyRelease, 'function');
-  t.is(typeof plugins.generateNotes, 'function');
-  t.is(typeof plugins.prepare, 'function');
-  t.is(typeof plugins.publish, 'function');
-  t.is(typeof plugins.success, 'function');
-  t.is(typeof plugins.fail, 'function');
+  t.is(typeof plugins.verifyConditions, "function");
+  t.is(typeof plugins.analyzeCommits, "function");
+  t.is(typeof plugins.verifyRelease, "function");
+  t.is(typeof plugins.generateNotes, "function");
+  t.is(typeof plugins.prepare, "function");
+  t.is(typeof plugins.publish, "function");
+  t.is(typeof plugins.success, "function");
+  t.is(typeof plugins.fail, "function");
 });
 
 test('Export plugins based on "plugins" config (single definition)', async (t) => {
-  const plugin1 = {verifyConditions: stub(), publish: stub()};
-  const plugins = await getPlugins({cwd, logger: t.context.logger, options: {plugins: plugin1}}, {});
+  const plugin1 = { verifyConditions: stub(), publish: stub() };
+  const plugins = await getPlugins({ cwd, logger: t.context.logger, options: { plugins: plugin1 } }, {});
 
-  await plugins.verifyConditions({options: {}});
+  await plugins.verifyConditions({ options: {} });
   t.true(plugin1.verifyConditions.calledOnce);
 
-  await plugins.publish({options: {}});
+  await plugins.publish({ options: {} });
   t.true(plugin1.publish.calledOnce);
 
   // Verify the module returns a function for each plugin
-  t.is(typeof plugins.verifyConditions, 'function');
-  t.is(typeof plugins.analyzeCommits, 'function');
-  t.is(typeof plugins.verifyRelease, 'function');
-  t.is(typeof plugins.generateNotes, 'function');
-  t.is(typeof plugins.prepare, 'function');
-  t.is(typeof plugins.publish, 'function');
-  t.is(typeof plugins.success, 'function');
-  t.is(typeof plugins.fail, 'function');
+  t.is(typeof plugins.verifyConditions, "function");
+  t.is(typeof plugins.analyzeCommits, "function");
+  t.is(typeof plugins.verifyRelease, "function");
+  t.is(typeof plugins.generateNotes, "function");
+  t.is(typeof plugins.prepare, "function");
+  t.is(typeof plugins.publish, "function");
+  t.is(typeof plugins.success, "function");
+  t.is(typeof plugins.fail, "function");
 });
 
 test('Merge global options, "plugins" options and step options', async (t) => {
-  const plugin1 = [{verifyConditions: stub(), publish: stub()}, {pluginOpt1: 'plugin1'}];
-  const plugin2 = [{verifyConditions: stub()}, {pluginOpt2: 'plugin2'}];
-  const plugin3 = [stub(), {pluginOpt3: 'plugin3'}];
+  const plugin1 = [{ verifyConditions: stub(), publish: stub() }, { pluginOpt1: "plugin1" }];
+  const plugin2 = [{ verifyConditions: stub() }, { pluginOpt2: "plugin2" }];
+  const plugin3 = [stub(), { pluginOpt3: "plugin3" }];
   const plugins = await getPlugins(
     {
       cwd,
       logger: t.context.logger,
-      options: {globalOpt: 'global', plugins: [plugin1, plugin2], verifyRelease: [plugin3]},
+      options: { globalOpt: "global", plugins: [plugin1, plugin2], verifyRelease: [plugin3] },
     },
     {}
   );
 
-  await plugins.verifyConditions({options: {}});
-  t.deepEqual(plugin1[0].verifyConditions.args[0][0], {globalOpt: 'global', pluginOpt1: 'plugin1'});
-  t.deepEqual(plugin2[0].verifyConditions.args[0][0], {globalOpt: 'global', pluginOpt2: 'plugin2'});
+  await plugins.verifyConditions({ options: {} });
+  t.deepEqual(plugin1[0].verifyConditions.args[0][0], { globalOpt: "global", pluginOpt1: "plugin1" });
+  t.deepEqual(plugin2[0].verifyConditions.args[0][0], { globalOpt: "global", pluginOpt2: "plugin2" });
 
-  await plugins.publish({options: {}});
-  t.deepEqual(plugin1[0].publish.args[0][0], {globalOpt: 'global', pluginOpt1: 'plugin1'});
+  await plugins.publish({ options: {} });
+  t.deepEqual(plugin1[0].publish.args[0][0], { globalOpt: "global", pluginOpt1: "plugin1" });
 
-  await plugins.verifyRelease({options: {}});
-  t.deepEqual(plugin3[0].args[0][0], {globalOpt: 'global', pluginOpt3: 'plugin3'});
+  await plugins.verifyRelease({ options: {} });
+  t.deepEqual(plugin3[0].args[0][0], { globalOpt: "global", pluginOpt3: "plugin3" });
 });
 
 test('Unknown steps of plugins configured in "plugins" are ignored', async (t) => {
-  const plugin1 = {verifyConditions: () => {}, unknown: () => {}};
-  const plugins = await getPlugins({cwd, logger: t.context.logger, options: {plugins: [plugin1]}}, {});
+  const plugin1 = { verifyConditions: () => {}, unknown: () => {} };
+  const plugins = await getPlugins({ cwd, logger: t.context.logger, options: { plugins: [plugin1] } }, {});
 
-  t.is(typeof plugins.verifyConditions, 'function');
+  t.is(typeof plugins.verifyConditions, "function");
   t.is(plugins.unknown, undefined);
 });
 
-test('Export plugins loaded from the dependency of a shareable config module', async (t) => {
+test("Export plugins loaded from the dependency of a shareable config module", async (t) => {
   const cwd = temporaryDirectory();
   await copy(
-    './test/fixtures/plugin-noop.cjs',
-    path.resolve(cwd, 'node_modules/shareable-config/node_modules/custom-plugin/index.js')
+    "./test/fixtures/plugin-noop.cjs",
+    path.resolve(cwd, "node_modules/shareable-config/node_modules/custom-plugin/index.js")
   );
-  await outputFile(path.resolve(cwd, 'node_modules/shareable-config/index.js'), '');
+  await outputFile(path.resolve(cwd, "node_modules/shareable-config/index.js"), "");
 
   const plugins = await getPlugins(
     {
       cwd,
       logger: t.context.logger,
       options: {
-        verifyConditions: ['custom-plugin', {path: 'custom-plugin'}],
-        generateNotes: 'custom-plugin',
-        analyzeCommits: {path: 'custom-plugin'},
+        verifyConditions: ["custom-plugin", { path: "custom-plugin" }],
+        generateNotes: "custom-plugin",
+        analyzeCommits: { path: "custom-plugin" },
         verifyRelease: () => {},
       },
     },
-    {'custom-plugin': 'shareable-config'}
+    { "custom-plugin": "shareable-config" }
   );
 
   // Verify the module returns a function for each plugin
-  t.is(typeof plugins.verifyConditions, 'function');
-  t.is(typeof plugins.analyzeCommits, 'function');
-  t.is(typeof plugins.verifyRelease, 'function');
-  t.is(typeof plugins.generateNotes, 'function');
-  t.is(typeof plugins.prepare, 'function');
-  t.is(typeof plugins.publish, 'function');
-  t.is(typeof plugins.success, 'function');
-  t.is(typeof plugins.fail, 'function');
+  t.is(typeof plugins.verifyConditions, "function");
+  t.is(typeof plugins.analyzeCommits, "function");
+  t.is(typeof plugins.verifyRelease, "function");
+  t.is(typeof plugins.generateNotes, "function");
+  t.is(typeof plugins.prepare, "function");
+  t.is(typeof plugins.publish, "function");
+  t.is(typeof plugins.success, "function");
+  t.is(typeof plugins.fail, "function");
 });
 
-test('Export plugins loaded from the dependency of a shareable config file', async (t) => {
+test("Export plugins loaded from the dependency of a shareable config file", async (t) => {
   const cwd = temporaryDirectory();
-  await copy('./test/fixtures/plugin-noop.cjs', path.resolve(cwd, 'plugin/plugin-noop.cjs'));
-  await outputFile(path.resolve(cwd, 'shareable-config.js'), '');
+  await copy("./test/fixtures/plugin-noop.cjs", path.resolve(cwd, "plugin/plugin-noop.cjs"));
+  await outputFile(path.resolve(cwd, "shareable-config.js"), "");
 
   const plugins = await getPlugins(
     {
       cwd,
       logger: t.context.logger,
       options: {
-        verifyConditions: ['./plugin/plugin-noop.cjs', {path: './plugin/plugin-noop.cjs'}],
-        generateNotes: './plugin/plugin-noop.cjs',
-        analyzeCommits: {path: './plugin/plugin-noop.cjs'},
+        verifyConditions: ["./plugin/plugin-noop.cjs", { path: "./plugin/plugin-noop.cjs" }],
+        generateNotes: "./plugin/plugin-noop.cjs",
+        analyzeCommits: { path: "./plugin/plugin-noop.cjs" },
         verifyRelease: () => {},
       },
     },
-    {'./plugin/plugin-noop': './shareable-config.js'}
+    { "./plugin/plugin-noop": "./shareable-config.js" }
   );
 
   // Verify the module returns a function for each plugin
-  t.is(typeof plugins.verifyConditions, 'function');
-  t.is(typeof plugins.analyzeCommits, 'function');
-  t.is(typeof plugins.verifyRelease, 'function');
-  t.is(typeof plugins.generateNotes, 'function');
-  t.is(typeof plugins.prepare, 'function');
-  t.is(typeof plugins.publish, 'function');
-  t.is(typeof plugins.success, 'function');
-  t.is(typeof plugins.fail, 'function');
+  t.is(typeof plugins.verifyConditions, "function");
+  t.is(typeof plugins.analyzeCommits, "function");
+  t.is(typeof plugins.verifyRelease, "function");
+  t.is(typeof plugins.generateNotes, "function");
+  t.is(typeof plugins.prepare, "function");
+  t.is(typeof plugins.publish, "function");
+  t.is(typeof plugins.success, "function");
+  t.is(typeof plugins.fail, "function");
 });
 
-test('Use default when only options are passed for a single plugin', async (t) => {
+test("Use default when only options are passed for a single plugin", async (t) => {
   const analyzeCommits = {};
   const generateNotes = {};
   const publish = {};
@@ -211,7 +211,7 @@ test('Use default when only options are passed for a single plugin', async (t) =
       cwd,
       logger: t.context.logger,
       options: {
-        plugins: ['@semantic-release/commit-analyzer', '@semantic-release/release-notes-generator'],
+        plugins: ["@semantic-release/commit-analyzer", "@semantic-release/release-notes-generator"],
         analyzeCommits,
         generateNotes,
         publish,
@@ -223,96 +223,102 @@ test('Use default when only options are passed for a single plugin', async (t) =
   );
 
   // Verify the module returns a function for each plugin
-  t.is(typeof plugins.analyzeCommits, 'function');
-  t.is(typeof plugins.generateNotes, 'function');
-  t.is(typeof plugins.success, 'function');
-  t.is(typeof plugins.fail, 'function');
+  t.is(typeof plugins.analyzeCommits, "function");
+  t.is(typeof plugins.generateNotes, "function");
+  t.is(typeof plugins.success, "function");
+  t.is(typeof plugins.fail, "function");
 
   // Verify only the plugins defined as an object with no `path` are set to the default value
   t.falsy(success.path);
   t.falsy(fail.path);
 });
 
-test('Merge global options with plugin options', async (t) => {
+test("Merge global options with plugin options", async (t) => {
   const plugins = await getPlugins(
     {
       cwd,
       logger: t.context.logger,
       options: {
-        globalOpt: 'global',
-        otherOpt: 'globally-defined',
-        verifyRelease: {path: './test/fixtures/plugin-result-config', localOpt: 'local', otherOpt: 'locally-defined'},
+        globalOpt: "global",
+        otherOpt: "globally-defined",
+        verifyRelease: { path: "./test/fixtures/plugin-result-config", localOpt: "local", otherOpt: "locally-defined" },
       },
     },
     {}
   );
 
-  const [result] = await plugins.verifyRelease({options: {}});
+  const [result] = await plugins.verifyRelease({ options: {} });
 
-  t.deepEqual(result.pluginConfig, {localOpt: 'local', globalOpt: 'global', otherOpt: 'locally-defined'});
+  t.deepEqual(result.pluginConfig, { localOpt: "local", globalOpt: "global", otherOpt: "locally-defined" });
 });
 
-test('Throw an error for each invalid plugin configuration', async (t) => {
+test("Throw an error for each invalid plugin configuration", async (t) => {
   const errors = [
-    ...(await t.throwsAsync(() =>
-      getPlugins(
-        {
-          cwd,
-          logger: t.context.logger,
-          options: {
-            plugins: ['@semantic-release/commit-analyzer', '@semantic-release/release-notes-generator'],
-            verifyConditions: 1,
-            analyzeCommits: [],
-            verifyRelease: [{}],
-            generateNotes: [{path: null}],
+    ...(
+      await t.throwsAsync(() =>
+        getPlugins(
+          {
+            cwd,
+            logger: t.context.logger,
+            options: {
+              plugins: ["@semantic-release/commit-analyzer", "@semantic-release/release-notes-generator"],
+              verifyConditions: 1,
+              analyzeCommits: [],
+              verifyRelease: [{}],
+              generateNotes: [{ path: null }],
+            },
           },
-        },
-        {}
+          {}
+        )
       )
-    )).errors,
+    ).errors,
   ];
 
-  t.is(errors[0].name, 'SemanticReleaseError');
-  t.is(errors[0].code, 'EPLUGINCONF');
-  t.is(errors[1].name, 'SemanticReleaseError');
-  t.is(errors[1].code, 'EPLUGINCONF');
-  t.is(errors[2].name, 'SemanticReleaseError');
-  t.is(errors[2].code, 'EPLUGINCONF');
-  t.is(errors[3].name, 'SemanticReleaseError');
-  t.is(errors[3].code, 'EPLUGINCONF');
+  t.is(errors[0].name, "SemanticReleaseError");
+  t.is(errors[0].code, "EPLUGINCONF");
+  t.is(errors[1].name, "SemanticReleaseError");
+  t.is(errors[1].code, "EPLUGINCONF");
+  t.is(errors[2].name, "SemanticReleaseError");
+  t.is(errors[2].code, "EPLUGINCONF");
+  t.is(errors[3].name, "SemanticReleaseError");
+  t.is(errors[3].code, "EPLUGINCONF");
 });
 
 test('Throw EPLUGINSCONF error if the "plugins" option contains an old plugin definition (returns a function)', async (t) => {
   const errors = [
-    ...(await t.throwsAsync(() =>
-      getPlugins(
-        {
-          cwd,
-          logger: t.context.logger,
-          options: {plugins: ['./test/fixtures/multi-plugin.cjs', './test/fixtures/plugin-noop.cjs', () => {}]},
-        },
-        {}
+    ...(
+      await t.throwsAsync(() =>
+        getPlugins(
+          {
+            cwd,
+            logger: t.context.logger,
+            options: { plugins: ["./test/fixtures/multi-plugin.cjs", "./test/fixtures/plugin-noop.cjs", () => {}] },
+          },
+          {}
+        )
       )
-    )).errors,
+    ).errors,
   ];
 
-  t.is(errors[0].name, 'SemanticReleaseError');
-  t.is(errors[0].code, 'EPLUGINSCONF');
-  t.is(errors[1].name, 'SemanticReleaseError');
-  t.is(errors[1].code, 'EPLUGINSCONF');
+  t.is(errors[0].name, "SemanticReleaseError");
+  t.is(errors[0].code, "EPLUGINSCONF");
+  t.is(errors[1].name, "SemanticReleaseError");
+  t.is(errors[1].code, "EPLUGINSCONF");
 });
 
 test('Throw EPLUGINSCONF error for each invalid definition if the "plugins" option', async (t) => {
   const errors = [
-    ...(await t.throwsAsync(() =>
-      getPlugins({cwd, logger: t.context.logger, options: {plugins: [1, {path: 1}, [() => {}, {}, {}]]}}, {})
-    )).errors,
+    ...(
+      await t.throwsAsync(() =>
+        getPlugins({ cwd, logger: t.context.logger, options: { plugins: [1, { path: 1 }, [() => {}, {}, {}]] } }, {})
+      )
+    ).errors,
   ];
 
-  t.is(errors[0].name, 'SemanticReleaseError');
-  t.is(errors[0].code, 'EPLUGINSCONF');
-  t.is(errors[1].name, 'SemanticReleaseError');
-  t.is(errors[1].code, 'EPLUGINSCONF');
-  t.is(errors[2].name, 'SemanticReleaseError');
-  t.is(errors[2].code, 'EPLUGINSCONF');
+  t.is(errors[0].name, "SemanticReleaseError");
+  t.is(errors[0].code, "EPLUGINSCONF");
+  t.is(errors[1].name, "SemanticReleaseError");
+  t.is(errors[1].code, "EPLUGINSCONF");
+  t.is(errors[2].name, "SemanticReleaseError");
+  t.is(errors[2].code, "EPLUGINSCONF");
 });

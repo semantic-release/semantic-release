@@ -4,7 +4,12 @@
 
 The [Authentication](../../usage/ci-configuration.md#authentication) environment variables can be configured with [Secret Variables](https://docs.github.com/en/actions/reference/encrypted-secrets).
 
-In this example a publish type [`NPM_TOKEN`](https://docs.npmjs.com/creating-and-viewing-authentication-tokens) is required to publish a package to the npm registry. GitHub Actions [automatically populate](https://help.github.com/en/articles/virtual-environments-for-github-actions#github_token-secret) a [`GITHUB_TOKEN`](https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line) environment variable which can be used in Workflows.
+In this example a publish type [`NPM_TOKEN`](https://docs.npmjs.com/creating-and-viewing-authentication-tokens) is required to publish a package to the npm registry. GitHub Actions [automatically populate](https://docs.github.com/en/actions/security-guides/automatic-token-authentication) a [`GITHUB_TOKEN`](https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line) environment variable which can be used in Workflows.
+
+## npm provenance
+
+Since GitHub Actions is a [supported provider](https://docs.npmjs.com/generating-provenance-statements#provenance-limitations) for [npm provenance](https://docs.npmjs.com/generating-provenance-statements), it is recommended to enable this to increase supply-chain security for your npm packages.
+Find more detail about configuring npm to publish with provenance through semantic-release [in the documentation for our npm plugin](https://github.com/semantic-release/npm#npm-provenance).
 
 ## Node project configuration
 
@@ -23,10 +28,19 @@ on:
   push:
     branches:
       - master
+
+permissions:
+  contents: read # for checkout
+
 jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # to be able to publish a GitHub release
+      issues: write # to be able to comment on released issues
+      pull-requests: write # to be able to comment on released pull requests
+      id-token: write # to enable use of OIDC for npm provenance
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -37,7 +51,9 @@ jobs:
         with:
           node-version: "lts/*"
       - name: Install dependencies
-        run: npm ci
+        run: npm clean-install
+      - name: Verify the integrity of provenance attestations and registry signatures for installed dependencies
+        run: npm audit signatures
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -45,20 +61,23 @@ jobs:
         run: npx semantic-release
 ```
 
-## Pushing `package.json` changes to a `master` branch
+## Pushing `package.json` changes to your repository
 
-To keep `package.json` updated in the `master` branch, [`@semantic-release/git`](https://github.com/semantic-release/git) plugin can be used.
+If you choose to commit changes to your `package.json` [against our recommendation](../../support/FAQ.md#making-commits-during-the-release-process-adds-significant-complexity), the [`@semantic-release/git`](https://github.com/semantic-release/git) plugin can be used.
 
-**Note**: Automatically populated `GITHUB_TOKEN` cannot be used if branch protection is enabled for the target branch. It is **not** advised to mitigate this limitation by overriding an automatically populated `GITHUB_TOKEN` variable with a [Personal Access Tokens](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line), as it poses a security risk. Since Secret Variables are available for Workflows triggered by any branch, it becomes a potential vector of attack, where a Workflow triggered from a non-protected branch can expose and use a token with elevated permissions, yielding branch protection insignificant. One can use Personal Access Tokens in trusted environments, where all developers should have the ability to perform administrative actions in the given repository and branch protection is enabled solely for convenience purposes, to remind about required reviews or CI checks.
+**Note**: Automatically populated `GITHUB_TOKEN` cannot be used if branch protection is enabled for the target branch.
+It is **not** advised to mitigate this limitation by overriding an automatically populated `GITHUB_TOKEN` variable with a [Personal Access Tokens](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line), as it poses a security risk.
+Since Secret Variables are available for Workflows triggered by any branch, it becomes a potential vector of attack, where a Workflow triggered from a non-protected branch can expose and use a token with elevated permissions, yielding branch protection insignificant.
+One can use Personal Access Tokens in trusted environments, where all developers should have the ability to perform administrative actions in the given repository and branch protection is enabled solely for convenience purposes, to remind about required reviews or CI checks.
 
 If the risk is acceptable, some extra configuration is needed. The [actions/checkout `persist-credentials`](https://github.com/marketplace/actions/checkout#usage) option needs to be `false`, otherwise the generated `GITHUB_TOKEN` will interfere with the custom one. Example:
 
 ```yaml
 - name: Checkout
-    uses: actions/checkout@v2
-    with:
-      fetch-depth: 0
-      persist-credentials: false # <--- this
+  uses: actions/checkout@v2
+  with:
+    fetch-depth: 0
+    persist-credentials: false # <--- this
 ```
 
 ## Trigger semantic-release on demand

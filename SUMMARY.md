@@ -2,8 +2,8 @@
 
 ## Usage
 
-- [Getting started](docs/usage/getting-started.md#getting-started)
-- [Installation](docs/usage/installation.md#installation)
+- [Getting started](docs/usage/getting-started.md)
+- [Installation](docs/usage/installation.md)
 - [CI Configuration](docs/usage/ci-configuration.md)
 - [Configuration](docs/usage/configuration.md)
 - [Plugins](docs/usage/plugins.md)

@@ -43,6 +43,43 @@ test("Get the highest prerelease valid tag, ignoring other tags from other prere
   });
 });
 
+test("Get the correct prerelease tag, when other prereleases share the same git HEAD", (t) => {
+  const testConfig = {
+    branch: {
+      name: "alpha",
+      prerelease: "alpha",
+      channel: "alpha",
+      tags: [
+        { version: "1.0.0-beta.1", gitTag: "v1.0.0-beta.1", gitHead: "v1.0.0-beta.1", channels: ["beta"] },
+        { version: "1.0.0-beta.2", gitTag: "v1.0.0-beta.2", gitHead: "v1.0.0-alpha.1", channels: ["alpha", "beta"] },
+        { version: "1.0.0-alpha.1", gitTag: "v1.0.0-alpha.1", gitHead: "v1.0.0-alpha.1", channels: ["alpha", "beta"] },
+      ],
+      type: "prerelease",
+    },
+    options: { tagFormat: `v\${version}`, debug: true },
+  };
+  const firstResult = getLastRelease(testConfig);
+
+  t.deepEqual(firstResult, {
+    version: "1.0.0-alpha.1",
+    gitTag: "v1.0.0-alpha.1",
+    name: "v1.0.0-alpha.1",
+    gitHead: "v1.0.0-alpha.1",
+    channels: ["alpha", "beta"],
+  });
+
+  testConfig.branch.prerelease = true;
+  const secondResult = getLastRelease(testConfig);
+
+  t.deepEqual(secondResult, {
+    version: "1.0.0-alpha.1",
+    gitTag: "v1.0.0-alpha.1",
+    name: "v1.0.0-alpha.1",
+    gitHead: "v1.0.0-alpha.1",
+    channels: ["alpha", "beta"],
+  });
+});
+
 test("Return empty object if no valid tag is found", (t) => {
   const result = getLastRelease({
     branch: {

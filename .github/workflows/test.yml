@@ -15,41 +15,66 @@ on:
 permissions:
   contents: read # to fetch code (actions/checkout)
 
+env:
+  FORCE_COLOR: 1
+  NPM_CONFIG_COLOR: always
+
 jobs:
+  # verify against ranges defined as supported in engines.node
   test_matrix:
     strategy:
       matrix:
         node-version:
-          - 18.0.0
-          - 19
+          - 20.8.1
+          - 20
+          - 21
 
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 5
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
       - run: git config --global user.name github-actions
       - run: git config --global user.email github-actions@github.com
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
         with:
           node-version: ${{ matrix.node-version }}
           cache: npm
       - run: npm clean-install
-      - name: Ensure dependencies are compatible with the version of node
-        run: npx ls-engines
-      - run: npm run test:ci
+      - run: corepack npm audit signatures
+      - run: npm test
+
+  # verify against the node version defined for development in the .nvmrc
+  test_dev:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
+      - run: git config --global user.name github-actions
+      - run: git config --global user.email github-actions@github.com
+      - name: Use Node.js from .nvmrc
+        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm clean-install
+      - run: corepack npm audit signatures
+      - run: npm test
 
   # separate job to set as required in branch protection,
   # as the build names above change each time Node versions change
   test:
     runs-on: ubuntu-latest
-    needs: test_matrix
+    needs:
+      - test_dev
+      - test_matrix
+    if: ${{ !cancelled() }}
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: lts/*
-          cache: npm
-      - run: npm clean-install
-      - run: npm run lint
+      - name: All matrix versions passed
+        if: ${{ !(contains(needs.*.result, 'failure')) }}
+        run: exit 0
+      - name: Some matrix version failed
+        if: ${{ contains(needs.*.result, 'failure') }}
+        run: exit 1
