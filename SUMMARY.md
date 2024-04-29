@@ -2,11 +2,13 @@
 
 ## Usage
 
+- [Considerations](docs/usage/considerations.md)
 - [Getting started](docs/usage/getting-started.md)
 - [Installation](docs/usage/installation.md)
 - [CI Configuration](docs/usage/ci-configuration.md)
 - [Configuration](docs/usage/configuration.md)
 - [Plugins](docs/usage/plugins.md)
+- [Supported Branching Models](docs/usage/supported-branching.md)
 - [Workflow configuration](docs/usage/workflow-configuration.md)
 - [Shareable configurations](docs/usage/shareable-configurations.md)
 
