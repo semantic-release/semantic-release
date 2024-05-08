@@ -19,7 +19,7 @@ Find more detail about configuring npm to publish with provenance through semant
 
 ### `.github/workflows/release.yml` configuration for Node projects
 
-The following is a minimal configuration for [`semantic-release`](https://github.com/semantic-release/semantic-release) with a build running on the latest LTS version of Node when a new commit is pushed to a `master` branch.
+The following is a minimal configuration for [`semantic-release`](https://github.com/semantic-release/semantic-release) with a build running on the latest LTS version of Node when a new commit is pushed to a `master/main` branch.
 See [Configuring a Workflow](https://help.github.com/en/articles/configuring-a-workflow) for additional configuration options.
 
 ```yaml
@@ -27,7 +27,7 @@ name: Release
 on:
   push:
     branches:
-      - master
+      - master # or main
 
 permissions:
   contents: read # for checkout

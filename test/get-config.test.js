@@ -45,6 +45,7 @@ test("Default values, reading repositoryUrl from package.json", async (t) => {
   t.deepEqual(result.branches, [
     "+([0-9])?(.{+([0-9]),x}).x",
     "master",
+    "main",
     "next",
     "next-major",
     { name: "beta", prerelease: true },
@@ -66,6 +67,7 @@ test("Default values, reading repositoryUrl from repo if not set in package.json
   t.deepEqual(result.branches, [
     "+([0-9])?(.{+([0-9]),x}).x",
     "master",
+    "main",
     "next",
     "next-major",
     { name: "beta", prerelease: true },
@@ -88,6 +90,7 @@ test("Default values, reading repositoryUrl (http url) from package.json if not 
   t.deepEqual(result.branches, [
     "+([0-9])?(.{+([0-9]),x}).x",
     "master",
+    "main",
     "next",
     "next-major",
     { name: "beta", prerelease: true },
