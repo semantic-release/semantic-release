@@ -73,7 +73,7 @@ This way no human is directly involved in the release process and the releases a
 
 ### Triggering a release
 
-For each new commit added to one of the release branches (for example: `master`, `next`, `beta`), with `git push` or by merging a pull request or merging from another branch, a CI build is triggered and runs the `semantic-release` command to make a release if there are codebase changes since the last release that affect the package functionalities.
+For each new commit added to one of the release branches (for example: `master`, `main`, `next`, `beta`), with `git push` or by merging a pull request or merging from another branch, a CI build is triggered and runs the `semantic-release` command to make a release if there are codebase changes since the last release that affect the package functionalities.
 
 **semantic-release** offers various ways to control the timing, the content and the audience of published releases.
 See example workflows in the following recipes:
