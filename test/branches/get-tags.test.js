@@ -13,6 +13,10 @@ test("Get the valid tags", async (t) => {
   await gitTagVersion("v3.0", undefined, { cwd });
   commits.push(...(await gitCommits(["Fourth"], { cwd })));
   await gitTagVersion("v3.0.0-beta.1", undefined, { cwd });
+  commits.push(...(await gitCommits(["Fifth"], { cwd })));
+  await gitTagVersion("v2.0.0+abcd", undefined, { cwd });
+  commits.push(...(await gitCommits(["Sixth"], { cwd })));
+  await gitTagVersion("v3.0.0-beta.1+abcd", undefined, { cwd });
 
   const result = await getTags({ cwd, options: { tagFormat: `v\${version}` } }, [{ name: "master" }]);
 
@@ -22,7 +26,9 @@ test("Get the valid tags", async (t) => {
       tags: [
         { gitTag: "v1.0.0", version: "1.0.0", channels: [null] },
         { gitTag: "v2.0.0", version: "2.0.0", channels: [null] },
+        { gitTag: "v2.0.0+abcd", version: "2.0.0", channels: [null] },
         { gitTag: "v3.0.0-beta.1", version: "3.0.0-beta.1", channels: [null] },
+        { gitTag: "v3.0.0-beta.1+abcd", version: "3.0.0-beta.1", channels: [null] },
       ],
     },
   ]);
@@ -151,6 +157,20 @@ test('Get the highest valid tag corresponding to the "tagFormat"', async (t) => 
 
   await gitTagVersion("3.0.0-bar.2", undefined, { cwd });
   t.deepEqual(await getTags({ cwd, options: { tagFormat: `\${version}-bar.2` } }, [{ name: "master" }]), [
-    { name: "master", tags: [{ gitTag: "3.0.0-bar.2", version: "3.0.0", channels: [null] }] },
+    {
+      name: "master",
+      tags: [{ gitTag: "3.0.0-bar.2", version: "3.0.0", channels: [null] }],
+    },
+  ]);
+
+  await gitTagVersion("3.0.1-bar.2+buildnumber", undefined, { cwd });
+  t.deepEqual(await getTags({ cwd, options: { tagFormat: `\${version}-bar.2` } }, [{ name: "master" }]), [
+    {
+      name: "master",
+      tags: [
+        { gitTag: "3.0.0-bar.2", version: "3.0.0", channels: [null] },
+        { gitTag: "3.0.1-bar.2+buildnumber", version: "3.0.1", channels: [null] },
+      ],
+    },
   ]);
 });
