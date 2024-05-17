@@ -34,6 +34,28 @@ test("Get the valid tags", async (t) => {
   ]);
 });
 
+test("Check if adding plus symbol not immediately after version works", async (t) => {
+  const { cwd } = await gitRepo();
+  const commits = await gitCommits(["First"], { cwd });
+  await gitTagVersion("v1.0.0K+abcd", undefined, { cwd });
+  commits.push(...(await gitCommits(["Second"], { cwd })));
+  await gitTagVersion("v2.0.0K+def", undefined, { cwd });
+  commits.push(...(await gitCommits(["Third"], { cwd })));
+  await gitTagVersion("v3.0.0K+abcd", undefined, { cwd });
+
+  const result = await getTags({ cwd, options: { tagFormat: `v\${version}K+abcd` } }, [{ name: "master" }]);
+
+  t.deepEqual(result, [
+    {
+      name: "master",
+      tags: [
+        { gitTag: "v1.0.0K+abcd", version: "1.0.0", channels: [null] },
+        { gitTag: "v3.0.0K+abcd", version: "3.0.0", channels: [null] }
+      ],
+    },
+  ]);
+});
+
 test("Get the valid tags from multiple branches", async (t) => {
   const { cwd } = await gitRepo();
   await gitCommits(["First"], { cwd });
