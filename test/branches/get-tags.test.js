@@ -64,9 +64,9 @@ test("Get the valid tags", async (t) => {
   await gitCommitAndTag("Invalid", "v9.8.7+meta+meta", { cwd });
   await gitCommitAndTag("Invalid", "v9.8.7-whatever+meta+meta", { cwd });
 
-  const result = await getTags({ cwd, options: { tagFormat: `v\${version}` } }, [{ name: "master" }]);
-
-  t.deepEqual(result, [
+  const result1 = await getTags({ cwd, options: { tagFormat: `v\${version}` } }, [{ name: "master" }]);
+  const result2 = await getTags({ cwd, options: { tagFormat: `v\${version}+1` } }, [{ name: "master" }]);
+  const correct = [
     {
       name: "master",
       tags: [
@@ -101,9 +101,12 @@ test("Get the valid tags", async (t) => {
         { gitTag: "v10.2.3-DEV-SNAPSHOT", version: "10.2.3-DEV-SNAPSHOT", channels: [null] },
         { gitTag: "v10.20.30", version: "10.20.30", channels: [null] },
         { gitTag: "v99999.99999.999999", version: "99999.99999.999999", channels: [null] }
-      ],
-    },
-  ]);
+      ]
+    }
+  ]
+
+  t.deepEqual(result1, correct);
+  t.deepEqual(result2, correct);
 });
 
 test("Get the valid tags from multiple branches", async (t) => {
