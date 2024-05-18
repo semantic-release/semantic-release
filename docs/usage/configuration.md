@@ -115,7 +115,9 @@ CLI arguments: `-t`, `--tag-format`
 
 The [Git tag](https://git-scm.com/book/en/v2/Git-Basics-Tagging) format used by **semantic-release** to identify releases. The tag name is generated with [Lodash template](https://lodash.com/docs#template) and will be compiled with the `version` variable.
 
-**Note**: The `tagFormat` must contain the `version` variable exactly once and compile to a [valid Git reference](https://git-scm.com/docs/git-check-ref-format#_description).
+**Note 1**: The `tagFormat` must contain the `version` variable exactly once and compile to a [valid Git reference](https://git-scm.com/docs/git-check-ref-format#_description).
+
+**Note 2**: The `tagFormat` must compile to a [valid SemVer reference](https://semver.org). The only exception to this is the ability to have any prefix prceeding the `${version}` variable. So, `pref-1.0.0` is a valid tag even though it is not strictly valid according to SemVer. However, `pref-1.0.0a` is not a valid tag.
 
 ### plugins
 

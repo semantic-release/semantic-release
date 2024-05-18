@@ -85,7 +85,7 @@ export async function initBareRepo(repositoryUrl, branch = "master") {
  * @param {String} tagName The tag name to create.
  * @param {Object} [execaOpts] Options to pass to `execa`.
  */
- export async function gitCommitAndTag(message, tagName, execaOptions) {
+export async function gitCommitAndTag(message, tagName, execaOptions) {
   await execa("git", ["commit", "-m", message, "--allow-empty", "--no-gpg-sign"], execaOptions);
   await gitTagVersion(tagName, undefined, execaOptions);
 }

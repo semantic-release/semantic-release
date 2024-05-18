@@ -22,9 +22,13 @@ test("Throw a AggregateError", async (t) => {
   t.truthy(errors[2].message);
   t.truthy(errors[2].details);
   t.is(errors[3].name, "SemanticReleaseError");
-  t.is(errors[3].code, "EINVALIDBRANCH");
+  t.is(errors[3].code, "ENONSEMVERTAGFORMAT");
   t.truthy(errors[3].message);
   t.truthy(errors[3].details);
+  t.is(errors[4].name, "SemanticReleaseError");
+  t.is(errors[4].code, "EINVALIDBRANCH");
+  t.truthy(errors[4].message);
+  t.truthy(errors[4].details);
 });
 
 test("Throw a SemanticReleaseError if does not run on a git repository", async (t) => {
@@ -59,6 +63,18 @@ test('Throw a SemanticReleaseError if the "tagFormat" does not contains the "ver
 
   t.is(errors[0].name, "SemanticReleaseError");
   t.is(errors[0].code, "ETAGNOVERSION");
+  t.truthy(errors[0].message);
+  t.truthy(errors[0].details);
+});
+
+test('Throw a SemanticReleaseError if the "tagFormat" is not SemVer compliant', async (t) => {
+  const { cwd, repositoryUrl } = await gitRepo(true);
+  const options = { repositoryUrl, tagFormat: "pre${version}a", branches: [] };
+
+  const errors = [...(await t.throwsAsync(verify({ cwd, options }))).errors];
+
+  t.is(errors[0].name, "SemanticReleaseError");
+  t.is(errors[0].code, "ENONSEMVERTAGFORMAT");
   t.truthy(errors[0].message);
   t.truthy(errors[0].details);
 });
