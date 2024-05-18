@@ -1,22 +1,68 @@
 import test from "ava";
 import getTags from "../../lib/branches/get-tags.js";
-import { gitAddNote, gitCheckout, gitCommits, gitRepo, gitTagVersion } from "../helpers/git-utils.js";
+import { gitAddNote, gitCheckout, gitCommitAndTag, gitCommits, gitRepo, gitTagVersion } from "../helpers/git-utils.js";
 
 test("Get the valid tags", async (t) => {
   const { cwd } = await gitRepo();
-  const commits = await gitCommits(["First"], { cwd });
-  await gitTagVersion("foo", undefined, { cwd });
-  await gitTagVersion("v2.0.0", undefined, { cwd });
-  commits.push(...(await gitCommits(["Second"], { cwd })));
-  await gitTagVersion("v1.0.0", undefined, { cwd });
-  commits.push(...(await gitCommits(["Third"], { cwd })));
-  await gitTagVersion("v3.0", undefined, { cwd });
-  commits.push(...(await gitCommits(["Fourth"], { cwd })));
-  await gitTagVersion("v3.0.0-beta.1", undefined, { cwd });
-  commits.push(...(await gitCommits(["Fifth"], { cwd })));
-  await gitTagVersion("v2.0.0+abcd", undefined, { cwd });
-  commits.push(...(await gitCommits(["Sixth"], { cwd })));
-  await gitTagVersion("v3.0.0-beta.1+abcd", undefined, { cwd });
+  await gitCommitAndTag("Valid", "v0.0.4", { cwd });
+  await gitCommitAndTag("Valid", "v1.2.3", { cwd });
+  await gitCommitAndTag("Valid", "v10.20.30", { cwd });
+  await gitCommitAndTag("Valid", "v1.1.2-prerelease+meta", { cwd });
+  await gitCommitAndTag("Valid", "v1.1.2+meta", { cwd });
+  await gitCommitAndTag("Valid", "v1.1.2+meta-valid", { cwd });
+  await gitCommitAndTag("Valid", "v1.0.0-alpha+beta", { cwd });
+  await gitCommitAndTag("Valid", "v1.0.0-alpha", { cwd });
+  await gitCommitAndTag("Valid", "v1.0.0-beta", { cwd });
+  await gitCommitAndTag("Valid", "v1.0.0-alpha.beta", { cwd });
+  await gitCommitAndTag("Valid", "v1.0.0-alpha.beta.1", { cwd });
+  await gitCommitAndTag("Valid", "v1.0.0-alpha.1", { cwd });
+  await gitCommitAndTag("Valid", "v1.0.0-alpha0.valid", { cwd });
+  await gitCommitAndTag("Valid", "v1.0.0-alpha.0valid", { cwd });
+  await gitCommitAndTag("Valid", "v1.0.0-alpha-a.b-c-somethinglong+build.1-aef.1-its-okay", { cwd });
+  await gitCommitAndTag("Valid", "v1.0.0-rc.1+build.1", { cwd });
+  await gitCommitAndTag("Valid", "v2.0.0-rc.1+build.123", { cwd });
+  await gitCommitAndTag("Valid", "v1.2.3-beta", { cwd });
+  await gitCommitAndTag("Valid", "v10.2.3-DEV-SNAPSHOT", { cwd });
+  await gitCommitAndTag("Valid", "v1.2.3-SNAPSHOT-123", { cwd });
+  await gitCommitAndTag("Valid", "v1.0.0", { cwd });
+  await gitCommitAndTag("Valid", "v2.0.0", { cwd });
+  await gitCommitAndTag("Valid", "v1.1.7", { cwd });
+  await gitCommitAndTag("Valid", "v2.0.0+build.1848", { cwd });
+  await gitCommitAndTag("Valid", "v2.0.1-alpha.1227", { cwd });
+  await gitCommitAndTag("Valid", "v1.2.3----RC-SNAPSHOT.12.9.1--.12+788", { cwd });
+  await gitCommitAndTag("Valid", "v1.2.3----R-S.12.9.1--.12+meta", { cwd });
+  await gitCommitAndTag("Valid", "v1.2.3----RC-SNAPSHOT.12.9.1--.12", { cwd });
+  await gitCommitAndTag("Valid", "v1.0.0+0.build.1-rc.10000aaa-kk-0.1", { cwd });
+  await gitCommitAndTag("Valid", "v99999.99999.999999", { cwd });
+  await gitCommitAndTag("Valid", "v1.0.0-0A.is.legal", { cwd });
+
+  await gitCommitAndTag("Invalid", "v1", { cwd });
+  await gitCommitAndTag("Invalid", "v1.2", { cwd });
+  await gitCommitAndTag("Invalid", "v1.2.3-0123", { cwd });
+  await gitCommitAndTag("Invalid", "v1.2.3-0123.0123", { cwd });
+  await gitCommitAndTag("Invalid", "v1.1.2+.123", { cwd });
+  await gitCommitAndTag("Invalid", "v+invalid", { cwd });
+  await gitCommitAndTag("Invalid", "v-invalid", { cwd });
+  await gitCommitAndTag("Invalid", "v-invalid+invalid", { cwd });
+  await gitCommitAndTag("Invalid", "v-invalid.01", { cwd });
+  await gitCommitAndTag("Invalid", "valpha", { cwd });
+  await gitCommitAndTag("Invalid", "valpha.beta", { cwd });
+  await gitCommitAndTag("Invalid", "valpha.beta.1", { cwd });
+  await gitCommitAndTag("Invalid", "valpha.1", { cwd });
+  await gitCommitAndTag("Invalid", "valpha+beta", { cwd });
+  await gitCommitAndTag("Invalid", "valpha_beta", { cwd });
+  await gitCommitAndTag("Invalid", "vbeta", { cwd });
+  await gitCommitAndTag("Invalid", "v1.0.0-alpha_beta", { cwd });
+  await gitCommitAndTag("Invalid", "v01.1.1", { cwd });
+  await gitCommitAndTag("Invalid", "v1.01.1", { cwd });
+  await gitCommitAndTag("Invalid", "v1.1.01", { cwd });
+  await gitCommitAndTag("Invalid", "v1.2.3.DEV", { cwd });
+  await gitCommitAndTag("Invalid", "v1.2-SNAPSHOT", { cwd });
+  await gitCommitAndTag("Invalid", "v1.2-RC-SNAPSHOT", { cwd });
+  await gitCommitAndTag("Invalid", "v-1.0.3-gamma+b7718", { cwd });
+  await gitCommitAndTag("Invalid", "v+justmeta", { cwd });
+  await gitCommitAndTag("Invalid", "v9.8.7+meta+meta", { cwd });
+  await gitCommitAndTag("Invalid", "v9.8.7-whatever+meta+meta", { cwd });
 
   const result = await getTags({ cwd, options: { tagFormat: `v\${version}` } }, [{ name: "master" }]);
 
@@ -24,33 +70,37 @@ test("Get the valid tags", async (t) => {
     {
       name: "master",
       tags: [
+        { gitTag: "v0.0.4", version: "0.0.4", channels: [null] },
+        { gitTag: "v1.0.0-0A.is.legal", version: "1.0.0-0A.is.legal", channels: [null] },
+        { gitTag: "v1.0.0-alpha", version: "1.0.0-alpha", channels: [null] },
+        { gitTag: "v1.0.0-alpha+beta", version: "1.0.0-alpha", channels: [null] },
+        { gitTag: "v1.0.0-alpha.1", version: "1.0.0-alpha.1", channels: [null] },
+        { gitTag: "v1.0.0-alpha.0valid", version: "1.0.0-alpha.0valid", channels: [null] },
+        { gitTag: "v1.0.0-alpha.beta", version: "1.0.0-alpha.beta", channels: [null] },
+        { gitTag: "v1.0.0-alpha.beta.1", version: "1.0.0-alpha.beta.1", channels: [null] },
+        { gitTag: "v1.0.0-alpha-a.b-c-somethinglong+build.1-aef.1-its-okay", version: "1.0.0-alpha-a.b-c-somethinglong", channels: [null] },
+        { gitTag: "v1.0.0-alpha0.valid", version: "1.0.0-alpha0.valid", channels: [null] },
+        { gitTag: "v1.0.0-beta", version: "1.0.0-beta", channels: [null] },
+        { gitTag: "v1.0.0-rc.1+build.1", version: "1.0.0-rc.1", channels: [null] },
         { gitTag: "v1.0.0", version: "1.0.0", channels: [null] },
+        { gitTag: "v1.0.0+0.build.1-rc.10000aaa-kk-0.1", version: "1.0.0", channels: [null] },
+        { gitTag: "v1.1.2-prerelease+meta", version: "1.1.2-prerelease", channels: [null] },
+        { gitTag: "v1.1.2+meta", version: "1.1.2", channels: [null] },
+        { gitTag: "v1.1.2+meta-valid", version: "1.1.2", channels: [null] },
+        { gitTag: "v1.1.7", version: "1.1.7", channels: [null] },
+        { gitTag: "v1.2.3----R-S.12.9.1--.12+meta", version: "1.2.3----R-S.12.9.1--.12", channels: [null] },
+        { gitTag: "v1.2.3----RC-SNAPSHOT.12.9.1--.12", version: "1.2.3----RC-SNAPSHOT.12.9.1--.12", channels: [null] },
+        { gitTag: "v1.2.3----RC-SNAPSHOT.12.9.1--.12+788", version: "1.2.3----RC-SNAPSHOT.12.9.1--.12", channels: [null] },
+        { gitTag: "v1.2.3-SNAPSHOT-123", version: "1.2.3-SNAPSHOT-123", channels: [null] },
+        { gitTag: "v1.2.3-beta", version: "1.2.3-beta", channels: [null] },
+        { gitTag: "v1.2.3", version: "1.2.3", channels: [null] },
+        { gitTag: "v2.0.0-rc.1+build.123", version: "2.0.0-rc.1", channels: [null] },
         { gitTag: "v2.0.0", version: "2.0.0", channels: [null] },
-        { gitTag: "v2.0.0+abcd", version: "2.0.0", channels: [null] },
-        { gitTag: "v3.0.0-beta.1", version: "3.0.0-beta.1", channels: [null] },
-        { gitTag: "v3.0.0-beta.1+abcd", version: "3.0.0-beta.1", channels: [null] },
-      ],
-    },
-  ]);
-});
-
-test("Check if adding plus symbol not immediately after version works", async (t) => {
-  const { cwd } = await gitRepo();
-  const commits = await gitCommits(["First"], { cwd });
-  await gitTagVersion("v1.0.0K+abcd", undefined, { cwd });
-  commits.push(...(await gitCommits(["Second"], { cwd })));
-  await gitTagVersion("v2.0.0K+def", undefined, { cwd });
-  commits.push(...(await gitCommits(["Third"], { cwd })));
-  await gitTagVersion("v3.0.0K+abcd", undefined, { cwd });
-
-  const result = await getTags({ cwd, options: { tagFormat: `v\${version}K+abcd` } }, [{ name: "master" }]);
-
-  t.deepEqual(result, [
-    {
-      name: "master",
-      tags: [
-        { gitTag: "v1.0.0K+abcd", version: "1.0.0", channels: [null] },
-        { gitTag: "v3.0.0K+abcd", version: "3.0.0", channels: [null] }
+        { gitTag: "v2.0.0+build.1848", version: "2.0.0", channels: [null] },
+        { gitTag: "v2.0.1-alpha.1227", version: "2.0.1-alpha.1227", channels: [null] },
+        { gitTag: "v10.2.3-DEV-SNAPSHOT", version: "10.2.3-DEV-SNAPSHOT", channels: [null] },
+        { gitTag: "v10.20.30", version: "10.20.30", channels: [null] },
+        { gitTag: "v99999.99999.999999", version: "99999.99999.999999", channels: [null] }
       ],
     },
   ]);

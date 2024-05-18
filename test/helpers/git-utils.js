@@ -79,6 +79,18 @@ export async function initBareRepo(repositoryUrl, branch = "master") {
 }
 
 /**
+ * Create commit on the current git repository and tags it.
+ *
+ * @param {String} message Commit message.
+ * @param {String} tagName The tag name to create.
+ * @param {Object} [execaOpts] Options to pass to `execa`.
+ */
+ export async function gitCommitAndTag(message, tagName, execaOptions) {
+  await execa("git", ["commit", "-m", message, "--allow-empty", "--no-gpg-sign"], execaOptions);
+  await gitTagVersion(tagName, undefined, execaOptions);
+}
+
+/**
  * Create commits on the current git repository.
  *
  * @param {Array<string>} messages Commit messages.
@@ -157,7 +169,7 @@ export async function gitHead(execaOptions) {
 }
 
 /**
- * Create a tag on the head commit in the current git repository.
+ * Create a tag on the commit in the current git repository.
  *
  * @param {String} tagName The tag name to create.
  * @param {String} [sha] The commit on which to create the tag. If undefined the tag is created on the last commit.
