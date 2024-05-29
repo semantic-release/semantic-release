@@ -51,6 +51,17 @@ module.exports = {
 };
 ```
 
+- Via `release.config.mjs` file:
+
+```js
+/**
+ * @type {import('semantic-release').GlobalConfig}
+ */
+export default {
+  branches: ["master", "next"],
+};
+```
+
 - Via CLI argument:
 
 ```bash
