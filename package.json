@@ -66,7 +66,7 @@
     "dockerode": "4.0.2",
     "file-url": "4.0.0",
     "fs-extra": "11.2.0",
-    "got": "14.2.1",
+    "got": "14.3.0",
     "js-yaml": "4.1.0",
     "lockfile-lint": "4.13.2",
     "ls-engines": "0.9.1",
