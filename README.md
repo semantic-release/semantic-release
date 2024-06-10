@@ -4,8 +4,8 @@
   <a href="https://github.com/semantic-release/semantic-release/discussions">
     <img alt="Join the community on GitHub Discussions" src="https://img.shields.io/badge/Join%20the%20community-on%20GitHub%20Discussions-blue">
   </a>
-  <a href="https://github.com/semantic-release/semantic-release/actions?query=workflow%3ATest+branch%3Amaster">
-    <img alt="Build states" src="https://github.com/semantic-release/semantic-release/workflows/Test/badge.svg">
+  <a href="https://github.com/semantic-release/semantic-release/actions/workflows/test.yml">
+    <img alt="Build states" src="https://github.com/semantic-release/semantic-release/actions/workflows/test.yml/badge.svg">
   </a>
   <a href="https://securityscorecards.dev/viewer/?uri=github.com/semantic-release/semantic-release">
     <img alt="OpenSSF Scorecard" src="https://api.securityscorecards.dev/projects/github.com/semantic-release/semantic-release/badge">
