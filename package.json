@@ -8,7 +8,7 @@
     "files": [
       "test/**/*.test.js",
       "!test/index.test.js",
-      "!test/integration.test.js"
+      "!test/e2e.test.js"
     ],
     "nodeArguments": [
       "--loader=testdouble",
@@ -157,7 +157,7 @@
     "test": "npm-run-all --print-label --parallel lint:* --parallel test:*",
     "test:unit": "c8 ava --verbose",
     "test:integration": "ava --verbose test/index.test.js",
-    "test:e2e": "ava --verbose test/integration.test.js"
+    "test:e2e": "ava --verbose test/e2e.test.js"
   },
   "renovate": {
     "extends": [
