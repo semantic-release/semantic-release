@@ -119,7 +119,7 @@ Here is a basic example to create [GitHub releases](https://help.github.com/arti
 
 **Note**: This is a theoretical example where the command `set-version` update the project version with the value passed as its first argument and `publish-package` publishes the package to a registry.
 
-See the [package managers and languages recipes](../recipes/release-workflow/README.md#package-managers-and-languages) for more details on specific project types.
+See the [package managers and languages recipes](../recipes/release-workflow/README.md#package-managers-and-languages) for more details on specific project types and the [available plugins list](../extending/plugins-list.md) to see if there are community-supported plugins already available for the stack you are interested in.
 
 ## Can I use semantic-release with any CI service?
 
