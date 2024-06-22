@@ -1,11 +1,18 @@
 import test from "ava";
 import { escapeRegExp, isString, omit, sortBy } from "lodash-es";
 import * as td from "testdouble";
-import { spy, stub } from "sinon";
+import { spy, stub, match } from "sinon";
 import { WritableStreamBuffer } from "stream-buffers";
 import AggregateError from "aggregate-error";
 import SemanticReleaseError from "@semantic-release/error";
-import { COMMIT_EMAIL, COMMIT_NAME, SECRET_REPLACEMENT } from "../lib/definitions/constants.js";
+import {
+  ALL_LIFECYCLES,
+  COMMIT_EMAIL,
+  COMMIT_NAME,
+  FAIL_LIFECYCLE,
+  SECRET_REPLACEMENT,
+  SUCCESS_LIFECYCLE,
+} from "../lib/definitions/constants.js";
 import {
   gitAddNote,
   gitCheckout,
@@ -1995,3 +2002,65 @@ test.serial("Get all commits including the ones not in the shallow clone", async
 
   t.is(analyzeCommits.args[0][1].commits.length, 3);
 });
+
+// Error testing for each plugin stage failure being caught
+for (const lifecycle of ALL_LIFECYCLES.filter((lcycle) => lcycle !== FAIL_LIFECYCLE && lcycle !== SUCCESS_LIFECYCLE)) {
+  test.serial(`Triggers failure plugin on phase (${lifecycle}) failure`, async (t) => {
+    // Setup an addChannel Scenario so we hit all plugin lifecycles
+    // Create a git repository, set the current working directory at the root of the repo
+    const { cwd, repositoryUrl } = await gitRepo(true);
+    // Add commits to the master branch
+    let commits = await gitCommits(["First"], { cwd });
+    // Create the tag corresponding to version 1.0.0
+    await gitTagVersion("v1.0.0", undefined, { cwd });
+    await gitAddNote(JSON.stringify({ channels: ["next"] }), "v1.0.0", { cwd });
+    commits = (await gitCommits(["Second"], { cwd })).concat(commits);
+    await gitCheckout("next", true, { cwd });
+    await gitPush(repositoryUrl, "next", { cwd });
+    await gitCheckout("master", false, { cwd });
+    await gitPush(repositoryUrl, "master", { cwd });
+
+    const notes1 = "Release notes 1";
+    const release1 = { name: "Release 1", url: "https://release1.com" };
+    const release2 = { name: "Release 2", url: "https://release2.com" };
+    const config = {
+      branches: [{ name: "master" }, { name: "next" }],
+      repositoryUrl,
+      originalRepositoryURL: repositoryUrl,
+      globalOpt: "global",
+      tagFormat: `v\${version}`,
+    };
+    const options = {
+      ...config,
+      plugins: false,
+      verifyConditions: stub().resolves(),
+      analyzeCommits: stub().resolves("major"),
+      verifyRelease: stub().resolves(),
+      addChannel: stub().resolves(release1),
+      generateNotes: stub().resolves(notes1),
+      prepare: stub().resolves(),
+      publish: stub().resolves(release2),
+      success: stub().resolves(),
+      fail: stub().resolves(),
+      // Override the particular lifecylce with a failure throw
+      [lifecycle]: stub().throws(new Error("This is a non-semrel error")),
+    };
+    await td.replaceEsm("../lib/get-logger.js", null, () => t.context.logger);
+    await td.replaceEsm("env-ci", null, () => ({ isCi: true, branch: "master", isPr: false }));
+    const semanticRelease = (await import("../index.js")).default;
+    await t.throwsAsync(
+      async () =>
+        await semanticRelease(options, {
+          cwd,
+          env: {},
+          stdout: new WritableStreamBuffer(),
+          stderr: new WritableStreamBuffer(),
+        })
+    );
+
+    t.is(options.fail.callCount, 1);
+    t.true(
+      options.fail.calledWith(match.any, match.has("errors", [match.has("message", "This is a non-semrel error")]))
+    );
+  });
+}
