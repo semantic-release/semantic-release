@@ -1,5 +1,5 @@
 import { createRequire } from "node:module";
-import { pick } from "lodash-es";
+import { template, pick } from "lodash-es";
 import * as marked from "marked";
 import envCi from "env-ci";
 import { hookStd } from "hook-std";
@@ -205,7 +205,16 @@ async function run(context, plugins) {
     logger.warn(`Skip ${nextRelease.gitTag} tag creation in dry-run mode`);
   } else {
     // Create the tag before calling the publish plugins as some require the tag to exists
-    await tag(nextRelease.gitTag, nextRelease.gitHead, { cwd, env });
+    await tag(
+      nextRelease.gitTag,
+      nextRelease.gitHead,
+      {
+        tagAnnotate: options.tagAnnotate,
+        tagSign: options.tagSign,
+        tagMessage: template(options.tagMessage)({ nextRelease }),
+      },
+      { cwd, env },
+    );
     await addNote({ channels: [nextRelease.channel] }, nextRelease.gitTag, { cwd, env });
     await push(options.repositoryUrl, { cwd, env });
     await pushNotes(options.repositoryUrl, nextRelease.gitTag, { cwd, env });
