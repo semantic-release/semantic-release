@@ -7,7 +7,8 @@
   "ava": {
     "files": [
       "test/**/*.test.js",
-      "!test/integration.test.js"
+      "!test/integration.test.js",
+      "!test/e2e.test.js"
     ],
     "nodeArguments": [
       "--loader=testdouble",
@@ -153,9 +154,10 @@
     "lint:engines": "ls-engines",
     "lint:publish": "publint --strict",
     "semantic-release": "./bin/semantic-release.js",
-    "test": "npm-run-all --print-label --parallel lint:* --parallel test:*",
+    "test": "npm-run-all --print-label --parallel lint:* --serial test:*",
     "test:unit": "c8 ava --verbose",
-    "test:integration": "ava --verbose test/integration.test.js"
+    "test:integration": "ava --verbose test/integration.test.js",
+    "test:e2e": "ava --verbose test/e2e.test.js"
   },
   "renovate": {
     "extends": [
