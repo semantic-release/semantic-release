@@ -398,7 +398,8 @@ test("Dry-run", async (t) => {
   await gitCommits(["feat: Initial commit"], { cwd });
   t.log("$ semantic-release -d");
   const { stdout, exitCode } = await execa(cli, ["-d"], { env, cwd, extendEnv: false });
-  t.regex(stdout, new RegExp(`There is no previous release, the next release version is ${version}`));
+  t.regex(stdout, /There is no previous release/);
+  t.regex(stdout, new RegExp(`The next release version is ${version}`));
   t.regex(stdout, new RegExp(`Release note for version ${version}`));
   t.regex(stdout, /Initial commit/);
   t.is(exitCode, 0);
