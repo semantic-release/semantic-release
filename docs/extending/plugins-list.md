@@ -198,3 +198,5 @@
   - `verifyConditions` Verify configuration options and existance of GitHub token.
   - `analyzeCommits` Determine the type of release by analyzing merged GitHub pull requests and their labels.
   - `generateNotes` Generates release notes using [GitHub release notes generator](https://docs.github.com/en/repositories/releasing-projects-on-github/automatically-generated-release-notes).
+- [semantic-release-commits-lint](https://github.com/BondarenkoAlex/semantic-release-commits-lint)
+  - `analyzeCommits` Analyzing commit messages by [commitlint](https://github.com/conventional-changelog/commitlint).
