@@ -1,5 +1,4 @@
 import test from "ava";
-import AggregateError from "aggregate-error";
 import {
   extractErrors,
   getEarliestVersion,

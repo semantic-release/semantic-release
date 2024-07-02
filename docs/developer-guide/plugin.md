@@ -54,8 +54,6 @@ module.exports = { verifyConditions };
 Then, in your `src` folder, create a file called `verify.js` and add the following
 
 ```javascript
-const AggregateError = require("aggregate-error");
-
 /**
  * A method to verify that the user has given us a slack webhook url to post to
  */
