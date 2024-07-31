@@ -66,16 +66,16 @@
     "dockerode": "4.0.2",
     "file-url": "4.0.0",
     "fs-extra": "11.2.0",
-    "got": "14.4.1",
+    "got": "14.4.2",
     "js-yaml": "4.1.0",
     "lockfile-lint": "4.14.0",
-    "ls-engines": "0.9.2",
+    "ls-engines": "0.9.3",
     "mockserver-client": "5.15.0",
     "nock": "13.5.4",
-    "npm-run-all2": "6.2.0",
+    "npm-run-all2": "6.2.2",
     "p-retry": "6.2.0",
-    "prettier": "3.3.2",
-    "publint": "0.2.8",
+    "prettier": "3.3.3",
+    "publint": "0.2.9",
     "sinon": "18.0.0",
     "stream-buffers": "3.0.3",
     "tempy": "3.1.0",
@@ -163,5 +163,5 @@
       "github>semantic-release/.github:renovate-config"
     ]
   },
-  "packageManager": "npm@10.8.1"
+  "packageManager": "npm@10.8.2"
 }
