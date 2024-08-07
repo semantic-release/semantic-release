@@ -1,6 +1,5 @@
 import test from "ava";
 import { stub } from "sinon";
-import AggregateError from "aggregate-error";
 import pipeline from "../../lib/plugins/pipeline.js";
 
 test("Execute each function in series passing the same input", async (t) => {
