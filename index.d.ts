@@ -40,7 +40,7 @@ declare module "semantic-release" {
      *
      * Has error, log and success methods.
      */
-    logger: Signale<"error" | "log" | "success">;
+    logger: Signale<"error" | "log" | "success" | "warn">;
   }
 
   /**
