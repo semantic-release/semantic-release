@@ -241,7 +241,7 @@ if (env.GITHUB_TOKEN) {
 
 ## Logger
 
-Use `context.logger` to provide debug logging in the plugin.
+Use `context.logger` to provide debug logging in the plugin. Available logging functions: `log`, `warn`, `success`, `error`.
 
 ```js
 const { logger } = context;

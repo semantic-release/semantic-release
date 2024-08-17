@@ -38,9 +38,9 @@ declare module "semantic-release" {
     /**
      * Signale console loger instance.
      *
-     * Has error, log and success methods.
+     * Has error, log, warn and success methods.
      */
-    logger: Signale<"error" | "log" | "success">;
+    logger: Signale<"error" | "log" | "success" | "warn">;
   }
 
   /**
