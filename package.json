@@ -43,7 +43,7 @@
     "get-stream": "^6.0.0",
     "git-log-parser": "^1.2.0",
     "hook-std": "^3.0.0",
-    "hosted-git-info": "^7.0.0",
+    "hosted-git-info": "^8.0.0",
     "import-from-esm": "^1.3.1",
     "lodash-es": "^4.17.21",
     "marked": "^12.0.0",
@@ -76,7 +76,7 @@
     "p-retry": "6.2.0",
     "prettier": "3.3.3",
     "publint": "0.2.10",
-    "sinon": "18.0.0",
+    "sinon": "18.0.1",
     "stream-buffers": "3.0.3",
     "tempy": "3.1.0",
     "testdouble": "3.20.2"
