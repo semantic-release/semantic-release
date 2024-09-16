@@ -85,7 +85,7 @@ async function run(context, plugins) {
 
   try {
     try {
-      await verifyAuth(options.repositoryUrl, context.branch.name, { cwd, env });
+      await verifyAuth(options.repositoryUrl, { cwd, env });
     } catch (error) {
       if (!(await isBranchUpToDate(options.repositoryUrl, context.branch.name, { cwd, env }))) {
         logger.log(
