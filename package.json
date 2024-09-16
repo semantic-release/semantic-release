@@ -75,7 +75,7 @@
     "npm-run-all2": "6.2.2",
     "p-retry": "6.2.0",
     "prettier": "3.3.3",
-    "publint": "0.2.10",
+    "publint": "0.2.11",
     "sinon": "19.0.2",
     "stream-buffers": "3.0.3",
     "tempy": "3.1.0",
