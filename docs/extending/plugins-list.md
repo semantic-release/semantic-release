@@ -200,3 +200,6 @@
   - `generateNotes` Generates release notes using [GitHub release notes generator](https://docs.github.com/en/repositories/releasing-projects-on-github/automatically-generated-release-notes).
 - [semantic-release-commits-lint](https://github.com/BondarenkoAlex/semantic-release-commits-lint)
   - `analyzeCommits` Analyzing commit messages by [commitlint](https://github.com/conventional-changelog/commitlint).
+- [semantic-release-kaniko](https://github.com/brendangeck/semantic-release-kaniko)
+  - `verifyConditions`: Verify that all needed configuration is present and login to the Docker registry.
+  - `publish`: Build a container image using [Kaniko](https://github.com/GoogleContainerTools/kaniko) and (optionally) push it to a Docker registry.
