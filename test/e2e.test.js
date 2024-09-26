@@ -87,7 +87,7 @@ test.serial("Release patch, minor and major versions", async (t) => {
   let verifyMock = await mockServer.mock(
     `/repos/${owner}/${packageName}`,
     { headers: [{ name: "Authorization", values: [`token ${env.GH_TOKEN}`] }] },
-    { body: { permissions: { push: true } }, method: "GET" }
+    { body: { permissions: { push: true }, clone_url: repositoryUrl }, method: "GET" }
   );
   t.log("Commit a chore");
   await gitCommits(["chore: Init repository"], { cwd });
@@ -142,7 +142,7 @@ test.serial("Release patch, minor and major versions", async (t) => {
   verifyMock = await mockServer.mock(
     `/repos/${owner}/${packageName}`,
     { headers: [{ name: "Authorization", values: [`token ${env.GH_TOKEN}`] }] },
-    { body: { permissions: { push: true } }, method: "GET" }
+    { body: { permissions: { push: true }, clone_url: repositoryUrl }, method: "GET" }
   );
   createReleaseMock = await mockServer.mock(
     `/repos/${owner}/${packageName}/releases`,
@@ -183,7 +183,7 @@ test.serial("Release patch, minor and major versions", async (t) => {
   verifyMock = await mockServer.mock(
     `/repos/${owner}/${packageName}`,
     { headers: [{ name: "Authorization", values: [`token ${env.GH_TOKEN}`] }] },
-    { body: { permissions: { push: true } }, method: "GET" }
+    { body: { permissions: { push: true }, clone_url: repositoryUrl }, method: "GET" }
   );
   createReleaseMock = await mockServer.mock(
     `/repos/${owner}/${packageName}/releases`,
@@ -224,7 +224,7 @@ test.serial("Release patch, minor and major versions", async (t) => {
   verifyMock = await mockServer.mock(
     `/repos/${owner}/${packageName}`,
     { headers: [{ name: "Authorization", values: [`token ${env.GH_TOKEN}`] }] },
-    { body: { permissions: { push: true } }, method: "GET" }
+    { body: { permissions: { push: true }, clone_url: repositoryUrl }, method: "GET" }
   );
   createReleaseMock = await mockServer.mock(
     `/repos/${owner}/${packageName}/releases`,
@@ -269,7 +269,7 @@ test.serial("Release patch, minor and major versions", async (t) => {
   verifyMock = await mockServer.mock(
     `/repos/${owner}/${packageName}`,
     { headers: [{ name: "Authorization", values: [`token ${env.GH_TOKEN}`] }] },
-    { body: { permissions: { push: true } }, method: "GET" }
+    { body: { permissions: { push: true }, clone_url: repositoryUrl }, method: "GET" }
   );
   const getReleaseMock = await mockServer.mock(
     `/repos/${owner}/${packageName}/releases/tags/v2.0.0`,
