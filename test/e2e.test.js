@@ -391,7 +391,7 @@ test.serial("Dry-run", async (t) => {
   const verifyMock = await mockServer.mock(
     `/repos/${owner}/${packageName}`,
     { headers: [{ name: "Authorization", values: [`token ${env.GH_TOKEN}`] }] },
-    { body: { permissions: { push: true } }, method: "GET" }
+    { body: { permissions: { push: true }, clone_url: repositoryUrl }, method: "GET" }
   );
   const version = "1.0.0";
   t.log("Commit a feature");
@@ -430,7 +430,7 @@ test.serial('Allow local releases with "noCi" option', async (t) => {
   const verifyMock = await mockServer.mock(
     `/repos/${owner}/${packageName}`,
     { headers: [{ name: "Authorization", values: [`token ${env.GH_TOKEN}`] }] },
-    { body: { permissions: { push: true } }, method: "GET" }
+    { body: { permissions: { push: true }, clone_url: repositoryUrl }, method: "GET" }
   );
   const createReleaseMock = await mockServer.mock(
     `/repos/${owner}/${packageName}/releases`,
@@ -541,7 +541,7 @@ test.serial("Run via JS API", async (t) => {
   const verifyMock = await mockServer.mock(
     `/repos/${owner}/${packageName}`,
     { headers: [{ name: "Authorization", values: [`token ${env.GH_TOKEN}`] }] },
-    { body: { permissions: { push: true } }, method: "GET" }
+    { body: { permissions: { push: true }, clone_url: repositoryUrl }, method: "GET" }
   );
   const createReleaseMock = await mockServer.mock(
     `/repos/${owner}/${packageName}/releases`,
