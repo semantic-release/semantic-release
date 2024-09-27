@@ -3,6 +3,7 @@
 ✨ Thanks for contributing to **semantic-release**! ✨
 
 As a contributor, here are the guidelines we would like you to follow:
+
 - [Code of conduct](#code-of-conduct)
 - [How can I contribute?](#how-can-i-contribute)
 - [Using the issue tracker](#using-the-issue-tracker)
@@ -74,24 +75,31 @@ Here is a summary of the steps to follow:
 
 1. [Set up the workspace](#set-up-the-workspace)
 2. If you cloned a while ago, get the latest changes from upstream and update dependencies:
+
 ```bash
 $ git checkout master
 $ git pull upstream master
 $ rm -rf node_modules
 $ npm install
 ```
+
 3. Create a new topic branch (off the main project development branch) to contain your feature, change, or fix:
+
 ```bash
 $ git checkout -b <topic-branch-name>
 ```
+
 4. Make your code changes, following the [Coding rules](#coding-rules)
 5. Push your topic branch up to your fork:
+
 ```bash
 $ git push origin <topic-branch-name>
 ```
+
 6. [Open a Pull Request](https://help.github.com/articles/creating-a-pull-request/#creating-the-pull-request) with a clear title and description.
 
 **Tips**:
+
 - For ambitious tasks, open a Pull Request as soon as possible with the `[WIP]` prefix in the title, in order to get feedback and help from the community.
 - [Allow semantic-release maintainers to make changes to your Pull Request branch](https://help.github.com/articles/allowing-changes-to-a-pull-request-branch-created-from-a-fork).
   This way, we can rebase it and make some minor changes if necessary.
@@ -102,6 +110,7 @@ $ git push origin <topic-branch-name>
 ### Source code
 
 To ensure consistency and quality throughout the source code, all code modifications must have:
+
 - No [linting](#lint) errors
 - A [test](#tests) for every possible case introduced by your code change
 - **100%** test coverage
@@ -112,6 +121,7 @@ To ensure consistency and quality throughout the source code, all code modificat
 ### Documentation
 
 To ensure consistency and quality, all documentation modifications must:
+
 - Refer to brand in [bold](https://help.github.com/articles/basic-writing-and-formatting-syntax/#styling-text) with proper capitalization, i.e. **GitHub**, **semantic-release**, **npm**
 - Prefer [tables](https://help.github.com/articles/organizing-information-with-tables) over [lists](https://help.github.com/articles/basic-writing-and-formatting-syntax/#lists) when listing key values, i.e. List of options with their description
 - Use [links](https://help.github.com/articles/basic-writing-and-formatting-syntax/#links) when you are referring to:
@@ -133,9 +143,10 @@ To ensure consistency and quality, all documentation modifications must:
 #### Atomic commits
 
 If possible, make [atomic commits](https://en.wikipedia.org/wiki/Atomic_commit), which means:
+
 - a commit should contain exactly one self-contained functional change
 - a functional change should be contained in exactly one commit
-- a commit should not create an inconsistent state (such as test errors, linting errors, partial fix, feature with documentation etc...)
+- a commit should not create an inconsistent state (such as test errors, linting errors, partial fix, feature without documentation, etc...)
 
 A complex feature can be broken down into multiple commits as long as each one maintains a consistent state and consists of a self-contained change.
 
@@ -166,7 +177,7 @@ In the body it should say: `This reverts commit <hash>.`, where the hash is the 
 The type must be one of the following:
 
 | Type         | Description                                                                                                 |
-|--------------|-------------------------------------------------------------------------------------------------------------|
+| ------------ | ----------------------------------------------------------------------------------------------------------- |
 | **build**    | Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm)         |
 | **ci**       | Changes to our CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs) |
 | **docs**     | Documentation only changes                                                                                  |
@@ -186,10 +197,12 @@ The subject contains succinct description of the change:
 - no dot (.) at the end
 
 #### Body
+
 Just as in the **subject**, use the imperative, present tense: "change" not "changed" nor "changes".
 The body should include the motivation for the change and contrast this with previous behavior.
 
 #### Footer
+
 The footer should contain any information about **Breaking Changes** and is also the place to reference GitHub issues that this commit **Closes**.
 
 **Breaking Changes** should start with the word `BREAKING CHANGE:` with a space or two newlines.
@@ -228,40 +241,82 @@ $ git clone https://github.com/semantic-release/<repo-name>
 $ cd <repo-name>
 # Assign the original repo to a remote called "upstream"
 $ git remote add upstream https://github.com/semantic-release/<repo-name>
+# Switch your node version to the version defined by the project as the development version
+# This step assumes you have already installed and configured https://github.com/nvm-sh/nvm
+# You may need to run `nvm install` if you have not already installed the development node version
+$ nvm use
 # Install the dependencies
 $ npm install
 ```
 
-### Lint
+### Verification
 
-All the [semantic-release](https://github.com/semantic-release) repositories use [XO](https://github.com/sindresorhus/xo) for linting and [Prettier](https://prettier.io) for formatting.
-Prettier formatting will be automatically verified and fixed by XO.
+The `test` script is structured to execute as much of the verification for the project as possible.
+Ensuring that the `test` script fully passes in the node version defined as the development version in the `.nvmrc`
+minimizes the chances of the test workflow failing after pushing your changes.
 
-Before pushing your code changes make sure there are no linting errors with `npm run lint`.
+> [!IMPORTANT]
+> Before pushing your code changes, be sure to run the verification for the project with `npm test`.
 
-**Tips**:
-- Most linting errors can be automatically fixed with `npm run lint -- --fix`.
-- Install the [XO plugin](https://github.com/sindresorhus/xo#editor-plugins) for your editor to see linting errors directly in your editor and automatically fix them on save.
+[npm-run-all2](https://www.npmjs.com/package/npm-run-all2) is used to enable running multiple independent lint and test
+scripts together from the `test` script.
+This enables the test script to not only run all scripts, but also parallelize some of the scripts to optimize the overall
+time required for verification.
 
-### Tests
+When a failure occurs with the `test`, the output can be a bit confusing because there may be output from multiple parallel
+scripts mixed together.
+To investigate the failure with cleaner output, re-run the problematic script directly using the script name from the label
+included on the left side of the output
 
-Running the integration test requires you to install [Docker](https://docs.docker.com/engine/installation) on your machine.
+```shell
+$ npm run <script-name>
+```
+
+#### Lint
+
+##### Prettier
+
+All the [semantic-release](https://github.com/semantic-release) repositories use [Prettier](https://prettier.io) for formatting.
+Prettier formatting will be automatically verified by the `lint:prettier` script, included in the `test` script.
+
+> [!NOTE]
+> Most linting errors can be automatically fixed with `npm run lint:prettier:fix`.
+
+##### Other Lint Tools
+
+Other tools are used for specific compatibility concerns, but are less likely to result in failures in common contributions.
+Please follow the guidance of these tools if failures are encountered.
+
+#### Tests
+
+> [!NOTE]
+> Before pushing your code changes make sure all **tests pass** and the unit test **coverage is 100%**:
 
 All the [semantic-release](https://github.com/semantic-release) repositories use [AVA](https://github.com/avajs/ava) for writing and running tests.
 
-Before pushing your code changes make sure all **tests pass** and the **coverage is 100%**:
+During development, you can:
 
-```bash
-$ npm run test
-```
-
-**Tips:** During development you can:
 - run only a subset of test files with `ava <glob>`, for example `ava test/mytestfile.test.js`
 - run in watch mode with `ava -w` to automatically run a test file when you modify it
 - run only the test you are working on by adding [`.only` to the test definition](https://github.com/avajs/ava#running-specific-tests)
+
+##### Unit Tests
+
+```bash
+$ npm run test:unit
+```
+
+##### Integration Tests
+
+> [!IMPORTANT]
+> Running the integration test requires you to install [Docker](https://docs.docker.com/engine/installation) on your machine.
+
+```bash
+$ npm run test:integration
+```
 
 ### Commits
 
 All the [semantic-release](https://github.com/semantic-release) repositories use [Commitizen](https://github.com/commitizen/cz-cli) to help you create [valid commit messages](#commit-message-guidelines).
 
-After staging your changes with `git add`, run `npm run cm` to start the interactive commit message CLI.
+Assuming you have [installed Commitizen](https://github.com/commitizen/cz-cli#installing-the-command-line-tool), run `git cz` to start the interactive commit message CLI rather than `git commit` when committing.

@@ -1,1 +1,1 @@
-module.exports = (pluginConfig, context) => ({pluginConfig, context});
+export default (pluginConfig, context) => ({ pluginConfig, context });

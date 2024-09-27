@@ -1,5 +1,5 @@
-module.exports = () => {
-  const error = new Error('a');
-  error.errorProperty = 'errorProperty';
+export default () => {
+  const error = new Error("a");
+  error.errorProperty = "errorProperty";
   throw error;
 };

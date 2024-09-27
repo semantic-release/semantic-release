@@ -3,43 +3,49 @@
 ## Usage
 
 ```js
-const semanticRelease = require('semantic-release');
-const {WritableStreamBuffer} = require('stream-buffers');
+const semanticRelease = require("semantic-release");
+const { WritableStreamBuffer } = require("stream-buffers");
 
-const stdoutBuffer = WritableStreamBuffer();
-const stderrBuffer = WritableStreamBuffer();
+const stdoutBuffer = new WritableStreamBuffer();
+const stderrBuffer = new WritableStreamBuffer();
 
 try {
-  const result = await semanticRelease({
-    // Core options
-    branches: [
-      '+([0-9])?(.{+([0-9]),x}).x',
-      'master',
-      'next',
-      'next-major',
-      {name: 'beta', prerelease: true},
-      {name: 'alpha', prerelease: true}
-    ],
-    repositoryUrl: 'https://github.com/me/my-package.git',
-    // Shareable config
-    extends: 'my-shareable-config',
-    // Plugin options
-    githubUrl: 'https://my-ghe.com',
-    githubApiPathPrefix: '/api-prefix'
-  }, {
-    // Run semantic-release from `/path/to/git/repo/root` without having to change local process `cwd` with `process.chdir()`
-    cwd: '/path/to/git/repo/root',
-    // Pass the variable `MY_ENV_VAR` to semantic-release without having to modify the local `process.env`
-    env: {...process.env, MY_ENV_VAR: 'MY_ENV_VAR_VALUE'},
-    // Store stdout and stderr to use later instead of writing to `process.stdout` and `process.stderr`
-    stdout: stdoutBuffer,
-    stderr: stderrBuffer
-  });
+  const result = await semanticRelease(
+    {
+      // Core options
+      branches: [
+        "+([0-9])?(.{+([0-9]),x}).x",
+        "master",
+        "main",
+        "next",
+        "next-major",
+        { name: "beta", prerelease: true },
+        { name: "alpha", prerelease: true },
+      ],
+      repositoryUrl: "https://github.com/me/my-package.git",
+      // Shareable config
+      extends: "my-shareable-config",
+      // Plugin options
+      githubUrl: "https://my-ghe.com",
+      githubApiPathPrefix: "/api-prefix",
+    },
+    {
+      // Run semantic-release from `/path/to/git/repo/root` without having to change local process `cwd` with `process.chdir()`
+      cwd: "/path/to/git/repo/root",
+      // Pass the variable `MY_ENV_VAR` to semantic-release without having to modify the local `process.env`
+      env: { ...process.env, MY_ENV_VAR: "MY_ENV_VAR_VALUE" },
+      // Store stdout and stderr to use later instead of writing to `process.stdout` and `process.stderr`
+      stdout: stdoutBuffer,
+      stderr: stderrBuffer,
+    }
+  );
 
   if (result) {
-    const {lastRelease, commits, nextRelease, releases} = result;
+    const { lastRelease, commits, nextRelease, releases } = result;
 
-    console.log(`Published ${nextRelease.type} release version ${nextRelease.version} containing ${commits.length} commits.`);
+    console.log(
+      `Published ${nextRelease.type} release version ${nextRelease.version} containing ${commits.length} commits.`
+    );
 
     if (lastRelease.version) {
       console.log(`The last release was "${lastRelease.version}".`);
@@ -49,14 +55,14 @@ try {
       console.log(`The release was published with plugin "${release.pluginName}".`);
     }
   } else {
-    console.log('No release published.');
+    console.log("No release published.");
   }
 
   // Get stdout and stderr content
-  const logs = stdoutBuffer.getContentsAsString('utf8');
-  const errors = stderrBuffer.getContentsAsString('utf8');
+  const logs = stdoutBuffer.getContentsAsString("utf8");
+  const errors = stderrBuffer.getContentsAsString("utf8");
 } catch (err) {
-  console.error('The automated release failed with %O', err)
+  console.error("The automated release failed with %O", err);
 }
 ```
 
@@ -122,7 +128,7 @@ It allows to configure **semantic-release** to write errors to a specific stream
 
 Type: `Object` `Boolean`<br>
 
-And object with [`lastRelease`](#lastrelease), [`nextRelease`](#nextrelease), [`commits`](#commits) and [`releases`](#releases) if a release is published or `false` if no release was published.
+An object with [`lastRelease`](#lastrelease), [`nextRelease`](#nextrelease), [`commits`](#commits) and [`releases`](#releases) if a release is published or `false` if no release was published.
 
 #### lastRelease
 
@@ -131,15 +137,16 @@ Type: `Object`
 Information related to the last release found:
 
 | Name    | Type     | Description                                                                                                                         |
-|---------|----------|-------------------------------------------------------------------------------------------------------------------------------------|
+| ------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------- |
 | version | `String` | The version of the last release.                                                                                                    |
 | gitHead | `String` | The sha of the last commit being part of the last release.                                                                          |
 | gitTag  | `String` | The [Git tag](https://git-scm.com/book/en/v2/Git-Basics-Tagging) associated with the last release.                                  |
 | channel | `String` | The distribution channel on which the last release was initially made available (`undefined` for the default distribution channel). |
 
-**Notes**: If no previous release is found, `lastRelease` will be an empty `Object`.
+**Note**: If no previous release is found, `lastRelease` will be an empty `Object`.
 
 Example:
+
 ```js
 {
   gitHead: 'da39a3ee5e6b4b0d3255bfef95601890afd80709',
@@ -153,11 +160,11 @@ Example:
 
 Type: `Array<Object>`
 
-The list of commit included in the new release.<br>
+The list of commit(s) included in the new release.<br>
 Each commit object has the following properties:
 
 | Name            | Type     | Description                                     |
-|-----------------|----------|-------------------------------------------------|
+| --------------- | -------- | ----------------------------------------------- |
 | commit          | `Object` | The commit abbreviated and full hash.           |
 | commit.long     | `String` | The commit hash.                                |
 | commit.short    | `String` | The commit abbreviated hash.                    |
@@ -179,6 +186,7 @@ Each commit object has the following properties:
 | committerDate   | `String` | The committer date.                             |
 
 Example:
+
 ```js
 [
   {
@@ -216,7 +224,7 @@ Type: `Object`
 Information related to the newly published release:
 
 | Name    | Type     | Description                                                                                                                   |
-|---------|----------|-------------------------------------------------------------------------------------------------------------------------------|
+| ------- | -------- | ----------------------------------------------------------------------------------------------------------------------------- |
 | type    | `String` | The [semver](https://semver.org) type of the release (`patch`, `minor` or `major`).                                           |
 | version | `String` | The version of the new release.                                                                                               |
 | gitHead | `String` | The sha of the last commit being part of the new release.                                                                     |
@@ -225,6 +233,7 @@ Information related to the newly published release:
 | channel | `String` | The distribution channel on which the next release will be made available (`undefined` for the default distribution channel). |
 
 Example:
+
 ```js
 {
   type: 'minor',
@@ -244,7 +253,7 @@ The list of releases published or made available to a distribution channel.<br>
 Each release object has the following properties:
 
 | Name       | Type     | Description                                                                                                    |
-|------------|----------|----------------------------------------------------------------------------------------------------------------|
+| ---------- | -------- | -------------------------------------------------------------------------------------------------------------- |
 | name       | `String` | **Optional.** The release name, only if set by the corresponding `publish` plugin.                             |
 | url        | `String` | **Optional.** The release URL, only if set by the corresponding `publish` plugin.                              |
 | type       | `String` | The [semver](https://semver.org) type of the release (`patch`, `minor` or `major`).                            |
@@ -256,6 +265,7 @@ Each release object has the following properties:
 | channel    | `String` | The distribution channel on which the release is available (`undefined` for the default distribution channel). |
 
 Example:
+
 ```js
 [
   {

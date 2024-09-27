@@ -1,5 +1,5 @@
-const AggregateError = require('aggregate-error');
+import AggregateError from "aggregate-error";
 
-module.exports = () => {
-  throw new AggregateError([new Error('a'), new Error('b')]);
+export default () => {
+  throw new AggregateError([new Error("a"), new Error("b")]);
 };

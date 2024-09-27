@@ -1,30 +1,32 @@
 #!/usr/bin/env node
 
-// Bad news: We have to write plain ES5 in this file
-// Good news: It's the only file of the entire project
-
 /* eslint-disable no-var */
 
-var semver = require('semver');
-var execa = require('execa');
-var findVersions = require('find-versions');
-var pkg = require('../package.json');
+import semver from "semver";
+import { execa } from "execa";
+import findVersions from "find-versions";
+import cli from "../cli.js";
+import { createRequire } from "node:module";
 
-var MIN_GIT_VERSION = '2.7.1';
+const require = createRequire(import.meta.url);
+const { engines } = require("../package.json");
+const { satisfies, lt } = semver;
 
-if (!semver.satisfies(process.version, pkg.engines.node)) {
+const MIN_GIT_VERSION = "2.7.1";
+
+if (!satisfies(process.version, engines.node)) {
   console.error(
-    `[semantic-release]: node version ${pkg.engines.node} is required. Found ${process.version}.
+    `[semantic-release]: node version ${engines.node} is required. Found ${process.version}.
 
 See https://github.com/semantic-release/semantic-release/blob/master/docs/support/node-version.md for more details and solutions.`
   );
   process.exit(1);
 }
 
-execa('git', ['--version'])
-  .then(({stdout}) => {
-    var gitVersion = findVersions(stdout)[0];
-    if (semver.lt(gitVersion, MIN_GIT_VERSION)) {
+execa("git", ["--version"])
+  .then(({ stdout }) => {
+    const gitVersion = findVersions(stdout, { loose: true })[0];
+    if (lt(gitVersion, MIN_GIT_VERSION)) {
       console.error(`[semantic-release]: Git version ${MIN_GIT_VERSION} is required. Found ${gitVersion}.`);
       process.exit(1);
     }
@@ -35,8 +37,7 @@ execa('git', ['--version'])
     process.exit(1);
   });
 
-// Node 10+ from this point on
-require('../cli')()
+cli()
   .then((exitCode) => {
     process.exitCode = exitCode;
   })

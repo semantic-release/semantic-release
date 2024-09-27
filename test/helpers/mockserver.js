@@ -1,31 +1,42 @@
-const Docker = require('dockerode');
-const getStream = require('get-stream');
-const got = require('got');
-const pRetry = require('p-retry');
-const {mockServerClient} = require('mockserver-client');
+import Docker from "dockerode";
+import got from "got";
+import pRetry from "p-retry";
+import { mockServerClient } from "mockserver-client";
 
-const IMAGE = 'jamesdbloom/mockserver:latest';
+const IMAGE = "mockserver/mockserver:latest";
 const MOCK_SERVER_PORT = 1080;
-const MOCK_SERVER_HOST = 'localhost';
+const MOCK_SERVER_HOST = "localhost";
 const docker = new Docker();
 let container;
 
 /**
- * Download the `mockserver` Docker image, create a new container and start it.
+ * Download the `mockserver` Docker image,
  */
-async function start() {
-  await getStream(await docker.pull(IMAGE));
+export function pull() {
+  return docker.pull(IMAGE).then((stream) => {
+    return new Promise((resolve, reject) => {
+      docker.modem.followProgress(stream, (err, res) => (err ? reject(err) : resolve(res)));
+    });
+  });
+}
 
+/**
+ * create a new container and start it.
+ */
+export async function start() {
   container = await docker.createContainer({
     Tty: true,
     Image: IMAGE,
-    PortBindings: {[`${MOCK_SERVER_PORT}/tcp`]: [{HostPort: `${MOCK_SERVER_PORT}`}]},
+    HostConfig: {
+      PortBindings: { [`${MOCK_SERVER_PORT}/tcp`]: [{ HostPort: `${MOCK_SERVER_PORT}` }] },
+    },
+    ExposedPorts: { [`${MOCK_SERVER_PORT}/tcp`]: {} },
   });
   await container.start();
 
   try {
     // Wait for the mock server to be ready
-    await pRetry(() => got.put(`http://${MOCK_SERVER_HOST}:${MOCK_SERVER_PORT}/status`, {cache: false}), {
+    await pRetry(() => got.put(`http://${MOCK_SERVER_HOST}:${MOCK_SERVER_PORT}/status`, { cache: false }), {
       retries: 7,
       minTimeout: 1000,
       factor: 2,
@@ -36,9 +47,9 @@ async function start() {
 }
 
 /**
- * Stop and remote the `mockserver` Docker container.
+ * Stop and remove the `mockserver` Docker container.
  */
-async function stop() {
+export async function stop() {
   await container.stop();
   await container.remove();
 }
@@ -50,7 +61,7 @@ const client = mockServerClient(MOCK_SERVER_HOST, MOCK_SERVER_PORT);
 /**
  * @type {string} the url of the `mockserver` instance
  */
-const url = `http://${MOCK_SERVER_HOST}:${MOCK_SERVER_PORT}`;
+export const url = `http://${MOCK_SERVER_HOST}:${MOCK_SERVER_PORT}`;
 
 /**
  * Set up the `mockserver` instance response for a specific request.
@@ -65,19 +76,19 @@ const url = `http://${MOCK_SERVER_HOST}:${MOCK_SERVER_PORT}`;
  * @param {Object} response.body The JSON object to respond in the response body.
  * @return {Object} An object representation the expectation. Pass to the `verify` function to validate the `mockserver` has been called with a `request` matching the expectations.
  */
-async function mock(
+export async function mock(
   path,
-  {body: requestBody, headers: requestHeaders},
-  {method = 'POST', statusCode = 200, body: responseBody}
+  { body: requestBody, headers: requestHeaders },
+  { method = "POST", statusCode = 200, body: responseBody }
 ) {
   await client.mockAnyResponse({
-    httpRequest: {path, method},
+    httpRequest: { path, method },
     httpResponse: {
       statusCode,
-      headers: [{name: 'Content-Type', values: ['application/json; charset=utf-8']}],
+      headers: [{ name: "Content-Type", values: ["application/json; charset=utf-8"] }],
       body: JSON.stringify(responseBody),
     },
-    times: {remainingTimes: 1, unlimited: false},
+    times: { remainingTimes: 1, unlimited: false },
   });
 
   return {
@@ -85,19 +96,17 @@ async function mock(
     path,
     headers: requestHeaders,
     body: requestBody
-      ? {type: 'JSON', json: JSON.stringify(requestBody), matchType: 'ONLY_MATCHING_FIELDS'}
+      ? { type: "JSON", json: JSON.stringify(requestBody), matchType: "ONLY_MATCHING_FIELDS" }
       : undefined,
   };
 }
 
 /**
- * Verify the `mockserver` has been called with a requestion matching expectations. The `expectation` is created with the `mock` function.
+ * Verify the `mockserver` has been called with a request matching expectations. The `expectation` is created with the `mock` function.
  *
  * @param {Object} expectation The expectation created with `mock` function.
  * @return {Promise} A Promise that resolves if the expectation is met or reject otherwise.
  */
-function verify(expectation) {
+export function verify(expectation) {
   return client.verify(expectation);
 }
-
-module.exports = {start, stop, mock, verify, url};

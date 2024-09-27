@@ -6,6 +6,11 @@ The [Authentication](../../usage/ci-configuration.md#authentication) environment
 
 **Note**: Make sure to configure your release branch as [protected](https://docs.gitlab.com/ce/user/project/protected_branches.html) in order for the CI/CD build to access the protected variables.
 
+## npm provenance
+
+Since GitLab CI is a [supported provider](https://docs.npmjs.com/generating-provenance-statements#provenance-limitations) for [npm provenance](https://docs.npmjs.com/generating-provenance-statements), it is recommended to enable this to increase supply-chain security for your npm packages.
+Find more detail about configuring npm to publish with provenance through semantic-release [in the documentation for our npm plugin](https://github.com/semantic-release/npm#npm-provenance).
+
 ## Node project configuration
 
 GitLab CI supports [Pipelines](https://docs.gitlab.com/ee/ci/pipelines.html) allowing to test on multiple Node versions and publishing a release only when all test pass.
@@ -21,8 +26,8 @@ This example is a minimal configuration for **semantic-release** with a build ru
 ```yaml
 # The release pipeline will run only if all jobs in the test pipeline are successful
 stages:
-    - test
-    - release
+  - test
+  - release
 
 before_script:
   - npm install
@@ -52,9 +57,8 @@ This example is a minimal configuration for **semantic-release** with a build ru
 
 **Note**: The`semantic-release` execution command varies depending if you are using a [local](../../usage/installation.md#local-installation) or [global](../../usage/installation.md#global-installation) **semantic-release** installation.
 
-
 ```yaml
-# The release pipeline will run only on the master branch a commit is triggered
+# The release pipeline will run only on the master/main branch a commit is triggered
 stages:
   - release
 
@@ -66,8 +70,8 @@ release:
     - npm install -g semantic-release @semantic-release/gitlab
   script:
     - semantic-release
-  only:
-    - master
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master" # or main
 
 release:
   image: node:12-buster-slim
@@ -77,8 +81,8 @@ release:
     - npm install -g semantic-release @semantic-release/gitlab
   script:
     - semantic-release
-  only:
-    - master
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master" # or main
 ```
 
 ### `package.json` configuration

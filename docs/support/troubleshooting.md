@@ -15,6 +15,7 @@ This is most likely related to a misconfiguration of the [npm registry authentic
 It might also happen if the package name you are trying to publish already exists (in the case of npm, you may be trying to publish a new version of a package that is not yours, hence the permission error).
 
 To verify if your package name is available you can use [npm-name-cli](https://github.com/sindresorhus/npm-name-cli):
+
 ```bash
 $ npm install --global npm-name-cli
 $ npm-name <package-name>
@@ -30,7 +31,7 @@ When [squashing commits](https://git-scm.com/book/en/v2/Git-Tools-Rewriting-Hist
 
 When squashing commits make sure to rewrite the resulting commit message to be compliant with the project's commit message convention.
 
-**Note**: if the resulting squashed commit would encompasses multiple changes (for example multiple unrelated features or fixes) then it's probably not a good idea to squash those commits together. A commit should contain exactly one self-contained functional change and a functional change should be contained in exactly one commit. See [atomic commits](https://en.wikipedia.org/wiki/Atomic_commit).
+**Note**: if the resulting squashed commit encompasses multiple changes (for example multiple unrelated features or fixes) then it's probably not a good idea to squash those commits together. A commit should contain exactly one self-contained functional change and a functional change should be contained in exactly one commit. See [atomic commits](https://en.wikipedia.org/wiki/Atomic_commit).
 
 ## `reference already exists` error when pushing tag
 
@@ -63,7 +64,7 @@ After a git history rewrite due to a `git push --force`, the git tags and notes 
 
 To recover from that situation, do the following:
 
-1. Delete the tag(s) for the release(s) that have been lost from the git history. You can delete each tag from remote using `git push origin :[TAG NAME]`, e.g. `git push origin :v2.0.0-beta.1`. You can delete tags locally using `git tag -d [TAG NAME]`, e.g. `git tag -d v2.0.0-beta.1`.
+1. Delete the tag(s) for the release(s) that have been lost from the git history. You can delete each tag from remote using `git push origin -d :[TAG NAME]`, e.g. `git push origin -d :v2.0.0-beta.1`. You can delete tags locally using `git tag -d [TAG NAME]`, e.g. `git tag -d v2.0.0-beta.1`.
 2. Re-create the tags locally: `git tag [TAG NAME] [COMMIT HASH]`, where `[COMMIT HASH]` is the new commit that created the release for the lost tag. E.g. `git tag v2.0.0-beta.1 abcdef0`
-3. Re-create the git notes for each release tag, e.g. `git notes --ref semantic-release add -f -m '{"channels":["beta"]}' v2.0.0-beta.1`. If the release was also published in the default channel (usually `master`), then set the first channel to `null`, e.g. `git notes --ref semantic-release add -f -m '{"channels":[null, "beta"]}'`
+3. Re-create the git notes for each release tag, e.g. `git notes --ref semantic-release add -f -m '{"channels":["beta"]}' v2.0.0-beta.1`. If the release was also published in the default channel (usually `master`/`main`), then set the first channel to `null`, e.g. `git notes --ref semantic-release add -f -m '{"channels":[null, "beta"]}'`
 4. Push the local notes: `git push --force origin refs/notes/semantic-release`. The `--force` is needed after the rebase. Be careful.
