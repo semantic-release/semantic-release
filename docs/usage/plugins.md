@@ -7,7 +7,7 @@ A plugin is a npm module that can implement one or more of the following steps:
 | Step               | Required | Description                                                                                                                                                                                                          |
 | ------------------ | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `verifyConditions` | No       | Responsible for verifying conditions necessary to proceed with the release: configuration is correct, authentication token are valid, etc...                                                                         |
-| `analyzeCommits`   | Yes      | Responsible for determining the type of the next release (`major`, `minor` or `patch`). If multiple plugins with a `analyzeCommits` step are defined, the release type will be the highest one among plugins output. |
+| `analyzeCommits`   | No      | Responsible for determining the type of the next release (`major`, `minor` or `patch`). If multiple plugins with a `analyzeCommits` step are defined, the release type will be the highest one among plugins output. If no plugin with a `analyzeCommits` step is defined `@semantic-release/commit-analyzer` will be used.|
 | `verifyRelease`    | No       | Responsible for verifying the parameters (version, type, dist-tag etc...) of the release that is about to be published.                                                                                              |
 | `generateNotes`    | No       | Responsible for generating the content of the release note. If multiple plugins with a `generateNotes` step are defined, the release notes will be the result of the concatenation of each plugin output.            |
 | `prepare`          | No       | Responsible for preparing the release, for example creating or updating files such as `package.json`, `CHANGELOG.md`, documentation or compiled assets and pushing a commit.                                         |
@@ -17,8 +17,6 @@ A plugin is a npm module that can implement one or more of the following steps:
 | `fail`             | No       | Responsible for notifying of a failed release.                                                                                                                                                                       |
 
 Release steps will run in that order. At each step, **semantic-release** will run every plugin in the [`plugins` array](#plugins-declaration-and-execution-order), as long as the plugin implements the step.
-
-**Note:** If no plugin with a `analyzeCommits` step is defined `@semantic-release/commit-analyzer` will be used.
 
 ## Plugins installation
 
