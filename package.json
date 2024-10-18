@@ -72,7 +72,7 @@
     "ls-engines": "0.9.3",
     "mockserver-client": "5.15.0",
     "nock": "13.5.5",
-    "npm-run-all2": "6.2.3",
+    "npm-run-all2": "6.2.4",
     "p-retry": "6.2.0",
     "prettier": "3.3.3",
     "publint": "0.2.11",
