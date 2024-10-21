@@ -30,7 +30,7 @@
   "dependencies": {
     "@semantic-release/commit-analyzer": "^13.0.0-beta.1",
     "@semantic-release/error": "^4.0.0",
-    "@semantic-release/github": "^10.0.0",
+    "@semantic-release/github": "^11.0.0",
     "@semantic-release/npm": "^12.0.0",
     "@semantic-release/release-notes-generator": "^14.0.0-beta.1",
     "aggregate-error": "^5.0.0",
@@ -66,13 +66,13 @@
     "dockerode": "4.0.2",
     "file-url": "4.0.0",
     "fs-extra": "11.2.0",
-    "got": "14.4.2",
+    "got": "14.4.3",
     "js-yaml": "4.1.0",
     "lockfile-lint": "4.14.0",
     "ls-engines": "0.9.3",
     "mockserver-client": "5.15.0",
     "nock": "13.5.5",
-    "npm-run-all2": "6.2.3",
+    "npm-run-all2": "6.2.4",
     "p-retry": "6.2.0",
     "prettier": "3.3.3",
     "publint": "0.2.11",
@@ -162,5 +162,5 @@
       "github>semantic-release/.github:renovate-config"
     ]
   },
-  "packageManager": "npm@10.8.3"
+  "packageManager": "npm@10.9.0"
 }

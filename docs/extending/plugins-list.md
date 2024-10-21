@@ -159,6 +159,8 @@
   - `verifyConditions`: Verify plugin configuration and login to Helm registry
   - `prepare`: Package Helm chart to local folder
   - `publish`: Publish Helm chart to OCI registry
+- [semantic-release-mirror-version](https://github.com/GarthDB/semantic-release-mirror-version)
+  - `prepare`: Update the version number in any file that matches the defined [file glob](https://github.com/isaacs/node-glob).
 - [semantic-release-space](https://github.com/123FLO321/semantic-release-space)
   - `verifyConditions` Verifies that all required options are set.
   - `prepare` Creates a JetBrains Space Deployment Target if it does not yet exist.

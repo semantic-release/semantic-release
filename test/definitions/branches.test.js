@@ -15,6 +15,7 @@ test('A "maintenance" branch is identified by having a "range" property or a "na
   t.false(maintenance.filter({ name: "some-name", range: false }));
   t.false(maintenance.filter({ name: "some-name" }));
   t.false(maintenance.filter({ name: "1.0.0" }));
+  t.false(maintenance.filter({ name: "1.0" }));
   t.false(maintenance.filter({ name: "x.x.x" }));
   /* eslint-enable unicorn/no-fn-reference-in-iterator */
 });
