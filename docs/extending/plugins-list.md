@@ -133,6 +133,9 @@
   - `verifyConditions`: Verify the environment variable `PYPI_TOKEN` and installation of build tools
   - `prepare`: Update the version in `setup.cfg` and create the distribution packages
   - `publish`: Publish the python package to a repository (default: pypi)
+- [@covage/semantic-release-poetry-plugin](https://github.com/covage/semantic-release-poetry-plugin)
+  - `verifyConditions`: Verify the presence and validity of `pyproject.toml` file.
+  - `prepare`: Update the version in `pyproject.toml`.
 - [semantic-release-codeartifact](https://github.com/ryansonshine/semantic-release-codeartifact)
   - `verifyConditions`: Validate configuration, get AWS CodeArtifact authentication and repository, validate `publishConfig` or `.npmrc` (if they exist), then pass the configuration to the associated plugins.
 - [semantic-release-telegram](https://github.com/pustovitDmytro/semantic-release-telegram)
