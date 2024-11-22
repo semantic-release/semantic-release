@@ -27,7 +27,7 @@ jobs:
         node-version:
           - 20.8.1
           - 20
-          - 21
+          - 22.0.0
 
     runs-on: ubuntu-latest
     timeout-minutes: 5
