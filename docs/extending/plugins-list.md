@@ -133,6 +133,9 @@
   - `verifyConditions`: Verify the environment variable `PYPI_TOKEN` and installation of build tools
   - `prepare`: Update the version in `setup.cfg` and create the distribution packages
   - `publish`: Publish the python package to a repository (default: pypi)
+- [@covage/semantic-release-poetry-plugin](https://github.com/covage/semantic-release-poetry-plugin)
+  - `verifyConditions`: Verify the presence and validity of `pyproject.toml` file.
+  - `prepare`: Update the version in `pyproject.toml`.
 - [semantic-release-codeartifact](https://github.com/ryansonshine/semantic-release-codeartifact)
   - `verifyConditions`: Validate configuration, get AWS CodeArtifact authentication and repository, validate `publishConfig` or `.npmrc` (if they exist), then pass the configuration to the associated plugins.
 - [semantic-release-telegram](https://github.com/pustovitDmytro/semantic-release-telegram)
@@ -159,6 +162,8 @@
   - `verifyConditions`: Verify plugin configuration and login to Helm registry
   - `prepare`: Package Helm chart to local folder
   - `publish`: Publish Helm chart to OCI registry
+- [semantic-release-mirror-version](https://github.com/GarthDB/semantic-release-mirror-version)
+  - `prepare`: Update the version number in any file that matches the defined [file glob](https://github.com/isaacs/node-glob).
 - [semantic-release-space](https://github.com/123FLO321/semantic-release-space)
   - `verifyConditions` Verifies that all required options are set.
   - `prepare` Creates a JetBrains Space Deployment Target if it does not yet exist.
@@ -200,3 +205,6 @@
   - `generateNotes` Generates release notes using [GitHub release notes generator](https://docs.github.com/en/repositories/releasing-projects-on-github/automatically-generated-release-notes).
 - [semantic-release-commits-lint](https://github.com/BondarenkoAlex/semantic-release-commits-lint)
   - `analyzeCommits` Analyzing commit messages by [commitlint](https://github.com/conventional-changelog/commitlint).
+- [semantic-release-kaniko](https://github.com/brendangeck/semantic-release-kaniko)
+  - `verifyConditions`: Verify that all needed configuration is present and login to the Docker registry.
+  - `publish`: Build a container image using [Kaniko](https://github.com/GoogleContainerTools/kaniko) and (optionally) push it to a Docker registry.

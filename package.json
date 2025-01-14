@@ -11,7 +11,6 @@
       "!test/e2e.test.js"
     ],
     "nodeArguments": [
-      "--loader=testdouble",
       "--no-warnings"
     ],
     "timeout": "2m"
@@ -30,7 +29,7 @@
   "dependencies": {
     "@semantic-release/commit-analyzer": "^13.0.0-beta.1",
     "@semantic-release/error": "^4.0.0",
-    "@semantic-release/github": "^10.0.0",
+    "@semantic-release/github": "^11.0.0",
     "@semantic-release/npm": "^12.0.0",
     "@semantic-release/release-notes-generator": "^14.0.0-beta.1",
     "aggregate-error": "^5.0.0",
@@ -44,7 +43,7 @@
     "git-log-parser": "^1.2.0",
     "hook-std": "^3.0.0",
     "hosted-git-info": "^8.0.0",
-    "import-from-esm": "^1.3.1",
+    "import-from-esm": "^2.0.0",
     "lodash-es": "^4.17.21",
     "marked": "^12.0.0",
     "marked-terminal": "^7.0.0",
@@ -59,23 +58,23 @@
     "yargs": "^17.5.1"
   },
   "devDependencies": {
-    "ava": "6.1.3",
-    "c8": "10.1.2",
+    "ava": "6.2.0",
+    "c8": "10.1.3",
     "clear-module": "4.1.2",
     "cz-conventional-changelog": "3.3.0",
-    "dockerode": "4.0.2",
+    "dockerode": "4.0.3",
     "file-url": "4.0.0",
     "fs-extra": "11.2.0",
-    "got": "14.4.2",
+    "got": "14.4.5",
     "js-yaml": "4.1.0",
     "lockfile-lint": "4.14.0",
     "ls-engines": "0.9.3",
     "mockserver-client": "5.15.0",
-    "nock": "13.5.5",
-    "npm-run-all2": "6.2.3",
-    "p-retry": "6.2.0",
-    "prettier": "3.3.3",
-    "publint": "0.2.11",
+    "nock": "13.5.6",
+    "npm-run-all2": "7.0.2",
+    "p-retry": "6.2.1",
+    "prettier": "3.4.2",
+    "publint": "0.3.2",
     "sinon": "19.0.2",
     "stream-buffers": "3.0.3",
     "tempy": "3.1.0",
@@ -152,7 +151,7 @@
     "lint:engines": "ls-engines",
     "lint:publish": "publint --strict",
     "semantic-release": "./bin/semantic-release.js",
-    "test": "npm-run-all --print-label --parallel lint:* --parallel test:*",
+    "test": "npm-run-all --print-label --parallel lint:* --serial test:*",
     "test:unit": "c8 ava --verbose",
     "test:integration": "ava --verbose test/integration.test.js",
     "test:e2e": "ava --verbose test/e2e.test.js"
@@ -162,5 +161,5 @@
       "github>semantic-release/.github:renovate-config"
     ]
   },
-  "packageManager": "npm@10.8.3"
+  "packageManager": "npm@11.0.0"
 }
