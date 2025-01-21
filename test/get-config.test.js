@@ -727,3 +727,61 @@ test('Convert "ci" option to "noCi" when set from extended config', async (t) =>
   t.is(result.ci, false);
   t.is(result.noCi, true);
 });
+
+test("Load any config path from --config", async (t) => {
+  // Create a git repository, set the current working directory at the root of the repo
+  const { cwd } = await gitRepo();
+
+  // Create a special config file
+  const configPath = path.resolve(cwd, "special-snowflake.json");
+  await outputJson(configPath, { repositoryUrl: "test-repo" });
+  const { options: result } = await t.context.getConfig({ cwd }, { config: configPath });
+
+  t.is(result.repositoryUrl, "test-repo");
+});
+
+test("Loading from '--config package.json' uses the 'release' key as usual", async (t) => {
+  // Create a git repository, set the current working directory at the root of the repo
+  const { cwd } = await gitRepo();
+
+  // Create a special config file
+  const configPath = path.resolve(cwd, "package.json");
+  await outputJson(configPath, { release: { repositoryUrl: "release-package-json" } });
+  const { options: result } = await t.context.getConfig({ cwd }, { config: configPath });
+
+  t.is(result.repositoryUrl, "release-package-json");
+});
+
+test("Load only the path from --config", async (t) => {
+  // Create a git repository, set the current working directory at the root of the repo
+  const { cwd } = await gitRepo();
+
+  // Create a special config file
+  const configPath = path.resolve(cwd, "special-config.json");
+  await outputJson(configPath, { repositoryUrl: "special-config" });
+
+  // Create a standard file
+  const pkgOptionsPath = path.resolve(cwd, "package.json");
+  await outputJson(pkgOptionsPath, { release: { repositoryUrl: "package-config", branches: ["package-branch"] } });
+
+  // Validate that the standard file is read when no --config is provided
+  const { options: packageConfigOptions } = await t.context.getConfig({ cwd });
+  t.is(packageConfigOptions.repositoryUrl, "package-config");
+  t.deepEqual(packageConfigOptions.branches, ["package-branch"]);
+
+  // Validate that the special file is read when --config is provided
+  const { options: specialConfigOptions } = await t.context.getConfig({ cwd }, { config: configPath });
+  t.is(specialConfigOptions.repositoryUrl, "special-config");
+  t.notDeepEqual(specialConfigOptions.branches, ["package-branch"]); // the default here is large, hence notDeepEqual
+});
+
+test("Throw an error if the --config path cannot be found", async (t) => {
+  // Create a git repository, set the current working directory at the root of the repo
+  const { cwd } = await gitRepo();
+
+  const configPath = path.resolve(cwd, "not-found.json");
+  await t.throwsAsync(t.context.getConfig({ cwd }, { config: configPath }), {
+    message: /.*no such file or directory, open '.*not-found.json'/,
+    code: "ENOENT",
+  });
+});

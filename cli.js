@@ -24,6 +24,7 @@ Usage:
     .option("r", { alias: "repository-url", describe: "Git repository URL", type: "string", group: "Options" })
     .option("t", { alias: "tag-format", describe: "Git tag format", type: "string", group: "Options" })
     .option("p", { alias: "plugins", describe: "Plugins", ...stringList, group: "Options" })
+    .option("c", { alias: "config", describe: "Configuration file to load", type: "string", group: "Options" })
     .option("e", { alias: "extends", describe: "Shareable configurations", ...stringList, group: "Options" })
     .option("ci", { describe: "Toggle CI verifications", type: "boolean", group: "Options" })
     .option("verify-conditions", { ...stringList, group: "Plugins" })
