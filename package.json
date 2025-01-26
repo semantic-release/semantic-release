@@ -70,7 +70,7 @@
     "lockfile-lint": "4.14.0",
     "ls-engines": "0.9.3",
     "mockserver-client": "5.15.0",
-    "nock": "13.5.6",
+    "nock": "14.0.0",
     "npm-run-all2": "7.0.2",
     "p-retry": "6.2.1",
     "prettier": "3.4.2",
