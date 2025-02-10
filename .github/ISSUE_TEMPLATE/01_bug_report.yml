@@ -1,5 +1,6 @@
 name: Bug Report
 description: Something not working as expected
+labels: ["bug"]
 body:
   - type: textarea
     attributes:
