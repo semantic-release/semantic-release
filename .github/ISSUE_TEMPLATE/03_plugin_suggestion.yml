@@ -1,5 +1,6 @@
 name: New plugin suggestion
 description: Integrate with a new platform, etc
+labels: ["new plugin"]
 body:
   - type: textarea
     attributes:
