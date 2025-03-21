@@ -88,7 +88,7 @@ List of modules or file paths containing a [shareable configuration](shareable-c
 ### branches
 
 Type: `Array`, `String`, `Object`<br>
-Default: `['+([0-9])?(.{+([0-9]),x}).x', 'master', 'main', 'next', 'next-major', {name: 'beta', prerelease: true}, {name: 'alpha', prerelease: true}]`<br>
+Default: `['\d+(?:\.(?:\d+|x))?\.x', 'master', 'main', 'next', 'next-major', {name: 'beta', prerelease: true}, {name: 'alpha', prerelease: true}]`<br>
 CLI arguments: `--branches`
 
 The branches on which releases should happen. By default **semantic-release** will release:
