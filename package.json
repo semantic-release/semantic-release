@@ -77,7 +77,7 @@
     "p-retry": "6.2.1",
     "prettier": "3.5.3",
     "publint": "0.3.9",
-    "sinon": "19.0.4",
+    "sinon": "19.0.5",
     "stream-buffers": "3.0.3",
     "tempy": "3.1.0",
     "testdouble": "3.20.2"
