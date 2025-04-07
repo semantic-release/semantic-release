@@ -325,5 +325,8 @@ export async function gitAddNote(note, ref, execaOptions) {
  * @param {Object} [execaOpts] Options to pass to `execa`.
  */
 export async function gitGetNote(ref, execaOptions) {
-  return (await execa("git", ["notes", "--ref", `${GIT_NOTE_REF}-${ref}`, "show", ref], execaOptions)).stdout;
+  // @Xunnamius: fix https://github.com/semantic-release/semantic-release/issues/1708
+  const commit = (await execa("git", ["log", "-1", "--pretty=format:%H", ref], execaOptions)).stdout;
+
+  return (await execa("git", ["notes", "--ref", `${GIT_NOTE_REF}-${ref}`, "show", commit], execaOptions)).stdout;
 }
