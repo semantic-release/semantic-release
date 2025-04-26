@@ -154,7 +154,7 @@ Type: `String`<br>
 Default: `release ${nextRelease.version}`<br>
 CLI arguments: `-tm`, `--tag-message`
 
-The message for the tag. The tag message is generated with [Lodash template](https://lodash.com/docs#template) and will be compiled with the `nextRelease` variable.
+The message for the tag. The tag message is generated with [Lodash template](https://lodash.com/docs#template) and will be compiled with the [nextRelease](../developer-guide/js-api#nextrelease) variable.
 
 **Note**: The message will be applied to the tag only if one of the following is `true`: `tagAnnotate`, `tagSign` or git config `tag.gpgsign`. Otherwise the tag is considered lightweight, without a message.
 

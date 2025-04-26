@@ -72,7 +72,7 @@ async function run(context, plugins) {
     logger.log(
       `This test run was triggered on the branch ${ciBranch}, while semantic-release is configured to only publish from ${context.branches
         .map(({ name }) => name)
-        .join(", ")}, therefore a new version won’t be published.`
+        .join(", ")}, therefore a new version won't be published.`
     );
     return false;
   }
@@ -211,7 +211,7 @@ async function run(context, plugins) {
       {
         tagAnnotate: options.tagAnnotate,
         tagSign: options.tagSign,
-        tagMessage: template(options.tagMessage)({ nextRelease }),
+        tagMessage: options.tagMessage ? template(options.tagMessage)({ nextRelease }) : nextRelease.gitTag,
       },
       { cwd, env },
     );

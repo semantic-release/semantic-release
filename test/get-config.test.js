@@ -368,6 +368,7 @@ test.serial('Read configuration from file path in "extends"', async (t) => {
     tagAnnotate: false,
     tagSign: false,
     tagMessage: `release \${nextRelease.version}`,
+    plugins: ["plugin-1", ["plugin-2", { plugin2Opt: "value" }]]
   };
   // Create package.json and shareable.json in repository root
   await outputJson(path.resolve(cwd, "package.json"), { release: pkgOptions });
