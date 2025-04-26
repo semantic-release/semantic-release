@@ -100,6 +100,40 @@ test("Default values, reading repositoryUrl (http url) from package.json if not 
   t.is(result.tagFormat, `v\${version}`);
 });
 
+test("Default tag annotation options", async (t) => {
+  // Create a git repository, set the current working directory at the root of the repo
+  const { cwd } = await gitRepo();
+
+  const { options: result } = await t.context.getConfig({ cwd });
+
+  // Verify the default tag annotation options are set correctly
+  t.is(result.tagAnnotate, false);
+  t.is(result.tagSign, false);
+  t.is(result.tagMessage, `release \${nextRelease.version}`);
+});
+
+test("Override default tag annotation options via package.json", async (t) => {
+  // Create a git repository, set the current working directory at the root of the repo
+  const { cwd } = await gitRepo();
+  const pkg = {
+    repository: "https://host.null/owner/module.git",
+    release: {
+      tagAnnotate: true,
+      tagSign: true,
+      tagMessage: "Custom message for version \${nextRelease.version}"
+    }
+  };
+  // Create package.json in repository root
+  await outputJson(path.resolve(cwd, "package.json"), pkg);
+
+  const { options: result } = await t.context.getConfig({ cwd });
+
+  // Verify the tag annotation options are overridden
+  t.is(result.tagAnnotate, true);
+  t.is(result.tagSign, true);
+  t.is(result.tagMessage, "Custom message for version \${nextRelease.version}");
+});
+
 test('Convert "ci" option to "noCi"', async (t) => {
   const pkg = { repository: "https://host.null/owner/module.git", release: { ci: false } };
   // Create a git repository, set the current working directory at the root of the repo
