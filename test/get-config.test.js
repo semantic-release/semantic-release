@@ -242,6 +242,9 @@ test.serial("Read options from .releaserc.mjs", async (t) => {
     repositoryUrl: "https://host.null/owner/module.git",
     tagFormat: `v\${version}`,
     plugins: false,
+    tagAnnotate: false,
+    tagSign: false,
+    tagMessage: `release \${nextRelease.version}`,
   };
   // Create .releaserc.mjs in repository root
   await writeFile(path.resolve(cwd, ".releaserc.mjs"), `export default ${JSON.stringify(options)}`);
@@ -311,6 +314,9 @@ test.serial("Read options from release.config.mjs", async (t) => {
     repositoryUrl: "https://host.null/owner/module.git",
     tagFormat: `v\${version}`,
     plugins: false,
+    tagAnnotate: false,
+    tagSign: false,
+    tagMessage: `release \${nextRelease.version}`,
   };
   // Verify the plugins module is called with the plugin options from release.config.mjs
   td.when(plugins({ cwd, options }, {})).thenResolve(pluginsConfig);
@@ -368,7 +374,7 @@ test.serial('Read configuration from file path in "extends"', async (t) => {
     tagAnnotate: false,
     tagSign: false,
     tagMessage: `release \${nextRelease.version}`,
-    plugins: ["plugin-1", ["plugin-2", { plugin2Opt: "value" }]]
+    plugins: ["plugin-1", ["plugin-2", { plugin2Opt: "value" }]],
   };
   // Create package.json and shareable.json in repository root
   await outputJson(path.resolve(cwd, "package.json"), { release: pkgOptions });
@@ -489,7 +495,14 @@ test.serial('Read configuration from an array of CJS files in "extends"', async 
   await outputJson(path.resolve(cwd, "package.json"), { release: pkgOptions });
   await writeFile(path.resolve(cwd, "shareable1.cjs"), `module.exports = ${JSON.stringify(options1)}`);
   await writeFile(path.resolve(cwd, "shareable2.cjs"), `module.exports = ${JSON.stringify(options2)}`);
-  const expectedOptions = { ...options1, ...options2, branches: ["test_branch"] };
+  const expectedOptions = {
+    ...options1,
+    ...options2,
+    branches: ["test_branch"],
+    tagAnnotate: false,
+    tagSign: false,
+    tagMessage: `release \${nextRelease.version}`,
+  };
   // Verify the plugins module is called with the plugin options from shareable1.mjs and shareable2.mjs
   td.when(
     plugins(
@@ -532,7 +545,14 @@ test.serial('Read configuration from an array of ESM files in "extends"', async 
   await outputJson(path.resolve(cwd, "package.json"), { release: pkgOptions });
   await writeFile(path.resolve(cwd, "shareable1.mjs"), `export default ${JSON.stringify(options1)}`);
   await writeFile(path.resolve(cwd, "shareable2.mjs"), `export default ${JSON.stringify(options2)}`);
-  const expectedOptions = { ...options1, ...options2, branches: ["test_branch"] };
+  const expectedOptions = {
+    ...options1,
+    ...options2,
+    branches: ["test_branch"],
+    tagAnnotate: false,
+    tagSign: false,
+    tagMessage: `release \${nextRelease.version}`,
+  };
   // Verify the plugins module is called with the plugin options from shareable1.mjs and shareable2.mjs
   td.when(
     plugins(

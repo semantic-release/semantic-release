@@ -213,7 +213,7 @@ async function run(context, plugins) {
         tagSign: options.tagSign,
         tagMessage: options.tagMessage ? template(options.tagMessage)({ nextRelease }) : nextRelease.gitTag,
       },
-      { cwd, env },
+      { cwd, env }
     );
     await addNote({ channels: [nextRelease.channel] }, nextRelease.gitTag, { cwd, env });
     await push(options.repositoryUrl, { cwd, env });
