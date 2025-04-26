@@ -119,7 +119,7 @@ Here is a basic example to create [GitHub releases](https://help.github.com/arti
 
 **Note**: This is a theoretical example where the command `set-version` update the project version with the value passed as its first argument and `publish-package` publishes the package to a registry.
 
-See the [package managers and languages recipes](../recipes/release-workflow/README.md#package-managers-and-languages) for more details on specific project types.
+See the [package managers and languages recipes](../recipes/release-workflow/README.md#package-managers-and-languages) for more details on specific project types and the [available plugins list](../extending/plugins-list.md) to see if there are community-supported plugins already available for the stack you are interested in.
 
 ## Can I use semantic-release with any CI service?
 
@@ -222,11 +222,11 @@ This is fully customizable with the [`@semantic-release/commit-analyzer`](https:
 
 ## Is it _really_ a good idea to release on every push?
 
-It is indeed a great idea because it _forces_ you to follow best practices. If you don’t feel comfortable releasing every feature or fix on your `master` you might not treat your `master` branch as intended.
+It is indeed a great idea because it _forces_ you to follow best practices. If you don’t feel comfortable releasing every feature or fix on your `master`/`main` you might not treat your `master`/`main` branch as intended.
 
 From [Understanding the GitHub Flow](https://guides.github.com/introduction/flow/index.html):
 
-> Branching is a core concept in Git, and the entire GitHub Flow is based upon it. There's only one rule: anything in the master branch is always deployable.
+> Branching is a core concept in Git, and the entire GitHub Flow is based upon it. There's only one rule: anything in the master/main branch is always deployable.
 
 If you need more control over the timing of releases, see [Triggering a release](../../README.md#triggering-a-release) for different options.
 

@@ -38,9 +38,14 @@ declare module "semantic-release" {
     /**
      * Signale console loger instance.
      *
-     * Has error, log and success methods.
+     * Has error, log, warn and success methods.
      */
-    logger: Signale<"error" | "log" | "success">;
+    logger: Signale<"error" | "log" | "success" | "warn">;
+
+    /**
+     * Semantic release configuration
+     */
+    options: Options;
   }
 
   /**
@@ -445,7 +450,7 @@ declare module "semantic-release" {
      * **semantic-release** will release:
      *
      *  * regular releases to the default distribution channel from the
-     *    branch `master`
+     *    branch `master` / `main`
      *  * regular releases to a distribution channel matching the branch
      *    name from any existing branch with a name matching a maintenance
      *    release range (`N.N.x` or `N.x.x` or `N.x` with `N` being a
@@ -462,7 +467,7 @@ declare module "semantic-release" {
      * **Note**: If your repository does not have a release branch, then
      * **semantic-release** will fail with an `ERELEASEBRANCHES` error
      * message. If you are using the default configuration, you can fix
-     * this error by pushing a `master` branch.
+     * this error by pushing a `master`/`main branch.
      *
      * **Note**: Once **semantic-release** is configured, any user with the
      * permission to push commits on one of those branches will be able to
@@ -587,7 +592,7 @@ declare module "semantic-release" {
      * **semantic-release** will release:
      *
      *  * regular releases to the default distribution channel from the
-     *    branch `master`
+     *    branch `master`/`main
      *  * regular releases to a distribution channel matching the branch
      *    name from any existing branch with a name matching a maintenance
      *    release range (`N.N.x` or `N.x.x` or `N.x` with `N` being a
@@ -604,7 +609,7 @@ declare module "semantic-release" {
      * **Note**: If your repository does not have a release branch, then
      * **semantic-release** will fail with an `ERELEASEBRANCHES` error
      * message. If you are using the default configuration, you can fix
-     * this error by pushing a `master` branch.
+     * this error by pushing a `master`/`main` branch.
      *
      * **Note**: Once **semantic-release** is configured, any user with the
      * permission to push commits on one of those branches will be able to
@@ -667,6 +672,11 @@ declare module "semantic-release" {
      * This allows for making releases from a local machine.
      */
     ci?: boolean | undefined;
+
+    /**
+     * Set to true when the `ci` option is set to false.
+     */
+    noCi?: true;
 
     /**
      * Any other options supported by plugins.

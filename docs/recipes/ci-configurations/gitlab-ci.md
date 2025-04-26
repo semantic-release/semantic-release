@@ -58,7 +58,7 @@ This example is a minimal configuration for **semantic-release** with a build ru
 **Note**: The`semantic-release` execution command varies depending if you are using a [local](../../usage/installation.md#local-installation) or [global](../../usage/installation.md#global-installation) **semantic-release** installation.
 
 ```yaml
-# The release pipeline will run only on the master branch a commit is triggered
+# The release pipeline will run only on the master/main branch a commit is triggered
 stages:
   - release
 
@@ -71,7 +71,7 @@ release:
   script:
     - semantic-release
   rules:
-    - if: $CI_COMMIT_BRANCH == "master"
+    - if: $CI_COMMIT_BRANCH == "master" # or main
 
 release:
   image: node:12-buster-slim
@@ -82,7 +82,7 @@ release:
   script:
     - semantic-release
   rules:
-    - if: $CI_COMMIT_BRANCH == "master"
+    - if: $CI_COMMIT_BRANCH == "master" # or main
 ```
 
 ### `package.json` configuration

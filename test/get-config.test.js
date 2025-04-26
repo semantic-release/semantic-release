@@ -45,6 +45,7 @@ test("Default values, reading repositoryUrl from package.json", async (t) => {
   t.deepEqual(result.branches, [
     "+([0-9])?(.{+([0-9]),x}).x",
     "master",
+    "main",
     "next",
     "next-major",
     { name: "beta", prerelease: true },
@@ -66,6 +67,7 @@ test("Default values, reading repositoryUrl from repo if not set in package.json
   t.deepEqual(result.branches, [
     "+([0-9])?(.{+([0-9]),x}).x",
     "master",
+    "main",
     "next",
     "next-major",
     { name: "beta", prerelease: true },
@@ -88,6 +90,7 @@ test("Default values, reading repositoryUrl (http url) from package.json if not 
   t.deepEqual(result.branches, [
     "+([0-9])?(.{+([0-9]),x}).x",
     "master",
+    "main",
     "next",
     "next-major",
     { name: "beta", prerelease: true },
@@ -230,6 +233,27 @@ test.serial("Read options from .releaserc.cjs", async (t) => {
   t.deepEqual(result, { options, plugins: pluginsConfig });
 });
 
+test.serial("Read options from .releaserc.mjs", async (t) => {
+  // Create a git repository, set the current working directory at the root of the repo
+  const { cwd } = await gitRepo();
+  const options = {
+    analyzeCommits: { path: "analyzeCommits", param: "analyzeCommits_param" },
+    branches: ["test_branch"],
+    repositoryUrl: "https://host.null/owner/module.git",
+    tagFormat: `v\${version}`,
+    plugins: false,
+  };
+  // Create .releaserc.mjs in repository root
+  await writeFile(path.resolve(cwd, ".releaserc.mjs"), `export default ${JSON.stringify(options)}`);
+  // Verify the plugins module is called with the plugin options from .releaserc.mjs
+  td.when(plugins({ cwd, options }, {})).thenResolve(pluginsConfig);
+
+  const result = await t.context.getConfig({ cwd });
+
+  // Verify the options contains the plugin config from .releaserc.mjs
+  t.deepEqual(result, { options, plugins: pluginsConfig });
+});
+
 test.serial("Read options from release.config.js", async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const { cwd } = await gitRepo();
@@ -275,6 +299,27 @@ test.serial("Read options from release.config.cjs", async (t) => {
   const result = await t.context.getConfig({ cwd });
 
   // Verify the options contains the plugin config from release.config.cjs
+  t.deepEqual(result, { options, plugins: pluginsConfig });
+});
+
+test.serial("Read options from release.config.mjs", async (t) => {
+  // Create a git repository, set the current working directory at the root of the repo
+  const { cwd } = await gitRepo();
+  const options = {
+    analyzeCommits: { path: "analyzeCommits", param: "analyzeCommits_param" },
+    branches: ["test_branch"],
+    repositoryUrl: "https://host.null/owner/module.git",
+    tagFormat: `v\${version}`,
+    plugins: false,
+  };
+  // Verify the plugins module is called with the plugin options from release.config.mjs
+  td.when(plugins({ cwd, options }, {})).thenResolve(pluginsConfig);
+  // Create release.config.mjs in repository root
+  await writeFile(path.resolve(cwd, "release.config.mjs"), `export default ${JSON.stringify(options)}`);
+
+  const result = await t.context.getConfig({ cwd });
+
+  // Verify the options contains the plugin config from release.config.mjs
   t.deepEqual(result, { options, plugins: pluginsConfig });
 });
 

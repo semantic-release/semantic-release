@@ -1,11 +1,12 @@
-# Workflow configuration
+# Release Workflow configuration
 
-**semantic-release** allow to manage and automate complex release workflow, based on multiple Git branches and distribution channels. This allow to:
+**semantic-release** enables managing and automating complex release workflow, based on multiple Git branches and distribution channels.
+This enables:
 
-- Distribute certain releases to a particular group of users via distribution channels
-- Manage the availability of releases on distribution channels via branches merge
-- Maintain multiple lines of releases in parallel
-- Work on large future releases outside the normal flow of one version increment per Git push
+- Distributing certain releases to a particular group of users via distribution channels
+- Managing the availability of releases on distribution channels via branches merge
+- Maintaining multiple lines of releases in parallel
+- Working on large future releases outside the normal flow of one version increment per Git push
 
 See [Release workflow recipes](../recipes/release-workflow/README.md#release-workflow) for detailed examples.
 
