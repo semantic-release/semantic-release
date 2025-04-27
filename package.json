@@ -69,7 +69,7 @@
     "fs-extra": "11.3.0",
     "got": "14.4.7",
     "js-yaml": "4.1.0",
-    "lockfile-lint": "4.14.0",
+    "lockfile-lint": "4.14.1",
     "ls-engines": "0.9.3",
     "mockserver-client": "5.15.0",
     "nock": "14.0.4",
