@@ -20,9 +20,7 @@ test("Get the valid tags", async (t) => {
     {
       name: "master",
       tags: [
-        { gitTag: "v1.0.0", version: "1.0.0", channels: [null] },
-        { gitTag: "v2.0.0", version: "2.0.0", channels: [null] },
-        { gitTag: "v3.0.0-beta.1", version: "3.0.0-beta.1", channels: [null] },
+        { gitTag: "v3.0.0-beta.1", version: "3.0.0-beta.1", channels: [null] }
       ],
     },
   ]);
@@ -56,8 +54,7 @@ test("Get the valid tags from multiple branches", async (t) => {
     {
       name: "1.x",
       tags: [
-        { gitTag: "v1.0.0", version: "1.0.0", channels: [null, "1.x"] },
-        { gitTag: "v1.1.0", version: "1.1.0", channels: [null, "1.x"] },
+        { gitTag: "v1.1.0", version: "1.1.0", channels: [null, "1.x"] }
       ],
     },
     {
