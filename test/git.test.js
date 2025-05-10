@@ -98,7 +98,7 @@ test("Fetch all tags on a detached head repository", async (t) => {
 
   await fetch(repositoryUrl, "master", "master", { cwd });
 
-  t.deepEqual((await getTags("master", { cwd })).sort(), ["v1.0.0", "v1.0.1", "v1.1.0"].sort());
+  t.deepEqual(await getTags("master", { cwd }), ["v1.1.0"]);
 });
 
 test("Fetch all tags on a repository with a detached head from branch (CircleCI)", async (t) => {
@@ -122,8 +122,8 @@ test("Fetch all tags on a repository with a detached head from branch (CircleCI)
   await fetch(repositoryUrl, "master", "other-branch", { cwd });
   await fetch(repositoryUrl, "other-branch", "other-branch", { cwd });
 
-  t.deepEqual((await getTags("other-branch", { cwd })).sort(), ["v1.0.0", "v1.0.1", "v1.1.0"].sort());
-  t.deepEqual((await getTags("master", { cwd })).sort(), ["v1.0.0", "v1.0.1", "v1.1.0", "v2.0.0"].sort());
+  t.deepEqual(await getTags("other-branch", { cwd }), ["v1.1.0"]);
+  t.deepEqual(await getTags("master", { cwd }), ["v2.0.0"]);
 });
 
 test("Fetch all tags on a detached head repository with outdated cached repo (GitLab CI)", async (t) => {
@@ -151,7 +151,7 @@ test("Fetch all tags on a detached head repository with outdated cached repo (Gi
   await fetch(repositoryUrl, "master", "master", { cwd: cloneCwd });
   await gitCheckout(commit.hash, false, { cwd: cloneCwd });
 
-  t.deepEqual((await getTags("master", { cwd: cloneCwd })).sort(), ["v1.0.0", "v1.0.1", "v1.1.0", "v1.2.0"].sort());
+  t.deepEqual(await getTags("master", { cwd: cloneCwd }), ["v1.2.0"]);
 });
 
 test("Verify if a branch exists", async (t) => {
