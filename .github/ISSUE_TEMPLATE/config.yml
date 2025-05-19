@@ -1,0 +1,6 @@
+contact_links:
+  - name: Usage Support
+    url: https://github.com/semantic-release/semantic-release/discussions
+    about: |
+      For usage and configuration support, please leverage our community discussions.
+      Please reserve issues for confirmed bugs and feature requests.

@@ -45,7 +45,7 @@
     "hosted-git-info": "^8.0.0",
     "import-from-esm": "^2.0.0",
     "lodash-es": "^4.17.21",
-    "marked": "^12.0.0",
+    "marked": "^15.0.0",
     "marked-terminal": "^7.0.0",
     "micromatch": "^4.0.2",
     "p-each-series": "^3.0.0",
@@ -58,9 +58,9 @@
     "yargs": "^17.5.1"
   },
   "devDependencies": {
-    "@types/node": "22.15.2",
+    "@types/node": "22.15.19",
     "@types/signale": "1.4.7",
-    "ava": "6.2.0",
+    "ava": "6.3.0",
     "c8": "10.1.3",
     "clear-module": "4.1.2",
     "cz-conventional-changelog": "3.3.0",
@@ -69,11 +69,11 @@
     "fs-extra": "11.3.0",
     "got": "14.4.7",
     "js-yaml": "4.1.0",
-    "lockfile-lint": "4.14.0",
+    "lockfile-lint": "4.14.1",
     "ls-engines": "0.9.3",
     "mockserver-client": "5.15.0",
     "nock": "14.0.4",
-    "npm-run-all2": "7.0.2",
+    "npm-run-all2": "8.0.2",
     "p-retry": "6.2.1",
     "prettier": "3.5.3",
     "publint": "0.3.12",
@@ -163,5 +163,5 @@
       "github>semantic-release/.github:renovate-config"
     ]
   },
-  "packageManager": "npm@11.3.0"
+  "packageManager": "npm@11.4.0"
 }
