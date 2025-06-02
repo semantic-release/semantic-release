@@ -301,6 +301,15 @@ test('Return "true" if repository is up to date', async (t) => {
   t.true(await isBranchUpToDate(repositoryUrl, "master", { cwd }));
 });
 
+test('Return "true" if repository is ahead of remote', async (t) => {
+  const { cwd, repositoryUrl } = await gitRepo(true);
+  await gitCommits(["First"], { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
+  await gitCommits(["Second"], { cwd });
+
+  t.true(await isBranchUpToDate(repositoryUrl, "master", { cwd }));
+});
+
 test("Return falsy if repository is not up to date", async (t) => {
   const { cwd, repositoryUrl } = await gitRepo(true);
   await gitCommits(["First"], { cwd });
