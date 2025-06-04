@@ -160,7 +160,10 @@ Set to `true` to skip the push of the release tag to the remote repository via g
 This allows for the release tag to be published via other means where repository push permissions may not be required
 (i.e. GitLab Releases)
 
-**Note**: Some plug-ins (i.e. GitHub) may require that the tag exists in the remote repository before publishing. Use with caution.
+Repository pull permissions are still required.
+
+**Note**: Some plug-ins (i.e. GitHub) may require that the tag exists in the remote repository before publishing.
+Use with caution.
 
 ### ci
 
