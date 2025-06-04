@@ -20,6 +20,7 @@ import {
   addNote,
   getGitHead,
   getTagHead,
+  isBranchInSync,
   isBranchUpToDate,
   push,
   pushNotes,
@@ -106,9 +107,11 @@ async function run(context, plugins) {
       `The local branch ${context.branch.name} is behind the remote one, therefore a new version won't be published.`
     );
     return false;
+  } else if (options.skipPush && !(await isBranchInSync(options.repositoryUrl, context.branch.name, { cwd, env }))) {
+    logger.warn(`The local branch ${context.branch.name} is ahead of the remote and skipPush is enabled`);
+  } else {
+    logger.success(`Local branch is up to date with the remote repository`);
   }
-
-  logger.success(`Local branch is up to date with the remote repository`);
 
   if (!options.skipPush) {
     try {
