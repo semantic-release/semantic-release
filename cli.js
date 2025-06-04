@@ -36,6 +36,7 @@ Usage:
     .option("fail", { ...stringList, group: "Plugins" })
     .option("debug", { describe: "Output debugging information", type: "boolean", group: "Options" })
     .option("d", { alias: "dry-run", describe: "Skip publishing", type: "boolean", group: "Options" })
+    .option("s", { alias: "skip-push", describe: "Skip git push operations", type: "boolean", group: "Options" })
     .option("h", { alias: "help", group: "Options" })
     .strict(false)
     .exitProcess(false);

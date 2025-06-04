@@ -1326,6 +1326,71 @@ test.serial('Allow local releases with "noCi" option', async (t) => {
   t.is(success.callCount, 1);
 });
 
+test.serial('No git push with "skipPush" option', async (t) => {
+  // Create a git repository, set the current working directory at the root of the repo
+  const { cwd, repositoryUrl } = await gitRepo(true);
+  // Add commits to the master branch
+  await gitCommits(["First"], { cwd });
+  // Create the tag corresponding to version 1.0.0
+  await gitTagVersion("v1.0.0", undefined, { cwd });
+  // Add new commits to the master branch
+  await gitCommits(["Second"], { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
+
+  const nextRelease = {
+    name: "v2.0.0",
+    type: "major",
+    version: "2.0.0",
+    gitHead: await getGitHead({ cwd }),
+    gitTag: "v2.0.0",
+    channel: undefined,
+  };
+  const notes = "Release notes";
+
+  const verifyConditions = stub().resolves();
+  const analyzeCommits = stub().resolves(nextRelease.type);
+  const verifyRelease = stub().resolves();
+  const generateNotes = stub().resolves(notes);
+  const publish = stub().resolves();
+  const success = stub().resolves();
+
+  const options = {
+    skipPush: true,
+    branches: ["master"],
+    repositoryUrl,
+    verifyConditions,
+    analyzeCommits,
+    verifyRelease,
+    generateNotes,
+    addChannel: stub().resolves(),
+    prepare: stub().resolves(),
+    publish,
+    success,
+    fail: stub().resolves(),
+  };
+
+  await td.replaceEsm("../lib/get-logger.js", null, () => t.context.logger);
+  await td.replaceEsm("env-ci", null, () => ({ isCi: true, branch: "master", isPr: false }));
+  const semanticRelease = (await import("../index.js")).default;
+  t.truthy(
+    await semanticRelease(options, {
+      cwd,
+      env: {},
+      stdout: new WritableStreamBuffer(),
+      stderr: new WritableStreamBuffer(),
+    })
+  );
+
+  t.is(await gitRemoteTagHead(repositoryUrl, nextRelease.gitTag, { cwd }), undefined);
+
+  t.is(verifyConditions.callCount, 1);
+  t.is(analyzeCommits.callCount, 1);
+  t.is(verifyRelease.callCount, 1);
+  t.is(generateNotes.callCount, 1);
+  t.is(publish.callCount, 1);
+  t.is(success.callCount, 1);
+});
+
 test.serial(
   'Accept "undefined" value returned by "generateNotes" and "false" by "publish" and "addChannel"',
   async (t) => {

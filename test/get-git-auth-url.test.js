@@ -412,3 +412,17 @@ test("Do not add git credential to repositoryUrl if push is allowed", async (t) 
     repositoryUrl
   );
 });
+
+test("Do not add git credential to repositoryUrl if ls-remote is allowed with skipPush", async (t) => {
+  const { cwd, repositoryUrl } = await gitRepo(true);
+
+  t.is(
+    await getAuthUrl({
+      cwd,
+      env: { ...env, GIT_CREDENTIALS: "user:pass" },
+      branch: { name: "master" },
+      options: { repositoryUrl, skipPush: true },
+    }),
+    repositoryUrl
+  );
+});

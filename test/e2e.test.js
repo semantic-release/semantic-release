@@ -646,7 +646,7 @@ test.serial("Exit with 1 if missing permission to push to the remote repository"
     { env: { ...env, GH_TOKEN: "user:wrong_pass" }, cwd, reject: false, extendEnv: false }
   );
   // Verify the type and message are logged
-  t.regex(stderr, /EGITNOPERMISSION/);
+  t.regex(stderr, /EGITNOWRITEPERMISSION/);
   t.is(exitCode, 1);
 });
 

@@ -16,7 +16,17 @@ import { extractErrors, makeTag } from "./lib/utils.js";
 import getGitAuthUrl from "./lib/get-git-auth-url.js";
 import getBranches from "./lib/branches/index.js";
 import getLogger from "./lib/get-logger.js";
-import { addNote, getGitHead, getTagHead, isBranchUpToDate, push, pushNotes, tag, verifyPush } from "./lib/git.js";
+import {
+  addNote,
+  getGitHead,
+  getTagHead,
+  isBranchUpToDate,
+  push,
+  pushNotes,
+  tag,
+  verifyLsRemote,
+  verifyPush,
+} from "./lib/git.js";
 import getError from "./lib/get-error.js";
 import { COMMIT_EMAIL, COMMIT_NAME } from "./lib/definitions/constants.js";
 
@@ -65,6 +75,14 @@ async function run(context, plugins) {
   await verify(context);
 
   options.repositoryUrl = await getGitAuthUrl({ ...context, branch: { name: ciBranch } });
+  try {
+    await verifyLsRemote(options.repositoryUrl, { cwd, env });
+  } catch (error) {
+    logger.error(`The command "${error.command}" failed with the error message ${error.stderr}.`);
+    throw getError("EGITNOREADPERMISSION", context);
+  }
+  logger.success(`Confirmed access to the Git repository`);
+
   context.branches = await getBranches(options.repositoryUrl, ciBranch, context);
   context.branch = context.branches.find(({ name }) => name === ciBranch);
 
@@ -77,6 +95,12 @@ async function run(context, plugins) {
     return false;
   }
 
+  logger[options.dryRun ? "warn" : "success"](
+    `Run automated release from branch ${ciBranch} on repository ${options.originalRepositoryURL}${
+      options.dryRun ? " in dry-run mode" : ""
+    }`
+  );
+
   if (!(await isBranchUpToDate(options.repositoryUrl, context.branch.name, { cwd, env }))) {
     logger.log(
       `The local branch ${context.branch.name} is behind the remote one, therefore a new version won't be published.`
@@ -86,20 +110,15 @@ async function run(context, plugins) {
 
   logger.success(`Local branch is up to date with the remote repository`);
 
-  try {
-    await verifyPush(options.repositoryUrl, context.branch.name, { cwd, env });
-  } catch (error) {
-    logger.error(`The command "${error.command}" failed with the error message ${error.stderr}.`);
-    throw getError("EGITNOPERMISSION", context);
+  if (!options.skipPush) {
+    try {
+      await verifyPush(options.repositoryUrl, context.branch.name, { cwd, env });
+    } catch (error) {
+      logger.error(`The command "${error.command}" failed with the error message ${error.stderr}.`);
+      throw getError("EGITNOWRITEPERMISSION", context);
+    }
+    logger.success(`Allowed to push to the Git repository`);
   }
-
-  logger.success(`Allowed to push to the Git repository`);
-
-  logger[options.dryRun ? "warn" : "success"](
-    `Run automated release from branch ${ciBranch} on repository ${options.originalRepositoryURL}${
-      options.dryRun ? " in dry-run mode" : ""
-    }`
-  );
 
   await plugins.verifyConditions(context);
 
@@ -125,11 +144,15 @@ async function run(context, plugins) {
           cwd,
           env,
         });
-        await push(options.repositoryUrl, { cwd, env });
-        await pushNotes(options.repositoryUrl, nextRelease.gitTag, {
-          cwd,
-          env,
-        });
+        if (options.skipPush) {
+          logger.warn(`Skip ${nextRelease.gitTag} tag push with skipPush enabled`);
+        } else {
+          await push(options.repositoryUrl, { cwd, env });
+          await pushNotes(options.repositoryUrl, nextRelease.gitTag, {
+            cwd,
+            env,
+          });
+        }
         logger.success(
           `Add ${nextRelease.channel ? `channel ${nextRelease.channel}` : "default channel"} to tag ${
             nextRelease.gitTag
@@ -205,8 +228,12 @@ async function run(context, plugins) {
     // Create the tag before calling the publish plugins as some require the tag to exists
     await tag(nextRelease.gitTag, nextRelease.gitHead, { cwd, env });
     await addNote({ channels: [nextRelease.channel] }, nextRelease.gitTag, { cwd, env });
-    await push(options.repositoryUrl, { cwd, env });
-    await pushNotes(options.repositoryUrl, nextRelease.gitTag, { cwd, env });
+    if (options.skipPush) {
+      logger.warn(`Skip ${nextRelease.gitTag} tag push with skipPush enabled`);
+    } else {
+      await push(options.repositoryUrl, { cwd, env });
+      await pushNotes(options.repositoryUrl, nextRelease.gitTag, { cwd, env });
+    }
     logger.success(`Created tag ${nextRelease.gitTag}`);
   }
 

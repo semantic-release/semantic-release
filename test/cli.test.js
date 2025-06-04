@@ -72,6 +72,7 @@ test.serial("Pass options to semantic-release API", async (t) => {
     "fail2",
     "--debug",
     "-d",
+    "-s",
   ];
   const index = await td.replaceEsm("../index.js");
   process.argv = argv;
@@ -96,6 +97,9 @@ test.serial("Pass options to semantic-release API", async (t) => {
       "dry-run": true,
       dryRun: true,
       d: true,
+      "skip-push": true,
+      skipPush: true,
+      s: true,
       verifyConditions: ["condition1", "condition2"],
       "verify-conditions": ["condition1", "condition2"],
       analyzeCommits: "analyze",
@@ -134,6 +138,7 @@ test.serial("Pass options to semantic-release API with alias arguments", async (
     "config1",
     "config2",
     "--dry-run",
+    "--skip-push",
   ];
   const index = await td.replaceEsm("../index.js");
   process.argv = argv;
@@ -158,6 +163,9 @@ test.serial("Pass options to semantic-release API with alias arguments", async (
       "dry-run": true,
       dryRun: true,
       d: true,
+      "skip-push": true,
+      skipPush: true,
+      s: true,
       _: [],
       $0: "",
     })
@@ -214,6 +222,8 @@ test.serial("Do not set properties in option for which arg is not in command lin
   t.false("ci" in run.args[0][0]);
   t.false("d" in run.args[0][0]);
   t.false("dry-run" in run.args[0][0]);
+  t.false("s" in run.args[0][0]);
+  t.false("skip-push" in run.args[0][0]);
   t.false("debug" in run.args[0][0]);
   t.false("r" in run.args[0][0]);
   t.false("t" in run.args[0][0]);

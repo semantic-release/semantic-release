@@ -150,6 +150,18 @@ The objective of the dry-run mode is to get a preview of the pending release. Dr
 
 **Note**: The Dry-run mode verifies the repository push permission, even though nothing will be pushed. The verification is done to help user to figure out potential configuration issues.
 
+### skipPush
+
+Type: `Boolean`<br>
+Default: `false`<br>
+CLI arguments: `-s`, `--skip-push`
+
+Set to `true` to skip the push of the release tag to the remote repository via git, and associated push permission checks.
+This allows for the release tag to be published via other means where repository push permissions may not be required
+(i.e. GitLab Releases)
+
+**Note**: Some plug-ins (i.e. GitHub) may require that the tag exists in the remote repository before publishing. Use with caution.
+
 ### ci
 
 Type: `Boolean`<br>

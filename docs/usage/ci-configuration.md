@@ -20,7 +20,7 @@ See [CI configuration recipes](../recipes/ci-configurations/README.md) for more 
 
 ### Push access to the remote repository
 
-**semantic-release** requires push access to the project Git repository in order to create [Git tags](https://git-scm.com/book/en/v2/Git-Basics-Tagging). The Git authentication can be set with one of the following environment variables:
+**semantic-release** requires push access to the project Git repository (unless the [skipPush](configuration.md#skippush) option is enabled) in order to create [Git tags](https://git-scm.com/book/en/v2/Git-Basics-Tagging). The Git authentication can be set with one of the following environment variables:
 
 | Variable                                              | Description                                                                                                                                                                                                                  |
 | ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
