@@ -1,12 +1,15 @@
 import path from "path";
+import { mkdtempSync } from "fs";
+import { tmpdir } from "os";
 import test from "ava";
 import { copy, outputFile } from "fs-extra";
 import { stub } from "sinon";
-import { temporaryDirectory } from "tempy";
 import getPlugins from "../../lib/plugins/index.js";
 
 // Save the current working directory
 const cwd = process.cwd();
+
+const tmpDir = tmpdir();
 
 test.beforeEach((t) => {
   // Stub the logger functions
@@ -137,7 +140,7 @@ test('Unknown steps of plugins configured in "plugins" are ignored', async (t) =
 });
 
 test("Export plugins loaded from the dependency of a shareable config module", async (t) => {
-  const cwd = temporaryDirectory();
+  const cwd = mkdtempSync(`${tmpDir}${path.sep}`);
   await copy(
     "./test/fixtures/plugin-noop.cjs",
     path.resolve(cwd, "node_modules/shareable-config/node_modules/custom-plugin/index.js")
@@ -170,7 +173,7 @@ test("Export plugins loaded from the dependency of a shareable config module", a
 });
 
 test("Export plugins loaded from the dependency of a shareable config file", async (t) => {
-  const cwd = temporaryDirectory();
+  const cwd = mkdtempSync(`${tmpDir}${path.sep}`);
   await copy("./test/fixtures/plugin-noop.cjs", path.resolve(cwd, "plugin/plugin-noop.cjs"));
   await outputFile(path.resolve(cwd, "shareable-config.js"), "");
 
