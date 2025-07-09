@@ -30,7 +30,7 @@
     "@semantic-release/commit-analyzer": "^13.0.0-beta.1",
     "@semantic-release/error": "^4.0.0",
     "@semantic-release/github": "^11.0.0",
-    "@semantic-release/npm": "^13.0.0-beta.1",
+    "@semantic-release/npm": "^13.0.0-alpha.4",
     "@semantic-release/release-notes-generator": "^14.0.0-beta.1",
     "aggregate-error": "^5.0.0",
     "cosmiconfig": "^9.0.0",
