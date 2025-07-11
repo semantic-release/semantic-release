@@ -1,5 +1,6 @@
 name: Feature request
 description: Wouldn't it be nice if `semantic-release` could ...
+labels: ["feature"]
 body:
   - type: textarea
     attributes:

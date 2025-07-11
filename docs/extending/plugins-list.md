@@ -66,6 +66,9 @@
   - `publish`: Publish the package to the Visual Studio Code marketplace
 - [semantic-release-verify-deps](https://github.com/piercus/semantic-release-verify-deps)
   - `verifyConditions`: Check the dependencies format against a regexp before a release
+- [semantic-release-openapi](https://github.com/aensley/semantic-release-openapi)
+  - `verifyConditions`: Verify `apiSpecFiles` is specified with at least one file name and all matching files have a .json, .yaml, or .yml extension.
+  - `prepare`: Write the correct version to all OpenAPI / Swagger files specified in `apiSpecFiles`.
 - [semantic-release-chrome](https://github.com/GabrielDuarteM/semantic-release-chrome)
   - `verifyConditions`: Verify the presence of the authentication (set via environment variables)
   - `prepare`: Write the correct version to the `manifest.json` and creates a zip file of the whole dist folder
@@ -158,10 +161,6 @@
   - `fail`: Publish a fail message to certain telegram chats
 - [semantic-release-npm-deprecate](https://github.com/jpoehnelt/semantic-release-npm-deprecate)
   - `publish`: Automatically mark old versions as deprecated.
-- [@eshepelyuk/semantic-release-helm-oci](https://github.com/eshepelyuk/semantic-release-helm-oci)
-  - `verifyConditions`: Verify plugin configuration and login to Helm registry
-  - `prepare`: Package Helm chart to local folder
-  - `publish`: Publish Helm chart to OCI registry
 - [semantic-release-mirror-version](https://github.com/GarthDB/semantic-release-mirror-version)
   - `prepare`: Update the version number in any file that matches the defined [file glob](https://github.com/isaacs/node-glob).
 - [semantic-release-space](https://github.com/123FLO321/semantic-release-space)

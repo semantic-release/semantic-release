@@ -41,6 +41,11 @@ declare module "semantic-release" {
      * Has error, log, warn and success methods.
      */
     logger: Signale<"error" | "log" | "success" | "warn">;
+
+    /**
+     * Semantic release configuration
+     */
+    options: Options;
   }
 
   /**
@@ -667,6 +672,11 @@ declare module "semantic-release" {
      * This allows for making releases from a local machine.
      */
     ci?: boolean | undefined;
+
+    /**
+     * Set to true when the `ci` option is set to false.
+     */
+    noCi?: true;
 
     /**
      * Any other options supported by plugins.

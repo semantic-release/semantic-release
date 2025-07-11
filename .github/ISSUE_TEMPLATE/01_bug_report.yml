@@ -1,5 +1,6 @@
 name: Bug Report
 description: Something not working as expected
+labels: ["bug"]
 body:
   - type: textarea
     attributes:
@@ -18,7 +19,10 @@ body:
   - type: input
     attributes:
       label: "`semantic-release` version"
-      description: Version set in `package.json` `devDpendencies`.
+      description: |
+        The version executed in your pipeline, printed in the first line of output.
+        If not already using the latest version, please try upgrading to the latest version and refreshing your lockfile to see if the issue persists.
+        We will likely ask you to take these steps as the first support steps if you haven't already.
     validations:
       required: true
 
@@ -39,13 +43,17 @@ body:
   - type: textarea
     attributes:
       label: "`semantic-release` configuration"
-      description: Link to your repository or relevant part of the `semantic-release` config.
+      description: |
+        Link to the configuration in your repository or relevant part of the `semantic-release` config.
+        When including configuration directly, please format with triple backticks (```) to ensure it is readable.
     validations:
       required: true
 
   - type: textarea
     attributes:
       label: CI logs
-      description: Link to your CI logs or `semantic-release` logs.
+      description: |
+        Link to your CI logs or `semantic-release` logs when executed with the debug flag enabled.
+        When including logs directly, please format with triple backticks (```) to ensure it is readable.
     validations:
       required: true
