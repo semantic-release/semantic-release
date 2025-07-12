@@ -312,6 +312,17 @@ test("Return true if local repository is ahead of remote", async (t) => {
   t.true(await isBranchUpToDate(repositoryUrl, "master", { cwd: localCwd }));
 });
 
+test("Return falsy if local repository is behind remote", async (t) => {
+  const { cwd, repositoryUrl } = await gitRepo(true);
+  await gitCommits(["First"], { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
+  const localCwd = await gitShallowClone(repositoryUrl);
+  await gitCommits(["Second", "Third"], { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
+
+  t.falsy(await isBranchUpToDate(repositoryUrl, "master", { cwd: localCwd }));
+});
+
 test("Return falsy if detached head repository is not up to date", async (t) => {
   let { cwd, repositoryUrl } = await gitRepo();
 
