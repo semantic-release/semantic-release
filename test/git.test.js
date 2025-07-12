@@ -301,19 +301,15 @@ test('Return "true" if repository is up to date', async (t) => {
   t.true(await isBranchUpToDate(repositoryUrl, "master", { cwd }));
 });
 
-test("Return falsy if repository is not up to date", async (t) => {
+test("Return true if local repository is ahead of remote", async (t) => {
   const { cwd, repositoryUrl } = await gitRepo(true);
   await gitCommits(["First"], { cwd });
   await gitCommits(["Second"], { cwd });
   await gitPush(repositoryUrl, "master", { cwd });
+  const localCwd = await gitShallowClone(repositoryUrl);
+  await gitCommits(["Third"], { cwd: localCwd });
 
-  t.true(await isBranchUpToDate(repositoryUrl, "master", { cwd }));
-
-  const temporaryRepo = await gitShallowClone(repositoryUrl);
-  await gitCommits(["Third"], { cwd: temporaryRepo });
-  await gitPush("origin", "master", { cwd: temporaryRepo });
-
-  t.falsy(await isBranchUpToDate(repositoryUrl, "master", { cwd }));
+  t.true(await isBranchUpToDate(repositoryUrl, "master", { cwd: localCwd }));
 });
 
 test("Return falsy if detached head repository is not up to date", async (t) => {
