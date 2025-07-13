@@ -207,3 +207,6 @@
 - [semantic-release-kaniko](https://github.com/brendangeck/semantic-release-kaniko)
   - `verifyConditions`: Verify that all needed configuration is present and login to the Docker registry.
   - `publish`: Build a container image using [Kaniko](https://github.com/GoogleContainerTools/kaniko) and (optionally) push it to a Docker registry.
+- [semantic-release-skopeo](https://github.com/LukasWestholt/semantic-release-skopeo)
+  - `verifyConditions`: Verify that all needed configuration is present and check if destination is writeable (unless force=true).
+  - `publish`: Copy OCI images to a custom (Docker) registry using daemonless open-source tool [skopeo](https://github.com/containers/skopeo/).
