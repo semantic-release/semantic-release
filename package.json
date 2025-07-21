@@ -58,9 +58,9 @@
     "yargs": "^17.5.1"
   },
   "devDependencies": {
-    "@types/node": "22.16.3",
+    "@types/node": "22.16.5",
     "@types/signale": "1.4.7",
-    "ava": "6.4.0",
+    "ava": "6.4.1",
     "c8": "10.1.3",
     "clear-module": "4.1.2",
     "cz-conventional-changelog": "3.3.0",
@@ -72,7 +72,7 @@
     "lockfile-lint": "4.14.1",
     "ls-engines": "0.9.3",
     "mockserver-client": "5.15.0",
-    "nock": "14.0.5",
+    "nock": "14.0.6",
     "npm-run-all2": "8.0.4",
     "p-retry": "6.2.1",
     "prettier": "3.6.2",
