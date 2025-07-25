@@ -66,6 +66,9 @@
   - `publish`: Publish the package to the Visual Studio Code marketplace
 - [semantic-release-verify-deps](https://github.com/piercus/semantic-release-verify-deps)
   - `verifyConditions`: Check the dependencies format against a regexp before a release
+- [semantic-release-openapi](https://github.com/aensley/semantic-release-openapi)
+  - `verifyConditions`: Verify `apiSpecFiles` is specified with at least one file name and all matching files have a .json, .yaml, or .yml extension.
+  - `prepare`: Write the correct version to all OpenAPI / Swagger files specified in `apiSpecFiles`.
 - [semantic-release-chrome](https://github.com/GabrielDuarteM/semantic-release-chrome)
   - `verifyConditions`: Verify the presence of the authentication (set via environment variables)
   - `prepare`: Write the correct version to the `manifest.json` and creates a zip file of the whole dist folder
@@ -204,3 +207,6 @@
 - [semantic-release-kaniko](https://github.com/brendangeck/semantic-release-kaniko)
   - `verifyConditions`: Verify that all needed configuration is present and login to the Docker registry.
   - `publish`: Build a container image using [Kaniko](https://github.com/GoogleContainerTools/kaniko) and (optionally) push it to a Docker registry.
+- [semantic-release-skopeo](https://github.com/LukasWestholt/semantic-release-skopeo)
+  - `verifyConditions`: Verify that all needed configuration is present and check if destination is writeable (unless force=true).
+  - `publish`: Copy OCI images to a custom (Docker) registry using daemonless open-source tool [skopeo](https://github.com/containers/skopeo/).
