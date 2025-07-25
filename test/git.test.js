@@ -6,9 +6,9 @@ import {
   fetchNotes,
   getBranches,
   getGitHead,
-  getNote,
   getTagHead,
   getTags,
+  getTagsNotes,
   isBranchUpToDate,
   isGitRepo,
   isRefExists,
@@ -402,31 +402,39 @@ test("Get a commit note", async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const { cwd } = await gitRepo();
   // Add commits to the master branch
-  const commits = await gitCommits(["First"], { cwd });
+  await gitCommits(["First"], { cwd });
+  await gitTagVersion("v1.0.0", undefined, { cwd });
 
-  await gitAddNote(JSON.stringify({ note: "note" }), commits[0].hash, { cwd });
+  await gitAddNote(JSON.stringify({ note: "note" }), "v1.0.0", { cwd });
+  const tagsNotes = await getTagsNotes({ cwd });
 
-  t.deepEqual(await getNote(commits[0].hash, { cwd }), { note: "note" });
+  t.deepEqual(tagsNotes.get("v1.0.0"), { note: "note" });
 });
 
-test("Return empty object if there is no commit note", async (t) => {
+test("Return undefined if there is no commit note", async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const { cwd } = await gitRepo();
   // Add commits to the master branch
-  const commits = await gitCommits(["First"], { cwd });
+  await gitCommits(["First"], { cwd });
+  await gitTagVersion("v1.0.0", undefined, { cwd });
 
-  t.deepEqual(await getNote(commits[0].hash, { cwd }), {});
+  const tagsNotes = await getTagsNotes({ cwd });
+
+  t.deepEqual(tagsNotes.get("v1.0.0"), undefined);
 });
 
-test("Throw error if a commit note in invalid", async (t) => {
+test("Return undefined if a commit note is invalid", async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const { cwd } = await gitRepo();
   // Add commits to the master branch
-  const commits = await gitCommits(["First"], { cwd });
+  await gitCommits(["First"], { cwd });
+  await gitTagVersion("v1.0.0", undefined, { cwd });
 
-  await gitAddNote("non-json note", commits[0].hash, { cwd });
+  await gitAddNote("non-json note", "v1.0.0", { cwd });
 
-  await t.throwsAsync(getNote(commits[0].hash, { cwd }));
+  const tagsNotes = await getTagsNotes({ cwd });
+
+  t.deepEqual(tagsNotes.get("v1.0.0"), undefined);
 });
 
 test("Add a commit note", async (t) => {
