@@ -210,3 +210,6 @@
 - [semantic-release-skopeo](https://github.com/LukasWestholt/semantic-release-skopeo)
   - `verifyConditions`: Verify that all needed configuration is present and check if destination is writeable (unless force=true).
   - `publish`: Copy OCI images to a custom (Docker) registry using daemonless open-source tool [skopeo](https://github.com/containers/skopeo/).
+- [sr-uv-plugin](https://github.com/Artessan-Devs/sr-uv-plugin)
+  - `verifyConditions`: Ensures `pyproject.toml` exists and contains a `[project]` section.
+  - `prepare`: Updates the `[project].version` field in `pyproject.toml` to match the release version.
