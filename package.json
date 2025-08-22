@@ -74,7 +74,7 @@
     "mockserver-client": "5.15.0",
     "nock": "14.0.10",
     "npm-run-all2": "8.0.4",
-    "p-retry": "6.2.1",
+    "p-retry": "7.0.0",
     "prettier": "3.6.2",
     "publint": "0.3.12",
     "sinon": "21.0.0",
