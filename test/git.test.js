@@ -1,5 +1,7 @@
 import test from "ava";
-import { temporaryDirectory } from "tempy";
+import { mkdtempSync } from "fs";
+import { tmpdir } from "os";
+import { sep } from "path";
 import {
   addNote,
   fetch,
@@ -268,7 +270,8 @@ test('Return "true" if in a Git repository', async (t) => {
 });
 
 test("Return falsy if not in a Git repository", async (t) => {
-  const cwd = temporaryDirectory();
+  const tmpDir = tmpdir();
+  const cwd = mkdtempSync(`${tmpDir}${sep}`);
 
   t.falsy(await isGitRepo({ cwd }));
 });
@@ -288,7 +291,8 @@ test("Return falsy for invalid tag names", async (t) => {
 });
 
 test("Throws error if obtaining the tags fails", async (t) => {
-  const cwd = temporaryDirectory();
+  const tmpDir = tmpdir();
+  const cwd = mkdtempSync(`${tmpDir}${sep}`);
 
   await t.throwsAsync(getTags("master", { cwd }));
 });

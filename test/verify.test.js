@@ -1,5 +1,7 @@
 import test from "ava";
-import { temporaryDirectory } from "tempy";
+import { mkdtempSync } from "fs";
+import { tmpdir } from "os";
+import { sep } from "path";
 import verify from "../lib/verify.js";
 import { gitRepo } from "./helpers/git-utils.js";
 
@@ -28,7 +30,8 @@ test("Throw a AggregateError", async (t) => {
 });
 
 test("Throw a SemanticReleaseError if does not run on a git repository", async (t) => {
-  const cwd = temporaryDirectory();
+  const tmpDir = tmpdir();
+  const cwd = mkdtempSync(`${tmpDir}${sep}`);
   const options = { branches: [] };
 
   const errors = [...(await t.throwsAsync(verify({ cwd, options }))).errors];
