@@ -274,6 +274,7 @@ export async function gitCommitTag(gitHead, execaOptions) {
  * @throws {Error} if the push failed.
  */
 export async function gitPush(repositoryUrl, branch, execaOptions) {
+  await execa("git", ["push", repositoryUrl, `refs/notes/${GIT_NOTE_REF}*`], execaOptions);
   await execa("git", ["push", "--tags", repositoryUrl, `HEAD:${branch}`], execaOptions);
 }
 
