@@ -15,6 +15,7 @@ import {
   lowest,
   makeTag,
   extractGitLogTags,
+  extractGitLogNotes,
   tagsToVersions,
 } from "../lib/utils.js";
 
@@ -192,4 +193,9 @@ test("isSameChannel", (t) => {
 test("extractGitLogTags", (t) => {
   t.deepEqual(extractGitLogTags(`(tag: v1.2.3)`), ["v1.2.3"]);
   t.deepEqual(extractGitLogTags(`(tag: v1.2.3, tag: 5833/merge)`), ["v1.2.3", "5833/merge"]);
+});
+
+test("extractGitLogNotes", (t) => {
+  t.deepEqual(extractGitLogNotes(`{"channels":[null]}\n`), { channels: [null] });
+  t.deepEqual(extractGitLogNotes(`{"channels":["develop"]}\n{"channels":[null]}\n`), { channels: ["develop", null] });
 });

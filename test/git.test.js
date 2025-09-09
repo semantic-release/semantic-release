@@ -423,3 +423,16 @@ test("Fetch all notes on a detached head repository", async (t) => {
 
   t.is(await gitGetNote(commit.hash, { cwd }), '{"note":"note"}');
 });
+
+test("Multiple notes at same tag", async (t) => {
+  const { cwd } = await gitRepo();
+  await gitCommits(["feat: initial release"], { cwd });
+  await gitTagVersion("v1.0.0", undefined, { cwd });
+  await gitAddNote(JSON.stringify({ channels: [null] }), "v1.0.0", { cwd });
+  await gitCheckout("next", true, { cwd });
+  await gitTagVersion("v1.1.0-next.1", undefined, { cwd });
+  await gitAddNote(JSON.stringify({ channels: ["next"] }), "v1.1.0-next.1", { cwd });
+  const tagsNotes = await getTagsNotes({ cwd });
+
+  t.deepEqual(tagsNotes.get("v1.1.0-next.1"), { channels: [null, "next"] });
+});
