@@ -41,7 +41,7 @@
     "find-versions": "^6.0.0",
     "get-stream": "^6.0.0",
     "git-log-parser": "^1.2.0",
-    "hook-std": "^3.0.0",
+    "hook-std": "^4.0.0",
     "hosted-git-info": "^8.0.0",
     "import-from-esm": "^2.0.0",
     "lodash-es": "^4.17.21",
