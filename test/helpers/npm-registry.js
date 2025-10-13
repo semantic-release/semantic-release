@@ -5,7 +5,7 @@ import Docker from "dockerode";
 import got from "got";
 import pRetry from "p-retry";
 
-const IMAGE = "verdaccio/verdaccio:5";
+const IMAGE = "verdaccio/verdaccio:6";
 const REGISTRY_PORT = 4873;
 const REGISTRY_HOST = "localhost";
 const NPM_USERNAME = "integration";
