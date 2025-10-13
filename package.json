@@ -27,7 +27,7 @@
     "Matt Travi <npm@travi.org> (https://matt.travi.org/)"
   ],
   "dependencies": {
-    "@semantic-release/commit-analyzer": "^13.0.0-beta.1",
+    "@semantic-release/commit-analyzer": "^13.0.1",
     "@semantic-release/error": "^4.0.0",
     "@semantic-release/npm": "^13.0.0",
     "@semantic-release/release-notes-generator": "^14.0.0-beta.1",
