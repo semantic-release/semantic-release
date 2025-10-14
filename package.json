@@ -55,7 +55,7 @@
     "semver": "^7.3.2",
     "semver-diff": "^5.0.0",
     "signale": "^1.2.1",
-    "yargs": "^17.5.1"
+    "yargs": "^18.0.0"
   },
   "devDependencies": {
     "@types/node": "22.18.10",
