@@ -6,10 +6,15 @@ The [Authentication](../../usage/ci-configuration.md#authentication) environment
 
 In this example a publish type [`NPM_TOKEN`](https://docs.npmjs.com/creating-and-viewing-authentication-tokens) is required to publish a package to the npm registry. GitHub Actions [automatically populate](https://docs.github.com/en/actions/security-guides/automatic-token-authentication) a [`GITHUB_TOKEN`](https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line) environment variable which can be used in Workflows.
 
-## npm provenance
+## Trusted publishing and npm provenance
 
-Since GitHub Actions is a [supported provider](https://docs.npmjs.com/generating-provenance-statements#provenance-limitations) for [npm provenance](https://docs.npmjs.com/generating-provenance-statements), it is recommended to enable this to increase supply-chain security for your npm packages.
-Find more detail about configuring npm to publish with provenance through semantic-release [in the documentation for our npm plugin](https://github.com/semantic-release/npm#npm-provenance).
+For improved security and automation, it is recommended to leverage [trusted publishing](https://docs.npmjs.com/trusted-publishers) through [OpenID Connect (OIDC)](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect) when publishing to npm from GitHub Actions.
+GitHub Actions is a [trusted identity provider](https://docs.npmjs.com/trusted-publishers#identity-providers) for npm, enabling configuration of a trust relationship between your GitHub repository and npm so that no long-lived secret (like an `NPM_TOKEN`) is required to publish packages to npm from GitHub Actions.
+Enabling trusted publishing requires granting the `id-token: write` permission to the job performing the publish step and [configuring a trust relationship](https://docs.npmjs.com/trusted-publishers#step-1-add-a-trusted-publisher-on-npmjscom) between your GitHub repository and npm.
+
+[npm provenance](https://docs.npmjs.com/generating-provenance-statements) is valuable for increasing supply-chain security for your npm packages.
+Before trusted publishing was available, generating provenance attestations required configuring your project to enable publishing with provenance.
+With trusted publishing, npm provenance is automatically generated for packages published to npm from GitHub Actions without any additional configuration.
 
 ## Node project configuration
 
@@ -40,7 +45,7 @@ jobs:
       contents: write # to be able to publish a GitHub release
       issues: write # to be able to comment on released issues
       pull-requests: write # to be able to comment on released pull requests
-      id-token: write # to enable use of OIDC for npm provenance
+      id-token: write # to enable use of OIDC for trusted publishing and npm provenance
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -57,7 +62,6 @@ jobs:
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npx semantic-release
 ```
 
