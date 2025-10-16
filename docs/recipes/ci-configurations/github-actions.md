@@ -10,6 +10,7 @@ In this example a publish type [`NPM_TOKEN`](https://docs.npmjs.com/creating-and
 
 For improved security and automation, it is recommended to leverage [trusted publishing](https://docs.npmjs.com/trusted-publishers) through [OpenID Connect (OIDC)](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect) when publishing to npm from GitHub Actions.
 GitHub Actions is a [trusted identity provider](https://docs.npmjs.com/trusted-publishers#identity-providers) for npm, enabling configuration of a trust relationship between your GitHub repository and npm so that no long-lived secret (like an `NPM_TOKEN`) is required to publish packages to npm from GitHub Actions.
+The npm registry [recently increased restrictions for use of long-lived access tokens](https://github.blog/changelog/2025-09-29-strengthening-npm-security-important-changes-to-authentication-and-token-management/), further encouraging trusted publishing as the preferred approach for publishing to npm from GitHub Actions.
 Enabling trusted publishing requires granting the `id-token: write` permission to the job performing the publish step and [configuring a trust relationship](https://docs.npmjs.com/trusted-publishers#step-1-add-a-trusted-publisher-on-npmjscom) between your GitHub repository and npm.
 
 [npm provenance](https://docs.npmjs.com/generating-provenance-statements) is valuable for increasing supply-chain security for your npm packages.
