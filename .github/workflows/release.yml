@@ -5,6 +5,7 @@ name: Release
       - master
       - next
       - beta
+      - alpha
       - "*.x"
 permissions:
   contents: read # for checkout
