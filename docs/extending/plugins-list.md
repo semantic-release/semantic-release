@@ -213,3 +213,7 @@
 - [sr-uv-plugin](https://github.com/Artessan-Devs/sr-uv-plugin)
   - `verifyConditions`: Ensures `pyproject.toml` exists and contains a `[project]` section.
   - `prepare`: Updates the `[project].version` field in `pyproject.toml` to match the release version.
+- [semantic-release-minecraft](https://github.com/pynickle/semantic-release)
+  - `verifyConditions`: Verify that all needed configuration is present.
+  - `prepare`: Convert different types of CurseForge game versions to their corresponding IDs.
+  - `publish`: Publish the Minecraft project to CurseForge and Modrinth.
