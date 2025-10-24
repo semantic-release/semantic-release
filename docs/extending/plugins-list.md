@@ -213,6 +213,10 @@
 - [sr-uv-plugin](https://github.com/Artessan-Devs/sr-uv-plugin)
   - `verifyConditions`: Ensures `pyproject.toml` exists and contains a `[project]` section.
   - `prepare`: Updates the `[project].version` field in `pyproject.toml` to match the release version.
+- [@jno21/semantic-release-github-commit](https://github.com/Jno21/semantic-release-github-commit)
+  - **Notes**: This plugin creates a commit on GitHub using the GitHub API, enabling signed commits via a GitHub App.
+  - `verifyConditions`: Verify GitHub authentication and configuration.
+  - `prepare`: Create a commit with the specified files using the GitHub API.
 - [semantic-release-minecraft](https://github.com/pynickle/semantic-release)
   - `verifyConditions`: Verify that all needed configuration is present.
   - `prepare`: Convert different types of CurseForge game versions to their corresponding IDs.
