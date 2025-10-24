@@ -217,3 +217,7 @@
   - **Notes**: This plugin creates a commit on GitHub using the GitHub API, enabling signed commits via a GitHub App.
   - `verifyConditions`: Verify GitHub authentication and configuration.
   - `prepare`: Create a commit with the specified files using the GitHub API.
+- [semantic-release-minecraft](https://github.com/pynickle/semantic-release)
+  - `verifyConditions`: Verify that all needed configuration is present.
+  - `prepare`: Convert different types of CurseForge game versions to their corresponding IDs.
+  - `publish`: Publish the Minecraft project to CurseForge and Modrinth.
