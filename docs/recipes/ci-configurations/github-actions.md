@@ -13,10 +13,9 @@ GitHub Actions is a [trusted identity provider](https://docs.npmjs.com/trusted-p
 The npm registry [recently increased restrictions for use of long-lived access tokens](https://github.blog/changelog/2025-09-29-strengthening-npm-security-important-changes-to-authentication-and-token-management/), further encouraging trusted publishing as the preferred approach for publishing to npm from GitHub Actions.
 Enabling trusted publishing requires granting the `id-token: write` permission to the job performing the publish step and [configuring a trust relationship](https://docs.npmjs.com/trusted-publishers#step-1-add-a-trusted-publisher-on-npmjscom) between your GitHub repository and npm.
 
-> [!NOTE]
-> When setting up a Trusted Publisher on npmjs for GitHub Actions, it's crucial to specify the workflow file that triggers the release process, not necessarily the one that contains the release logic itself.  
+**Note**: When setting up a Trusted Publisher on npmjs for GitHub Actions, it's crucial to specify the workflow file that triggers the release process, not necessarily the one that contains the release logic itself.  
 If your release job is encapsulated in a [reusable workflow](https://docs.github.com/en/actions/how-tos/reuse-automations/reuse-workflows), the workflow file you must reference is the caller workflow—typically the one triggered by events like `push` or `workflow_dispatch` on your main branch.  
-> This is because npm's Trusted Publisher mechanism authorizes the workflow that initiates the run, not any downstream workflows it invokes.  
+This is because npm's Trusted Publisher mechanism authorizes the workflow that initiates the run, not any downstream workflows it invokes.
 
 [npm provenance](https://docs.npmjs.com/generating-provenance-statements) is valuable for increasing supply-chain security for your npm packages.
 Before trusted publishing was available, generating provenance attestations required configuring your project to enable publishing with provenance.
