@@ -139,7 +139,6 @@ In order to use **semantic-release** you need:
 
 - [GitHub Discussions](https://github.com/semantic-release/semantic-release/discussions)
 - [Stack Overflow](https://stackoverflow.com/questions/tagged/semantic-release)
-- [𝕏 (Twitter)](https://x.com/SemanticRelease)
 
 ## Badge
 
