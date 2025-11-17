@@ -213,6 +213,10 @@
 - [sr-uv-plugin](https://github.com/Artessan-Devs/sr-uv-plugin)
   - `verifyConditions`: Ensures `pyproject.toml` exists and contains a `[project]` section.
   - `prepare`: Updates the `[project].version` field in `pyproject.toml` to match the release version.
+- [semantic-release-uv](https://github.com/Deltamir/semantic-release-uv)
+  - `verifyConditions`: Verify the presence and validity of a `PYPI_TOKEN` and validate the `pyproject.toml` structure
+  - `prepare`: Update the version in `pyproject.toml`, locking and build the distribution with `uv`
+  - `publish`: Publish the package to PyPI or a custom index using `uv publish`
 - [@jno21/semantic-release-github-commit](https://github.com/Jno21/semantic-release-github-commit)
   - **Notes**: This plugin creates a commit on GitHub using the GitHub API, enabling signed commits via a GitHub App.
   - `verifyConditions`: Verify GitHub authentication and configuration.
