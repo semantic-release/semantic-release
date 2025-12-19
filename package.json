@@ -70,7 +70,7 @@
     "got": "14.6.5",
     "js-yaml": "4.1.1",
     "lockfile-lint": "4.14.1",
-    "ls-engines": "0.9.3",
+    "ls-engines": "0.9.4",
     "mockserver-client": "5.15.0",
     "nock": "14.0.10",
     "npm-run-all2": "8.0.4",
