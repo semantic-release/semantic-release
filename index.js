@@ -199,7 +199,7 @@ async function run(context, plugins) {
 
   nextRelease.notes = await plugins.generateNotes(context);
 
-  await plugins.prepare(context);
+  nextRelease.prepareOutput = await plugins.prepare(context);
 
   if (options.dryRun) {
     logger.warn(`Skip ${nextRelease.gitTag} tag creation in dry-run mode`);
