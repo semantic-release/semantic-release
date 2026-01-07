@@ -1612,7 +1612,10 @@ test.serial("Returns false value if triggered on an outdated clone", async (t) =
 
   t.false(
     await semanticRelease(
-      { repositoryUrl },
+      {
+        repositoryUrl,
+        plugins: false,
+      },
       { cwd: repoDir, env: {}, stdout: new WritableStreamBuffer(), stderr: new WritableStreamBuffer() }
     )
   );
