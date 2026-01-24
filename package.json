@@ -75,7 +75,7 @@
     "nock": "14.0.10",
     "npm-run-all2": "8.0.4",
     "p-retry": "7.1.1",
-    "prettier": "3.8.0",
+    "prettier": "3.8.1",
     "publint": "0.3.17",
     "sinon": "21.0.1",
     "stream-buffers": "3.0.3",
