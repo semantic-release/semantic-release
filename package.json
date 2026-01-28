@@ -79,7 +79,7 @@
     "publint": "0.3.17",
     "sinon": "21.0.1",
     "stream-buffers": "3.0.3",
-    "tempy": "3.1.1",
+    "tempy": "3.1.2",
     "testdouble": "3.20.2"
   },
   "engines": {
