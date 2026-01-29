@@ -21,6 +21,27 @@ This is because npm's Trusted Publisher mechanism authorizes the workflow that i
 Before trusted publishing was available, generating provenance attestations required configuring your project to enable publishing with provenance.
 With trusted publishing, npm provenance is automatically generated for packages published to npm from GitHub Actions without any additional configuration.
 
+## Important: Avoid `registry-url` in `setup-node`
+
+**Do not** set the `registry-url` option in the `actions/setup-node` step when using semantic-release for npm publishing. The `registry-url` option causes `setup-node` to create an `.npmrc` file that can conflict with semantic-release's npm authentication mechanism, leading to `EINVALIDNPMTOKEN` errors even when your token is valid.
+
+```yaml
+# ❌ Don't do this - can cause conflicts with semantic-release
+- name: Setup Node.js
+  uses: actions/setup-node@v4
+  with:
+    node-version: "lts/*"
+    registry-url: "https://registry.npmjs.org"
+
+# ✅ Do this instead - let semantic-release handle npm authentication
+- name: Setup Node.js
+  uses: actions/setup-node@v4
+  with:
+    node-version: "lts/*"
+```
+
+If you need to specify a custom registry, configure it in your project's `.npmrc` file instead. This ensures consistent behavior between local development and CI environments, and avoids conflicts with semantic-release.
+
 ## Node project configuration
 
 [GitHub Actions](https://github.com/features/actions) support [Workflows](https://help.github.com/en/articles/configuring-workflows), allowing to run tests on multiple Node versions and publish a release only when all test pass.
