@@ -8,6 +8,7 @@ import {
   getLowerBound,
   getRange,
   getUpperBound,
+  getVersionDiff,
   highest,
   isMaintenanceRange,
   isMajorRange,
@@ -192,4 +193,19 @@ test("isSameChannel", (t) => {
 test("extractGitLogTags", (t) => {
   t.deepEqual(extractGitLogTags(`(tag: v1.2.3)`), ["v1.2.3"]);
   t.deepEqual(extractGitLogTags(`(tag: v1.2.3, tag: 5833/merge)`), ["v1.2.3", "5833/merge"]);
+});
+
+test("getVersionDiff", (t) => {
+  t.is(getVersionDiff("1.0.0", "2.0.0"), "major");
+  t.is(getVersionDiff("1.0.0", "1.1.0"), "minor");
+  t.is(getVersionDiff("1.0.0", "1.0.1"), "patch");
+  t.is(getVersionDiff("1.0.0", "2.0.0-alpha.1"), "premajor");
+  t.is(getVersionDiff("1.0.0", "1.1.0-alpha.1"), "preminor");
+  t.is(getVersionDiff("1.0.0", "1.0.1-alpha.1"), "prepatch");
+  t.is(getVersionDiff("1.0.0-alpha.1", "1.0.0-alpha.2"), "prerelease");
+
+  t.is(getVersionDiff("2.0.0", "1.0.0"), undefined);
+  t.is(getVersionDiff("1.1.0", "1.0.0"), undefined);
+  t.is(getVersionDiff("1.0.1", "1.0.0"), undefined);
+  t.is(getVersionDiff("1.0.0", "1.0.0"), undefined);
 });
