@@ -134,4 +134,3 @@ To trigger a release, call (with a [Personal Access Tokens](https://help.github.
 ```
 $ curl -v -H "Accept: application/vnd.github.everest-preview+json" -H "Authorization: token ${GITHUB_TOKEN}" https://api.github.com/repos/[org-name-or-username]/[repository]/dispatches -d '{ "event_type": "semantic-release" }'
 ```
-
