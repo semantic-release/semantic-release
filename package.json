@@ -71,7 +71,7 @@
     "lockfile-lint": "5.0.0",
     "ls-engines": "0.10.0",
     "mockserver-client": "5.15.0",
-    "nock": "14.0.10",
+    "nock": "14.0.11",
     "npm-run-all2": "8.0.4",
     "p-retry": "7.1.1",
     "prettier": "3.8.1",
