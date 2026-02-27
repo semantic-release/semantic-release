@@ -50,7 +50,11 @@
   - `verifyConditions`: Verify that the environment variable `SLACK_WEBHOOK` has been defined.
   - `success`: Publish a message about the success to a slack channel.
   - `fail`: Optionally publish a message about failure to a slack channel.
-- [semantic-release-docker](https://github.com/felixfbecker/semantic-release-docker)
+- [semantic-release-docker](https://github.com/esatterwhite/semantic-release-docker)
+  - `verifyConditions`: Verifies that environment variables for authentication via username and password are set.
+  - `prepare`: builds a an image using the specified docker file and context.
+  - `publish`: pushes the tags Images with specified tags and pushes them to the registry.
+- [semantic-release-docker](https://github.com/felixfbecker/semantic-release-docker) ([unmaintained](https://github.com/felixfbecker/semantic-release-docker/issues/39))
   - `verifyConditions`: Verify that all needed configuration is present and login to the Docker registry.
   - `publish`: Tag the image specified by `name` with the new version, push it to Docker Hub and update the latest tag
 - [@semantic-release-plus/docker](https://github.com/semantic-release-plus/semantic-release-plus/tree/master/packages/plugins/docker)
