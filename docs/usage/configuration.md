@@ -188,6 +188,8 @@ If the previous releases were published with [`npm publish`](https://docs.npmjs.
 
 For example, if your release branch is `master`/`main`, the last release published on your project is `1.1.0` and the last commit included has the sha `1234567`, you must make sure this commit is in `master`/`main` history and is tagged with `v1.1.0`.
 
+**Note:** pre-release channels also require a note to be attached to the version tag, so how to add these manually [here](https://semantic-release.gitbook.io/semantic-release/support/troubleshooting#release-not-found-release-branch-after-git-push-force) (step 3 & 4)
+
 ```bash
 # Make sure the commit 1234567 is in the release branch history
 $ git branch --contains 1234567
