@@ -100,6 +100,40 @@ test("Default values, reading repositoryUrl (http url) from package.json if not 
   t.is(result.tagFormat, `v\${version}`);
 });
 
+test("Default tag annotation options", async (t) => {
+  // Create a git repository, set the current working directory at the root of the repo
+  const { cwd } = await gitRepo();
+
+  const { options: result } = await t.context.getConfig({ cwd });
+
+  // Verify the default tag annotation options are set correctly
+  t.is(result.tagAnnotate, false);
+  t.is(result.tagSign, false);
+  t.is(result.tagMessage, `release \${nextRelease.version}`);
+});
+
+test("Override default tag annotation options via package.json", async (t) => {
+  // Create a git repository, set the current working directory at the root of the repo
+  const { cwd } = await gitRepo();
+  const pkg = {
+    repository: "https://host.null/owner/module.git",
+    release: {
+      tagAnnotate: true,
+      tagSign: true,
+      tagMessage: "Custom message for version \${nextRelease.version}"
+    }
+  };
+  // Create package.json in repository root
+  await outputJson(path.resolve(cwd, "package.json"), pkg);
+
+  const { options: result } = await t.context.getConfig({ cwd });
+
+  // Verify the tag annotation options are overridden
+  t.is(result.tagAnnotate, true);
+  t.is(result.tagSign, true);
+  t.is(result.tagMessage, "Custom message for version \${nextRelease.version}");
+});
+
 test('Convert "ci" option to "noCi"', async (t) => {
   const pkg = { repository: "https://host.null/owner/module.git", release: { ci: false } };
   // Create a git repository, set the current working directory at the root of the repo
@@ -121,6 +155,9 @@ test.serial("Read options from package.json", async (t) => {
     branches: ["test_branch"],
     repositoryUrl: "https://host.null/owner/module.git",
     tagFormat: `v\${version}`,
+    tagAnnotate: false,
+    tagSign: false,
+    tagMessage: `release \${nextRelease.version}`,
     plugins: false,
   };
   // Verify the plugins module is called with the plugin options from package.json
@@ -142,6 +179,9 @@ test.serial("Read options from .releaserc.yml", async (t) => {
     branches: ["test_branch"],
     repositoryUrl: "https://host.null/owner/module.git",
     tagFormat: `v\${version}`,
+    tagAnnotate: false,
+    tagSign: false,
+    tagMessage: `release \${nextRelease.version}`,
     plugins: false,
   };
   // Create package.json in repository root
@@ -163,6 +203,9 @@ test.serial("Read options from .releaserc.json", async (t) => {
     branches: ["test_branch"],
     repositoryUrl: "https://host.null/owner/module.git",
     tagFormat: `v\${version}`,
+    tagAnnotate: false,
+    tagSign: false,
+    tagMessage: `release \${nextRelease.version}`,
     plugins: false,
   };
   // Create package.json in repository root
@@ -184,6 +227,9 @@ test.serial("Read options from .releaserc.js", async (t) => {
     branches: ["test_branch"],
     repositoryUrl: "https://host.null/owner/module.git",
     tagFormat: `v\${version}`,
+    tagAnnotate: false,
+    tagSign: false,
+    tagMessage: `release \${nextRelease.version}`,
     plugins: false,
   };
   // Create package.json in repository root
@@ -205,6 +251,9 @@ test.serial("Read options from .releaserc.cjs", async (t) => {
     branches: ["test_branch"],
     repositoryUrl: "https://host.null/owner/module.git",
     tagFormat: `v\${version}`,
+    tagAnnotate: false,
+    tagSign: false,
+    tagMessage: `release \${nextRelease.version}`,
     plugins: false,
   };
   // Create .releaserc.cjs in repository root
@@ -227,6 +276,9 @@ test.serial("Read options from .releaserc.mjs", async (t) => {
     repositoryUrl: "https://host.null/owner/module.git",
     tagFormat: `v\${version}`,
     plugins: false,
+    tagAnnotate: false,
+    tagSign: false,
+    tagMessage: `release \${nextRelease.version}`,
   };
   // Create .releaserc.mjs in repository root
   await writeFile(path.resolve(cwd, ".releaserc.mjs"), `export default ${JSON.stringify(options)}`);
@@ -247,6 +299,9 @@ test.serial("Read options from release.config.js", async (t) => {
     branches: ["test_branch"],
     repositoryUrl: "https://host.null/owner/module.git",
     tagFormat: `v\${version}`,
+    tagAnnotate: false,
+    tagSign: false,
+    tagMessage: `release \${nextRelease.version}`,
     plugins: false,
   };
   // Create package.json in repository root
@@ -268,6 +323,9 @@ test.serial("Read options from release.config.cjs", async (t) => {
     branches: ["test_branch"],
     repositoryUrl: "https://host.null/owner/module.git",
     tagFormat: `v\${version}`,
+    tagAnnotate: false,
+    tagSign: false,
+    tagMessage: `release \${nextRelease.version}`,
     plugins: false,
   };
   // Verify the plugins module is called with the plugin options from release.config.cjs
@@ -290,6 +348,9 @@ test.serial("Read options from release.config.mjs", async (t) => {
     repositoryUrl: "https://host.null/owner/module.git",
     tagFormat: `v\${version}`,
     plugins: false,
+    tagAnnotate: false,
+    tagSign: false,
+    tagMessage: `release \${nextRelease.version}`,
   };
   // Verify the plugins module is called with the plugin options from release.config.mjs
   td.when(plugins({ cwd, options }, {})).thenResolve(pluginsConfig);
@@ -317,6 +378,9 @@ test.serial("Prioritise CLI/API parameters over file configuration and git repo"
     branches: ["branch_cli"],
     repositoryUrl: "http://cli-url.com/owner/package",
     tagFormat: `cli\${version}`,
+    tagAnnotate: false,
+    tagSign: false,
+    tagMessage: `release \${nextRelease.version}`,
     plugins: false,
   };
   // Verify the plugins module is called with the plugin options from CLI/API
@@ -341,6 +405,9 @@ test.serial('Read configuration from file path in "extends"', async (t) => {
     branches: ["test_branch"],
     repositoryUrl: "https://host.null/owner/module.git",
     tagFormat: `v\${version}`,
+    tagAnnotate: false,
+    tagSign: false,
+    tagMessage: `release \${nextRelease.version}`,
     plugins: ["plugin-1", ["plugin-2", { plugin2Opt: "value" }]],
   };
   // Create package.json and shareable.json in repository root
@@ -375,6 +442,9 @@ test.serial('Read configuration from module path in "extends"', async (t) => {
     branches: ["test_branch"],
     repositoryUrl: "https://host.null/owner/module.git",
     tagFormat: `v\${version}`,
+    tagAnnotate: false,
+    tagSign: false,
+    tagMessage: `release \${nextRelease.version}`,
     plugins: false,
   };
   // Create package.json and shareable.json in repository root
@@ -407,6 +477,9 @@ test.serial('Read configuration from an array of paths in "extends"', async (t) 
     analyzeCommits: { path: "analyzeCommits2", param: "analyzeCommits_param2" },
     branches: ["test_branch"],
     tagFormat: `v\${version}`,
+    tagAnnotate: false,
+    tagSign: false,
+    tagMessage: `release \${nextRelease.version}`,
     plugins: false,
   };
   // Create package.json and shareable.json in repository root
@@ -456,7 +529,14 @@ test.serial('Read configuration from an array of CJS files in "extends"', async 
   await outputJson(path.resolve(cwd, "package.json"), { release: pkgOptions });
   await writeFile(path.resolve(cwd, "shareable1.cjs"), `module.exports = ${JSON.stringify(options1)}`);
   await writeFile(path.resolve(cwd, "shareable2.cjs"), `module.exports = ${JSON.stringify(options2)}`);
-  const expectedOptions = { ...options1, ...options2, branches: ["test_branch"] };
+  const expectedOptions = {
+    ...options1,
+    ...options2,
+    branches: ["test_branch"],
+    tagAnnotate: false,
+    tagSign: false,
+    tagMessage: `release \${nextRelease.version}`,
+  };
   // Verify the plugins module is called with the plugin options from shareable1.mjs and shareable2.mjs
   td.when(
     plugins(
@@ -499,7 +579,14 @@ test.serial('Read configuration from an array of ESM files in "extends"', async 
   await outputJson(path.resolve(cwd, "package.json"), { release: pkgOptions });
   await writeFile(path.resolve(cwd, "shareable1.mjs"), `export default ${JSON.stringify(options1)}`);
   await writeFile(path.resolve(cwd, "shareable2.mjs"), `export default ${JSON.stringify(options2)}`);
-  const expectedOptions = { ...options1, ...options2, branches: ["test_branch"] };
+  const expectedOptions = {
+    ...options1,
+    ...options2,
+    branches: ["test_branch"],
+    tagAnnotate: false,
+    tagSign: false,
+    tagMessage: `release \${nextRelease.version}`,
+  };
   // Verify the plugins module is called with the plugin options from shareable1.mjs and shareable2.mjs
   td.when(
     plugins(
@@ -536,6 +623,9 @@ test.serial('Prioritize configuration from config file over "extends"', async (t
     branches: ["test_branch"],
     repositoryUrl: "https://host.null/owner/module.git",
     tagFormat: `v\${version}`,
+    tagAnnotate: false,
+    tagSign: false,
+    tagMessage: `release \${nextRelease.version}`,
     plugins: false,
   };
   // Create package.json and shareable.json in repository root
@@ -587,6 +677,9 @@ test.serial('Prioritize configuration from cli/API options over "extends"', asyn
     publish: [{ path: "publishShareable", param: "publishShareable_param2" }],
     branches: ["test_branch2"],
     tagFormat: `v\${version}`,
+    tagAnnotate: false,
+    tagSign: false,
+    tagMessage: `release \${nextRelease.version}`,
     plugins: false,
   };
   // Create package.json, shareable1.json and shareable2.json in repository root
@@ -622,6 +715,9 @@ test.serial('Allow to unset properties defined in shareable config with "null"',
     generateNotes: "generateNotes",
     analyzeCommits: { path: "analyzeCommits", param: "analyzeCommits_param" },
     tagFormat: `v\${version}`,
+    tagAnnotate: false,
+    tagSign: false,
+    tagMessage: `release \${nextRelease.version}`,
     plugins: ["test-plugin"],
   };
   // Create package.json and shareable.json in repository root
@@ -672,6 +768,9 @@ test.serial('Allow to unset properties defined in shareable config with "undefin
     generateNotes: "generateNotes",
     analyzeCommits: { path: "analyzeCommits", param: "analyzeCommits_param" },
     tagFormat: `v\${version}`,
+    tagAnnotate: false,
+    tagSign: false,
+    tagMessage: `release \${nextRelease.version}`,
     plugins: false,
   };
   // Create release.config.js and shareable.json in repository root

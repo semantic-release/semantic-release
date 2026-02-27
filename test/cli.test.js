@@ -189,6 +189,40 @@ test.serial("Pass unknown options to semantic-release API", async (t) => {
   t.is(exitCode, 0);
 });
 
+test.serial("Pass tag annotation options to semantic-release API", async (t) => {
+  const argv = [
+    "",
+    "",
+    "--tag-annotate",
+    "--tag-sign",
+    "--tag-message",
+    "Custom tag message for \${nextRelease.version}"
+  ];
+  const index = await td.replaceEsm("../index.js");
+  process.argv = argv;
+  const cli = (await import("../cli.js")).default;
+
+  const exitCode = await cli();
+
+  td.verify(
+    index.default({
+      "tag-annotate": true,
+      tagAnnotate: true,
+      ta: true,
+      "tag-sign": true,
+      tagSign: true,
+      ts: true,
+      "tag-message": "Custom tag message for \${nextRelease.version}",
+      tagMessage: "Custom tag message for \${nextRelease.version}",
+      tm: "Custom tag message for \${nextRelease.version}",
+      _: [],
+      $0: "",
+    })
+  );
+
+  t.is(exitCode, 0);
+});
+
 test.serial('Pass empty Array to semantic-release API for list option set to "false"', async (t) => {
   const argv = ["", "", "--publish", "false"];
   const index = await td.replaceEsm("../index.js");

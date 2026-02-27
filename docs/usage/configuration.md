@@ -128,6 +128,36 @@ The [Git tag](https://git-scm.com/book/en/v2/Git-Basics-Tagging) format used by 
 
 **Note**: The `tagFormat` must contain the `version` variable exactly once and compile to a [valid Git reference](https://git-scm.com/docs/git-check-ref-format#_description).
 
+### tagAnnotate
+
+Type: `Boolean`<br>
+Default: `false`<br>
+CLI arguments: `--ta`, `--tag-annotate`
+
+Whether to create an unsigned, annotated tag. The default is `false` which will create a lightweight tag.
+
+**Note**: `tagSign` takes precedence over `tagAnnotate`.
+
+### tagSign
+
+Type: `Boolean`<br>
+Default: `false`<br>
+CLI arguments: `--ts`, `--tag-sign`
+
+Whether to create a GPG-signed tag, using the configured GPG signing key. Signed tags must have a message. If no message is provided it defaults to [nextRelease.gitTag](../developer-guide/js-api#nextrelease)
+
+**Note**: `tagSign` takes precedence over `tagAnnotate`.
+
+### tagMessage
+
+Type: `String`<br>
+Default: `release ${nextRelease.version}`<br>
+CLI arguments: `-tm`, `--tag-message`
+
+The message for the tag. The tag message is generated with [Lodash template](https://lodash.com/docs#template) and will be compiled with the [nextRelease](../developer-guide/js-api#nextrelease) variable.
+
+**Note**: The message will be applied to the tag only if one of the following is `true`: `tagAnnotate` or `tagSign`. Otherwise the tag is considered lightweight and is created without a message.
+
 ### plugins
 
 Type: `Array`<br>
