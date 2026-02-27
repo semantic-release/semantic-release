@@ -72,6 +72,8 @@ For example the configuration `['master', {name: 'next', channel: 'channel-${nam
 
 A `range` only applies to maintenance branches, is required and must be formatted like `N.N.x` or `N.x` (`N` is a number). In case the `name` is formatted as a range (for example `1.x` or `1.5.x`) the branch will be considered a maintenance branch and the `name` value will be used for the `range`.
 
+The value of `range`, if defined as a string, is generated with [Lodash template](https://lodash.com/docs#template) with the variable `name` available.
+
 For example the configuration `['1.1.x', '1.2.x', 'master']` will be expanded as:
 
 ```js
@@ -79,6 +81,22 @@ For example the configuration `['1.1.x', '1.2.x', 'master']` will be expanded as
   branches: [
     { name: "1.1.x", range: "1.1.x", channel: "1.1.x" },
     { name: "1.2.x", range: "1.2.x", channel: "1.2.x" },
+    { name: "master" },
+  ];
+}
+```
+
+More dynamic configuration example `[{name: 'release/+([0-9])?(.{+([0-9]),x}).x', range: '${name.replace(/^release\\//g, "")}', channel: '${name.replace(/^release\\//g, "")}'}, 'master']` will be expanded as:
+
+```js
+{
+  branches: [
+    { name: "release/1.1.x", range: "1.1.x", channel: "1.1.x" },
+    { name: "release/1.2.x", range: "1.2.x", channel: "1.2.x" },
+    .......
+    { name: "release/2.x", range: "2.x", channel: "2.x" },
+    { name: "release/3.x", range: "3.x", channel: "3.x" },
+    .......
     { name: "master" },
   ];
 }
