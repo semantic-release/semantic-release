@@ -1,4 +1,4 @@
-# Shareable configurations
+# Shareable configurations 
 
 A shareable configuration is an [npm](https://www.npmjs.com/) package that exports a **semantic-release** configuration object. It allows for use of the same configuration across several projects.
 
