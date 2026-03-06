@@ -19,6 +19,7 @@ import {
 } from "../lib/git.js";
 import {
   gitAddConfig,
+  gitAddLegacyNote,
   gitAddNote,
   gitCheckout,
   gitCommits,
@@ -339,6 +340,45 @@ test("Get a commit note", async (t) => {
   const tagsNotes = await getTagsNotes({ cwd });
 
   t.deepEqual(tagsNotes.get("v1.0.0"), { note: "note" });
+});
+
+test("Merge notes for a tag stored under the legacy and the per-tag notes refs", async (t) => {
+  // Reproduces upgrading across the v23 notes-ref change (#2085): a tag released by an older
+  // version keeps its note under the shared `refs/notes/semantic-release` ref, while a later
+  // release (e.g. adding a distribution channel) writes the current per-tag
+  // `refs/notes/semantic-release-v1.0.0` ref. `git log` concatenates both refs into %N, so they
+  // must be merged - otherwise the extra channels are silently dropped.
+  const { cwd } = await gitRepo();
+  await gitCommits(["First"], { cwd });
+  await gitTagVersion("v1.0.0", undefined, { cwd });
+
+  // Legacy note written before the upgrade, then the per-tag note that adds the `next` channel.
+  await gitAddLegacyNote(JSON.stringify({ channels: [null] }), "v1.0.0", { cwd });
+  await gitAddNote(JSON.stringify({ channels: [null, "next"] }), "v1.0.0", { cwd });
+
+  const tagsNotes = await getTagsNotes({ cwd });
+
+  // The channels from both refs are merged; without the fix `next` is dropped, leaving `[null]`.
+  t.deepEqual(tagsNotes.get("v1.0.0").channels, [null, "next"]);
+});
+
+test("Attribute notes to the correct tag when multiple tags share a commit", async (t) => {
+  // Reproduces #4073: a commit released on two prerelease branches ends up with two tags, each
+  // with its own per-tag notes ref. `git log` concatenates them in %N with no way to tell them
+  // apart, so each tag's note is read from its own ref to keep channels correctly attributed.
+  const { cwd } = await gitRepo();
+  await gitCommits(["First"], { cwd });
+  await gitTagVersion("v2.9.0-beta.13", undefined, { cwd });
+  await gitTagVersion("v2.9.0-alpha.1", undefined, { cwd });
+
+  await gitAddNote(JSON.stringify({ channels: ["staging"] }), "v2.9.0-beta.13", { cwd });
+  await gitAddNote(JSON.stringify({ channels: ["develop"] }), "v2.9.0-alpha.1", { cwd });
+
+  const tagsNotes = await getTagsNotes({ cwd });
+
+  // Each tag keeps only its own channel - nothing dropped, nothing cross-contaminated.
+  t.deepEqual(tagsNotes.get("v2.9.0-beta.13").channels, ["staging"]);
+  t.deepEqual(tagsNotes.get("v2.9.0-alpha.1").channels, ["develop"]);
 });
 
 test("Return undefined if there is no commit note", async (t) => {
