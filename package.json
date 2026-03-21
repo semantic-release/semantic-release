@@ -162,5 +162,5 @@
       "github>semantic-release/.github:renovate-config"
     ]
   },
-  "packageManager": "npm@11.11.1+sha512.6ac6b30a876415dcf545e433ba4cb34bf0c3efbb86088a9415e446de0b5a4fc6fd511d277b59bd40e06e3204fbda28f5aeded346b3a8c780355b39ed31622e12"
+  "packageManager": "npm@11.12.0+sha512.c4f84e6a9e196c95b277b0c03ae90fe7ae161703521aeff615e4d114786288ab6171abb1847fcda64240426db8c43f9c027f1abf9b50d34a618bdf03aad7cbb2"
 }
