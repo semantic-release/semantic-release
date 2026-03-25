@@ -13,6 +13,7 @@ import {
   gitGetNote,
   gitHead as getGitHead,
   gitPush,
+  gitPushNotes,
   gitRemoteTagHead,
   gitRepo,
   gitShallowClone,
@@ -51,6 +52,7 @@ test.serial("Plugins are called with expected values", async (t) => {
   // Create the tag corresponding to version 1.0.0
   await gitTagVersion("v1.0.0", undefined, { cwd });
   await gitAddNote(JSON.stringify({ channels: ["next"] }), "v1.0.0", { cwd });
+  await gitPushNotes(repositoryUrl, { cwd });
   commits = (await gitCommits(["Second"], { cwd })).concat(commits);
   await gitCheckout("next", true, { cwd });
   await gitPush(repositoryUrl, "next", { cwd });
@@ -526,6 +528,7 @@ test.serial("Make a new release when a commit is forward-ported to an upper bran
   await gitCommits(["fix: fix on maintenance version 1.0.x"], { cwd });
   await gitTagVersion("v1.0.1", undefined, { cwd });
   await gitAddNote(JSON.stringify({ channels: ["1.0.x"] }), "v1.0.1", { cwd });
+  await gitPushNotes(repositoryUrl, { cwd });
   await gitPush("origin", "1.0.x", { cwd });
   await gitCheckout("master", false, { cwd });
   await gitCommits(["feat: new feature on master"], { cwd });
@@ -750,6 +753,7 @@ test.serial("Do not add pre-releases to a different channel", async (t) => {
   await gitCommits(["fix: a fix"], { cwd });
   await gitTagVersion("v2.0.0-beta.2", undefined, { cwd });
   await gitAddNote(JSON.stringify({ channels: ["beta"] }), "v2.0.0-beta.2", { cwd });
+  await gitPushNotes(repositoryUrl, { cwd });
   await gitPush("origin", "beta", { cwd });
   await gitCheckout("master", false, { cwd });
   await merge("beta", { cwd });
@@ -807,6 +811,7 @@ async function addChannelMacro(t, mergeFunction) {
   commits.push(...(await gitCommits(["feat: a feature"], { cwd })));
   await gitTagVersion("v2.1.0", undefined, { cwd });
   await gitAddNote(JSON.stringify({ channels: ["next"] }), "v2.1.0", { cwd });
+  await gitPushNotes(repositoryUrl, { cwd });
   await gitPush("origin", "next", { cwd });
   await gitCheckout("master", false, { cwd });
   // Merge all commits but last one from next to master
@@ -1048,7 +1053,7 @@ test.serial("Dry-run skips addChannel, prepare, publish and success", async (t) 
   await gitCommits(["Second"], { cwd });
   await gitTagVersion("v1.1.0", undefined, { cwd });
   await gitAddNote(JSON.stringify({ channels: ["next"] }), "v1.1.0", { cwd });
-
+  await gitPushNotes(repositoryUrl, { cwd });
   await gitPush(repositoryUrl, "master", { cwd });
   await gitCheckout("next", true, { cwd });
   await gitPush("origin", "next", { cwd });
@@ -1336,6 +1341,7 @@ test.serial(
     await gitCommits(["Second"], { cwd });
     await gitTagVersion("v1.1.0", undefined, { cwd });
     await gitAddNote(JSON.stringify({ channels: ["next"] }), "v1.1.0", { cwd });
+    await gitPushNotes(repositoryUrl, { cwd });
     await gitPush(repositoryUrl, "master", { cwd });
     await gitCheckout("next", true, { cwd });
     await gitPush("origin", "next", { cwd });
