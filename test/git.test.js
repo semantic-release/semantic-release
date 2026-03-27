@@ -341,6 +341,27 @@ test("Get a commit note", async (t) => {
   t.deepEqual(tagsNotes.get("v1.0.0"), { note: "note" });
 });
 
+test("Merge notes when multiple tags on same commit have different notes refs", async (t) => {
+  // Create a git repository, set the current working directory at the root of the repo
+  const { cwd } = await gitRepo();
+  // Add a commit and create two tags on it (simulating a release on both staging and develop)
+  await gitCommits(["First"], { cwd });
+  await gitTagVersion("v1.0.0-beta.1", undefined, { cwd });
+  await gitTagVersion("v1.0.0-alpha.1", undefined, { cwd });
+
+  // Add notes under different refs (as semantic-release does for each release)
+  await gitAddNote(JSON.stringify({ channels: ["staging"] }), "v1.0.0-beta.1", { cwd });
+  await gitAddNote(JSON.stringify({ channels: ["develop"] }), "v1.0.0-alpha.1", { cwd });
+
+  const tagsNotes = await getTagsNotes({ cwd });
+
+  // Both tags should have merged channels from both notes refs
+  t.true(tagsNotes.get("v1.0.0-beta.1").channels.includes("staging"));
+  t.true(tagsNotes.get("v1.0.0-beta.1").channels.includes("develop"));
+  t.true(tagsNotes.get("v1.0.0-alpha.1").channels.includes("staging"));
+  t.true(tagsNotes.get("v1.0.0-alpha.1").channels.includes("develop"));
+});
+
 test("Return undefined if there is no commit note", async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const { cwd } = await gitRepo();
