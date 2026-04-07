@@ -301,19 +301,38 @@ test('Return "true" if repository is up to date', async (t) => {
   t.true(await isBranchUpToDate(repositoryUrl, "master", { cwd }));
 });
 
-test("Return falsy if repository is not up to date", async (t) => {
+test("Return true if local repository is ahead of remote", async (t) => {
   const { cwd, repositoryUrl } = await gitRepo(true);
   await gitCommits(["First"], { cwd });
   await gitCommits(["Second"], { cwd });
   await gitPush(repositoryUrl, "master", { cwd });
+  const localCwd = await gitShallowClone(repositoryUrl);
+  await gitCommits(["Third"], { cwd: localCwd });
 
-  t.true(await isBranchUpToDate(repositoryUrl, "master", { cwd }));
+  t.true(await isBranchUpToDate(repositoryUrl, "master", { cwd: localCwd }));
+});
 
-  const temporaryRepo = await gitShallowClone(repositoryUrl);
-  await gitCommits(["Third"], { cwd: temporaryRepo });
-  await gitPush("origin", "master", { cwd: temporaryRepo });
+test("Return falsy if local repository is behind remote", async (t) => {
+  const { cwd, repositoryUrl } = await gitRepo(true);
+  await gitCommits(["First"], { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
+  const localCwd = await gitShallowClone(repositoryUrl);
+  await gitCommits(["Second", "Third"], { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
 
-  t.falsy(await isBranchUpToDate(repositoryUrl, "master", { cwd }));
+  t.falsy(await isBranchUpToDate(repositoryUrl, "master", { cwd: localCwd }));
+});
+
+test("Return falsy if local and remote repository are diverged i.e. both have commits the other doesn't", async (t) => {
+  const { cwd, repositoryUrl } = await gitRepo(true);
+  await gitCommits(["First"], { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
+  const localCwd = await gitShallowClone(repositoryUrl);
+  await gitCommits(["Second", "Third"], { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
+  await gitCommits(["Fourth"], { cwd: localCwd });
+
+  t.falsy(await isBranchUpToDate(repositoryUrl, "master", { cwd: localCwd }));
 });
 
 test("Return falsy if detached head repository is not up to date", async (t) => {
