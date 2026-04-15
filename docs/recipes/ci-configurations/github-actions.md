@@ -110,6 +110,38 @@ If the risk is acceptable, some extra configuration is needed. The [actions/chec
     persist-credentials: false # <--- this
 ```
 
+## Triggering semantic-release on private repositories
+If you'd like to apply **semantic-release** on your private repository, you may use this workflow to get started. 
+
+Make sure to add all [configurations](https://github.com/semantic-release/semantic-release/blob/master/docs/usage/configuration.md#ci) needed and **set** your repository to  [private](https://docs.npmjs.com/cli/v9/configuring-npm/package-json#private) by adding `"private": true`.
+```
+name: Release
+on:
+  push:
+    branches:
+      - main
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions: # add minimum permissions
+      contents: write 
+      issues: write
+      pull-requests: write
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Setup Node
+      uses: actions/setup-node@v3
+      with:
+        node-version: "lts/*"
+        cache: 'npm'
+    - name: Apply Semantic Release 
+      env:
+        GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      run: |
+          npx semantic-release
+```
+
 ## Trigger semantic-release on demand
 
 ### Using GUI:
