@@ -225,3 +225,6 @@
   - `verifyConditions`: Verify that all needed configuration is present.
   - `prepare`: Convert different types of CurseForge game versions to their corresponding IDs.
   - `publish`: Publish the Minecraft project to CurseForge and Modrinth.
+- [semantic-release-linear-issue-status](https://github.com/noahlaux/semantic-release-linear-issue-status)
+  - `verifyConditions`: Verify the presence of the `LINEAR_API_KEY` environment variable and required configuration options (`teamKey`, `issuePrefixes`).
+  - `success`: Move linked [Linear](https://linear.app) issues to a completed workflow state after a successful release, based on issue identifiers found in release commits.
