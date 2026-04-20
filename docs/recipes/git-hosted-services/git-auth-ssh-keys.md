@@ -1,8 +1,10 @@
 # Git authentication with SSH keys
 
-When using [environment variables](../../usage/ci-configuration.md#authentication) to set up the Git authentication, the remote Git repository will automatically be accessed via [https](https://git-scm.com/book/en/v2/Git-on-the-Server-The-Protocols#_the_http_protocols), independently of the [`repositoryUrl`](../../usage/configuration.md#repositoryurl) format configured in the **semantic-release** [Configuration](../../usage/configuration.md#configuration) (the format will be automatically converted as needed).
+When using [environment variables](../../usage/ci-configuration.md#authentication) to set up the Git authentication, the remote Git repository will automatically be accessed via [https](https://git-scm.com/book/en/v2/Git-on-the-Server-The-Protocols#_the_http_protocols).
 
-Alternatively the Git repository can be accessed via [SSH](https://git-scm.com/book/en/v2/Git-on-the-Server-The-Protocols#_the_ssh_protocol) by creating SSH keys, adding the public one to your Git hosted account and making the private one available on the CI environment.
+Alternatively, the Git repository can be accessed via [SSH](https://git-scm.com/book/en/v2/Git-on-the-Server-The-Protocols#_the_ssh_protocol) by authenticating with an SSH key.
+This can be a deploy key for a specific repository, or, by adding the public SSH key to your Git hosted account, and in both cases, making the private key available on the CI environment.
+In addition, the [`repositoryUrl`](../../usage/configuration.md#repositoryurl) needs to be configured in the **semantic-release** [Configuration](../../usage/configuration.md#configuration) with the [SSH format](https://git-scm.com/book/en/v2/Git-on-the-Server-The-Protocols#_the_ssh_protocol).
 
 **Note:** SSH keys allow to push the [Git release tag](https://git-scm.com/book/en/v2/Git-Basics-Tagging) associated to the released version. Some plugins might also require an API token. See each plugin documentation for additional information.
 
@@ -11,18 +13,21 @@ Alternatively the Git repository can be accessed via [SSH](https://git-scm.com/b
 In your local repository root:
 
 ```bash
-$ ssh-keygen -t rsa -b 4096 -C "<your_email>" -f git_deploy_key -N "<ssh_passphrase>"
+$ ssh-keygen -t ed25519 -C "<your_email>" -f git_deploy_key -N "<ssh_passphrase>"
 ```
 
 `your_email` must be the email associated with your Git hosted account. `ssh_passphrase` must be a long and hard to guess string. It will be used later.
 
 This will generate a public key in `git_deploy_key.pub` and a private key in `git_deploy_key`.
 
+**Note:** Deploy keys do not support passphrases. Omit the `-N` argument if you are using a deploy key and you deem the risk this poses as acceptable.
+
 ## Adding the SSH public key to the Git hosted account
 
 Step by step instructions are provided for the following Git hosted services:
 
 - [GitHub](#adding-the-ssh-public-key-to-github)
+- [Deploy Key on GitHub](#using-the-ssh-public-key-as-a-deploy-key-for-a-specific-repository-on-github)
 
 ### Adding the SSH public key to GitHub
 
@@ -40,14 +45,39 @@ $ rm git_deploy_key.pub
 
 See [Adding a new SSH key to your GitHub account](https://help.github.com/articles/adding-a-new-ssh-key-to-your-github-account/) for more details.
 
+### Using the SSH public key as a deploy key for a specific repository on GitHub
+
+Follow the instructions on [how to add a deploy key to a repository on GitHub](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/managing-deploy-keys#set-up-deploy-keys).
+
+See the documentation on [deploy keys](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/managing-deploy-keys#deploy-keys) for more details.
+
 ## Adding the SSH private key to the CI environment
 
 In order to be available on the CI environment, the SSH private key must be encrypted, committed to the Git repository and decrypted by the CI service.
 
 Step by step instructions are provided for the following environments:
 
+- [GitHub Actions](#adding-the-ssh-private-key-to-github-actions)
 - [Travis CI](#adding-the-ssh-private-key-to-travis-ci)
 - [Circle CI](#adding-the-ssh-private-key-to-circle-ci)
+
+### Adding the SSH private key to GitHub Actions
+
+Add the SSH private key as a [secret on the repository](https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/use-secrets#creating-secrets-for-a-repository).
+
+Then use this key to checkout the repository in your workflow:
+
+```yaml
+    steps:
+      - uses: actions/checkout@v5.0.0
+        with:
+          # Deploy key used to give write access to semantic-release
+          ssh-key: ${{ secrets.SEMANTIC_RELEASE_SSH_PRIVATE_KEY }}
+          # Persist credentials so that semantic-release will use them
+          persist-credentials: true
+      - name: Run semantic-release
+        run: npx semantic-release
+```
 
 ### Adding the SSH private key to Travis CI
 
