@@ -465,8 +465,8 @@ declare module "semantic-release" {
      *    `alpha` if it exists
      *
      * **Note**: If your repository does not have a release branch, then
-     * **semantic-release** will fail with an `ERELEASEBRANCHES` error
-     * message. If you are using the default configuration, you can fix
+     * **semantic-release** will log a warning message.
+     * If you are using the default configuration, you can fix
      * this error by pushing a `master`/`main branch.
      *
      * **Note**: Once **semantic-release** is configured, any user with the
@@ -607,8 +607,8 @@ declare module "semantic-release" {
      *    `alpha` if it exists
      *
      * **Note**: If your repository does not have a release branch, then
-     * **semantic-release** will fail with an `ERELEASEBRANCHES` error
-     * message. If you are using the default configuration, you can fix
+     * **semantic-release** will log a warning message.
+     * If you are using the default configuration, you can fix
      * this error by pushing a `master`/`main` branch.
      *
      * **Note**: Once **semantic-release** is configured, any user with the
