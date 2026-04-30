@@ -83,12 +83,12 @@ test('A "release" branch is identified by not havin a "range" or "prerelease" pr
   /* eslint-enable unicorn/no-fn-reference-in-iterator */
 });
 
-test("There must be between 1 and 3 release branches", (t) => {
+test("There must be between 0 and 3 release branches", (t) => {
+  t.true(release.branchesValidator([]));
   t.true(release.branchesValidator([{ name: "branch1" }]));
   t.true(release.branchesValidator([{ name: "branch1" }, { name: "branch2" }]));
   t.true(release.branchesValidator([{ name: "branch1" }, { name: "branch2" }, { name: "branch3" }]));
 
-  t.false(release.branchesValidator([]));
   t.false(
     release.branchesValidator([{ name: "branch1" }, { name: "branch2" }, { name: "branch3" }, { name: "branch4" }])
   );
