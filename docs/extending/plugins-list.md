@@ -225,3 +225,6 @@
   - `verifyConditions`: Verify that all needed configuration is present.
   - `prepare`: Convert different types of CurseForge game versions to their corresponding IDs.
   - `publish`: Publish the Minecraft project to CurseForge and Modrinth.
+- [semantic-release-jira-fixversion](https://github.com/danbka33/semantic-release-jira-fixversion)
+  - `verifyConditions`: Verify Jira Server/Data Center connectivity, authentication, and plugin configuration.
+  - `success`: Create or reuse Jira Versions for affected projects, update `fixVersions`, add release comments to referenced issues, and transition them to the configured workflow state.
