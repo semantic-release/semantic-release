@@ -57,26 +57,26 @@
     "yargs": "^18.0.0"
   },
   "devDependencies": {
-    "@types/node": "24.12.2",
+    "@types/node": "24.12.4",
     "@types/signale": "1.4.7",
-    "ava": "7.0.0",
+    "ava": "8.0.0",
     "c8": "11.0.0",
     "clear-module": "4.1.2",
     "cz-conventional-changelog": "3.3.0",
-    "dockerode": "4.0.10",
+    "dockerode": "5.0.0",
     "file-url": "4.0.0",
-    "fs-extra": "11.3.4",
-    "got": "15.0.1",
+    "fs-extra": "11.3.5",
+    "got": "15.0.5",
     "js-yaml": "4.1.1",
     "lockfile-lint": "5.0.0",
     "ls-engines": "0.10.0",
     "mockserver-client": "5.15.0",
-    "nock": "14.0.12",
+    "nock": "14.0.15",
     "npm-run-all2": "8.0.4",
     "p-retry": "8.0.0",
-    "prettier": "3.8.2",
-    "publint": "0.3.18",
-    "sinon": "21.1.1",
+    "prettier": "3.8.3",
+    "publint": "0.3.20",
+    "sinon": "22.0.0",
     "stream-buffers": "3.0.3",
     "tempy": "3.2.0",
     "testdouble": "3.20.2"
@@ -162,5 +162,5 @@
       "github>semantic-release/.github:renovate-config"
     ]
   },
-  "packageManager": "npm@11.12.1+sha512.cdca14b85d647b3192028d02aadbe82d75f79a446aceea9874be98e6d768f20ebd3555770a48d0e9906106007877bbc690f715e9372f2e2dc644a3c3157fb14c"
+  "packageManager": "npm@11.14.1+sha512.6a8a4d67478497a2dbc6815cad72e64c43f33413717e242756047d466241ab39bee61e691683a64658e94496ec5f1a1c05e4a5ec62dcc773280dfd949443a367"
 }
