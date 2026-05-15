@@ -57,7 +57,7 @@
     "yargs": "^18.0.0"
   },
   "devDependencies": {
-    "@types/node": "24.12.3",
+    "@types/node": "24.12.4",
     "@types/signale": "1.4.7",
     "ava": "8.0.0",
     "c8": "11.0.0",
@@ -75,7 +75,7 @@
     "npm-run-all2": "8.0.4",
     "p-retry": "8.0.0",
     "prettier": "3.8.3",
-    "publint": "0.3.19",
+    "publint": "0.3.20",
     "sinon": "22.0.0",
     "stream-buffers": "3.0.3",
     "tempy": "3.2.0",
@@ -162,5 +162,5 @@
       "github>semantic-release/.github:renovate-config"
     ]
   },
-  "packageManager": "npm@11.14.0+sha512.ea37d9cea2bc11f5869d379941ef9b80cc78220884667ee4d5e338184f1213cd41de261c879d9d55230ed610b63a735b14b230cefc14914c6c38e7143c6d9723"
+  "packageManager": "npm@11.14.1+sha512.6a8a4d67478497a2dbc6815cad72e64c43f33413717e242756047d466241ab39bee61e691683a64658e94496ec5f1a1c05e4a5ec62dcc773280dfd949443a367"
 }
