@@ -228,3 +228,6 @@
 - [semantic-release-jira-fixversion](https://github.com/danbka33/semantic-release-jira-fixversion)
   - `verifyConditions`: Verify Jira Server/Data Center connectivity, authentication, and plugin configuration.
   - `success`: Create or reuse Jira Versions for affected projects, update `fixVersions`, add release comments to referenced issues, and transition them to the configured workflow state.
+- [semantic-release-linear-issue-status](https://github.com/noahlaux/semantic-release-linear-issue-status)
+  - `verifyConditions`: Verify the presence of the `LINEAR_API_KEY` environment variable and required configuration options (`teamKey`, `issuePrefixes`).
+  - `success`: Move linked [Linear](https://linear.app) issues to a completed workflow state after a successful release, based on issue identifiers found in release commits.
