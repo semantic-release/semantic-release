@@ -4,7 +4,7 @@ import { gitRepo } from "./helpers/git-utils.js";
 
 const env = { GIT_ASKPASS: "echo", GIT_TERMINAL_PROMPT: 0 };
 
-test('Return the same "git" formatted URL if "gitCredentials" is not defined', async (t) => {
+test('Return the "https" formatted URL when ssh auth fails and no credentials are defined', async (t) => {
   const { cwd } = await gitRepo();
 
   t.is(
@@ -14,7 +14,7 @@ test('Return the same "git" formatted URL if "gitCredentials" is not defined', a
       branch: { name: "master" },
       options: { repositoryUrl: "git@host.null:owner/repo.git" },
     }),
-    "git@host.null:owner/repo.git"
+    "https://host.null/owner/repo.git"
   );
 });
 
@@ -46,12 +46,12 @@ test('Return the "https" formatted URL if "gitCredentials" is not defined and re
   );
 });
 
-test('Do not add trailing ".git" if not present in the origian URL', async (t) => {
+test('Return the "https" formatted URL when ssh auth fails for git URL without trailing ".git"', async (t) => {
   const { cwd } = await gitRepo();
 
   t.is(
-    await getAuthUrl({ cwd, env, vranch: { name: "master" }, options: { repositoryUrl: "git@host.null:owner/repo" } }),
-    "git@host.null:owner/repo"
+    await getAuthUrl({ cwd, env, branch: { name: "master" }, options: { repositoryUrl: "git@host.null:owner/repo" } }),
+    "https://host.null/owner/repo"
   );
 });
 
@@ -69,7 +69,7 @@ test('Handle "https" URL with group and subgroup', async (t) => {
   );
 });
 
-test('Handle "git" URL with group and subgroup', async (t) => {
+test('Handle "git" URL with group and subgroup when ssh auth fails', async (t) => {
   const { cwd } = await gitRepo();
 
   t.is(
@@ -79,7 +79,7 @@ test('Handle "git" URL with group and subgroup', async (t) => {
       branch: { name: "master" },
       options: { repositoryUrl: "git@host.null:group/subgroup/owner/repo.git" },
     }),
-    "git@host.null:group/subgroup/owner/repo.git"
+    "https://host.null/group/subgroup/owner/repo.git"
   );
 });
 
@@ -295,6 +295,20 @@ test('Return the "https" formatted URL if "gitCredentials" is defined with "GITL
     await getAuthUrl({
       cwd,
       env: { ...env, GITLAB_TOKEN: "token" },
+      branch: { name: "master" },
+      options: { repositoryUrl: "git@host.null:owner/repo.git" },
+    }),
+    "https://gitlab-ci-token:token@host.null/owner/repo.git"
+  );
+});
+
+test('Return the "https" formatted URL if "gitCredentials" is defined with "CI_JOB_TOKEN"', async (t) => {
+  const { cwd } = await gitRepo();
+
+  t.is(
+    await getAuthUrl({
+      cwd,
+      env: { ...env, CI_JOB_TOKEN: "token" },
       branch: { name: "master" },
       options: { repositoryUrl: "git@host.null:owner/repo.git" },
     }),
