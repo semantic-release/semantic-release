@@ -4,7 +4,6 @@ import * as marked from "marked";
 import envCi from "env-ci";
 import { hookStd } from "hook-std";
 import semver from "semver";
-import AggregateError from "aggregate-error";
 import hideSensitive from "./lib/hide-sensitive.js";
 import getConfig from "./lib/get-config.js";
 import verify from "./lib/verify.js";
