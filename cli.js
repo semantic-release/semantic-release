@@ -3,13 +3,60 @@ import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
 import hideSensitive from "./lib/hide-sensitive.js";
 
+const splitListValue = (value) => {
+  const values = [];
+  let current = "";
+  let depth = 0;
+  let quote;
+  let escaped = false;
+
+  for (const character of value) {
+    if (escaped) {
+      current += character;
+      escaped = false;
+      continue;
+    }
+
+    if (quote) {
+      current += character;
+
+      if (character === "\\") {
+        escaped = true;
+      } else if (character === quote) {
+        quote = undefined;
+      }
+
+      continue;
+    }
+
+    if (character === '"' || character === "'") {
+      current += character;
+      quote = character;
+    } else if (character === "{" || character === "[") {
+      current += character;
+      depth += 1;
+    } else if (character === "}" || character === "]") {
+      current += character;
+      depth = Math.max(depth - 1, 0);
+    } else if (character === "," && depth === 0) {
+      values.push(current.trim());
+      current = "";
+    } else {
+      current += character;
+    }
+  }
+
+  values.push(current.trim());
+  return values;
+};
+
 const stringList = {
   type: "string",
   array: true,
   coerce: (values) =>
     values.length === 1 && values[0].trim() === "false"
       ? []
-      : values.reduce((values, value) => values.concat(value.split(",").map((value) => value.trim())), []),
+      : values.reduce((values, value) => values.concat(splitListValue(value)), []),
 };
 
 export default async () => {
