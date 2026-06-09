@@ -34,7 +34,7 @@ export default async (
     env,
     stdout,
     stderr,
-    envCi: envCiResult,
+    envCi: envCiResult
   };
 
   context.logger = getLogger(context);
