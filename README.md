@@ -30,13 +30,6 @@
 
 This removes the immediate connection between human emotions and version numbers, strictly following the [Semantic Versioning](http://semver.org) specification and communicating the **impact** of changes to consumers.
 
-## Core Engine
-
-`semantic-release` now uses [`@semantic-release/core`](https://github.com/semantic-release/core) as its release engine.
-For existing users, behavior stays the same: the `semantic-release` CLI, default plugin profile, and current configuration model remain backward compatible.
-
-If you want to build a custom CLI or compose your own plugin stack directly, use `@semantic-release/core`.
-
 > Trust us, this will change your workflow for the better. – [egghead.io](https://egghead.io/lessons/javascript-how-to-write-a-javascript-library-automating-releases-with-semantic-release)
 
 ## Highlights
