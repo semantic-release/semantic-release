@@ -57,7 +57,7 @@
     "yargs": "^18.0.0"
   },
   "devDependencies": {
-    "@types/node": "24.13.1",
+    "@types/node": "24.12.4",
     "@types/signale": "1.4.7",
     "ava": "8.0.1",
     "c8": "11.0.0",
@@ -67,10 +67,10 @@
     "file-url": "4.0.0",
     "fs-extra": "11.3.5",
     "got": "15.0.5",
-    "js-yaml": "4.2.0",
+    "js-yaml": "4.1.1",
     "lockfile-lint": "5.0.0",
     "ls-engines": "0.10.0",
-    "mockserver-client": "7.0.0",
+    "mockserver-client": "6.1.0",
     "nock": "14.0.15",
     "npm-run-all2": "9.0.1",
     "p-retry": "8.0.0",
@@ -162,5 +162,5 @@
       "github>semantic-release/.github:renovate-config"
     ]
   },
-  "packageManager": "npm@11.16.0+sha512.03be172fc3b199c7a06433163e459be5b110a6983c1dd6305b7ac10f6b0fa12e1440755a8df6b1064ab2ccb789df0474919fb9c684e322dc57685ede21752ccb"
+  "packageManager": "npm@11.15.0+sha512.fa4d2d93b9519e93143e70bb913b94ff2ad5fe69c5a0f84943be557cbb59e9fc1bcce55768fb1313f225f4f9f50c78b8f366f2332aa41effd7b10efa98d8d72f"
 }
