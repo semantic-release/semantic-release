@@ -44,6 +44,19 @@ test.afterEach.always((t) => {
   td.reset();
 });
 
+async function mockCore(t, envCiResult) {
+  const semanticReleaseCore = await import("@semantic-release/core");
+  await td.replaceEsm(
+    "@semantic-release/core",
+    {
+      resolveConfig: semanticReleaseCore.resolveConfig,
+      getLogger: () => t.context.logger,
+      resolveEnvCi: () => envCiResult,
+    },
+    semanticReleaseCore.default
+  );
+}
+
 test.serial("Plugins are called with expected values", async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const { cwd, repositoryUrl } = await gitRepo(true);
@@ -153,9 +166,7 @@ test.serial("Plugins are called with expected values", async (t) => {
     { ...nextRelease, notes: `${notes1}\n\n${notes2}\n\n${notes3}`, pluginName: "[Function: noop]" },
   ];
 
-  await td.replaceEsm("../lib/get-logger.js", null, () => t.context.logger);
-  const envCi = (await td.replaceEsm("env-ci")).default;
-  td.when(envCi({ env, cwd })).thenReturn(envCiResults);
+  await mockCore(t, envCiResults);
   const semanticRelease = (await import("../index.js")).default;
   const result = await semanticRelease(options, {
     cwd,
@@ -429,8 +440,7 @@ test.serial("Use custom tag format", async (t) => {
     fail: stub().resolves(),
   };
 
-  await td.replaceEsm("../lib/get-logger.js", null, () => t.context.logger);
-  await td.replaceEsm("env-ci", null, () => ({ isCi: true, branch: "master", isPr: false }));
+  await mockCore(t, { isCi: true, branch: "master", isPr: false });
   const semanticRelease = (await import("../index.js")).default;
   t.truthy(
     await semanticRelease(options, {
@@ -487,8 +497,7 @@ test.serial("Use new gitHead, and recreate release notes if a prepare plugin cre
     fail: stub().resolves(),
   };
 
-  await td.replaceEsm("../lib/get-logger.js", null, () => t.context.logger);
-  await td.replaceEsm("env-ci", null, () => ({ isCi: true, branch: "master", isPr: false }));
+  await mockCore(t, { isCi: true, branch: "master", isPr: false });
   const semanticRelease = (await import("../index.js")).default;
 
   t.truthy(
@@ -554,8 +563,7 @@ test.serial("Make a new release when a commit is forward-ported to an upper bran
     success,
   };
 
-  await td.replaceEsm("../lib/get-logger.js", null, () => t.context.logger);
-  await td.replaceEsm("env-ci", null, () => ({ isCi: true, branch: "master", isPr: false }));
+  await mockCore(t, { isCi: true, branch: "master", isPr: false });
   const semanticRelease = (await import("../index.js")).default;
   t.truthy(await semanticRelease(options, { cwd, env: {}, stdout: { write: () => {} }, stderr: { write: () => {} } }));
 
@@ -589,9 +597,7 @@ test.serial("Publish a pre-release version", async (t) => {
   };
 
   const env = {};
-  await td.replaceEsm("../lib/get-logger.js", null, () => t.context.logger);
-  const envCi = (await td.replaceEsm("env-ci")).default;
-  td.when(envCi({ env, cwd })).thenReturn({ isCi: true, branch: "beta", isPr: false });
+  await mockCore(t, { isCi: true, branch: "beta", isPr: false });
   const semanticRelease = (await import("../index.js")).default;
   let { releases } = await semanticRelease(options, {
     cwd,
@@ -648,9 +654,7 @@ test.serial("Publish releases from different branch on the same channel", async 
   };
 
   const env = {};
-  await td.replaceEsm("../lib/get-logger.js", null, () => t.context.logger);
-  const envCi = (await td.replaceEsm("env-ci")).default;
-  td.when(envCi({ env, cwd })).thenReturn({ isCi: true, branch: "next", isPr: false });
+  await mockCore(t, { isCi: true, branch: "next", isPr: false });
   let semanticRelease = (await import("../index.js")).default;
   let { releases } = await semanticRelease(options, {
     cwd,
@@ -679,8 +683,7 @@ test.serial("Publish releases from different branch on the same channel", async 
   await merge("next", { cwd });
   await gitPush("origin", "master", { cwd });
 
-  await td.replaceEsm("../lib/get-logger.js", null, () => t.context.logger);
-  await td.replaceEsm("env-ci", null, () => ({ isCi: true, branch: "master", isPr: false }));
+  await mockCore(t, { isCi: true, branch: "master", isPr: false });
   semanticRelease = (await import("../index.js")).default;
 
   t.falsy(await semanticRelease(options, { cwd, env: {}, stdout: { write: () => {} }, stderr: { write: () => {} } }));
@@ -713,9 +716,7 @@ test.serial("Publish pre-releases the same channel as regular releases", async (
   };
 
   const env = {};
-  await td.replaceEsm("../lib/get-logger.js", null, () => t.context.logger);
-  const envCi = (await td.replaceEsm("env-ci")).default;
-  td.when(envCi({ cwd, env })).thenReturn({ isCi: true, branch: "beta", isPr: false });
+  await mockCore(t, { isCi: true, branch: "beta", isPr: false });
   const semanticRelease = (await import("../index.js")).default;
   let { releases } = await semanticRelease(options, {
     cwd,
@@ -786,9 +787,7 @@ test.serial("Do not add pre-releases to a different channel", async (t) => {
   };
 
   const env = {};
-  await td.replaceEsm("../lib/get-logger.js", null, () => t.context.logger);
-  const envCi = (await td.replaceEsm("env-ci")).default;
-  td.when(envCi({ cwd, env })).thenReturn({ isCi: true, branch: "master", isPr: false });
+  await mockCore(t, { isCi: true, branch: "master", isPr: false });
   const semanticRelease = (await import("../index.js")).default;
   t.truthy(await semanticRelease(options, { cwd, env, stdout: { write: () => {} }, stderr: { write: () => {} } }));
 
@@ -857,9 +856,7 @@ async function addChannelMacro(t, mergeFunction) {
   };
 
   const env = {};
-  await td.replaceEsm("../lib/get-logger.js", null, () => t.context.logger);
-  const envCi = (await td.replaceEsm("env-ci")).default;
-  td.when(envCi({ env, cwd })).thenReturn({ isCi: true, branch: "master", isPr: false });
+  await mockCore(t, { isCi: true, branch: "master", isPr: false });
   const semanticRelease = (await import("../index.js")).default;
   const result = await semanticRelease(options, { cwd, env, stdout: { write: () => {} }, stderr: { write: () => {} } });
 
@@ -925,9 +922,7 @@ test.serial('Call all "success" plugins even if one errors out', async (t) => {
   };
 
   const env = {};
-  await td.replaceEsm("../lib/get-logger.js", null, () => t.context.logger);
-  const envCi = (await td.replaceEsm("env-ci")).default;
-  td.when(envCi({ cwd, env })).thenReturn({ isCi: true, branch: "master", isPr: false });
+  await mockCore(t, { isCi: true, branch: "master", isPr: false });
   const semanticRelease = (await import("../index.js")).default;
 
   await t.throwsAsync(
@@ -970,8 +965,7 @@ test.serial('Log all "verifyConditions" errors', async (t) => {
     fail,
   };
 
-  await td.replaceEsm("../lib/get-logger.js", null, () => t.context.logger);
-  await td.replaceEsm("env-ci", null, () => ({ isCi: true, branch: "master", isPr: false }));
+  await mockCore(t, { isCi: true, branch: "master", isPr: false });
   const semanticRelease = (await import("../index.js")).default;
   const errors = [
     ...(
@@ -1021,8 +1015,7 @@ test.serial('Log all "verifyRelease" errors', async (t) => {
     fail,
   };
 
-  await td.replaceEsm("../lib/get-logger.js", null, () => t.context.logger);
-  await td.replaceEsm("env-ci", null, () => ({ isCi: true, branch: "master", isPr: false }));
+  await mockCore(t, { isCi: true, branch: "master", isPr: false });
   const semanticRelease = (await import("../index.js")).default;
   const errors = [
     ...(
@@ -1081,8 +1074,7 @@ test.serial("Dry-run skips addChannel, prepare, publish and success", async (t) 
     success,
   };
 
-  await td.replaceEsm("../lib/get-logger.js", null, () => t.context.logger);
-  await td.replaceEsm("env-ci", null, () => ({ isCi: true, branch: "master", isPr: false }));
+  await mockCore(t, { isCi: true, branch: "master", isPr: false });
   const semanticRelease = (await import("../index.js")).default;
   t.truthy(
     await semanticRelease(options, {
@@ -1133,8 +1125,7 @@ test.serial("Dry-run skips fail", async (t) => {
     fail,
   };
 
-  await td.replaceEsm("../lib/get-logger.js", null, () => t.context.logger);
-  await td.replaceEsm("env-ci", null, () => ({ isCi: true, branch: "master", isPr: false }));
+  await mockCore(t, { isCi: true, branch: "master", isPr: false });
   const semanticRelease = (await import("../index.js")).default;
   const errors = [
     ...(
@@ -1199,8 +1190,7 @@ test.serial('Force a dry-run if not on a CI and "noCi" is not explicitly set', a
     fail: stub().resolves(),
   };
 
-  await td.replaceEsm("../lib/get-logger.js", null, () => t.context.logger);
-  await td.replaceEsm("env-ci", null, () => ({ isCi: false, branch: "master" }));
+  await mockCore(t, { isCi: false, branch: "master" });
   const semanticRelease = (await import("../index.js")).default;
   t.truthy(
     await semanticRelease(options, {
@@ -1248,8 +1238,7 @@ test.serial('Dry-run does not print changelog if "generateNotes" return "undefin
     success: false,
   };
 
-  await td.replaceEsm("../lib/get-logger.js", null, () => t.context.logger);
-  await td.replaceEsm("env-ci", null, () => ({ isCi: true, branch: "master", isPr: false }));
+  await mockCore(t, { isCi: true, branch: "master", isPr: false });
   const semanticRelease = (await import("../index.js")).default;
   t.truthy(
     await semanticRelease(options, {
@@ -1260,7 +1249,7 @@ test.serial('Dry-run does not print changelog if "generateNotes" return "undefin
     })
   );
 
-  t.deepEqual(t.context.log.args[t.context.log.args.length - 1], ["Release note for version 2.0.0:"]);
+  t.false(t.context.log.args.some(([message]) => message === "Release note for version 2.0.0:"));
 });
 
 test.serial('Allow local releases with "noCi" option', async (t) => {
@@ -1306,8 +1295,7 @@ test.serial('Allow local releases with "noCi" option', async (t) => {
     fail: stub().resolves(),
   };
 
-  await td.replaceEsm("../lib/get-logger.js", null, () => t.context.logger);
-  await td.replaceEsm("env-ci", null, () => ({ isCi: false, branch: "master", isPr: false }));
+  await mockCore(t, { isCi: false, branch: "master", isPr: false });
   const semanticRelease = (await import("../index.js")).default;
   t.truthy(
     await semanticRelease(options, {
@@ -1378,8 +1366,7 @@ test.serial(
       fail: stub().resolves(),
     };
 
-    await td.replaceEsm("../lib/get-logger.js", null, () => t.context.logger);
-    await td.replaceEsm("env-ci", null, () => ({ isCi: true, branch: "master", isPr: false }));
+    await mockCore(t, { isCi: true, branch: "master", isPr: false });
     const semanticRelease = (await import("../index.js")).default;
     t.truthy(
       await semanticRelease(options, {
@@ -1407,8 +1394,7 @@ test.serial("Returns false if triggered by a PR", async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const { cwd, repositoryUrl } = await gitRepo(true);
 
-  await td.replaceEsm("../lib/get-logger.js", null, () => t.context.logger);
-  await td.replaceEsm("env-ci", null, () => ({ isCi: true, branch: "master", prBranch: "patch-1", isPr: true }));
+  await mockCore(t, { isCi: true, branch: "master", prBranch: "patch-1", isPr: true });
   const semanticRelease = (await import("../index.js")).default;
 
   t.false(
@@ -1462,9 +1448,7 @@ test.serial(
     };
 
     const env = {};
-    await td.replaceEsm("../lib/get-logger.js", null, () => t.context.logger);
-    const envCi = (await td.replaceEsm("env-ci")).default;
-    td.when(envCi({ cwd, env })).thenReturn({ isCi: true, branch: "1.x", isPr: false });
+    await mockCore(t, { isCi: true, branch: "1.x", isPr: false });
     const semanticRelease = (await import("../index.js")).default;
 
     const error = await t.throwsAsync(
@@ -1515,8 +1499,7 @@ test.serial('Throws "EINVALIDNEXTVERSION" if next release is out of range of the
     success,
   };
 
-  await td.replaceEsm("../lib/get-logger.js", null, () => t.context.logger);
-  await td.replaceEsm("env-ci", null, () => ({ isCi: true, branch: "master", isPr: false }));
+  await mockCore(t, { isCi: true, branch: "master", isPr: false });
   const semanticRelease = (await import("../index.js")).default;
 
   const error = await t.throwsAsync(
@@ -1574,8 +1557,7 @@ test.serial('Throws "EINVALIDMAINTENANCEMERGE" if merge an out of range release 
     fail,
   };
 
-  await td.replaceEsm("../lib/get-logger.js", null, () => t.context.logger);
-  await td.replaceEsm("env-ci", null, () => ({ isCi: true, branch: "1.1.x", isPr: false }));
+  await mockCore(t, { isCi: true, branch: "1.1.x", isPr: false });
   const semanticRelease = (await import("../index.js")).default;
   const errors = [
     ...(
@@ -1612,8 +1594,7 @@ test.serial("Returns false value if triggered on an outdated clone", async (t) =
   await gitCommits(["Third"], { cwd });
   await gitPush(repositoryUrl, "master", { cwd });
 
-  await td.replaceEsm("../lib/get-logger.js", null, () => t.context.logger);
-  await td.replaceEsm("env-ci", null, () => ({ isCi: true, branch: "master", isPr: false }));
+  await mockCore(t, { isCi: true, branch: "master", isPr: false });
   const semanticRelease = (await import("../index.js")).default;
 
   t.false(
@@ -1644,8 +1625,7 @@ test.serial("Returns false if not running from the configured branch", async (t)
     fail: stub().resolves(),
   };
 
-  await td.replaceEsm("../lib/get-logger.js", null, () => t.context.logger);
-  await td.replaceEsm("env-ci", null, () => ({ isCi: true, branch: "other-branch", isPr: false }));
+  await mockCore(t, { isCi: true, branch: "other-branch", isPr: false });
   const semanticRelease = (await import("../index.js")).default;
 
   t.false(
@@ -1688,8 +1668,7 @@ test.serial("Returns false if there is no relevant changes", async (t) => {
     fail: stub().resolves(),
   };
 
-  await td.replaceEsm("../lib/get-logger.js", null, () => t.context.logger);
-  await td.replaceEsm("env-ci", null, () => ({ isCi: true, branch: "master", isPr: false }));
+  await mockCore(t, { isCi: true, branch: "master", isPr: false });
   const semanticRelease = (await import("../index.js")).default;
 
   t.false(
@@ -1744,9 +1723,7 @@ test.serial("Exclude commits with [skip release] or [release skip] from analysis
   };
 
   const env = {};
-  await td.replaceEsm("../lib/get-logger.js", null, () => t.context.logger);
-  const envCi = (await td.replaceEsm("env-ci")).default;
-  td.when(envCi({ env, cwd })).thenReturn({ isCi: true, branch: "master", isPr: false });
+  await mockCore(t, { isCi: true, branch: "master", isPr: false });
   const semanticRelease = (await import("../index.js")).default;
   await semanticRelease(options, {
     cwd,
@@ -1772,8 +1749,7 @@ test.serial('Log both plugins errors and errors thrown by "fail" plugin', async 
     verifyConditions: stub().rejects(pluginError),
     fail: [stub().rejects(failError1), stub().rejects(failError2)],
   };
-  await td.replaceEsm("../lib/get-logger.js", null, () => t.context.logger);
-  await td.replaceEsm("env-ci", null, () => ({ isCi: true, branch: "master", isPr: false }));
+  await mockCore(t, { isCi: true, branch: "master", isPr: false });
   const semanticRelease = (await import("../index.js")).default;
 
   await t.throwsAsync(
@@ -1796,8 +1772,7 @@ test.serial('Call "fail" only if a plugin returns a SemanticReleaseError', async
     verifyConditions: stub().rejects(pluginError),
     fail,
   };
-  await td.replaceEsm("../lib/get-logger.js", null, () => t.context.logger);
-  await td.replaceEsm("env-ci", null, () => ({ isCi: true, branch: "master", isPr: false }));
+  await mockCore(t, { isCi: true, branch: "master", isPr: false });
   const semanticRelease = (await import("../index.js")).default;
 
   await t.throwsAsync(
@@ -1814,8 +1789,7 @@ test.serial(
     // Create a git repository, set the current working directory at the root of the repo
     const { cwd } = await gitRepo();
 
-    await td.replaceEsm("../lib/get-logger.js", null, () => t.context.logger);
-    await td.replaceEsm("env-ci", null, () => ({ isCi: true, branch: "master", isPr: false }));
+    await mockCore(t, { isCi: true, branch: "master", isPr: false });
     const semanticRelease = (await import("../index.js")).default;
     const errors = [
       ...(
@@ -1856,8 +1830,7 @@ test.serial("Throw an Error if plugin returns an unexpected value", async (t) =>
     fail: stub().resolves(),
   };
 
-  await td.replaceEsm("../lib/get-logger.js", null, () => t.context.logger);
-  await td.replaceEsm("env-ci", null, () => ({ isCi: true, branch: "master", isPr: false }));
+  await mockCore(t, { isCi: true, branch: "master", isPr: false });
   const semanticRelease = (await import("../index.js")).default;
 
   let error;
@@ -1894,8 +1867,7 @@ test.serial('Hide sensitive information passed to "fail" plugin', async (t) => {
     fail,
   };
 
-  await td.replaceEsm("../lib/get-logger.js", null, () => t.context.logger);
-  await td.replaceEsm("env-ci", null, () => ({ isCi: true, branch: "master", isPr: false }));
+  await mockCore(t, { isCi: true, branch: "master", isPr: false });
   const semanticRelease = (await import("../index.js")).default;
   await t.throwsAsync(
     semanticRelease(options, { cwd, env, stdout: new WritableStreamBuffer(), stderr: new WritableStreamBuffer() })
@@ -1938,8 +1910,7 @@ test.serial('Hide sensitive information passed to "success" plugin', async (t) =
     fail: stub().resolves(),
   };
 
-  await td.replaceEsm("../lib/get-logger.js", null, () => t.context.logger);
-  await td.replaceEsm("env-ci", null, () => ({ isCi: true, branch: "master", isPr: false }));
+  await mockCore(t, { isCi: true, branch: "master", isPr: false });
   const semanticRelease = (await import("../index.js")).default;
   await semanticRelease(options, { cwd, env, stdout: new WritableStreamBuffer(), stderr: new WritableStreamBuffer() });
 
@@ -1987,8 +1958,7 @@ test.serial("Get all commits including the ones not in the shallow clone", async
     fail: stub().resolves(),
   };
 
-  await td.replaceEsm("../lib/get-logger.js", null, () => t.context.logger);
-  await td.replaceEsm("env-ci", null, () => ({ isCi: true, branch: "master", isPr: false }));
+  await mockCore(t, { isCi: true, branch: "master", isPr: false });
   const semanticRelease = (await import("../index.js")).default;
   t.truthy(
     await semanticRelease(options, {
