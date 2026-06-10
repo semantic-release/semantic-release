@@ -44,7 +44,7 @@ The following three examples are the same. Use main instead of master if your de
 
 ```js
 /**
- * @type {import('semantic-release').GlobalConfig}
+ * @type {import('semantic-release').Options}
  */
 module.exports = {
   branches: ["master", "next"],
@@ -55,7 +55,7 @@ module.exports = {
 
 ```js
 /**
- * @type {import('semantic-release').GlobalConfig}
+ * @type {import('semantic-release').Options}
  */
 export default {
   branches: ["master", "next"],
