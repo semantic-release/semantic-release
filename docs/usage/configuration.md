@@ -102,7 +102,7 @@ The branches on which releases should happen. By default **semantic-release** wi
 
 **Note**: Branches configuration key accepts [**micromatch**](https://github.com/micromatch/micromatch?tab=readme-ov-file#matching-features) globs.
 
-**Note**: If your repository does not have a release branch, then **semantic-release** will fail with an `ERELEASEBRANCHES` error message. If you are using the default configuration, you can fix this error by pushing a `master` or `main` branch.
+**Note**: If your repository does not have a release branch, then **semantic-release** will log a warning message. If you are using the default configuration, you can fix this error by pushing a `master` or `main` branch.
 
 **Note**: Once **semantic-release** is configured, any user with the permission to push commits on one of those branches will be able to publish a release. It is recommended to protect those branches, for example with [GitHub protected branches](https://docs.github.com/github/administering-a-repository/about-protected-branches).
 

@@ -13,11 +13,13 @@ const merge = (branches, source, target, tag) => {
 };
 const remoteBranches = [];
 const repositoryUrl = "repositoryUrl";
-let expand, getTags, getBranches;
+let expand, getTags, getBranches, getLogger;
 
 test.beforeEach(async (t) => {
   getTags = (await td.replaceEsm("../../lib/branches/get-tags.js")).default;
   expand = (await td.replaceEsm("../../lib/branches/expand.js")).default;
+  getLogger = (await td.replaceEsm("../../lib/get-logger.js")).default;
+  td.when(getLogger(td.matchers.anything())).thenReturn({ warn: () => {} });
   getBranches = (await import("../../lib/branches/index.js")).default;
 });
 
@@ -213,7 +215,7 @@ test.serial("Throw SemanticReleaseError for invalid configurations", async (t) =
   td.when(getTags(context, remoteBranches)).thenResolve(branches);
 
   const error = await t.throwsAsync(getBranches(repositoryUrl, "master", context));
-  const errors = [...error.errors];
+  const errors = error?.errors ? [...error.errors] : [error];
 
   t.is(errors[0].name, "SemanticReleaseError");
   t.is(errors[0].code, "EMAINTENANCEBRANCH");
@@ -231,10 +233,19 @@ test.serial("Throw SemanticReleaseError for invalid configurations", async (t) =
   t.is(errors[3].code, "EPRERELEASEBRANCHES");
   t.truthy(errors[3].message);
   t.truthy(errors[3].details);
-  t.is(errors[4].name, "SemanticReleaseError");
-  t.is(errors[4].code, "ERELEASEBRANCHES");
-  t.truthy(errors[4].message);
-  t.truthy(errors[4].details);
+});
+
+test.serial("Log a warning message when no release branch is configured", async (t) => {
+  const branches = [{ name: "1.x", range: "1.x", tags: [] }];
+  const context = { options: { branches } };
+  const warn = td.function();
+  td.when(expand(repositoryUrl, context, branches)).thenResolve(remoteBranches);
+  td.when(getTags(context, remoteBranches)).thenResolve(branches);
+  td.when(getLogger(context)).thenReturn({ warn });
+
+  await t.notThrowsAsync(getBranches(repositoryUrl, "master", context));
+
+  td.verify(warn(td.matchers.contains("No release branch found, semantic-release will not publish any release.")));
 });
 
 test.serial("Throw a SemanticReleaseError if there is duplicate branches", async (t) => {
