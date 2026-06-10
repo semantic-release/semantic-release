@@ -27,7 +27,7 @@ The type of the branch is automatically determined based on naming convention an
 | ------------ | ----------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
 | `name`       | All                                       | **Required.** The Git branch holding the commits to analyze and the code to release. See [name](#name).                                                                                 | - The value itself if defined as a `String` or the matching branches name if defined as a glob. |
 | `channel`    | All                                       | The distribution channel on which to publish releases from this branch. Set to `false` to force the default distribution channel instead of using the default. See [channel](#channel). | `undefined` for the first release branch, the value of `name` for subsequent ones.              |
-| `range`      | [maintenance](#maintenance-branches) only | **Required unless `name` is formatted like `N.N.x` or `N.x` (`N` is a number).** The range of [semantic versions](https://semver.org) to support on this branch. See [range](#range).   | The value of `name`.                                                                            |
+| `range`      | [maintenance](#maintenance-branches) only | **Required unless `name` is formatted like `N.N.x` or `N.x.x` or `N.x` (`N` is a number).** The range of [semantic versions](https://semver.org) to support on this branch. See [range](#range).   | The value of `name`.                                                                            |
 | `prerelease` | [pre-release](#pre-release-branches) only | **Required.** The pre-release denotation to append to [semantic versions](https://semver.org) released from this branch. See [prerelease](#prerelease).                                 | -                                                                                               |
 
 ### name
@@ -70,7 +70,7 @@ For example the configuration `['master', {name: 'next', channel: 'channel-${nam
 
 ### range
 
-A `range` only applies to maintenance branches, is required and must be formatted like `N.N.x` or `N.x` (`N` is a number). In case the `name` is formatted as a range (for example `1.x` or `1.5.x`) the branch will be considered a maintenance branch and the `name` value will be used for the `range`.
+A `range` only applies to maintenance branches, is required and must be formatted like `N.N.x` or `N.x.x` or `N.x` (`N` is a number). In case the `name` is formatted as a range (for example `1.x` or `1.5.x`) the branch will be considered a maintenance branch and the `name` value will be used for the `range`.
 
 For example the configuration `['1.1.x', '1.2.x', 'master']` will be expanded as:
 
