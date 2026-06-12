@@ -44,6 +44,7 @@ test.serial("wrapper forwards environment params and delegates to core", async (
   const [, , configOptions] = resolveConfigArgs;
 
   t.deepEqual(receivedPlugins, plugins);
+  t.is(typeof callArg.formatOutput, "function");
   t.deepEqual(configOptions, { baseConfig: SEMANTIC_RELEASE_DEFAULT_CONFIG, buildPlugins: true });
   t.is(context.envCi.branch, "next");
   t.is(context.cwd, process.cwd());
@@ -53,6 +54,9 @@ test.serial("wrapper forwards environment params and delegates to core", async (
   t.is(context.options.originalRepositoryURL, resolvedOptions.repositoryUrl);
 
   td.verify(logger.log(td.matchers.contains("Running semantic-release version")));
+
+  const formatted = await callArg.formatOutput("## Title");
+  t.true(formatted.includes("Title"));
   t.deepEqual(result, { ok: true });
 });
 

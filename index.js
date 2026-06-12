@@ -1,7 +1,19 @@
 import semanticReleaseCore, { resolveConfig, getLogger, resolveEnvCi } from "@semantic-release/core";
+import * as marked from "marked";
 import { COMMIT_EMAIL, COMMIT_NAME, SEMANTIC_RELEASE_DEFAULT_CONFIG } from "./lib/definitions/constants.js";
 
 import pkg from "./package.json" with { type: "json" };
+
+let markedOptionsSet = false;
+async function terminalOutput(text) {
+  if (!markedOptionsSet) {
+    const { default: TerminalRenderer } = await import("marked-terminal"); // eslint-disable-line node/no-unsupported-features/es-syntax
+    marked.setOptions({ renderer: new TerminalRenderer() });
+    markedOptionsSet = true;
+  }
+
+  return marked.parse(text);
+}
 
 export default async (
   cliOptions = {},
@@ -56,7 +68,7 @@ export default async (
   resolvedOptions.originalRepositoryURL = resolvedOptions.repositoryUrl;
   context.options = resolvedOptions;
 
-  const result = await semanticReleaseCore({ context, plugins });
+  const result = await semanticReleaseCore({ context, plugins, formatOutput: terminalOutput });
 
   return result;
 };
