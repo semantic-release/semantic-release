@@ -65,7 +65,6 @@ export default async (
     baseConfig: SEMANTIC_RELEASE_DEFAULT_CONFIG,
     buildPlugins: true,
   });
-  resolvedOptions.originalRepositoryURL = resolvedOptions.repositoryUrl;
   context.options = resolvedOptions;
 
   const result = await semanticReleaseCore({ context, plugins, formatOutput: terminalOutput });
