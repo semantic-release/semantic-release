@@ -111,7 +111,7 @@ In order to use **semantic-release** you need:
 
 - Usage
   - [Getting started](https://semantic-release.org/usage/getting-started/)
-  - [Configuration](https://semantic-release.org/usage/configuration/#configuration)
+  - [Configuration](https://semantic-release.org/usage/configuration/)
   - [CI Configuration](https://semantic-release.org/usage/ci-configuration/)
   - [Running semantic-release](https://semantic-release.org/usage/running/)
 - Foundations
