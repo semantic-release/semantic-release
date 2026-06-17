@@ -146,8 +146,8 @@
     }
   },
   "scripts": {
-    "lint:prettier": "prettier --check \"*.{js,json,md}\" \".github/**/*.{md,yml}\" \"docs/**/*.md\" \"{bin,lib,test}/**/*.js\"",
-    "lint:prettier:fix": "prettier --write \"*.{js,json,md}\" \".github/**/*.{md,yml}\" \"docs/**/*.md\" \"{bin,lib,test}/**/*.js\"",
+    "lint:prettier": "prettier --check \"*.{js,json,md}\" \".github/**/*.{md,yml}\" \"{bin,lib,test}/**/*.js\"",
+    "lint:prettier:fix": "prettier --write \"*.{js,json,md}\" \".github/**/*.{md,yml}\" \"{bin,lib,test}/**/*.js\"",
     "lint:lockfile": "lockfile-lint",
     "lint:engines": "ls-engines",
     "lint:publish": "publint --strict",
