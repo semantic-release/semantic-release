@@ -18,7 +18,7 @@ if (!satisfies(process.version, engines.node)) {
   console.error(
     `[semantic-release]: node version ${engines.node} is required. Found ${process.version}.
 
-See https://github.com/semantic-release/semantic-release/blob/master/docs/support/node-version.md for more details and solutions.`
+See https://semantic-release.org/support/node-version/ for more details and solutions.`
   );
   process.exit(1);
 }
