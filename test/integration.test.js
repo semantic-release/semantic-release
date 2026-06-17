@@ -3,7 +3,6 @@ import { escapeRegExp, isString, omit, sortBy } from "lodash-es";
 import * as td from "testdouble";
 import { spy, stub } from "sinon";
 import { WritableStreamBuffer } from "stream-buffers";
-import AggregateError from "aggregate-error";
 import SemanticReleaseError from "@semantic-release/error";
 import { COMMIT_EMAIL, COMMIT_NAME, SECRET_REPLACEMENT } from "../lib/definitions/constants.js";
 import {
