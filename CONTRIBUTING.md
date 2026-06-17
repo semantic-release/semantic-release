@@ -21,7 +21,7 @@ Help us keep **semantic-release** open and inclusive. Please read and follow our
 
 ### Improve documentation
 
-As a **semantic-release** user, you are the perfect candidate to help us improve our documentation: typo corrections, clarifications, more examples, new [recipes](docs/recipes), etc. Take a look at the [documentation issues that need help](https://github.com/issues?utf8=%E2%9C%93&q=is%3Aopen+is%3Aissue+user%3Asemantic-release+archived%3Afalse+label%3A%22help+wanted%22+label%3Adocs+).
+As a **semantic-release** user, you are the perfect candidate to help us improve our documentation: typo corrections, clarifications, more examples, new [recipes](https://semantic-release.org/recipes/release-workflow/), etc. Take a look at the [documentation issues that need help](https://github.com/issues?utf8=%E2%9C%93&q=is%3Aopen+is%3Aissue+user%3Asemantic-release+archived%3Afalse+label%3A%22help+wanted%22+label%3Adocs+).
 
 Please follow the [Documentation guidelines](#documentation).
 
@@ -41,7 +41,7 @@ Post a comment on an issue to indicate you would like to work on it and to reque
 ## Using the issue tracker
 
 The issue tracker is the channel for [bug reports](#bug-report), [features requests](#feature-request) and [submitting pull requests](#submitting-a-pull-request) only.
-Please use the [Support](docs/support/README.md) and [Get help](README.md#get-help) sections for support, troubleshooting and questions.
+Please use the [Support](https://semantic-release.org/support/) and [Get help](README.md#get-help) sections for support, troubleshooting and questions.
 
 Before opening an issue or a Pull Request, please use the [GitHub issue search](https://github.com/issues?utf8=%E2%9C%93&q=user%3Asemantic-release) to make sure the bug or feature request hasn't been already reported or fixed.
 
@@ -58,7 +58,7 @@ Please provide as much detail and context as possible and fill the information r
 
 ### New plugin request
 
-[Plugins](docs/usage/plugins.md) are a great way to extend **semantic-release** capabilities, integrate with other systems and support new project type.
+[Plugins](https://semantic-release.org/foundation/plugins/) are a great way to extend **semantic-release** capabilities, integrate with other systems and support new project type.
 Please provide as much detail and context as possible and fill the information requested in the [plugin suggestion template](https://github.com/semantic-release/semantic-release/issues/new?template=03_plugin_suggestion.md).
 
 ## Submitting a Pull Request
