@@ -80,6 +80,47 @@ test("Get the correct prerelease tag, when other prereleases share the same git 
   });
 });
 
+test("Get the highest prerelease valid tag when prerelease identifier contains dots", (t) => {
+  const result = getLastRelease({
+    branch: {
+      name: "lts/AS2024.10",
+      prerelease: "AS2024.10",
+      channel: "lts-as2024.10",
+      tags: [
+        { version: "1.705.2", gitTag: "v1.705.2", gitHead: "v1.705.2", channels: ["latest"] },
+        {
+          version: "1.705.3-AS2024.10.1",
+          gitTag: "v1.705.3-AS2024.10.1",
+          gitHead: "v1.705.3-AS2024.10.1",
+          channels: ["lts-as2024.10"],
+        },
+        {
+          version: "1.705.3-AS2024.10.15",
+          gitTag: "v1.705.3-AS2024.10.15",
+          gitHead: "v1.705.3-AS2024.10.15",
+          channels: ["lts-as2024.10"],
+        },
+        {
+          version: "1.705.3-AS2024.11.1",
+          gitTag: "v1.705.3-AS2024.11.1",
+          gitHead: "v1.705.3-AS2024.11.1",
+          channels: ["lts-as2024.11"],
+        },
+      ],
+      type: "prerelease",
+    },
+    options: { tagFormat: `v\${version}` },
+  });
+
+  t.deepEqual(result, {
+    version: "1.705.3-AS2024.10.15",
+    gitTag: "v1.705.3-AS2024.10.15",
+    name: "v1.705.3-AS2024.10.15",
+    gitHead: "v1.705.3-AS2024.10.15",
+    channels: ["lts-as2024.10"],
+  });
+});
+
 test("Return empty object if no valid tag is found", (t) => {
   const result = getLastRelease({
     branch: {
