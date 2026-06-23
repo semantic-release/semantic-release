@@ -367,6 +367,21 @@ test("Return undefined if a commit note is invalid", async (t) => {
   t.deepEqual(tagsNotes.get("v1.0.0"), undefined);
 });
 
+test("Merge channels when multiple tag notes exist on the same commit", async (t) => {
+  const { cwd } = await gitRepo();
+  const [commit] = await gitCommits(["First"], { cwd });
+
+  await gitTagVersion("v2.9.0-beta.13", commit.hash, { cwd });
+  await gitTagVersion("v2.9.0-alpha.1", commit.hash, { cwd });
+  await gitAddNote(JSON.stringify({ channels: ["staging"] }), "v2.9.0-beta.13", { cwd });
+  await gitAddNote(JSON.stringify({ channels: ["develop"] }), "v2.9.0-alpha.1", { cwd });
+
+  const tagsNotes = await getTagsNotes({ cwd });
+
+  t.deepEqual(tagsNotes.get("v2.9.0-beta.13"), { channels: ["develop", "staging"] });
+  t.deepEqual(tagsNotes.get("v2.9.0-alpha.1"), { channels: ["develop", "staging"] });
+});
+
 test("Add a commit note", async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const { cwd } = await gitRepo();
