@@ -84,24 +84,20 @@ async function run(context, plugins) {
   );
 
   try {
-    try {
-      await verifyAuth(options.repositoryUrl, context.branch.name, { cwd, env });
-    } catch (error) {
-      if (!(await isBranchUpToDate(options.repositoryUrl, context.branch.name, { cwd, env }))) {
-        logger.log(
-          `The local branch ${context.branch.name} is behind the remote one, therefore a new version won't be published.`
-        );
-        return false;
-      }
-
-      throw error;
-    }
+    await verifyAuth(options.repositoryUrl, { cwd, env });
   } catch (error) {
     logger.error(`The command "${error.command}" failed with the error message ${error.stderr}.`);
     throw getError("EGITNOPERMISSION", context);
   }
 
   logger.success(`Allowed to push to the Git repository`);
+
+  if (!(await isBranchUpToDate(options.repositoryUrl, context.branch.name, { cwd, env }))) {
+    logger.log(
+      `The local branch ${context.branch.name} is behind the remote one, therefore a new version won't be published.`
+    );
+    return false;
+  }
 
   await plugins.verifyConditions(context);
 
