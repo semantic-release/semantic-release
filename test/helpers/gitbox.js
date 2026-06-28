@@ -1,5 +1,6 @@
 import Docker from "dockerode";
 import pRetry from "p-retry";
+import { finished } from "node:stream/promises";
 import { gitShallowClone, initBareRepo } from "./git-utils.js";
 
 const IMAGE = "semanticrelease/docker-gitbox:latest";
@@ -10,6 +11,12 @@ const GIT_USERNAME = "integration";
 const GIT_PASSWORD = "suchsecure";
 const docker = new Docker();
 let container;
+
+async function startAndDrainExec(exec, options) {
+  const stream = await exec.start(options);
+  stream.resume();
+  await finished(stream);
+}
 
 export const gitCredential = `${GIT_USERNAME}:${GIT_PASSWORD}`;
 
@@ -43,7 +50,7 @@ export async function start() {
     AttachStdout: true,
     AttachStderr: true,
   });
-  await exec.start();
+  await startAndDrainExec(exec);
 }
 
 /**
@@ -52,6 +59,7 @@ export async function start() {
 export async function stop() {
   await container.stop();
   await container.remove();
+  container = undefined;
 }
 
 /**
@@ -68,7 +76,7 @@ export async function createRepo(name, branch = "master", description = `Reposit
     AttachStdout: true,
     AttachStderr: true,
   });
-  await exec.start();
+  await startAndDrainExec(exec);
 
   const repositoryUrl = `http://${SERVER_HOST}:${HOST_PORT}/git/${name}.git`;
   const authUrl = `http://${gitCredential}@${SERVER_HOST}:${HOST_PORT}/git/${name}.git`;
