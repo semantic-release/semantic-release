@@ -1,0 +1,19 @@
+services:
+  gitbox:
+    image: semanticrelease/docker-gitbox:latest
+    tty: true
+    stdin_open: true
+    ports:
+      - "80"
+
+  npm-registry:
+    image: verdaccio/verdaccio:6
+    ports:
+      - "4873"
+    volumes:
+      - ./config.yaml:/verdaccio/conf/config.yaml:ro
+
+  mockserver:
+    image: mockserver/mockserver:latest
+    ports:
+      - "1080"
