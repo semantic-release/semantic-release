@@ -9,7 +9,7 @@ import { mockServerClient } from "mockserver-client";
 import { gitShallowClone, initBareRepo } from "./git-utils.js";
 
 const helpersDir = dirname(fileURLToPath(import.meta.url));
-const composeConfig = yaml.load(readFileSync(join(helpersDir, "e2e.compose.yml"), "utf8"));
+const composeConfig = yaml.load(readFileSync(join(helpersDir, "../../e2e.compose.yml"), "utf8"));
 
 const GITBOX_IMAGE = composeConfig.services.gitbox.image;
 const NPM_REGISTRY_IMAGE = composeConfig.services["npm-registry"].image;
