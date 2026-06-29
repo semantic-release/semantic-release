@@ -7,13 +7,13 @@ services:
       - "80"
 
   npm-registry:
-    image: verdaccio/verdaccio:6@sha256:e3ac7e335e69504cd0b09616aa52066399868282313c34762d2a77b8169a3575
+    image: verdaccio/verdaccio:6.7.2@sha256:e3ac7e335e69504cd0b09616aa52066399868282313c34762d2a77b8169a3575
     ports:
       - "4873"
     volumes:
       - ./config.yaml:/verdaccio/conf/config.yaml:ro
 
   mockserver:
-    image: mockserver/mockserver:latest@sha256:b4fddf798d33f385e52e8f685085e3d646da0c5c8e498d2c9b6b4e87a1ffcde0
+    image: mockserver/mockserver:7.2.0@sha256:b4fddf798d33f385e52e8f685085e3d646da0c5c8e498d2c9b6b4e87a1ffcde0
     ports:
       - "1080"
