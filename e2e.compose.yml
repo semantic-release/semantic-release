@@ -1,19 +1,19 @@
 services:
   gitbox:
-    image: semanticrelease/docker-gitbox:latest
+    image: semanticrelease/docker-gitbox:latest@sha256:c0c2a595740e070c4b4dbe5bcd389da21e670008958967e74cd1a9ba8bcb3afa
     tty: true
     stdin_open: true
     ports:
       - "80"
 
   npm-registry:
-    image: verdaccio/verdaccio:6
+    image: verdaccio/verdaccio:6@sha256:e3ac7e335e69504cd0b09616aa52066399868282313c34762d2a77b8169a3575
     ports:
       - "4873"
     volumes:
       - ./config.yaml:/verdaccio/conf/config.yaml:ro
 
   mockserver:
-    image: mockserver/mockserver:latest
+    image: mockserver/mockserver:latest@sha256:b4fddf798d33f385e52e8f685085e3d646da0c5c8e498d2c9b6b4e87a1ffcde0
     ports:
       - "1080"
