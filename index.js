@@ -1,6 +1,6 @@
 import semanticReleaseCore, { resolveConfig, getLogger, resolveEnvCi } from "@semantic-release/core";
 import * as marked from "marked";
-import { COMMIT_EMAIL, COMMIT_NAME, SEMANTIC_RELEASE_DEFAULT_CONFIG } from "./lib/definitions/constants.js";
+import { SEMANTIC_RELEASE_DEFAULT_CONFIG } from "./lib/definitions/constants.js";
 
 import pkg from "./package.json" with { type: "json" };
 
