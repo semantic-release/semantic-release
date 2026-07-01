@@ -65,7 +65,7 @@
     "cz-conventional-changelog": "3.3.0",
     "file-url": "4.0.0",
     "fs-extra": "11.3.5",
-    "got": "15.0.6",
+    "got": "15.0.7",
     "js-yaml": "4.3.0",
     "lockfile-lint": "5.0.0",
     "ls-engines": "0.10.1",
