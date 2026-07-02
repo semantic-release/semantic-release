@@ -14,6 +14,6 @@ services:
       - ./config.yaml:/verdaccio/conf/config.yaml:ro
 
   mockserver:
-    image: mockserver/mockserver:7.2.0@sha256:b4fddf798d33f385e52e8f685085e3d646da0c5c8e498d2c9b6b4e87a1ffcde0
+    image: mockserver/mockserver:7.3.0@sha256:321937ef06cb8d7004a6302505498c005e202322fd33debcc10c039a9b859946
     ports:
       - "1080"
