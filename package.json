@@ -69,7 +69,7 @@
     "js-yaml": "4.3.0",
     "lockfile-lint": "5.0.0",
     "ls-engines": "0.10.1",
-    "mockserver-client": "7.3.0",
+    "mockserver-client": "7.4.0",
     "nock": "14.0.16",
     "npm-run-all2": "9.0.2",
     "p-retry": "8.0.0",
