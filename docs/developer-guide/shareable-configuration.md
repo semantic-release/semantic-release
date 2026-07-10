@@ -1,1 +1,0 @@
-# Shareable configuration developer guide
