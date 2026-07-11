@@ -57,7 +57,7 @@
     "yargs": "^18.0.0"
   },
   "devDependencies": {
-    "@types/node": "24.13.2",
+    "@types/node": "24.13.3",
     "@types/signale": "1.4.7",
     "ava": "8.0.1",
     "c8": "11.0.0",
