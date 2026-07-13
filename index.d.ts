@@ -627,6 +627,9 @@ declare module "semantic-release" {
      * Any valid git url format is supported (see
      * [git protocols](https://git-scm.com/book/en/v2/Git-on-the-Server-The-Protocols))
      *
+     * The value must not begin with `-`, as it would otherwise be interpreted
+     * by `git` as a command-line option rather than a URL.
+     *
      * Default: `repository` property in `package.json`, or git origin url.
      */
     repositoryUrl?: string | undefined;
