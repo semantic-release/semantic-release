@@ -109,6 +109,18 @@ test("Throw a SemanticReleaseError for each invalid branch", async (t) => {
   t.truthy(errors[5].details);
 });
 
+test('Throw a SemanticReleaseError if the "repositoryUrl" starts with "-"', async (t) => {
+  const { cwd } = await gitRepo(true);
+  const options = { repositoryUrl: "--upload-pack=/bin/sh", tagFormat: `v\${version}`, branches: [{ name: "master" }] };
+
+  const errors = [...(await t.throwsAsync(verify({ cwd, options }))).errors];
+
+  t.is(errors[0].name, "SemanticReleaseError");
+  t.is(errors[0].code, "EINVALIDREPOURL");
+  t.truthy(errors[0].message);
+  t.truthy(errors[0].details);
+});
+
 test('Return "true" if all verification pass', async (t) => {
   const { cwd, repositoryUrl } = await gitRepo(true);
   const options = { repositoryUrl, tagFormat: `v\${version}`, branches: [{ name: "master" }] };

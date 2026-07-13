@@ -1,3 +1,5 @@
+import { existsSync } from "node:fs";
+import path from "node:path";
 import test from "ava";
 import { temporaryDirectory } from "tempy";
 import {
@@ -422,4 +424,31 @@ test("Fetch all notes on a detached head repository", async (t) => {
   await fetchNotes(repositoryUrl, { cwd });
 
   t.is(await gitGetNote(commit.hash, { cwd }), '{"note":"note"}');
+});
+
+test("Does not execute a `repositoryUrl` injected as an `--upload-pack` git option", async (t) => {
+  const { cwd } = await gitRepo();
+  await gitCommits(["First"], { cwd });
+  const marker = path.join(temporaryDirectory(), "upload-pack-rce");
+  // A `repositoryUrl` beginning with `-` would be parsed by git as a
+  // command-line option rather than a positional argument. `--upload-pack`
+  // lets the injected value run an arbitrary binary when fetching refs.
+  const repositoryUrl = `--upload-pack=touch ${marker}`;
+
+  await t.throwsAsync(isBranchUpToDate(repositoryUrl, "master", { cwd }));
+
+  t.false(existsSync(marker));
+});
+
+test("Does not execute a `repositoryUrl` injected as a `--receive-pack` git option", async (t) => {
+  const { cwd } = await gitRepo(true);
+  await gitCommits(["First"], { cwd });
+  const marker = path.join(temporaryDirectory(), "receive-pack-rce");
+  // `--receive-pack` is the push-side equivalent: it lets the injected value
+  // run an arbitrary binary when pushing to the (configured) remote.
+  const repositoryUrl = `--receive-pack=touch ${marker}`;
+
+  await t.throwsAsync(push(repositoryUrl, { cwd }));
+
+  t.false(existsSync(marker));
 });
