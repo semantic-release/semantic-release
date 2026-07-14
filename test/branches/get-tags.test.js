@@ -28,6 +28,30 @@ test("Get the valid tags", async (t) => {
   ]);
 });
 
+test("Get the valid tags with non-trivial tagFormat", async (t) => {
+  const { cwd } = await gitRepo();
+  const commits = await gitCommits(["First"], { cwd });
+  await gitTagVersion("foo", undefined, { cwd });
+  await gitTagVersion("v2.0.0+my-library", undefined, { cwd });
+  commits.push(...(await gitCommits(["Second"], { cwd })));
+  await gitTagVersion("v1.0.0", undefined, { cwd });
+  commits.push(...(await gitCommits(["Third"], { cwd })));
+  await gitTagVersion("v3.0+my-library-utils", undefined, { cwd });
+  commits.push(...(await gitCommits(["Fourth"], { cwd })));
+  await gitTagVersion("v3.0.0-beta.1+my-library-utils", undefined, { cwd });
+
+  const result = await getTags({ cwd, options: { tagFormat: `v\${version}+my-library` } }, [{ name: "master" }]);
+
+  t.deepEqual(result, [
+    {
+      name: "master",
+      tags: [
+        { gitTag: "v2.0.0", version: "2.0.0", channels: [null] },
+      ],
+    },
+  ]);
+});
+
 test("Get the valid tags from multiple branches", async (t) => {
   const { cwd } = await gitRepo();
   await gitCommits(["First"], { cwd });
