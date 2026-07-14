@@ -42,7 +42,7 @@ Post a comment on an issue to indicate you would like to work on it and to reque
 
 ## Using the issue tracker
 
-The issue tracker is the channel for [bug reports](#bug-report), [features requests](#feature-request) and [submitting pull requests](#submitting-a-pull-request) only.
+The issue tracker is the channel for [bug reports](#bug-report), [feature requests](#feature-request) and [submitting pull requests](#submitting-a-pull-request) only.
 Please use the [Support](https://semantic-release.org/support/) and [Get help](README.md#get-help) sections for support, troubleshooting and questions.
 
 Before opening an issue or a Pull Request, please use the [GitHub issue search](https://github.com/issues?utf8=%E2%9C%93&q=user%3Asemantic-release) to make sure the bug or feature request hasn't been already reported or fixed.
@@ -50,18 +50,18 @@ Before opening an issue or a Pull Request, please use the [GitHub issue search](
 ### Bug report
 
 A good bug report shouldn't leave others needing to chase you for more information.
-Please try to be as detailed as possible in your report and fill the information requested in the [bug report template](https://github.com/semantic-release/semantic-release/issues/new?template=01_bug_report.md).
+Please try to be as detailed as possible in your report and fill the information requested in the [bug report template](https://github.com/semantic-release/semantic-release/issues/new?template=01_bug_report.yml).
 
 ### Feature request
 
 Feature requests are welcome, but take a moment to find out whether your idea fits with the scope and aims of the project.
 It's up to you to make a strong case to convince the project's developers of the merits of this feature.
-Please provide as much detail and context as possible and fill the information requested in the [feature request template](https://github.com/semantic-release/semantic-release/issues/new?template=02_feature_request.md).
+Please provide as much detail and context as possible and fill the information requested in the [feature request template](https://github.com/semantic-release/semantic-release/issues/new?template=02_feature_request.yml).
 
 ### New plugin request
 
-[Plugins](https://semantic-release.org/foundation/plugins/) are a great way to extend **semantic-release** capabilities, integrate with other systems and support new project type.
-Please provide as much detail and context as possible and fill the information requested in the [plugin suggestion template](https://github.com/semantic-release/semantic-release/issues/new?template=03_plugin_suggestion.md).
+[Plugins](https://semantic-release.org/foundation/plugins/) are a great way to extend **semantic-release** capabilities, integrate with other systems and support new project types.
+Please provide as much detail and context as possible and fill the information requested in the [plugin suggestion template](https://github.com/semantic-release/semantic-release/issues/new?template=03_plugin_suggestion.yml).
 
 ## Submitting a Pull Request
 
