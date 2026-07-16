@@ -70,7 +70,9 @@ async function run(context, plugins) {
 
   if (!context.branch) {
     logger.log(
-      `This test run was triggered on the branch ${ciBranch}, while semantic-release is configured to only publish from ${context.branches
+      `This test run was triggered on the branch ${ciBranch}, while semantic-release is configured to publish from ${options.branches
+        .map((branch) => branch.name || branch)
+        .join(", ")}. The configured branches that are present on the remote are ${context.branches
         .map(({ name }) => name)
         .join(", ")}, therefore a new version won’t be published.`
     );

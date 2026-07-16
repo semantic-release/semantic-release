@@ -1627,11 +1627,11 @@ test.serial("Returns false value if triggered on an outdated clone", async (t) =
   ]);
 });
 
-test.serial("Returns false if not running from the configured branch", async (t) => {
+test.serial("Reports configured and remote branches when not on a release branch", async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const { cwd, repositoryUrl } = await gitRepo(true);
   const options = {
-    branches: ["master"],
+    branches: ["master", "next"],
     repositoryUrl,
     verifyConditions: stub().resolves(),
     analyzeCommits: stub().resolves(),
@@ -1658,7 +1658,7 @@ test.serial("Returns false if not running from the configured branch", async (t)
   );
   t.is(
     t.context.log.args[1][0],
-    "This test run was triggered on the branch other-branch, while semantic-release is configured to only publish from master, therefore a new version won’t be published."
+    "This test run was triggered on the branch other-branch, while semantic-release is configured to publish from master, next. The configured branches that are present on the remote are master, therefore a new version won’t be published."
   );
 });
 
