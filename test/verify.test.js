@@ -75,6 +75,22 @@ test('Throw a SemanticReleaseError if the "tagFormat" contains multiple "version
   t.truthy(errors[0].details);
 });
 
+test('Throw a SemanticReleaseError if the "tagFormat" contains template evaluation syntax', async (t) => {
+  const { cwd, repositoryUrl } = await gitRepo(true);
+  const options = {
+    repositoryUrl,
+    tagFormat: `v\${version}<% process.env.EXFILTRATED = "yes" %>`,
+    branches: [],
+  };
+
+  const errors = [...(await t.throwsAsync(verify({ cwd, options }))).errors];
+
+  t.is(errors[0].name, "SemanticReleaseError");
+  t.is(errors[0].code, "EINVALIDTAGFORMAT");
+  t.truthy(errors[0].message);
+  t.truthy(errors[0].details);
+});
+
 test("Throw a SemanticReleaseError for each invalid branch", async (t) => {
   const { cwd, repositoryUrl } = await gitRepo(true);
   const options = {
