@@ -166,6 +166,29 @@ test.serial("Pass options to semantic-release API with alias arguments", async (
   t.is(exitCode, 0);
 });
 
+test.serial("Keep JSON objects with commas together in list options", async (t) => {
+  const argv = ["", "", "--branches", '{"name":"main"},{"name":"version-test","prerelease":"snap"}', "--dry-run"];
+  const index = await td.replaceEsm("../index.js");
+  process.argv = argv;
+  const cli = (await import("../cli.js")).default;
+
+  const exitCode = await cli();
+
+  td.verify(
+    index.default({
+      branches: ['{"name":"main"}', '{"name":"version-test","prerelease":"snap"}'],
+      b: ['{"name":"main"}', '{"name":"version-test","prerelease":"snap"}'],
+      "dry-run": true,
+      dryRun: true,
+      d: true,
+      _: [],
+      $0: "",
+    })
+  );
+
+  t.is(exitCode, 0);
+});
+
 test.serial("Pass unknown options to semantic-release API", async (t) => {
   const argv = ["", "", "--bool", "--first-option", "value1", "--second-option", "value2", "--second-option", "value3"];
   const index = await td.replaceEsm("../index.js");
