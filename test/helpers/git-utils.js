@@ -319,6 +319,18 @@ export async function gitAddNote(note, ref, execaOptions) {
 }
 
 /**
+ * Add a note to a Git reference under the legacy shared `semantic-release` notes ref, as
+ * written by semantic-release before v23 (#2085 moved to one notes ref per tag).
+ *
+ * @param {String} note The note to add.
+ * @param {String} ref The ref to add the note to.
+ * @param {Object} [execaOpts] Options to pass to `execa`.
+ */
+export async function gitAddLegacyNote(note, ref, execaOptions) {
+  await execa("git", ["notes", "--ref", GIT_NOTE_REF, "add", "-m", note, ref], execaOptions);
+}
+
+/**
  * Push all notes refs to the remote repository.
  *
  * @param {String} repositoryUrl The remote repository URL.
