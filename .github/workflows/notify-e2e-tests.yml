@@ -1,0 +1,28 @@
+name: Happy Path
+on:
+  release:
+    types: [prereleased, published]
+
+jobs:
+  happy-path:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12
+
+      # notify happy-path e2e test repository
+      - uses: octokit/request-action@v2.x
+        with:
+          route: POST /repos/:owner/:repo/dispatches
+          owner: semantic-release-test
+          repo: dispatcher
+          event_type: github_release
+          client_payload: |
+            {
+              "tag": "${{ github.event.release.tag_name }}"
+              "prerelease": ${{ github.event.release.prerelease }}
+            }
+        env:
+          GITHUB_TOKEN: ${{ secrets.SEMANTIC_RELEASE_BOT_PAT_FOR_DISPATCH_EVENTS }}
