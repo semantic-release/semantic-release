@@ -66,12 +66,12 @@
     "file-url": "4.0.0",
     "fs-extra": "11.4.0",
     "got": "15.1.0",
-    "js-yaml": "4.3.0",
+    "js-yaml": "4.3.1",
     "lockfile-lint": "5.0.0",
     "ls-engines": "0.10.1",
-    "mockserver-client": "7.4.0",
-    "nock": "14.0.16",
-    "npm-run-all2": "9.0.2",
+    "mockserver-client": "7.5.0",
+    "nock": "14.0.17",
+    "npm-run-all2": "9.0.3",
     "p-retry": "8.0.0",
     "prettier": "3.8.5",
     "publint": "0.3.22",
@@ -167,5 +167,5 @@
       ]
     }
   },
-  "packageManager": "npm@12.0.1+sha512.2f94fd8bf600416416a934bfc59c4991e8bff7372ef7d842784e2a8b8d48c81555ee645069ddea73625fb8e92dc261feab0188fd5dab6c22fefd46316f5f9140"
+  "packageManager": "npm@12.0.2+sha512.b885e890b9418fa1693544d05f53e64f9a73ec194837d4258b15fecdd692347b1dd2a517b1b0cbaf9d31cd8e92c3b70956bd2ecc72833a57b4b3098f5bfa7943"
 }
