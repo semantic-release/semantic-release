@@ -148,7 +148,7 @@ In order to use **semantic-release** you need:
 
 Let people know that your package is published using **semantic-release** and which [commit-convention](#commit-message-format) is followed by including this badge in your readme.
 
-[![semantic-release: COMMIT-CONVENTION](https://img.shields.io/badge/semantic--release-%5BCOMMIT--CONVENTION%5D-e10079?logo=semantic-release)](https://github.com/semantic-release/semantic-release)
+[![semantic-release: COMMIT-CONVENTION](https://img.shields.io/badge/semantic--release-COMMIT--CONVENTION-e10079?logo=semantic-release)](https://github.com/semantic-release/semantic-release)
 
 ```md
 [![semantic-release: COMMIT-CONVENTION](https://img.shields.io/badge/semantic--release-COMMIT--CONVENTION-e10079?logo=semantic-release)](https://github.com/semantic-release/semantic-release)
