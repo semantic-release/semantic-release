@@ -21,24 +21,18 @@ import {
   merge,
 } from "./helpers/git-utils.js";
 import { npmView } from "./helpers/npm-utils.js";
-import * as gitbox from "./helpers/gitbox.js";
-import * as mockServer from "./helpers/mockserver.js";
-import * as npmRegistry from "./helpers/npm-registry.js";
+import { gitbox, mockServer, npmRegistry, startE2EEnvironment, stopE2EEnvironment } from "./helpers/e2e-environment.js";
 
 const { readJson, writeJson } = fsExtra;
 
 /* eslint camelcase: ["error", {properties: "never"}] */
 
-// Environment variables used with semantic-release cli (similar to what a user would setup)
+// Environment variables used with semantic-release cli (similar to what a user would set up)
 const { GITHUB_ACTION, GITHUB_ACTIONS, GITHUB_TOKEN, ...processEnvWithoutGitHubActionsVariables } = process.env;
 let env;
 
 // Environment variables used only for the local npm command used to do verification
-const npmTestEnv = {
-  ...processEnvWithoutGitHubActionsVariables,
-  ...npmRegistry.authEnv(),
-  npm_config_registry: npmRegistry.url,
-};
+let npmTestEnv;
 
 const cli = path.resolve("./bin/semantic-release.js");
 const pluginError = path.resolve("./test/fixtures/plugin-error");
@@ -47,12 +41,13 @@ const pluginLogEnv = path.resolve("./test/fixtures/plugin-log-env");
 const pluginEsmNamedExports = path.resolve("./test/fixtures/plugin-esm-named-exports");
 
 test.before(async () => {
-  await Promise.all([gitbox.pull(), npmRegistry.pull(), mockServer.pull()]);
-  await Promise.all([gitbox.start(), npmRegistry.start(), mockServer.start()]);
+  await startE2EEnvironment();
+
+  const authEnv = npmRegistry.authEnv();
 
   env = {
     ...processEnvWithoutGitHubActionsVariables,
-    ...npmRegistry.authEnv(),
+    ...authEnv,
     CI: "true",
     GH_TOKEN: gitbox.gitCredential,
     TRAVIS: "true",
@@ -60,10 +55,16 @@ test.before(async () => {
     TRAVIS_PULL_REQUEST: "false",
     GITHUB_API_URL: mockServer.url,
   };
+
+  npmTestEnv = {
+    ...processEnvWithoutGitHubActionsVariables,
+    ...authEnv,
+    npm_config_registry: npmRegistry.url,
+  };
 });
 
 test.after.always(async () => {
-  await Promise.all([gitbox.stop(), npmRegistry.stop(), mockServer.stop()]);
+  await stopE2EEnvironment();
 });
 
 test.serial("Release patch, minor and major versions", async (t) => {
@@ -642,7 +643,7 @@ test.serial("Exit with 1 if missing permission to push to the remote repository"
   t.log("$ semantic-release");
   const { stderr, exitCode } = await execa(
     cli,
-    ["--repository-url", "http://user:wrong_pass@localhost:2080/git/unauthorized.git"],
+    ["--repository-url", gitbox.repositoryUrlFor("unauthorized").replace(/^https?:\/\//, "http://user:wrong_pass@")],
     { env: { ...env, GH_TOKEN: "user:wrong_pass" }, cwd, reject: false, extendEnv: false }
   );
   // Verify the type and message are logged
@@ -691,7 +692,7 @@ test.serial("Use the valid git credentials when multiple are provided", async (t
         GIT_CONFIG_PARAMETERS: "'credential.helper='",
       },
       branch: { name: "master" },
-      options: { repositoryUrl: "http://toto@localhost:2080/git/test-auth.git" },
+      options: { repositoryUrl: gitbox.repositoryUrlFor("test-auth").replace(/^https?:\/\//, "http://toto@") },
     }),
     authUrl
   );
@@ -699,7 +700,7 @@ test.serial("Use the valid git credentials when multiple are provided", async (t
 
 test.serial("Use the repository URL as is if none of the given git credentials are valid", async (t) => {
   const { cwd } = await gitbox.createRepo("test-invalid-auth");
-  const dummyUrl = "http://toto@localhost:2080/git/test-invalid-auth.git";
+  const dummyUrl = gitbox.repositoryUrlFor("test-invalid-auth").replace(/^https?:\/\//, "http://toto@");
 
   t.is(
     await getAuthUrl({

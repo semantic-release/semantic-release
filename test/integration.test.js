@@ -13,6 +13,7 @@ import {
   gitGetNote,
   gitHead as getGitHead,
   gitPush,
+  gitPushNotes,
   gitRemoteTagHead,
   gitRepo,
   gitShallowClone,
@@ -51,6 +52,7 @@ test.serial("Plugins are called with expected values", async (t) => {
   // Create the tag corresponding to version 1.0.0
   await gitTagVersion("v1.0.0", undefined, { cwd });
   await gitAddNote(JSON.stringify({ channels: ["next"] }), "v1.0.0", { cwd });
+  await gitPushNotes(repositoryUrl, { cwd });
   commits = (await gitCommits(["Second"], { cwd })).concat(commits);
   await gitCheckout("next", true, { cwd });
   await gitPush(repositoryUrl, "next", { cwd });
@@ -526,6 +528,7 @@ test.serial("Make a new release when a commit is forward-ported to an upper bran
   await gitCommits(["fix: fix on maintenance version 1.0.x"], { cwd });
   await gitTagVersion("v1.0.1", undefined, { cwd });
   await gitAddNote(JSON.stringify({ channels: ["1.0.x"] }), "v1.0.1", { cwd });
+  await gitPushNotes(repositoryUrl, { cwd });
   await gitPush("origin", "1.0.x", { cwd });
   await gitCheckout("master", false, { cwd });
   await gitCommits(["feat: new feature on master"], { cwd });
@@ -750,6 +753,7 @@ test.serial("Do not add pre-releases to a different channel", async (t) => {
   await gitCommits(["fix: a fix"], { cwd });
   await gitTagVersion("v2.0.0-beta.2", undefined, { cwd });
   await gitAddNote(JSON.stringify({ channels: ["beta"] }), "v2.0.0-beta.2", { cwd });
+  await gitPushNotes(repositoryUrl, { cwd });
   await gitPush("origin", "beta", { cwd });
   await gitCheckout("master", false, { cwd });
   await merge("beta", { cwd });
@@ -807,6 +811,7 @@ async function addChannelMacro(t, mergeFunction) {
   commits.push(...(await gitCommits(["feat: a feature"], { cwd })));
   await gitTagVersion("v2.1.0", undefined, { cwd });
   await gitAddNote(JSON.stringify({ channels: ["next"] }), "v2.1.0", { cwd });
+  await gitPushNotes(repositoryUrl, { cwd });
   await gitPush("origin", "next", { cwd });
   await gitCheckout("master", false, { cwd });
   // Merge all commits but last one from next to master
@@ -1048,7 +1053,7 @@ test.serial("Dry-run skips addChannel, prepare, publish and success", async (t) 
   await gitCommits(["Second"], { cwd });
   await gitTagVersion("v1.1.0", undefined, { cwd });
   await gitAddNote(JSON.stringify({ channels: ["next"] }), "v1.1.0", { cwd });
-
+  await gitPushNotes(repositoryUrl, { cwd });
   await gitPush(repositoryUrl, "master", { cwd });
   await gitCheckout("next", true, { cwd });
   await gitPush("origin", "next", { cwd });
@@ -1336,6 +1341,7 @@ test.serial(
     await gitCommits(["Second"], { cwd });
     await gitTagVersion("v1.1.0", undefined, { cwd });
     await gitAddNote(JSON.stringify({ channels: ["next"] }), "v1.1.0", { cwd });
+    await gitPushNotes(repositoryUrl, { cwd });
     await gitPush(repositoryUrl, "master", { cwd });
     await gitCheckout("next", true, { cwd });
     await gitPush("origin", "next", { cwd });
@@ -1950,6 +1956,44 @@ test.serial('Hide sensitive information passed to "success" plugin', async (t) =
       t.notRegex(release[prop], new RegExp(escapeRegExp(env.MY_TOKEN)));
     }
   });
+});
+
+test.serial("Hide encoded credentials in the logs of a failing git command", async (t) => {
+  const { cwd } = await gitRepo(true);
+  await gitCommits(["First"], { cwd });
+
+  // `GIT_CREDENTIALS` contains URL reserved characters, so the authenticated repository URL built by
+  // `get-git-auth-url.js` contains the credentials percent-encoded (`user:abc%40def%2Fsecret`).
+  // The remote points to a closed loopback port, so the first git command using the authenticated URL
+  // fails and the failing command is logged.
+  const env = { GIT_CREDENTIALS: "user:abc@def/secret" };
+  const options = {
+    branch: "master",
+    repositoryUrl: "http://127.0.0.1:9/owner/repo.git",
+    verifyConditions: stub().resolves(),
+    verifyRelease: false,
+    generateNotes: false,
+    prepare: false,
+    publish: false,
+    addChannel: false,
+    success: false,
+    fail: false,
+  };
+
+  await td.replaceEsm("env-ci", null, () => ({ isCi: true, branch: "master", isPr: false }));
+  const semanticRelease = (await import("../index.js")).default;
+  const stdout = new WritableStreamBuffer();
+  const stderr = new WritableStreamBuffer();
+  await t.throwsAsync(semanticRelease(options, { cwd, env, stdout, stderr }));
+
+  const output = (stdout.getContentsAsString("utf8") || "") + (stderr.getContentsAsString("utf8") || "");
+
+  // The failing git command was logged with the credentials masked
+  t.regex(output, /127\.0\.0\.1:9/);
+  t.regex(output, new RegExp(escapeRegExp(SECRET_REPLACEMENT)));
+  t.notRegex(output, new RegExp(escapeRegExp(env.GIT_CREDENTIALS)));
+  t.notRegex(output, new RegExp(escapeRegExp("user:abc%40def%2Fsecret")));
+  t.notRegex(output, new RegExp(escapeRegExp(encodeURIComponent(env.GIT_CREDENTIALS))));
 });
 
 test.serial("Get all commits including the ones not in the shallow clone", async (t) => {

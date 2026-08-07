@@ -319,6 +319,16 @@ export async function gitAddNote(note, ref, execaOptions) {
 }
 
 /**
+ * Push all notes refs to the remote repository.
+ *
+ * @param {String} repositoryUrl The remote repository URL.
+ * @param {Object} [execaOpts] Options to pass to `execa`.
+ */
+export async function gitPushNotes(repositoryUrl, execaOptions) {
+  await execa("git", ["push", repositoryUrl, "refs/notes/*:refs/notes/*"], execaOptions);
+}
+
+/**
  * Get the note associated with a Git reference.
  *
  * @param {String} ref The ref to get the note from.
