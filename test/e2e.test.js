@@ -515,7 +515,7 @@ test.serial("Pass options via CLI arguments", async (t) => {
   t.log(`+ released ${releasedVersion} with head ${releasedGitHead}`);
 });
 
-test.serial("Run via JS API", async (t) => {
+test.serial("Run via Core API", async (t) => {
   const semanticReleaseCore = await import("@semantic-release/core");
   const logger = { log: () => {}, error: () => {}, success: () => {}, warn: () => {}, scope: () => logger };
   await td.replaceEsm(
