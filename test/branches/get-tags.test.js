@@ -154,3 +154,21 @@ test('Get the highest valid tag corresponding to the "tagFormat"', async (t) => 
     { name: "master", tags: [{ gitTag: "3.0.0-bar.2", version: "3.0.0", channels: [null] }] },
   ]);
 });
+
+test.serial('Do not execute template evaluation syntax in "tagFormat" when building the tag regexp', async (t) => {
+  const { cwd } = await gitRepo();
+  await gitCommits(["First"], { cwd });
+
+  delete process.env.GET_TAGS_TEMPLATE_PWNED;
+
+  const result = await getTags(
+    {
+      cwd,
+      options: { tagFormat: `v\${version}<% process.env.GET_TAGS_TEMPLATE_PWNED = "yes" %>` },
+    },
+    [{ name: "master" }]
+  );
+
+  t.is(process.env.GET_TAGS_TEMPLATE_PWNED, undefined);
+  t.deepEqual(result, [{ name: "master", tags: [] }]);
+});

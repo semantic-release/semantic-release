@@ -150,3 +150,47 @@ test("Mask multiple occurrences of encoded credentials", (t) => {
     `url1: https://${SECRET_REPLACEMENT}@host.com/owner/repo.git url2: https://${SECRET_REPLACEMENT}@host.com/owner/repo.git`
   );
 });
+
+test("Mask API_KEY values", (t) => {
+  const env = { API_KEY: "SUPER-SECRET-VALUE-API_KEY" };
+  t.is(hideSensitive(env)(`leaked value: ${env.API_KEY}`), `leaked value: ${SECRET_REPLACEMENT}`);
+});
+
+test("Mask AUTH values", (t) => {
+  const env = { BASIC_AUTH: "SUPER-SECRET-VALUE-BASIC_AUTH" };
+  t.is(hideSensitive(env)(`leaked value: ${env.BASIC_AUTH}`), `leaked value: ${SECRET_REPLACEMENT}`);
+});
+
+test("Mask WEBHOOK values", (t) => {
+  const env = { SLACK_WEBHOOK: "SUPER-SECRET-VALUE-SLACK_WEBHOOK" };
+  t.is(hideSensitive(env)(`leaked value: ${env.SLACK_WEBHOOK}`), `leaked value: ${SECRET_REPLACEMENT}`);
+});
+
+test("Mask AWS_ACCESS_KEY_ID values", (t) => {
+  const env = { AWS_ACCESS_KEY_ID: "SUPER-SECRET-VALUE-AWS_ACCESS_KEY_ID" };
+  t.is(hideSensitive(env)(`leaked value: ${env.AWS_ACCESS_KEY_ID}`), `leaked value: ${SECRET_REPLACEMENT}`);
+});
+
+test("Mask fully percent-encoded API_KEY values", (t) => {
+  const env = { API_KEY: "user:pass@word-secret" };
+  t.is(hideSensitive(env)(`key=${encodeURIComponent(env.API_KEY)}`), `key=${SECRET_REPLACEMENT}`);
+});
+
+test("Mask common key/auth/webhook env-var names from advisory", (t) => {
+  for (const name of [
+    "API_KEY",
+    "DEPLOY_KEY",
+    "SIGNING_KEY",
+    "SSH_KEY",
+    "ENCRYPTION_KEY",
+    "AUTH",
+    "BASIC_AUTH",
+    "SLACK_WEBHOOK",
+    "DOCKER_AUTH",
+    "AWS_ACCESS_KEY_ID",
+  ]) {
+    const secretValue = `SUPER-SECRET-VALUE-${name}`;
+    const env = { [name]: secretValue };
+    t.false(hideSensitive(env)(`leaked value: ${secretValue}`).includes(secretValue), `${name} should be masked`);
+  }
+});

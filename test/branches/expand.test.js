@@ -52,3 +52,18 @@ test("Expand branches defined with globs", async (t) => {
     { name: "beta", channel: "channel-beta", prerelease: true },
   ]);
 });
+
+test("Expand branch string fields without executing template evaluation syntax", async (t) => {
+  const { cwd, repositoryUrl } = await gitRepo(true);
+  await gitCommits(["First"], { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
+  await gitCheckout("release", true, { cwd });
+  await gitCommits(["Second"], { cwd });
+  await gitPush(repositoryUrl, "release", { cwd });
+
+  const branches = [{ name: "release", channel: `channel-\${name}<% process.env.TEST = "x" %>`, prerelease: true }];
+
+  t.deepEqual(await expand(repositoryUrl, { cwd }, branches), [
+    { name: "release", channel: `channel-release<% process.env.TEST = "x" %>`, prerelease: true },
+  ]);
+});

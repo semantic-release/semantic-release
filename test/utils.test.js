@@ -179,6 +179,7 @@ test("getRange", (t) => {
 
 test("makeTag", (t) => {
   t.is(makeTag(`v\${version}`, "1.0.0"), "v1.0.0");
+  t.is(makeTag(`v\${version}<% process.env.TEST = "x" %>`, "1.0.0"), `v1.0.0<% process.env.TEST = "x" %>`);
 });
 
 test("isSameChannel", (t) => {
