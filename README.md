@@ -11,7 +11,7 @@
     <img alt="OpenSSF Scorecard" src="https://api.securityscorecards.dev/projects/github.com/semantic-release/semantic-release/badge">
   </a>
   <a href="#badge">
-    <img alt="semantic-release: angular" src="https://img.shields.io/badge/semantic--release-angular-e10079?logo=semantic-release">
+    <img alt="semantic-release: conventional-commits" src="https://img.shields.io/badge/semantic--release-conventional--commits-e10079?logo=semantic-release">
   </a>
 </p>
 <p align="center">
@@ -50,18 +50,19 @@ This removes the immediate connection between human emotions and version numbers
 **semantic-release** uses the commit messages to determine the consumer impact of changes in the codebase.
 Following formalized conventions for commit messages, **semantic-release** automatically determines the next [semantic version](https://semver.org) number, generates a changelog and publishes the release.
 
-By default, **semantic-release** uses [Angular Commit Message Conventions](https://github.com/angular/angular/blob/main/contributing-docs/commit-message-guidelines.md).
+By default, **semantic-release** uses [Conventional Commits](https://www.conventionalcommits.org) Commit Message Conventions.
 The commit message format can be changed with the [`preset` or `config` options](https://semantic-release.org/usage/configuration/#options) of the [@semantic-release/commit-analyzer](https://github.com/semantic-release/commit-analyzer#options) and [@semantic-release/release-notes-generator](https://github.com/semantic-release/release-notes-generator#options) plugins.
 
 Tools such as [commitizen](https://github.com/commitizen/cz-cli) or [commitlint](https://github.com/conventional-changelog/commitlint) can be used to help contributors and enforce valid commit messages.
 
 The table below shows which commit message gets you which release type when `semantic-release` runs (using the default configuration):
 
-| Commit message                                                                                                                                                                                   | Release type                                                                                                    |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------- |
-| `fix(pencil): stop graphite breaking when too much pressure applied`                                                                                                                             | ~~Patch~~ Fix Release                                                                                           |
-| `feat(pencil): add 'graphiteWidth' option`                                                                                                                                                       | ~~Minor~~ Feature Release                                                                                       |
-| `perf(pencil): remove graphiteWidth option`<br><br>`BREAKING CHANGE: The graphiteWidth option has been removed.`<br>`The default graphite width of 10mm is always used for performance reasons.` | ~~Major~~ Breaking Release <br /> (Note that the `BREAKING CHANGE: ` token must be in the footer of the commit) |
+| Commit message                                                                                                                                                                                   | Release type                                                                                                                  |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- |
+| `fix(pencil): stop graphite breaking when too much pressure applied`                                                                                                                             | ~~Patch~~ Fix Release                                                                                                         |
+| `feat(pencil): add 'graphiteWidth' option`                                                                                                                                                       | ~~Minor~~ Feature Release                                                                                                     |
+| `feat(pencil)!: remove graphiteWidth option`                                                                                                                                                     | ~~Major~~ Breaking Release <br><br> (The `!` after the type/scope marks this commit as a breaking change)                     |
+| `perf(pencil): remove graphiteWidth option`<br><br>`BREAKING CHANGE: The graphiteWidth option has been removed.`<br>`The default graphite width of 10mm is always used for performance reasons.` | ~~Major~~ Breaking Release <br><br> (The `BREAKING CHANGE: ` footer is an alternative to `!`, and they can be used together.) |
 
 ### Automation with CI
 
@@ -147,10 +148,10 @@ In order to use **semantic-release** you need:
 
 Let people know that your package is published using **semantic-release** and which [commit-convention](#commit-message-format) is followed by including this badge in your readme.
 
-[![semantic-release: angular](https://img.shields.io/badge/semantic--release-angular-e10079?logo=semantic-release)](https://github.com/semantic-release/semantic-release)
+[![semantic-release: COMMIT-CONVENTION](https://img.shields.io/badge/semantic--release-COMMIT--CONVENTION-e10079?logo=semantic-release)](https://github.com/semantic-release/semantic-release)
 
 ```md
-[![semantic-release: angular](https://img.shields.io/badge/semantic--release-angular-e10079?logo=semantic-release)](https://github.com/semantic-release/semantic-release)
+[![semantic-release: COMMIT-CONVENTION](https://img.shields.io/badge/semantic--release-COMMIT--CONVENTION-e10079?logo=semantic-release)](https://github.com/semantic-release/semantic-release)
 ```
 
 ## Team
