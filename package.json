@@ -28,6 +28,7 @@
   ],
   "dependencies": {
     "@semantic-release/commit-analyzer": "^13.0.1",
+    "@semantic-release/core": "^1.0.0-beta.7",
     "@semantic-release/error": "^4.0.0",
     "@semantic-release/github": "^12.0.0",
     "@semantic-release/npm": "^13.1.1",
@@ -82,7 +83,7 @@
     "testdouble": "3.20.2"
   },
   "engines": {
-    "node": "^22.14.0 || >= 24.10.0"
+    "node": "^22.22.2 || >=24.15"
   },
   "files": [
     "bin",
