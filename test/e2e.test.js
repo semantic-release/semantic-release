@@ -239,7 +239,7 @@ test.serial("Release patch, minor and major versions", async (t) => {
   t.log("Commit a breaking change on next");
   await gitCheckout("next", true, { cwd });
   await gitPush("origin", "next", { cwd });
-  await gitCommits(["feat: foo\n\n BREAKING CHANGE: bar"], { cwd });
+  await gitCommits(["feat: foo\n\nBREAKING CHANGE: bar"], { cwd });
   t.log("$ semantic-release");
   ({ stdout, exitCode } = await execa(cli, [], { env: { ...env, TRAVIS_BRANCH: "next" }, cwd, extendEnv: false }));
   t.regex(stdout, new RegExp(`Published GitHub release: release-url/${version}`));
