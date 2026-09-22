@@ -17,6 +17,7 @@ import {
   push,
   repoUrl,
   tag,
+  verifyAuth,
   verifyTagName,
 } from "../lib/git.js";
 import {
@@ -199,6 +200,30 @@ test("Get the commit sha for a given tag", async (t) => {
   await gitTagVersion("v1.0.0", undefined, { cwd });
 
   t.is(await getTagHead("v1.0.0", { cwd }), commits[0].hash);
+});
+
+test("Verify auth succeeds when the remote accepts the dry-run push and tag push", async (t) => {
+  const { cwd, repositoryUrl } = await gitRepo(true);
+
+  await gitCommits(["First"], { cwd });
+  await gitTagVersion("v1.0.0", undefined, { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
+
+  await t.notThrowsAsync(verifyAuth(repositoryUrl, { cwd }));
+});
+
+test("Verify auth ignores non-fast-forward and rejected push errors", async (t) => {
+  const { cwd, repositoryUrl } = await gitRepo(true);
+
+  await gitCommits(["First"], { cwd });
+  await gitTagVersion("v1.0.0", undefined, { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
+
+  const staleRepo = await gitShallowClone(repositoryUrl);
+  await gitCommits(["Second"], { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
+
+  await t.notThrowsAsync(verifyAuth(repositoryUrl, { cwd: staleRepo }));
 });
 
 test("Return git remote repository url from config", async (t) => {
