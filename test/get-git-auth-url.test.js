@@ -32,6 +32,34 @@ test('Return the same "https" formatted URL if "gitCredentials" is not defined',
   );
 });
 
+test('Return the same "file" URL if "gitCredentials" is not defined', async (t) => {
+  const { cwd } = await gitRepo();
+
+  t.is(
+    await getAuthUrl({
+      cwd,
+      env,
+      branch: { name: "master" },
+      options: { repositoryUrl: "file:///tmp/owner/repo.git" },
+    }),
+    "file:///tmp/owner/repo.git"
+  );
+});
+
+test('Return the same "file" URL even if credentials are present', async (t) => {
+  const { cwd } = await gitRepo();
+
+  t.is(
+    await getAuthUrl({
+      cwd,
+      env: { ...env, GIT_CREDENTIALS: "user:pass" },
+      branch: { name: "master" },
+      options: { repositoryUrl: "file:///tmp/owner/repo.git" },
+    }),
+    "file:///tmp/owner/repo.git"
+  );
+});
+
 test('Return the "https" formatted URL if "gitCredentials" is not defined and repositoryUrl is a "git+https" URL', async (t) => {
   const { cwd } = await gitRepo();
 

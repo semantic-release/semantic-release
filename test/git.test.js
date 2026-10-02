@@ -17,6 +17,7 @@ import {
   push,
   repoUrl,
   tag,
+  verifyAuth,
   verifyTagName,
 } from "../lib/git.js";
 import {
@@ -201,6 +202,30 @@ test("Get the commit sha for a given tag", async (t) => {
   t.is(await getTagHead("v1.0.0", { cwd }), commits[0].hash);
 });
 
+test("Verify auth succeeds when the remote accepts the dry-run push and tag push", async (t) => {
+  const { cwd, repositoryUrl } = await gitRepo(true);
+
+  await gitCommits(["First"], { cwd });
+  await gitTagVersion("v1.0.0", undefined, { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
+
+  await t.notThrowsAsync(verifyAuth(repositoryUrl, { cwd }));
+});
+
+test("Verify auth ignores non-fast-forward and rejected push errors", async (t) => {
+  const { cwd, repositoryUrl } = await gitRepo(true);
+
+  await gitCommits(["First"], { cwd });
+  await gitTagVersion("v1.0.0", undefined, { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
+
+  const staleRepo = await gitShallowClone(repositoryUrl);
+  await gitCommits(["Second"], { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
+
+  await t.notThrowsAsync(verifyAuth(repositoryUrl, { cwd: staleRepo }));
+});
+
 test("Return git remote repository url from config", async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const { cwd } = await gitRepo();
@@ -303,19 +328,38 @@ test('Return "true" if repository is up to date', async (t) => {
   t.true(await isBranchUpToDate(repositoryUrl, "master", { cwd }));
 });
 
-test("Return falsy if repository is not up to date", async (t) => {
+test("Return true if local repository is ahead of remote", async (t) => {
   const { cwd, repositoryUrl } = await gitRepo(true);
   await gitCommits(["First"], { cwd });
   await gitCommits(["Second"], { cwd });
   await gitPush(repositoryUrl, "master", { cwd });
+  const localCwd = await gitShallowClone(repositoryUrl);
+  await gitCommits(["Third"], { cwd: localCwd });
 
-  t.true(await isBranchUpToDate(repositoryUrl, "master", { cwd }));
+  t.true(await isBranchUpToDate(repositoryUrl, "master", { cwd: localCwd }));
+});
 
-  const temporaryRepo = await gitShallowClone(repositoryUrl);
-  await gitCommits(["Third"], { cwd: temporaryRepo });
-  await gitPush("origin", "master", { cwd: temporaryRepo });
+test("Return falsy if local repository is behind remote", async (t) => {
+  const { cwd, repositoryUrl } = await gitRepo(true);
+  await gitCommits(["First"], { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
+  const localCwd = await gitShallowClone(repositoryUrl);
+  await gitCommits(["Second", "Third"], { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
 
-  t.falsy(await isBranchUpToDate(repositoryUrl, "master", { cwd }));
+  t.falsy(await isBranchUpToDate(repositoryUrl, "master", { cwd: localCwd }));
+});
+
+test("Return falsy if local and remote repository are diverged i.e. both have commits the other doesn't", async (t) => {
+  const { cwd, repositoryUrl } = await gitRepo(true);
+  await gitCommits(["First"], { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
+  const localCwd = await gitShallowClone(repositoryUrl);
+  await gitCommits(["Second", "Third"], { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
+  await gitCommits(["Fourth"], { cwd: localCwd });
+
+  t.falsy(await isBranchUpToDate(repositoryUrl, "master", { cwd: localCwd }));
 });
 
 test("Return falsy if detached head repository is not up to date", async (t) => {
