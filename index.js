@@ -28,6 +28,10 @@ async function terminalOutput(text) {
   if (!markedOptionsSet) {
     const { default: TerminalRenderer } = await import("marked-terminal"); // eslint-disable-line node/no-unsupported-features/es-syntax
     marked.setOptions({ renderer: new TerminalRenderer() });
+    marked.use({
+      mangle: false,
+      headerIds: false,
+    });
     markedOptionsSet = true;
   }
 
@@ -224,7 +228,12 @@ async function run(context, plugins) {
   if (options.dryRun) {
     logger.log(`Release note for version ${nextRelease.version}:`);
     if (nextRelease.notes) {
-      context.stdout.write(await terminalOutput(nextRelease.notes));
+      if (options.marked) {
+        context.stdout.write(await terminalOutput(nextRelease.notes));
+      }
+      else {
+        context.stdout.write(nextRelease.notes);
+      }
     }
   }
 
@@ -268,7 +277,7 @@ export default async (cliOptions = {}, { cwd = process.cwd(), env = process.env,
     stderr: stderr || process.stderr,
     envCi: envCi({ env, cwd }),
   };
-  context.logger = getLogger(context);
+  context.logger = getLogger(context, cliOptions.silent);
   context.logger.log(`Running ${pkg.name} version ${pkg.version}`);
   try {
     const { plugins, options } = await getConfig(context, cliOptions);
