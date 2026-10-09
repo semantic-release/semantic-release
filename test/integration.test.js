@@ -9,7 +9,9 @@ import { COMMIT_EMAIL, COMMIT_NAME, SECRET_REPLACEMENT } from "../lib/definition
 import {
   gitAddNote,
   gitCheckout,
+  gitCommitFiles,
   gitCommits,
+  gitFullClone,
   gitGetNote,
   gitHead as getGitHead,
   gitPush,
@@ -1625,6 +1627,120 @@ test.serial("Returns false value if triggered on an outdated clone", async (t) =
   t.deepEqual(t.context.log.args[t.context.log.args.length - 1], [
     "The local branch master is behind the remote one, therefore a new version won't be published.",
   ]);
+});
+
+test.serial("Publish a release when the branch is behind only outside the monorepo path", async (t) => {
+  // Create a git repository, set the current working directory at the root of the repo
+  let { cwd, repositoryUrl } = await gitRepo(true);
+  const repoDir = cwd;
+  await gitCommitFiles({ "packages/foo/index.js": "module.exports = 1;" }, "feat: add foo", { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
+
+  // Another package is merged: the shared branch moves, but nothing in `packages/foo` changed
+  cwd = await gitShallowClone(repositoryUrl);
+  await gitCommitFiles({ "packages/bar/index.js": "module.exports = 2;" }, "feat: add bar", { cwd });
+  await gitPush("origin", "master", { cwd });
+
+  const publish = stub().resolves({ name: "pkg" });
+  const options = {
+    branches: ["master"],
+    repositoryUrl,
+    tagFormat: `foo-v\${version}`,
+    monorepo: { path: "packages/foo" },
+    verifyConditions: stub().resolves(),
+    analyzeCommits: stub().resolves("minor"),
+    verifyRelease: stub().resolves(),
+    addChannel: stub().resolves(),
+    generateNotes: stub().resolves("notes"),
+    prepare: stub().resolves(),
+    publish,
+    success: stub().resolves(),
+    fail: stub().resolves(),
+  };
+
+  await td.replaceEsm("../lib/get-logger.js", null, () => t.context.logger);
+  await td.replaceEsm("env-ci", null, () => ({ isCi: true, branch: "master", isPr: false }));
+  const semanticRelease = (await import("../index.js")).default;
+
+  const result = await semanticRelease(options, {
+    cwd: repoDir,
+    env: {},
+    stdout: new WritableStreamBuffer(),
+    stderr: new WritableStreamBuffer(),
+  });
+
+  t.is(publish.callCount, 1);
+  t.is(result.nextRelease.version, "1.0.0");
+  t.is(result.nextRelease.gitTag, "foo-v1.0.0");
+});
+
+test.serial("Skip the release when the branch is behind inside the monorepo path", async (t) => {
+  let { cwd, repositoryUrl } = await gitRepo(true);
+  const repoDir = cwd;
+  await gitCommitFiles({ "packages/foo/index.js": "module.exports = 1;" }, "feat: add foo", { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
+
+  // The same package moves on: this clone is now stale for `packages/foo`
+  cwd = await gitShallowClone(repositoryUrl);
+  await gitCommitFiles({ "packages/foo/index.js": "module.exports = 2;" }, "fix: change foo", { cwd });
+  await gitPush("origin", "master", { cwd });
+
+  const publish = stub().resolves();
+
+  await td.replaceEsm("../lib/get-logger.js", null, () => t.context.logger);
+  await td.replaceEsm("env-ci", null, () => ({ isCi: true, branch: "master", isPr: false }));
+  const semanticRelease = (await import("../index.js")).default;
+
+  t.false(
+    await semanticRelease(
+      {
+        repositoryUrl,
+        branches: ["master"],
+        tagFormat: `foo-v\${version}`,
+        monorepo: { path: "packages/foo" },
+        publish,
+      },
+      { cwd: repoDir, env: {}, stdout: new WritableStreamBuffer(), stderr: new WritableStreamBuffer() }
+    )
+  );
+  t.is(publish.callCount, 0);
+  t.true(t.context.log.args.flat().some((arg) => String(arg).includes("packages/foo")));
+});
+
+test.serial("Skip the release when no commit affects the monorepo path", async (t) => {
+  const { cwd, repositoryUrl } = await gitRepo(true);
+  await gitCommitFiles({ "packages/foo/index.js": "module.exports = 1;" }, "feat: add foo", { cwd });
+  await gitTagVersion("foo-v1.0.0", undefined, { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
+
+  // A complete clone so the tag is present: the release then has a last release and an empty commit range
+  const releaseDir = await gitFullClone(repositoryUrl);
+
+  await gitCommitFiles({ "packages/bar/index.js": "module.exports = 2;" }, "feat: add bar", { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
+
+  const analyzeCommits = stub().resolves("minor");
+
+  await td.replaceEsm("../lib/get-logger.js", null, () => t.context.logger);
+  await td.replaceEsm("env-ci", null, () => ({ isCi: true, branch: "master", isPr: false }));
+  const semanticRelease = (await import("../index.js")).default;
+
+  const result = await semanticRelease(
+    {
+      repositoryUrl,
+      branches: ["master"],
+      tagFormat: `foo-v\${version}`,
+      monorepo: { path: "packages/foo" },
+      verifyConditions: stub().resolves(),
+      analyzeCommits,
+      fail: stub().resolves(),
+    },
+    { cwd: releaseDir, env: {}, stdout: new WritableStreamBuffer(), stderr: new WritableStreamBuffer() }
+  );
+
+  t.false(result);
+  t.is(analyzeCommits.callCount, 0);
+  t.true(t.context.log.args.flat().some((arg) => String(arg).includes("packages/foo")));
 });
 
 test.serial("Returns false if not running from the configured branch", async (t) => {
