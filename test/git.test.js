@@ -1,6 +1,7 @@
 import { existsSync } from "node:fs";
 import path from "node:path";
 import test from "ava";
+import { execa } from "execa";
 import fsExtra from "fs-extra";
 import { temporaryDirectory } from "tempy";
 import {
@@ -9,11 +10,13 @@ import {
   fetchNotes,
   getBranches,
   getBranchState,
+  getChangedFilesSinceRemote,
   getGitHead,
   getRepoPrefix,
   getTagHead,
   getTags,
   getTagsNotes,
+  fetchRemoteTip,
   isBranchUpToDate,
   isGitRepo,
   isRefExists,
@@ -26,11 +29,13 @@ import {
   gitAddConfig,
   gitAddNote,
   gitCheckout,
+  gitCommitFiles,
   gitCommits,
   gitCommitTag,
   gitDetachedHead,
   gitDetachedHeadFromBranch,
   gitFetch,
+  gitFullClone,
   gitGetCommits,
   gitGetNote,
   gitPush,
@@ -493,4 +498,79 @@ test("Get the state of a branch that is behind", async (t) => {
 
   t.not(state.localHead, state.remoteHead);
   t.false(state.upToDate);
+});
+
+test("Fetch the remote tip into a dedicated reference", async (t) => {
+  const { cwd, repositoryUrl } = await gitRepo(true);
+  await gitCommitFiles({ "packages/a/index.js": "a" }, "feat: a", { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
+
+  const otherClone = await gitShallowClone(repositoryUrl);
+  await gitCommitFiles({ "packages/b/index.js": "b" }, "feat: b", { cwd: otherClone });
+  await gitPush("origin", "master", { cwd: otherClone });
+
+  const ref = await fetchRemoteTip(repositoryUrl, "master", { cwd });
+
+  t.is(ref, "refs/semantic-release/upstream");
+  t.is(
+    (await execa("git", ["rev-parse", ref], { cwd })).stdout,
+    (await execa("git", ["rev-parse", "HEAD"], { cwd: otherClone })).stdout
+  );
+});
+
+test("Fetching the remote tip into a complete clone does not make it shallow", async (t) => {
+  const { cwd, repositoryUrl } = await gitRepo(true);
+  await gitCommitFiles({ "packages/a/index.js": "a" }, "feat: a", { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
+
+  // A complete clone, as produced by `actions/checkout` with `fetch-depth: 0`
+  const complete = await gitFullClone(repositoryUrl);
+  const before = (await execa("git", ["rev-list", "--count", "HEAD"], { cwd: complete })).stdout;
+
+  await fetchRemoteTip(repositoryUrl, "master", { cwd: complete });
+
+  t.is((await execa("git", ["rev-parse", "--is-shallow-repository"], { cwd: complete })).stdout, "false");
+  t.is((await execa("git", ["rev-list", "--count", "HEAD"], { cwd: complete })).stdout, before);
+});
+
+test("Get the files changed between the local head and the remote tip", async (t) => {
+  const { cwd, repositoryUrl } = await gitRepo(true);
+  await gitCommitFiles({ "packages/a/index.js": "a" }, "feat: a", { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
+
+  const otherClone = await gitShallowClone(repositoryUrl);
+  await gitCommitFiles({ "packages/b/index.js": "b" }, "feat: b", { cwd: otherClone });
+  await gitCommitFiles({ "packages/a/other.js": "a" }, "fix: a", { cwd: otherClone });
+  await gitPush("origin", "master", { cwd: otherClone });
+
+  t.deepEqual((await getChangedFilesSinceRemote(repositoryUrl, "master", { cwd })).sort(), [
+    "packages/a/other.js",
+    "packages/b/index.js",
+  ]);
+});
+
+test("Get the files changed between a diverged head and the remote tip", async (t) => {
+  const { cwd, repositoryUrl } = await gitRepo(true);
+  await gitCommitFiles({ "packages/a/index.js": "a" }, "feat: a", { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
+
+  const otherClone = await gitShallowClone(repositoryUrl);
+  await gitCommitFiles({ "packages/b/index.js": "b" }, "feat: b", { cwd: otherClone });
+  await gitPush("origin", "master", { cwd: otherClone });
+
+  // A local commit the remote does not have: the diff is symmetric, so the local change is reported
+  // too. That makes a diverged branch skip the release, which is the conservative outcome.
+  await gitCommitFiles({ "packages/a/local.js": "a" }, "fix: local", { cwd });
+
+  t.deepEqual((await getChangedFilesSinceRemote(repositoryUrl, "master", { cwd })).sort(), [
+    "packages/a/local.js",
+    "packages/b/index.js",
+  ]);
+});
+
+test("Return undefined when the remote tip cannot be fetched", async (t) => {
+  const { cwd } = await gitRepo(true);
+  await gitCommitFiles({ "packages/a/index.js": "a" }, "feat: a", { cwd });
+
+  t.is(await getChangedFilesSinceRemote("file:///does/not/exist", "master", { cwd }), undefined);
 });

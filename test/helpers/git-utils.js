@@ -1,6 +1,8 @@
+import path from "node:path";
 import { temporaryDirectory } from "tempy";
 import { execa } from "execa";
 import fileUrl from "file-url";
+import fsExtra from "fs-extra";
 import pEachSeries from "p-each-series";
 import gitLogParser from "git-log-parser";
 import getStream from "get-stream";
@@ -96,6 +98,32 @@ export async function gitCommits(messages, execaOptions) {
 }
 
 /**
+ * Create a commit with actual file changes.
+ *
+ * `gitCommits` uses `--allow-empty`, which is enough for most fixtures but gives every commit an empty file
+ * list, so it cannot be used to exercise path based filtering.
+ *
+ * @param {Object} files A map of repository relative file path to content.
+ * @param {String} message The commit message.
+ * @param {Object} [execaOpts] Options to pass to `execa`.
+ *
+ * @return {Promise<Object>} The created commit.
+ */
+export async function gitCommitFiles(files, message, execaOptions) {
+  await Promise.all(
+    Object.entries(files).map(async ([file, content]) => {
+      const filePath = path.resolve(execaOptions.cwd, file);
+      await fsExtra.ensureDir(path.dirname(filePath));
+      await fsExtra.writeFile(filePath, content);
+    })
+  );
+  await execa("git", ["add", "--all"], execaOptions);
+  await execa("git", ["commit", "-m", message, "--no-gpg-sign"], execaOptions);
+
+  return (await gitGetCommits(undefined, execaOptions))[0];
+}
+
+/**
  * Get the list of parsed commits since a git reference.
  *
  * @param {String} [from] Git reference from which to search commits.
@@ -182,6 +210,23 @@ export async function gitShallowClone(repositoryUrl, branch = "master", depth = 
   await execa("git", ["clone", "--no-hardlinks", "--no-tags", "-b", branch, "--depth", depth, repositoryUrl, cwd], {
     cwd,
   });
+  return cwd;
+}
+
+/**
+ * Create a complete clone of a git repository and change the current working directory to the cloned repository
+ * root. Unlike `gitShallowClone`, this keeps the full history and fetches the tags.
+ *
+ * @param {String} repositoryUrl The path of the repository to clone.
+ * @param {String} [branch='master'] the branch to clone.
+ *
+ * @return {String} The path of the cloned repository.
+ */
+export async function gitFullClone(repositoryUrl, branch = "master") {
+  const cwd = temporaryDirectory();
+
+  await execa("git", ["clone", "--no-hardlinks", repositoryUrl, cwd], { cwd });
+  await gitCheckout(branch, false, { cwd });
   return cwd;
 }
 
