@@ -657,7 +657,8 @@ declare module "semantic-release" {
      *
      * A path covers everything inside it at any depth, matched on a directory boundary, so
      * `packages/ui` includes `packages/ui/src/index.ts` but not `packages/uikit`. Pattern syntax
-     * such as `packages/*` is not supported: paths are matched literally.
+     * such as `packages/*` is not supported: paths are matched literally. A file moved between
+     * packages counts for the package it moves to, not for the one it left.
      *
      * Only changes under that path are analyzed when looking for a release, and a branch that
      * moved because of commits outside of it does not prevent the release.

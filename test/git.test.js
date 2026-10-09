@@ -660,3 +660,33 @@ test("Return undefined when the commit files cannot be determined", async (t) =>
 
   t.is(await getCommitsFiles(undefined, "HEAD", { cwd }), undefined);
 });
+
+test("Attribute a moved file to its destination even without rename detection", async (t) => {
+  const { cwd } = await gitRepo();
+  await gitCommitFiles({ "packages/ui/a.js": "ui", "packages/other/b.js": "other" }, "chore: init", { cwd });
+  // A repository can disable rename detection, which would otherwise attribute the move to both packages
+  await gitAddConfig("diff.renames", "false", { cwd });
+  await execa("git", ["mv", "packages/ui/a.js", "packages/other/a.js"], { cwd });
+  await execa("git", ["commit", "-m", "refactor: move out of ui", "--no-gpg-sign"], { cwd });
+
+  const filesByHash = await getCommitsFiles(undefined, "HEAD", { cwd });
+  const moved = (await execa("git", ["rev-parse", "HEAD"], { cwd })).stdout;
+
+  t.deepEqual(filesByHash.get(moved).files, ["packages/other/a.js"]);
+});
+
+test("Report only the destination of a move between the local head and the remote tip", async (t) => {
+  const { cwd, repositoryUrl } = await gitRepo(true);
+  await gitCommitFiles({ "packages/ui/a.js": "ui", "packages/other/b.js": "other" }, "chore: init", { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
+
+  const otherClone = await gitShallowClone(repositoryUrl);
+  await execa("git", ["mv", "packages/ui/a.js", "packages/other/a.js"], { cwd: otherClone });
+  await execa("git", ["commit", "-m", "refactor: move out of ui", "--no-gpg-sign"], { cwd: otherClone });
+  await gitPush("origin", "master", { cwd: otherClone });
+
+  // The repository doing the comparison is the one whose configuration matters
+  await gitAddConfig("diff.renames", "false", { cwd });
+
+  t.deepEqual(await getChangedFilesSinceRemote(repositoryUrl, "master", { cwd }), ["packages/other/a.js"]);
+});

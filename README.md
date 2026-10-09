@@ -119,7 +119,8 @@ outside of it does not prevent the release. Without the option, behavior is unch
 
 A path covers everything inside it at any depth, matched on a directory boundary: `packages/ui` includes
 `packages/ui/src/index.ts` and `packages/ui/deep/nested/file.css`, but not `packages/uikit`. Pattern syntax
-is not supported — `packages/*` is matched literally, not as a glob.
+is not supported — `packages/*` is matched literally, not as a glob. A file moved between packages counts
+for the package it moves to, not for the one it left.
 
 Two prerequisites apply, because ignoring them causes wrong releases rather than errors:
 
