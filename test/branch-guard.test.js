@@ -116,3 +116,17 @@ test("Report an unauthorized push when the tag cannot be pushed", async (t) => {
   t.is(result, UNAUTHORIZED);
   t.is(t.context.warn.callCount, 0);
 });
+
+test("Skip the release when the missing changes are inside a second configured path", async (t) => {
+  const { cwd, repositoryUrl } = await behindRepo("shared/proto/index.proto");
+
+  const result = await branchGuard(context(t, cwd, { monorepo: { paths: ["packages/a", "shared/proto"] } }), {
+    repositoryUrl,
+    branch: "master",
+  });
+
+  t.is(result, SKIP);
+  t.is(t.context.warn.callCount, 0);
+  t.is(t.context.log.callCount, 1);
+  t.true(t.context.log.args[0][0].includes("packages/a, shared/proto"));
+});

@@ -1748,6 +1748,52 @@ test.serial("Skip the release when no commit affects the monorepo path", async (
   t.true(t.context.log.args.flat().some((arg) => String(arg).includes("packages/foo")));
 });
 
+test.serial("Publish a release for any of the configured monorepo paths", async (t) => {
+  const { cwd, repositoryUrl } = await gitRepo(true);
+  await gitCommitFiles({ "packages/bar/index.js": "bar" }, "feat: bar", { cwd });
+  await gitCommitFiles({ "shared/proto/index.proto": "proto" }, "feat: proto", { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
+
+  const generateNotes = stub().resolves("notes");
+  const publish = stub().resolves({ name: "pkg" });
+  const options = {
+    branches: ["master"],
+    repositoryUrl,
+    tagFormat: `foo-v\${version}`,
+    monorepo: { path: ["packages/foo", "shared/proto"] },
+    verifyConditions: stub().resolves(),
+    analyzeCommits: stub().resolves("minor"),
+    verifyRelease: stub().resolves(),
+    addChannel: stub().resolves(),
+    generateNotes,
+    prepare: stub().resolves(),
+    publish,
+    success: stub().resolves(),
+    fail: stub().resolves(),
+  };
+
+  await td.replaceEsm("../lib/get-logger.js", null, () => t.context.logger);
+  await td.replaceEsm("env-ci", null, () => ({ isCi: true, branch: "master", isPr: false }));
+  const semanticRelease = (await import("../index.js")).default;
+
+  const result = await semanticRelease(options, {
+    cwd,
+    env: {},
+    stdout: new WritableStreamBuffer(),
+    stderr: new WritableStreamBuffer(),
+  });
+
+  t.is(publish.callCount, 1);
+  t.is(result.nextRelease.version, "1.0.0");
+  // Plugins are called with (pluginConfig, context), so the analyzed commits are the second argument
+  // The commit outside of both paths is filtered out, the one inside the second path is not
+  const analyzed = generateNotes.args[0][1].commits.map(({ message }) => message);
+  t.true(analyzed.includes("feat: proto"));
+  t.false(analyzed.includes("feat: bar"));
+  t.true(analyzed.includes("feat: proto"));
+  t.false(analyzed.includes("feat: bar"));
+});
+
 test.serial("Returns false if not running from the configured branch", async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
   const { cwd, repositoryUrl } = await gitRepo(true);

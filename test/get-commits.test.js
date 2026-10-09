@@ -210,3 +210,22 @@ test("Do not filter the commits without the monorepo option", async (t) => {
 
   t.is(result.length, 2);
 });
+
+test("Keep the commits affecting any of the configured paths", async (t) => {
+  const { cwd } = await gitRepo();
+  await gitCommitFiles({ "packages/a/index.js": "a" }, "feat: a", { cwd });
+  await gitCommitFiles({ "shared/proto/index.proto": "proto" }, "feat: proto", { cwd });
+  await gitCommitFiles({ "packages/b/index.js": "b" }, "feat: b", { cwd });
+
+  const result = await getCommits({
+    cwd,
+    lastRelease: {},
+    logger: t.context.logger,
+    options: { monorepo: { paths: ["packages/a", "shared/proto"] } },
+  });
+
+  const messages = result.map(({ message }) => message);
+  t.true(messages.includes("feat: a"));
+  t.true(messages.includes("feat: proto"));
+  t.false(messages.includes("feat: b"));
+});
