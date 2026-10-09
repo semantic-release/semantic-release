@@ -179,3 +179,33 @@ test("Do not report a monorepo problem outside of a git repository", async (t) =
     ["ENOGITREPO"]
   );
 });
+
+test("Throw a SemanticReleaseError if a monorepo path contains a parent directory segment", async (t) => {
+  const { cwd, repositoryUrl } = await gitRepo(true);
+  const options = {
+    repositoryUrl,
+    tagFormat: `v\${version}`,
+    branches: [],
+    // `..` can never appear in a path reported by git, so this could only ever match nothing
+    monorepo: { paths: ["packages/foo", "packages/bar/../shared"] },
+  };
+
+  const errors = [...(await t.throwsAsync(verify({ cwd, options }))).errors];
+
+  t.is(errors[0].code, "EINVALIDMONOREPOPATH");
+  t.truthy(errors[0].message);
+  t.true(errors[0].details.includes("packages/bar/../shared"));
+});
+
+test("Accept a monorepo path whose segments merely start with dots", async (t) => {
+  const { cwd, repositoryUrl } = await gitRepo(true);
+  const options = {
+    repositoryUrl,
+    tagFormat: `v\${version}`,
+    branches: [{ name: "master" }],
+    // `..foo` is a valid directory name and a path that can match, unlike the `..` segment
+    monorepo: { paths: ["packages/..foo", "packages/.hidden"] },
+  };
+
+  await t.notThrowsAsync(verify({ cwd, options }));
+});

@@ -651,7 +651,9 @@ declare module "semantic-release" {
      * Set to `true` to infer the path from the current working directory, which requires the
      * command to run from the directory of the package — for example through the
      * `working-directory` of a CI job. Set to an object with a `path` property to configure it
-     * explicitly, relative to the repository root. A string or an array of strings is accepted.
+     * explicitly, relative to the repository root. A string or an array of strings is accepted;
+     * a path containing a `..` segment is rejected, since git never reports such a path and it
+     * could therefore never match a file.
      *
      * Only changes under that path are analyzed when looking for a release, and a branch that
      * moved because of commits outside of it does not prevent the release.
