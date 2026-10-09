@@ -655,6 +655,10 @@ declare module "semantic-release" {
      * a path containing a `..` segment is rejected, since git never reports such a path and it
      * could therefore never match a file.
      *
+     * A path covers everything inside it at any depth, matched on a directory boundary, so
+     * `packages/ui` includes `packages/ui/src/index.ts` but not `packages/uikit`. Pattern syntax
+     * such as `packages/*` is not supported: paths are matched literally.
+     *
      * Only changes under that path are analyzed when looking for a release, and a branch that
      * moved because of commits outside of it does not prevent the release.
      *

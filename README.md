@@ -117,6 +117,10 @@ This fork adds a `monorepo` option that scopes a release to a single package ins
 Only the commits that touch that path are analyzed, and a release branch that moved because of commits
 outside of it does not prevent the release. Without the option, behavior is unchanged.
 
+A path covers everything inside it at any depth, matched on a directory boundary: `packages/ui` includes
+`packages/ui/src/index.ts` and `packages/ui/deep/nested/file.css`, but not `packages/uikit`. Pattern syntax
+is not supported — `packages/*` is matched literally, not as a glob.
+
 Two prerequisites apply, because ignoring them causes wrong releases rather than errors:
 
 - **One tag namespace per package.** Give each package its own `tagFormat`, for example `foo-v${version}`.
