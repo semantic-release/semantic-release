@@ -119,6 +119,17 @@ outside of it does not prevent the release. A package is not released when its p
 had at the last release — work that was changed and then changed back, by hand or by a revert, leaves
 nothing to release. Without the option, behavior is unchanged.
 
+For example, with `packages/ui` last released as `ui-v1.0.0`:
+
+```
+ui-v1.0.0   chore: init          touches packages/ui and packages/core
+            feat: core change    touches packages/core
+HEAD        feat: ui change      touches packages/ui
+```
+
+The changeset for the `packages/ui` release is `feat: ui change` alone — `feat: core change` is left out
+because it touches nothing under the path, so it cannot decide `ui`'s next version.
+
 A path covers everything inside it at any depth, matched on a directory boundary: `packages/ui` includes
 `packages/ui/src/index.ts` and `packages/ui/deep/nested/file.css`, but not `packages/uikit`. Pattern syntax
 is not supported — `packages/*` is matched literally, not as a glob. A file moved between packages counts
