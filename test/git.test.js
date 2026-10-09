@@ -11,6 +11,7 @@ import {
   getBranches,
   getBranchState,
   getChangedFilesSinceRemote,
+  getCommitsFiles,
   getGitHead,
   getRepoPrefix,
   getTagHead,
@@ -24,6 +25,7 @@ import {
   repoUrl,
   tag,
   verifyTagName,
+  verifyTagPush,
 } from "../lib/git.js";
 import {
   gitAddConfig,
@@ -44,6 +46,7 @@ import {
   gitShallowClone,
   gitTagVersion,
   initGit,
+  merge,
 } from "./helpers/git-utils.js";
 
 test("Get the last commit sha", async (t) => {
@@ -573,4 +576,87 @@ test("Return undefined when the remote tip cannot be fetched", async (t) => {
   await gitCommitFiles({ "packages/a/index.js": "a" }, "feat: a", { cwd });
 
   t.is(await getChangedFilesSinceRemote("file:///does/not/exist", "master", { cwd }), undefined);
+});
+
+test("Verify the tag push is accepted", async (t) => {
+  const { cwd } = await gitRepo(true);
+  await gitCommitFiles({ "packages/a/index.js": "a" }, "feat: a", { cwd });
+
+  t.true(await verifyTagPush("origin", { cwd }));
+});
+
+test("Verify the tag push is rejected without credentials", async (t) => {
+  const { cwd } = await gitRepo(true);
+  await gitCommitFiles({ "packages/a/index.js": "a" }, "feat: a", { cwd });
+
+  t.false(await verifyTagPush("file:///does/not/exist", { cwd }));
+});
+
+test("The tag push probe does not create a reference", async (t) => {
+  const { cwd, repositoryUrl } = await gitRepo(true);
+  await gitCommitFiles({ "packages/a/index.js": "a" }, "feat: a", { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
+
+  await verifyTagPush(repositoryUrl, { cwd });
+
+  t.is((await execa("git", ["ls-remote", "--tags", repositoryUrl], { cwd })).stdout.trim(), "");
+});
+
+test("Get the files of each commit", async (t) => {
+  const { cwd } = await gitRepo();
+  const first = await gitCommitFiles({ "packages/a/index.js": "a" }, "feat: a", { cwd });
+  const second = await gitCommitFiles({ "packages/b/index.js": "b" }, "feat: b", { cwd });
+
+  const filesByHash = await getCommitsFiles(undefined, "HEAD", { cwd });
+
+  t.deepEqual(filesByHash.get(first.hash).files, ["packages/a/index.js"]);
+  t.deepEqual(filesByHash.get(second.hash).files, ["packages/b/index.js"]);
+  t.true(filesByHash.get(second.hash).hasParents);
+});
+
+test("Attribute a merge commit to its first parent", async (t) => {
+  const { cwd } = await gitRepo();
+  await gitCommitFiles({ "packages/a/index.js": "a" }, "feat: a", { cwd });
+  await gitCheckout("feature", true, { cwd });
+  const feature = await gitCommitFiles({ "packages/b/index.js": "b" }, "feat: b", { cwd });
+  await gitCheckout("master", false, { cwd });
+  await gitCommitFiles({ "packages/a/other.js": "a" }, "fix: a", { cwd });
+  await merge("feature", { cwd });
+
+  const filesByHash = await getCommitsFiles(undefined, "HEAD", { cwd });
+  const mergeHash = (await execa("git", ["rev-parse", "HEAD"], { cwd })).stdout;
+
+  // The merge introduces the feature branch's change relative to its first parent
+  t.deepEqual(filesByHash.get(mergeHash).files, ["packages/b/index.js"]);
+  t.true(filesByHash.has(feature.hash));
+});
+
+test("Report an empty commit as having no files", async (t) => {
+  const { cwd } = await gitRepo();
+  await gitCommitFiles({ "packages/a/index.js": "a" }, "feat: a", { cwd });
+  await gitCommits(["chore: trigger ci"], { cwd });
+
+  const filesByHash = await getCommitsFiles(undefined, "HEAD", { cwd });
+  const empty = (await execa("git", ["rev-parse", "HEAD"], { cwd })).stdout;
+
+  t.deepEqual(filesByHash.get(empty).files, []);
+  t.true(filesByHash.get(empty).hasParents);
+});
+
+test("Report a grafted commit in a shallow clone as having no parent", async (t) => {
+  const { cwd, repositoryUrl } = await gitRepo(true);
+  await gitCommitFiles({ "packages/a/index.js": "a" }, "feat: a", { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
+
+  const shallow = await gitShallowClone(repositoryUrl);
+  const filesByHash = await getCommitsFiles(undefined, "HEAD", { cwd: shallow });
+  const grafted = (await execa("git", ["rev-parse", "HEAD"], { cwd: shallow })).stdout;
+
+  t.false(filesByHash.get(grafted).hasParents);
+});
+
+test("Return undefined when the commit files cannot be determined", async (t) => {
+  const cwd = temporaryDirectory();
+
+  t.is(await getCommitsFiles(undefined, "HEAD", { cwd }), undefined);
 });
