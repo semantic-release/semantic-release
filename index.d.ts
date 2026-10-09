@@ -646,6 +646,24 @@ declare module "semantic-release" {
     tagFormat?: string | undefined;
 
     /**
+     * Restrict the release to the changes of a single package in a monorepo.
+     *
+     * Set to `true` to infer the path from the current working directory, which requires the
+     * command to run from the directory of the package — for example through the
+     * `working-directory` of a CI job. Set to an object with a `path` property to configure it
+     * explicitly, relative to the repository root. A string or an array of strings is accepted.
+     *
+     * Only changes under that path are analyzed when looking for a release, and a branch that
+     * moved because of commits outside of it does not prevent the release.
+     *
+     * Two prerequisites apply. Each package must use its own `tagFormat`, otherwise one
+     * package's tag is read as another package's last release. And the commit filtering needs
+     * the repository history, so a shallow clone must be deepened, for example with
+     * `fetch-depth: 0`.
+     */
+    monorepo?: boolean | { path?: string | ReadonlyArray<string> } | undefined;
+
+    /**
      * Define the list of plugins to use. Plugins will run in series, in
      * the order defined, for each [step](https://semantic-release.gitbook.io/semantic-release/#release-steps)
      * if they implement it.
