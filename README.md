@@ -119,16 +119,26 @@ outside of it does not prevent the release. A package is not released when its p
 had at the last release — work that was changed and then changed back, by hand or by a revert, leaves
 nothing to release. Without the option, behavior is unchanged.
 
-For example, with `packages/ui` last released as `ui-v1.0.0`:
+For example, two packages released with their own tags:
 
-```
-ui-v1.0.0   chore: init          touches packages/ui and packages/core
-            feat: core change    touches packages/core
-HEAD        feat: ui change      touches packages/ui
-```
+| commit | message                  | touches                        | releases                   |
+| ------ | ------------------------ | ------------------------------ | -------------------------- |
+| 1      | `feat: initial packages` | `packages/ui`, `packages/core` | `ui-v1.0.0`, `core-v1.0.0` |
+| 2      | `feat: core change`      | `packages/core`                | `core-v1.1.0`              |
+| 3      | `feat: ui change`        | `packages/ui`                  | `ui-v1.1.0`                |
 
-The changeset for the `packages/ui` release is `feat: ui change` alone — `feat: core change` is left out
-because it touches nothing under the path, so it cannot decide `ui`'s next version.
+Every push runs each package's workflow, and each one looks only at its own tags (that is what the
+per-package `tagFormat` prerequisite below is for), so:
+
+- `core`'s release at commit 2 is made of `feat: core change` alone. Commit 1 is the commit `core-v1.0.0`
+  points at, so the range starts after it.
+- `ui`'s release at commit 3 is made of `feat: ui change` alone. Commit 2 is inside the range but touches
+  nothing under `packages/ui`, so it cannot decide `ui`'s next version.
+- Commits 2 and 3 also run the other package's workflow, which finds no change under its path and releases
+  nothing.
+
+A package's first release is `1.0.0` whether the commits are a feature or a fix, which is why both packages
+start there.
 
 A path covers everything inside it at any depth, matched on a directory boundary: `packages/ui` includes
 `packages/ui/src/index.ts` and `packages/ui/deep/nested/file.css`, but not `packages/uikit`. Pattern syntax
