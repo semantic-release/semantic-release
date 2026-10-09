@@ -646,6 +646,33 @@ declare module "semantic-release" {
     tagFormat?: string | undefined;
 
     /**
+     * Restrict the release to the changes of a single package in a monorepo.
+     *
+     * Set to `true` to infer the path from the current working directory, which requires the
+     * command to run from the directory of the package — for example through the
+     * `working-directory` of a CI job. Set to an object with a `path` property to configure it
+     * explicitly, relative to the repository root. A string or an array of strings is accepted;
+     * a path containing a `..` segment is rejected, since git never reports such a path and it
+     * could therefore never match a file.
+     *
+     * A path covers everything inside it at any depth, matched on a directory boundary, so
+     * `packages/ui` includes `packages/ui/src/index.ts` but not `packages/uikit`. Pattern syntax
+     * such as `packages/*` is not supported: paths are matched literally. A file moved between
+     * packages counts for the package it moves to, not for the one it left.
+     *
+     * Only changes under that path are analyzed when looking for a release, and a branch that
+     * moved because of commits outside of it does not prevent the release. A release is skipped
+     * when the path is back to the state it had at the last release, so work that was changed and
+     * then changed back — by hand or by a revert — leaves nothing to release.
+     *
+     * Two prerequisites apply. Each package must use its own `tagFormat`, otherwise one
+     * package's tag is read as another package's last release. And the commit filtering needs
+     * the repository history, so a shallow clone must be deepened, for example with
+     * `fetch-depth: 0`.
+     */
+    monorepo?: boolean | { path?: string | ReadonlyArray<string> } | undefined;
+
+    /**
      * Define the list of plugins to use. Plugins will run in series, in
      * the order defined, for each [step](https://semantic-release.gitbook.io/semantic-release/#release-steps)
      * if they implement it.

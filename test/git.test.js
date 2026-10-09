@@ -1,16 +1,24 @@
 import { existsSync } from "node:fs";
 import path from "node:path";
 import test from "ava";
+import { execa } from "execa";
+import fsExtra from "fs-extra";
 import { temporaryDirectory } from "tempy";
 import {
   addNote,
   fetch,
   fetchNotes,
   getBranches,
+  getBranchState,
+  getChangedFiles,
+  getChangedFilesSinceRemote,
+  getCommitsFiles,
   getGitHead,
+  getRepoPrefix,
   getTagHead,
   getTags,
   getTagsNotes,
+  fetchRemoteTip,
   isBranchUpToDate,
   isGitRepo,
   isRefExists,
@@ -18,16 +26,19 @@ import {
   repoUrl,
   tag,
   verifyTagName,
+  verifyTagPush,
 } from "../lib/git.js";
 import {
   gitAddConfig,
   gitAddNote,
   gitCheckout,
+  gitCommitFiles,
   gitCommits,
   gitCommitTag,
   gitDetachedHead,
   gitDetachedHeadFromBranch,
   gitFetch,
+  gitFullClone,
   gitGetCommits,
   gitGetNote,
   gitPush,
@@ -36,6 +47,7 @@ import {
   gitShallowClone,
   gitTagVersion,
   initGit,
+  merge,
 } from "./helpers/git-utils.js";
 
 test("Get the last commit sha", async (t) => {
@@ -451,4 +463,254 @@ test("Does not execute a `repositoryUrl` injected as a `--receive-pack` git opti
   await t.throwsAsync(push(repositoryUrl, { cwd }));
 
   t.false(existsSync(marker));
+});
+
+test("Get the repository relative prefix of the working directory", async (t) => {
+  const { cwd } = await gitRepo();
+  t.is(await getRepoPrefix({ cwd }), "");
+
+  const subDirectory = path.resolve(cwd, "packages/api");
+  await fsExtra.ensureDir(subDirectory);
+  t.is(await getRepoPrefix({ cwd: subDirectory }), "packages/api/");
+});
+
+test("Get the repository relative prefix outside of a repository", async (t) => {
+  t.is(await getRepoPrefix({ cwd: temporaryDirectory() }), "");
+});
+
+test("Get the state of a branch that is up to date", async (t) => {
+  const { cwd, repositoryUrl } = await gitRepo(true);
+  await gitCommits(["First"], { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
+
+  const state = await getBranchState(repositoryUrl, "master", { cwd });
+
+  t.is(state.localHead, state.remoteHead);
+  t.true(state.upToDate);
+});
+
+test("Get the state of a branch that is behind", async (t) => {
+  const { cwd, repositoryUrl } = await gitRepo(true);
+  await gitCommits(["First"], { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
+
+  const otherClone = await gitShallowClone(repositoryUrl);
+  await gitCommits(["Second"], { cwd: otherClone });
+  await gitPush("origin", "master", { cwd: otherClone });
+
+  const state = await getBranchState(repositoryUrl, "master", { cwd });
+
+  t.not(state.localHead, state.remoteHead);
+  t.false(state.upToDate);
+});
+
+test("Fetch the remote tip into a dedicated reference", async (t) => {
+  const { cwd, repositoryUrl } = await gitRepo(true);
+  await gitCommitFiles({ "packages/a/index.js": "a" }, "feat: a", { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
+
+  const otherClone = await gitShallowClone(repositoryUrl);
+  await gitCommitFiles({ "packages/b/index.js": "b" }, "feat: b", { cwd: otherClone });
+  await gitPush("origin", "master", { cwd: otherClone });
+
+  const ref = await fetchRemoteTip(repositoryUrl, "master", { cwd });
+
+  t.is(ref, "refs/semantic-release/upstream");
+  t.is(
+    (await execa("git", ["rev-parse", ref], { cwd })).stdout,
+    (await execa("git", ["rev-parse", "HEAD"], { cwd: otherClone })).stdout
+  );
+});
+
+test("Fetching the remote tip into a complete clone does not make it shallow", async (t) => {
+  const { cwd, repositoryUrl } = await gitRepo(true);
+  await gitCommitFiles({ "packages/a/index.js": "a" }, "feat: a", { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
+
+  // A complete clone, as produced by `actions/checkout` with `fetch-depth: 0`
+  const complete = await gitFullClone(repositoryUrl);
+  const before = (await execa("git", ["rev-list", "--count", "HEAD"], { cwd: complete })).stdout;
+
+  await fetchRemoteTip(repositoryUrl, "master", { cwd: complete });
+
+  t.is((await execa("git", ["rev-parse", "--is-shallow-repository"], { cwd: complete })).stdout, "false");
+  t.is((await execa("git", ["rev-list", "--count", "HEAD"], { cwd: complete })).stdout, before);
+});
+
+test("Get the files changed between the local head and the remote tip", async (t) => {
+  const { cwd, repositoryUrl } = await gitRepo(true);
+  await gitCommitFiles({ "packages/a/index.js": "a" }, "feat: a", { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
+
+  const otherClone = await gitShallowClone(repositoryUrl);
+  await gitCommitFiles({ "packages/b/index.js": "b" }, "feat: b", { cwd: otherClone });
+  await gitCommitFiles({ "packages/a/other.js": "a" }, "fix: a", { cwd: otherClone });
+  await gitPush("origin", "master", { cwd: otherClone });
+
+  t.deepEqual((await getChangedFilesSinceRemote(repositoryUrl, "master", { cwd })).sort(), [
+    "packages/a/other.js",
+    "packages/b/index.js",
+  ]);
+});
+
+test("Get the files changed between a diverged head and the remote tip", async (t) => {
+  const { cwd, repositoryUrl } = await gitRepo(true);
+  await gitCommitFiles({ "packages/a/index.js": "a" }, "feat: a", { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
+
+  const otherClone = await gitShallowClone(repositoryUrl);
+  await gitCommitFiles({ "packages/b/index.js": "b" }, "feat: b", { cwd: otherClone });
+  await gitPush("origin", "master", { cwd: otherClone });
+
+  // A local commit the remote does not have: the diff is symmetric, so the local change is reported
+  // too. That makes a diverged branch skip the release, which is the conservative outcome.
+  await gitCommitFiles({ "packages/a/local.js": "a" }, "fix: local", { cwd });
+
+  t.deepEqual((await getChangedFilesSinceRemote(repositoryUrl, "master", { cwd })).sort(), [
+    "packages/a/local.js",
+    "packages/b/index.js",
+  ]);
+});
+
+test("Return undefined when the remote tip cannot be fetched", async (t) => {
+  const { cwd } = await gitRepo(true);
+  await gitCommitFiles({ "packages/a/index.js": "a" }, "feat: a", { cwd });
+
+  t.is(await getChangedFilesSinceRemote("file:///does/not/exist", "master", { cwd }), undefined);
+});
+
+test("Verify the tag push is accepted", async (t) => {
+  const { cwd } = await gitRepo(true);
+  await gitCommitFiles({ "packages/a/index.js": "a" }, "feat: a", { cwd });
+
+  t.true(await verifyTagPush("origin", { cwd }));
+});
+
+test("Verify the tag push is rejected without credentials", async (t) => {
+  const { cwd } = await gitRepo(true);
+  await gitCommitFiles({ "packages/a/index.js": "a" }, "feat: a", { cwd });
+
+  t.false(await verifyTagPush("file:///does/not/exist", { cwd }));
+});
+
+test("The tag push probe does not create a reference", async (t) => {
+  const { cwd, repositoryUrl } = await gitRepo(true);
+  await gitCommitFiles({ "packages/a/index.js": "a" }, "feat: a", { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
+
+  await verifyTagPush(repositoryUrl, { cwd });
+
+  t.is((await execa("git", ["ls-remote", "--tags", repositoryUrl], { cwd })).stdout.trim(), "");
+});
+
+test("Get the files of each commit", async (t) => {
+  const { cwd } = await gitRepo();
+  const first = await gitCommitFiles({ "packages/a/index.js": "a" }, "feat: a", { cwd });
+  const second = await gitCommitFiles({ "packages/b/index.js": "b" }, "feat: b", { cwd });
+
+  const filesByHash = await getCommitsFiles(undefined, "HEAD", { cwd });
+
+  t.deepEqual(filesByHash.get(first.hash).files, ["packages/a/index.js"]);
+  t.deepEqual(filesByHash.get(second.hash).files, ["packages/b/index.js"]);
+  t.true(filesByHash.get(second.hash).hasParents);
+});
+
+test("Attribute a merge commit to its first parent", async (t) => {
+  const { cwd } = await gitRepo();
+  await gitCommitFiles({ "packages/a/index.js": "a" }, "feat: a", { cwd });
+  await gitCheckout("feature", true, { cwd });
+  const feature = await gitCommitFiles({ "packages/b/index.js": "b" }, "feat: b", { cwd });
+  await gitCheckout("master", false, { cwd });
+  await gitCommitFiles({ "packages/a/other.js": "a" }, "fix: a", { cwd });
+  await merge("feature", { cwd });
+
+  const filesByHash = await getCommitsFiles(undefined, "HEAD", { cwd });
+  const mergeHash = (await execa("git", ["rev-parse", "HEAD"], { cwd })).stdout;
+
+  // The merge introduces the feature branch's change relative to its first parent
+  t.deepEqual(filesByHash.get(mergeHash).files, ["packages/b/index.js"]);
+  t.true(filesByHash.has(feature.hash));
+});
+
+test("Report an empty commit as having no files", async (t) => {
+  const { cwd } = await gitRepo();
+  await gitCommitFiles({ "packages/a/index.js": "a" }, "feat: a", { cwd });
+  await gitCommits(["chore: trigger ci"], { cwd });
+
+  const filesByHash = await getCommitsFiles(undefined, "HEAD", { cwd });
+  const empty = (await execa("git", ["rev-parse", "HEAD"], { cwd })).stdout;
+
+  t.deepEqual(filesByHash.get(empty).files, []);
+  t.true(filesByHash.get(empty).hasParents);
+});
+
+test("Report a grafted commit in a shallow clone as having no parent", async (t) => {
+  const { cwd, repositoryUrl } = await gitRepo(true);
+  await gitCommitFiles({ "packages/a/index.js": "a" }, "feat: a", { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
+
+  const shallow = await gitShallowClone(repositoryUrl);
+  const filesByHash = await getCommitsFiles(undefined, "HEAD", { cwd: shallow });
+  const grafted = (await execa("git", ["rev-parse", "HEAD"], { cwd: shallow })).stdout;
+
+  t.false(filesByHash.get(grafted).hasParents);
+});
+
+test("Return undefined when the commit files cannot be determined", async (t) => {
+  const cwd = temporaryDirectory();
+
+  t.is(await getCommitsFiles(undefined, "HEAD", { cwd }), undefined);
+});
+
+test("Attribute a moved file to its destination even without rename detection", async (t) => {
+  const { cwd } = await gitRepo();
+  await gitCommitFiles({ "packages/ui/a.js": "ui", "packages/other/b.js": "other" }, "chore: init", { cwd });
+  // A repository can disable rename detection, which would otherwise attribute the move to both packages
+  await gitAddConfig("diff.renames", "false", { cwd });
+  await execa("git", ["mv", "packages/ui/a.js", "packages/other/a.js"], { cwd });
+  await execa("git", ["commit", "-m", "refactor: move out of ui", "--no-gpg-sign"], { cwd });
+
+  const filesByHash = await getCommitsFiles(undefined, "HEAD", { cwd });
+  const moved = (await execa("git", ["rev-parse", "HEAD"], { cwd })).stdout;
+
+  t.deepEqual(filesByHash.get(moved).files, ["packages/other/a.js"]);
+});
+
+test("Report only the destination of a move between the local head and the remote tip", async (t) => {
+  const { cwd, repositoryUrl } = await gitRepo(true);
+  await gitCommitFiles({ "packages/ui/a.js": "ui", "packages/other/b.js": "other" }, "chore: init", { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
+
+  const otherClone = await gitShallowClone(repositoryUrl);
+  await execa("git", ["mv", "packages/ui/a.js", "packages/other/a.js"], { cwd: otherClone });
+  await execa("git", ["commit", "-m", "refactor: move out of ui", "--no-gpg-sign"], { cwd: otherClone });
+  await gitPush("origin", "master", { cwd: otherClone });
+
+  // The repository doing the comparison is the one whose configuration matters
+  await gitAddConfig("diff.renames", "false", { cwd });
+
+  t.deepEqual(await getChangedFilesSinceRemote(repositoryUrl, "master", { cwd }), ["packages/other/a.js"]);
+});
+
+test("Get the files changed on a revision range", async (t) => {
+  const { cwd } = await gitRepo();
+  const first = await gitCommitFiles({ "packages/ui/a.js": "ui", "packages/other/b.js": "other" }, "chore: init", {
+    cwd,
+  });
+  await gitCommitFiles({ "packages/ui/a.js": "ui2", "packages/other/b.js": "other2" }, "feat: change both", { cwd });
+
+  t.deepEqual((await getChangedFiles(first.hash, "HEAD", { cwd })).sort(), ["packages/other/b.js", "packages/ui/a.js"]);
+});
+
+test("Report only the destination of a file moved out of a path", async (t) => {
+  const { cwd } = await gitRepo();
+  const first = await gitCommitFiles({ "packages/ui/a.js": "ui", "packages/other/b.js": "other" }, "chore: init", {
+    cwd,
+  });
+  await execa("git", ["mv", "packages/ui/a.js", "packages/other/a.js"], { cwd });
+  await execa("git", ["commit", "-m", "refactor: move out of ui", "--no-gpg-sign"], { cwd });
+
+  // A diff limited to `packages/ui` would report the source as a deletion instead, which is why this helper
+  // takes no paths and callers match the result with the same rule as for commits
+  t.deepEqual(await getChangedFiles(first.hash, "HEAD", { cwd }), ["packages/other/a.js"]);
 });

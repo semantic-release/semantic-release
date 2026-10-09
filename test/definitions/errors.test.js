@@ -1,5 +1,5 @@
 import test from "ava";
-import { EGITNOPERMISSION } from "../../lib/definitions/errors.js";
+import { EGITNOPERMISSION, EINVALIDMONOREPOPATH } from "../../lib/definitions/errors.js";
 
 test("EGITNOPERMISSION does not expose the authenticated repository URL", (t) => {
   const error = EGITNOPERMISSION({
@@ -21,4 +21,12 @@ test("EGITNOPERMISSION falls back to the repository URL if the original URL is n
   });
 
   t.true(error.details.includes("https://github.com/owner/repo.git"));
+});
+
+test("EINVALIDMONOREPOPATH explains the inferred path and the empty case", (t) => {
+  const error = EINVALIDMONOREPOPATH({ cwd: "/repo/packages/foo" });
+
+  t.truthy(error.message);
+  t.true(error.details.includes("/repo/packages/foo"));
+  t.true(error.details.includes("path"));
 });

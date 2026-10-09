@@ -104,8 +104,62 @@ In order to use **semantic-release** you need:
 - A Git CLI version that meets [our version requirement](https://semantic-release.org/support/git-version/) installed in your Continuous Integration environment
 - A [Node.js](https://nodejs.org) version that meets [our version requirement](https://semantic-release.org/support/node-version/) installed in your Continuous Integration environment
 
+## Monorepo releases
+
+This fork adds a `monorepo` option that scopes a release to a single package inside the repository:
+
+```jsonc
+{ "monorepo": true }                        // path inferred from the current working directory
+{ "monorepo": { "path": "packages/foo" } }  // explicit, relative to the repository root
+{ "monorepo": { "path": ["packages/foo", "packages/shared"] } }
+```
+
+Only the commits that touch that path are analyzed, and a release branch that moved because of commits
+outside of it does not prevent the release. A package is not released when its path is back to the state it
+had at the last release — work that was changed and then changed back, by hand or by a revert, leaves
+nothing to release. Without the option, behavior is unchanged.
+
+For example, two packages released with their own tags:
+
+| commit | message                  | touches                        | releases                   |
+| ------ | ------------------------ | ------------------------------ | -------------------------- |
+| 1      | `feat: initial packages` | `packages/ui`, `packages/core` | `ui-v1.0.0`, `core-v1.0.0` |
+| 2      | `feat: core change`      | `packages/core`                | `core-v1.1.0`              |
+| 3      | `feat: ui change`        | `packages/ui`                  | `ui-v1.1.0`                |
+
+Every push runs each package's workflow, and each one looks only at its own tags (that is what the
+per-package `tagFormat` prerequisite below is for), so:
+
+- `core`'s release at commit 2 is made of `feat: core change` alone. Commit 1 is the commit `core-v1.0.0`
+  points at, so the range starts after it.
+- `ui`'s release at commit 3 is made of `feat: ui change` alone. Commit 2 is inside the range but touches
+  nothing under `packages/ui`, so it cannot decide `ui`'s next version.
+- Commits 2 and 3 also run the other package's workflow, which finds no change under its path and releases
+  nothing.
+
+A package's first release is `1.0.0` whether the commits are a feature or a fix, which is why both packages
+start there.
+
+A path covers everything inside it at any depth, matched on a directory boundary: `packages/ui` includes
+`packages/ui/src/index.ts` and `packages/ui/deep/nested/file.css`, but not `packages/uikit`. Pattern syntax
+is not supported — `packages/*` is matched literally, not as a glob. A file moved between packages counts
+for the package it moves to, not for the one it left.
+
+Two prerequisites apply, because ignoring them causes wrong releases rather than errors:
+
+- **One tag namespace per package.** Give each package its own `tagFormat`, for example `foo-v${version}`.
+  With a shared `v${version}`, one package's tag is read as another package's last release and its next
+  version is computed from it.
+- **Full history.** The commit filtering needs the repository history, so the clone must not be shallow —
+  with `actions/checkout` that means `fetch-depth: 0`. Without it the filtering degrades to considering
+  every commit.
+
+The release also needs to be able to push tags, since it pushes a tag even when it cannot push to the
+branch.
+
 ## Documentation
 
+- [Monorepo releases](#monorepo-releases) — the `monorepo` option, added by this fork
 - Usage
   - [Getting started](https://semantic-release.org/usage/getting-started/)
   - [Configuration](https://semantic-release.org/usage/configuration/)

@@ -16,7 +16,9 @@ import { extractErrors, makeTag } from "./lib/utils.js";
 import getGitAuthUrl from "./lib/get-git-auth-url.js";
 import getBranches from "./lib/branches/index.js";
 import getLogger from "./lib/get-logger.js";
-import { addNote, getGitHead, getTagHead, isBranchUpToDate, push, pushNotes, tag, verifyAuth } from "./lib/git.js";
+import branchGuard from "./lib/branch-guard.js";
+import { PROCEED, UNAUTHORIZED } from "./lib/monorepo.js";
+import { addNote, getGitHead, getTagHead, push, pushNotes, tag, verifyAuth } from "./lib/git.js";
 import getError from "./lib/get-error.js";
 import { COMMIT_EMAIL, COMMIT_NAME } from "./lib/definitions/constants.js";
 
@@ -39,6 +41,7 @@ async function run(context, plugins) {
   const { cwd, env, options, logger, envCi } = context;
   const { isCi, branch, prBranch, isPr } = envCi;
   const ciBranch = isPr ? prBranch : branch;
+  const monorepoPaths = options.monorepo?.paths ?? [];
 
   if (!isCi && !options.dryRun && !options.noCi) {
     logger.warn("This run was not triggered in a known CI environment, running in dry-run mode.");
@@ -83,25 +86,38 @@ async function run(context, plugins) {
     }`
   );
 
+  let pushVerified = true;
+
   try {
     try {
       await verifyAuth(options.repositoryUrl, context.branch.name, { cwd, env });
     } catch (error) {
-      if (!(await isBranchUpToDate(options.repositoryUrl, context.branch.name, { cwd, env }))) {
-        logger.log(
-          `The local branch ${context.branch.name} is behind the remote one, therefore a new version won't be published.`
-        );
+      const decision = await branchGuard(context, {
+        repositoryUrl: options.repositoryUrl,
+        branch: context.branch.name,
+      });
+
+      if (decision === UNAUTHORIZED) {
+        // The credentials cannot push at all, so the release cannot complete
+        throw error;
+      }
+
+      if (decision !== PROCEED) {
         return false;
       }
 
-      throw error;
+      // The branch push is known to have failed and only the tag push was probed, so this run must not
+      // report a verified push. `branch-guard` already warned about it.
+      pushVerified = false;
     }
   } catch (error) {
     logger.error(`The command "${error.command}" failed with the error message ${error.stderr}.`);
     throw getError("EGITNOPERMISSION", context);
   }
 
-  logger.success(`Allowed to push to the Git repository`);
+  if (pushVerified) {
+    logger.success(`Allowed to push to the Git repository`);
+  }
 
   await plugins.verifyConditions(context);
 
@@ -170,6 +186,15 @@ async function run(context, plugins) {
   }
 
   context.commits = await getCommits(context);
+
+  if (monorepoPaths.length > 0 && context.commits.length === 0) {
+    logger.log(
+      `There are no changes in ${monorepoPaths.join(
+        ", "
+      )} since the last release, therefore a new version won't be published.`
+    );
+    return context.releases.length > 0 ? { releases: context.releases } : false;
+  }
 
   const nextRelease = {
     type: await plugins.analyzeCommits(context),

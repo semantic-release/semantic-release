@@ -9,7 +9,9 @@ import { COMMIT_EMAIL, COMMIT_NAME, SECRET_REPLACEMENT } from "../lib/definition
 import {
   gitAddNote,
   gitCheckout,
+  gitCommitFiles,
   gitCommits,
+  gitFullClone,
   gitGetNote,
   gitHead as getGitHead,
   gitPush,
@@ -398,6 +400,9 @@ test.serial("Plugins are called with expected values", async (t) => {
   t.is(env.GIT_AUTHOR_EMAIL, COMMIT_EMAIL);
   t.is(env.GIT_COMMITTER_NAME, COMMIT_NAME);
   t.is(env.GIT_COMMITTER_EMAIL, COMMIT_EMAIL);
+
+  // The branch push was verified, so the run reports it
+  t.true(t.context.success.args.flat().some((arg) => String(arg).includes("Allowed to push")));
 });
 
 test.serial("Use custom tag format", async (t) => {
@@ -1625,6 +1630,202 @@ test.serial("Returns false value if triggered on an outdated clone", async (t) =
   t.deepEqual(t.context.log.args[t.context.log.args.length - 1], [
     "The local branch master is behind the remote one, therefore a new version won't be published.",
   ]);
+});
+
+test.serial("Publish a release when the branch is behind only outside the monorepo path", async (t) => {
+  // Create a git repository, set the current working directory at the root of the repo
+  let { cwd, repositoryUrl } = await gitRepo(true);
+  const repoDir = cwd;
+  await gitCommitFiles({ "packages/foo/index.js": "module.exports = 1;" }, "feat: add foo", { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
+
+  // Another package is merged: the shared branch moves, but nothing in `packages/foo` changed
+  cwd = await gitShallowClone(repositoryUrl);
+  await gitCommitFiles({ "packages/bar/index.js": "module.exports = 2;" }, "feat: add bar", { cwd });
+  await gitPush("origin", "master", { cwd });
+
+  const publish = stub().resolves({ name: "pkg" });
+  const options = {
+    branches: ["master"],
+    repositoryUrl,
+    tagFormat: `foo-v\${version}`,
+    monorepo: { path: "packages/foo" },
+    verifyConditions: stub().resolves(),
+    analyzeCommits: stub().resolves("minor"),
+    verifyRelease: stub().resolves(),
+    addChannel: stub().resolves(),
+    generateNotes: stub().resolves("notes"),
+    prepare: stub().resolves(),
+    publish,
+    success: stub().resolves(),
+    fail: stub().resolves(),
+  };
+
+  await td.replaceEsm("../lib/get-logger.js", null, () => t.context.logger);
+  await td.replaceEsm("env-ci", null, () => ({ isCi: true, branch: "master", isPr: false }));
+  const semanticRelease = (await import("../index.js")).default;
+
+  const result = await semanticRelease(options, {
+    cwd: repoDir,
+    env: {},
+    stdout: new WritableStreamBuffer(),
+    stderr: new WritableStreamBuffer(),
+  });
+
+  t.is(publish.callCount, 1);
+  t.is(result.nextRelease.version, "1.0.0");
+  t.is(result.nextRelease.gitTag, "foo-v1.0.0");
+  // The branch push was never verified as allowed: this path must read as a warning, not as a clean run
+  t.false(t.context.success.args.flat().some((arg) => String(arg).includes("Allowed to push")));
+});
+
+test.serial("Skip the release when the branch is behind inside the monorepo path", async (t) => {
+  let { cwd, repositoryUrl } = await gitRepo(true);
+  const repoDir = cwd;
+  await gitCommitFiles({ "packages/foo/index.js": "module.exports = 1;" }, "feat: add foo", { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
+
+  // The same package moves on: this clone is now stale for `packages/foo`
+  cwd = await gitShallowClone(repositoryUrl);
+  await gitCommitFiles({ "packages/foo/index.js": "module.exports = 2;" }, "fix: change foo", { cwd });
+  await gitPush("origin", "master", { cwd });
+
+  const publish = stub().resolves();
+
+  await td.replaceEsm("../lib/get-logger.js", null, () => t.context.logger);
+  await td.replaceEsm("env-ci", null, () => ({ isCi: true, branch: "master", isPr: false }));
+  const semanticRelease = (await import("../index.js")).default;
+
+  t.false(
+    await semanticRelease(
+      {
+        repositoryUrl,
+        branches: ["master"],
+        tagFormat: `foo-v\${version}`,
+        monorepo: { path: "packages/foo" },
+        publish,
+      },
+      { cwd: repoDir, env: {}, stdout: new WritableStreamBuffer(), stderr: new WritableStreamBuffer() }
+    )
+  );
+  t.is(publish.callCount, 0);
+  t.true(t.context.log.args.flat().some((arg) => String(arg).includes("packages/foo")));
+});
+
+test.serial("Skip the release when no commit affects the monorepo path", async (t) => {
+  const { cwd, repositoryUrl } = await gitRepo(true);
+  await gitCommitFiles({ "packages/foo/index.js": "module.exports = 1;" }, "feat: add foo", { cwd });
+  await gitTagVersion("foo-v1.0.0", undefined, { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
+
+  // A complete clone so the tag is present: the release then has a last release and an empty commit range
+  const releaseDir = await gitFullClone(repositoryUrl);
+
+  await gitCommitFiles({ "packages/bar/index.js": "module.exports = 2;" }, "feat: add bar", { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
+
+  const analyzeCommits = stub().resolves("minor");
+
+  await td.replaceEsm("../lib/get-logger.js", null, () => t.context.logger);
+  await td.replaceEsm("env-ci", null, () => ({ isCi: true, branch: "master", isPr: false }));
+  const semanticRelease = (await import("../index.js")).default;
+
+  const result = await semanticRelease(
+    {
+      repositoryUrl,
+      branches: ["master"],
+      tagFormat: `foo-v\${version}`,
+      monorepo: { path: "packages/foo" },
+      verifyConditions: stub().resolves(),
+      analyzeCommits,
+      fail: stub().resolves(),
+    },
+    { cwd: releaseDir, env: {}, stdout: new WritableStreamBuffer(), stderr: new WritableStreamBuffer() }
+  );
+
+  t.false(result);
+  t.is(analyzeCommits.callCount, 0);
+  t.true(t.context.log.args.flat().some((arg) => String(arg).includes("packages/foo")));
+});
+
+test.serial("Publish a release for any of the configured monorepo paths", async (t) => {
+  const { cwd, repositoryUrl } = await gitRepo(true);
+  await gitCommitFiles({ "packages/bar/index.js": "bar" }, "feat: bar", { cwd });
+  await gitCommitFiles({ "shared/proto/index.proto": "proto" }, "feat: proto", { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
+
+  const generateNotes = stub().resolves("notes");
+  const publish = stub().resolves({ name: "pkg" });
+  const options = {
+    branches: ["master"],
+    repositoryUrl,
+    tagFormat: `foo-v\${version}`,
+    monorepo: { path: ["packages/foo", "shared/proto"] },
+    verifyConditions: stub().resolves(),
+    analyzeCommits: stub().resolves("minor"),
+    verifyRelease: stub().resolves(),
+    addChannel: stub().resolves(),
+    generateNotes,
+    prepare: stub().resolves(),
+    publish,
+    success: stub().resolves(),
+    fail: stub().resolves(),
+  };
+
+  await td.replaceEsm("../lib/get-logger.js", null, () => t.context.logger);
+  await td.replaceEsm("env-ci", null, () => ({ isCi: true, branch: "master", isPr: false }));
+  const semanticRelease = (await import("../index.js")).default;
+
+  const result = await semanticRelease(options, {
+    cwd,
+    env: {},
+    stdout: new WritableStreamBuffer(),
+    stderr: new WritableStreamBuffer(),
+  });
+
+  t.is(publish.callCount, 1);
+  t.is(result.nextRelease.version, "1.0.0");
+  // Plugins are called with (pluginConfig, context), so the analyzed commits are the second argument.
+  // The commit outside of both paths is filtered out, the one inside the second path is not
+  const analyzed = generateNotes.args[0][1].commits.map(({ message }) => message);
+  t.true(analyzed.includes("feat: proto"));
+  t.false(analyzed.includes("feat: bar"));
+});
+
+test.serial("Skip the release when the monorepo path was changed back", async (t) => {
+  const { cwd, repositoryUrl } = await gitRepo(true);
+  await gitCommitFiles({ "packages/foo/index.js": "module.exports = 1;" }, "chore: init", { cwd });
+  await gitTagVersion("foo-v1.0.0", undefined, { cwd });
+  await gitCommitFiles({ "packages/foo/index.js": "module.exports = 2;" }, "feat: change foo", { cwd });
+  await gitCommitFiles({ "packages/foo/index.js": "module.exports = 1;" }, "chore: put it back", { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
+
+  // A complete clone, so the tag is present, and up to date, so the guard is not involved
+  const releaseDir = await gitFullClone(repositoryUrl);
+
+  const analyzeCommits = stub().resolves("minor");
+
+  await td.replaceEsm("../lib/get-logger.js", null, () => t.context.logger);
+  await td.replaceEsm("env-ci", null, () => ({ isCi: true, branch: "master", isPr: false }));
+  const semanticRelease = (await import("../index.js")).default;
+
+  const result = await semanticRelease(
+    {
+      repositoryUrl,
+      branches: ["master"],
+      tagFormat: `foo-v\${version}`,
+      monorepo: { path: "packages/foo" },
+      verifyConditions: stub().resolves(),
+      analyzeCommits,
+      fail: stub().resolves(),
+    },
+    { cwd: releaseDir, env: {}, stdout: new WritableStreamBuffer(), stderr: new WritableStreamBuffer() }
+  );
+
+  // The two commits touch the path, but the path is back to its released state, so there is nothing to release
+  t.false(result);
+  t.is(analyzeCommits.callCount, 0);
+  t.true(t.context.log.args.flat().some((arg) => String(arg).includes("packages/foo")));
 });
 
 test.serial("Returns false if not running from the configured branch", async (t) => {

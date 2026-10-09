@@ -143,3 +143,69 @@ test('Return "true" if all verification pass', async (t) => {
 
   await t.notThrowsAsync(verify({ cwd, options }));
 });
+
+test("Throw a SemanticReleaseError if the monorepo option resolves to no path", async (t) => {
+  const { cwd, repositoryUrl } = await gitRepo(true);
+  const options = { repositoryUrl, tagFormat: `v\${version}`, branches: [], monorepo: { paths: [] } };
+
+  const errors = [...(await t.throwsAsync(verify({ cwd, options }))).errors];
+
+  t.is(errors[0].name, "SemanticReleaseError");
+  t.is(errors[0].code, "EINVALIDMONOREPOPATH");
+  t.truthy(errors[0].message);
+  t.truthy(errors[0].details);
+});
+
+test("Accept a monorepo option resolving to at least one path", async (t) => {
+  const { cwd, repositoryUrl } = await gitRepo(true);
+  const options = {
+    repositoryUrl,
+    branches: [{ name: "master" }],
+    tagFormat: `v\${version}`,
+    monorepo: { paths: ["packages/foo"] },
+  };
+
+  await t.notThrowsAsync(verify({ cwd, options }));
+});
+
+test("Do not report a monorepo problem outside of a git repository", async (t) => {
+  const cwd = temporaryDirectory();
+  const options = { tagFormat: `v\${version}`, branches: [], monorepo: { paths: [] } };
+
+  const errors = [...(await t.throwsAsync(verify({ cwd, options }))).errors];
+
+  t.deepEqual(
+    errors.map(({ code }) => code),
+    ["ENOGITREPO"]
+  );
+});
+
+test("Throw a SemanticReleaseError if a monorepo path contains a parent directory segment", async (t) => {
+  const { cwd, repositoryUrl } = await gitRepo(true);
+  const options = {
+    repositoryUrl,
+    tagFormat: `v\${version}`,
+    branches: [],
+    // `..` can never appear in a path reported by git, so this could only ever match nothing
+    monorepo: { paths: ["packages/foo", "packages/bar/../shared"] },
+  };
+
+  const errors = [...(await t.throwsAsync(verify({ cwd, options }))).errors];
+
+  t.is(errors[0].code, "EINVALIDMONOREPOPATH");
+  t.truthy(errors[0].message);
+  t.true(errors[0].details.includes("packages/bar/../shared"));
+});
+
+test("Accept a monorepo path whose segments merely start with dots", async (t) => {
+  const { cwd, repositoryUrl } = await gitRepo(true);
+  const options = {
+    repositoryUrl,
+    tagFormat: `v\${version}`,
+    branches: [{ name: "master" }],
+    // `..foo` is a valid directory name and a path that can match, unlike the `..` segment
+    monorepo: { paths: ["packages/..foo", "packages/.hidden"] },
+  };
+
+  await t.notThrowsAsync(verify({ cwd, options }));
+});

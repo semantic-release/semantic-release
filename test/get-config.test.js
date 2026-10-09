@@ -727,3 +727,70 @@ test('Convert "ci" option to "noCi" when set from extended config', async (t) =>
   t.is(result.ci, false);
   t.is(result.noCi, true);
 });
+
+test("Resolve the monorepo option from an explicit path", async (t) => {
+  const { cwd } = await gitRepo(true);
+  const { options } = await t.context.getConfig(
+    { cwd, env: {} },
+    {
+      branches: ["master"],
+      repositoryUrl: "https://host.null/owner/package.git",
+      monorepo: { path: "./packages/foo/" },
+    }
+  );
+
+  t.deepEqual(options.monorepo, { paths: ["packages/foo"] });
+});
+
+test("Resolve the monorepo option from the working directory", async (t) => {
+  const { cwd } = await gitRepo(true);
+  const packageDir = path.resolve(cwd, "packages/foo");
+  await fsExtra.ensureDir(packageDir);
+
+  const { options } = await t.context.getConfig(
+    { cwd: packageDir, env: {} },
+    { branches: ["master"], repositoryUrl: "https://host.null/owner/package.git", monorepo: true }
+  );
+
+  t.deepEqual(options.monorepo, { paths: ["packages/foo"] });
+});
+
+test("Resolve the monorepo option to no path from the repository root", async (t) => {
+  const { cwd } = await gitRepo(true);
+  const { options } = await t.context.getConfig(
+    { cwd, env: {} },
+    { branches: ["master"], repositoryUrl: "https://host.null/owner/package.git", monorepo: true }
+  );
+
+  t.deepEqual(options.monorepo, { paths: [] });
+});
+
+test("Treat an invalid monorepo option as resolving to no path", async (t) => {
+  const { cwd } = await gitRepo(true);
+  const { options } = await t.context.getConfig(
+    { cwd, env: {} },
+    { branches: ["master"], repositoryUrl: "https://host.null/owner/package.git", monorepo: 42 }
+  );
+
+  t.deepEqual(options.monorepo, { paths: [] });
+});
+
+test("Disable the monorepo option with false", async (t) => {
+  const { cwd } = await gitRepo(true);
+  const { options } = await t.context.getConfig(
+    { cwd, env: {} },
+    { branches: ["master"], repositoryUrl: "https://host.null/owner/package.git", monorepo: false }
+  );
+
+  t.is(options.monorepo, undefined);
+});
+
+test("Leave the monorepo option absent when not configured", async (t) => {
+  const { cwd } = await gitRepo(true);
+  const { options } = await t.context.getConfig(
+    { cwd, env: {} },
+    { branches: ["master"], repositoryUrl: "https://host.null/owner/package.git" }
+  );
+
+  t.is(options.monorepo, undefined);
+});
