@@ -159,6 +159,7 @@ branch.
 
 ## Documentation
 
+- [Monorepo releases](#monorepo-releases) — the `monorepo` option, added by this fork
 - Usage
   - [Getting started](https://semantic-release.org/usage/getting-started/)
   - [Configuration](https://semantic-release.org/usage/configuration/)
