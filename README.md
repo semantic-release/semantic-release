@@ -104,6 +104,31 @@ In order to use **semantic-release** you need:
 - A Git CLI version that meets [our version requirement](https://semantic-release.org/support/git-version/) installed in your Continuous Integration environment
 - A [Node.js](https://nodejs.org) version that meets [our version requirement](https://semantic-release.org/support/node-version/) installed in your Continuous Integration environment
 
+## Monorepo releases
+
+This fork adds a `monorepo` option that scopes a release to a single package inside the repository:
+
+```jsonc
+{ "monorepo": true }                        // path inferred from the current working directory
+{ "monorepo": { "path": "packages/foo" } }  // explicit, relative to the repository root
+{ "monorepo": { "path": ["packages/foo", "packages/shared"] } }
+```
+
+Only the commits that touch that path are analyzed, and a release branch that moved because of commits
+outside of it does not prevent the release. Without the option, behavior is unchanged.
+
+Two prerequisites apply, because ignoring them causes wrong releases rather than errors:
+
+- **One tag namespace per package.** Give each package its own `tagFormat`, for example `foo-v${version}`.
+  With a shared `v${version}`, one package's tag is read as another package's last release and its next
+  version is computed from it.
+- **Full history.** The commit filtering needs the repository history, so the clone must not be shallow —
+  with `actions/checkout` that means `fetch-depth: 0`. Without it the filtering degrades to considering
+  every commit.
+
+The release also needs to be able to push tags, since it pushes a tag even when it cannot push to the
+branch.
+
 ## Documentation
 
 - Usage
