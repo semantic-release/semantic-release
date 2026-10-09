@@ -1,13 +1,16 @@
 import { existsSync } from "node:fs";
 import path from "node:path";
 import test from "ava";
+import fsExtra from "fs-extra";
 import { temporaryDirectory } from "tempy";
 import {
   addNote,
   fetch,
   fetchNotes,
   getBranches,
+  getBranchState,
   getGitHead,
+  getRepoPrefix,
   getTagHead,
   getTags,
   getTagsNotes,
@@ -451,4 +454,43 @@ test("Does not execute a `repositoryUrl` injected as a `--receive-pack` git opti
   await t.throwsAsync(push(repositoryUrl, { cwd }));
 
   t.false(existsSync(marker));
+});
+
+test("Get the repository relative prefix of the working directory", async (t) => {
+  const { cwd } = await gitRepo();
+  t.is(await getRepoPrefix({ cwd }), "");
+
+  const subDirectory = path.resolve(cwd, "packages/api");
+  await fsExtra.ensureDir(subDirectory);
+  t.is(await getRepoPrefix({ cwd: subDirectory }), "packages/api/");
+});
+
+test("Get the repository relative prefix outside of a repository", async (t) => {
+  t.is(await getRepoPrefix({ cwd: temporaryDirectory() }), "");
+});
+
+test("Get the state of a branch that is up to date", async (t) => {
+  const { cwd, repositoryUrl } = await gitRepo(true);
+  await gitCommits(["First"], { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
+
+  const state = await getBranchState(repositoryUrl, "master", { cwd });
+
+  t.is(state.localHead, state.remoteHead);
+  t.true(state.upToDate);
+});
+
+test("Get the state of a branch that is behind", async (t) => {
+  const { cwd, repositoryUrl } = await gitRepo(true);
+  await gitCommits(["First"], { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
+
+  const otherClone = await gitShallowClone(repositoryUrl);
+  await gitCommits(["Second"], { cwd: otherClone });
+  await gitPush("origin", "master", { cwd: otherClone });
+
+  const state = await getBranchState(repositoryUrl, "master", { cwd });
+
+  t.not(state.localHead, state.remoteHead);
+  t.false(state.upToDate);
 });
