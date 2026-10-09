@@ -86,6 +86,8 @@ async function run(context, plugins) {
     }`
   );
 
+  let pushVerified = true;
+
   try {
     try {
       await verifyAuth(options.repositoryUrl, context.branch.name, { cwd, env });
@@ -103,13 +105,19 @@ async function run(context, plugins) {
       if (decision !== PROCEED) {
         return false;
       }
+
+      // The branch push is known to have failed and only the tag push was probed, so this run must not
+      // report a verified push. `branch-guard` already warned about it.
+      pushVerified = false;
     }
   } catch (error) {
     logger.error(`The command "${error.command}" failed with the error message ${error.stderr}.`);
     throw getError("EGITNOPERMISSION", context);
   }
 
-  logger.success(`Allowed to push to the Git repository`);
+  if (pushVerified) {
+    logger.success(`Allowed to push to the Git repository`);
+  }
 
   await plugins.verifyConditions(context);
 

@@ -400,6 +400,9 @@ test.serial("Plugins are called with expected values", async (t) => {
   t.is(env.GIT_AUTHOR_EMAIL, COMMIT_EMAIL);
   t.is(env.GIT_COMMITTER_NAME, COMMIT_NAME);
   t.is(env.GIT_COMMITTER_EMAIL, COMMIT_EMAIL);
+
+  // The branch push was verified, so the run reports it
+  t.true(t.context.success.args.flat().some((arg) => String(arg).includes("Allowed to push")));
 });
 
 test.serial("Use custom tag format", async (t) => {
@@ -1672,6 +1675,8 @@ test.serial("Publish a release when the branch is behind only outside the monore
   t.is(publish.callCount, 1);
   t.is(result.nextRelease.version, "1.0.0");
   t.is(result.nextRelease.gitTag, "foo-v1.0.0");
+  // The branch push was never verified as allowed: this path must read as a warning, not as a clean run
+  t.false(t.context.success.args.flat().some((arg) => String(arg).includes("Allowed to push")));
 });
 
 test.serial("Skip the release when the branch is behind inside the monorepo path", async (t) => {
