@@ -661,7 +661,9 @@ declare module "semantic-release" {
      * packages counts for the package it moves to, not for the one it left.
      *
      * Only changes under that path are analyzed when looking for a release, and a branch that
-     * moved because of commits outside of it does not prevent the release.
+     * moved because of commits outside of it does not prevent the release. A release is skipped
+     * when the path is back to the state it had at the last release, so work that was changed and
+     * then changed back — by hand or by a revert — leaves nothing to release.
      *
      * Two prerequisites apply. Each package must use its own `tagFormat`, otherwise one
      * package's tag is read as another package's last release. And the commit filtering needs

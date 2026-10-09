@@ -1785,13 +1785,47 @@ test.serial("Publish a release for any of the configured monorepo paths", async 
 
   t.is(publish.callCount, 1);
   t.is(result.nextRelease.version, "1.0.0");
-  // Plugins are called with (pluginConfig, context), so the analyzed commits are the second argument
+  // Plugins are called with (pluginConfig, context), so the analyzed commits are the second argument.
   // The commit outside of both paths is filtered out, the one inside the second path is not
   const analyzed = generateNotes.args[0][1].commits.map(({ message }) => message);
   t.true(analyzed.includes("feat: proto"));
   t.false(analyzed.includes("feat: bar"));
-  t.true(analyzed.includes("feat: proto"));
-  t.false(analyzed.includes("feat: bar"));
+});
+
+test.serial("Skip the release when the monorepo path was changed back", async (t) => {
+  const { cwd, repositoryUrl } = await gitRepo(true);
+  await gitCommitFiles({ "packages/foo/index.js": "module.exports = 1;" }, "chore: init", { cwd });
+  await gitTagVersion("foo-v1.0.0", undefined, { cwd });
+  await gitCommitFiles({ "packages/foo/index.js": "module.exports = 2;" }, "feat: change foo", { cwd });
+  await gitCommitFiles({ "packages/foo/index.js": "module.exports = 1;" }, "chore: put it back", { cwd });
+  await gitPush(repositoryUrl, "master", { cwd });
+
+  // A complete clone, so the tag is present, and up to date, so the guard is not involved
+  const releaseDir = await gitFullClone(repositoryUrl);
+
+  const analyzeCommits = stub().resolves("minor");
+
+  await td.replaceEsm("../lib/get-logger.js", null, () => t.context.logger);
+  await td.replaceEsm("env-ci", null, () => ({ isCi: true, branch: "master", isPr: false }));
+  const semanticRelease = (await import("../index.js")).default;
+
+  const result = await semanticRelease(
+    {
+      repositoryUrl,
+      branches: ["master"],
+      tagFormat: `foo-v\${version}`,
+      monorepo: { path: "packages/foo" },
+      verifyConditions: stub().resolves(),
+      analyzeCommits,
+      fail: stub().resolves(),
+    },
+    { cwd: releaseDir, env: {}, stdout: new WritableStreamBuffer(), stderr: new WritableStreamBuffer() }
+  );
+
+  // The two commits touch the path, but the path is back to its released state, so there is nothing to release
+  t.false(result);
+  t.is(analyzeCommits.callCount, 0);
+  t.true(t.context.log.args.flat().some((arg) => String(arg).includes("packages/foo")));
 });
 
 test.serial("Returns false if not running from the configured branch", async (t) => {

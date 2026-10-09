@@ -229,3 +229,47 @@ test("Keep the commits affecting any of the configured paths", async (t) => {
   t.true(messages.includes("feat: proto"));
   t.false(messages.includes("feat: b"));
 });
+
+test("Return no commit when the configured path was changed back", async (t) => {
+  const { cwd } = await gitRepo();
+  const baseline = await gitCommitFiles({ "packages/a/index.js": "1" }, "chore: init", { cwd });
+  await gitCommitFiles({ "packages/a/index.js": "2" }, "feat: change a", { cwd });
+  // Undone by hand, so no revert commit for the analyzer to filter: the path is back to its released state
+  await gitCommitFiles({ "packages/a/index.js": "1" }, "chore: put it back", { cwd });
+
+  const result = await getCommits({
+    cwd,
+    lastRelease: { gitHead: baseline.hash },
+    logger: t.context.logger,
+    options: { monorepo: { paths: ["packages/a"] } },
+  });
+
+  t.deepEqual(result, []);
+});
+
+test("Keep the commits when the configured path still differs from the last release", async (t) => {
+  const { cwd } = await gitRepo();
+  const baseline = await gitCommitFiles({ "packages/a/index.js": "1" }, "chore: init", { cwd });
+  await gitCommitFiles({ "packages/a/index.js": "2" }, "feat: change a", { cwd });
+  await gitCommitFiles({ "packages/a/index.js": "3" }, "fix: change a again", { cwd });
+
+  const result = await getCommits({
+    cwd,
+    lastRelease: { gitHead: baseline.hash },
+    logger: t.context.logger,
+    options: { monorepo: { paths: ["packages/a"] } },
+  });
+
+  t.is(result.length, 2);
+});
+
+test("Do not discard the changed back commits without the monorepo option", async (t) => {
+  const { cwd } = await gitRepo();
+  const baseline = await gitCommitFiles({ "packages/a/index.js": "1" }, "chore: init", { cwd });
+  await gitCommitFiles({ "packages/a/index.js": "2" }, "feat: change a", { cwd });
+  await gitCommitFiles({ "packages/a/index.js": "1" }, "chore: put it back", { cwd });
+
+  const result = await getCommits({ cwd, lastRelease: { gitHead: baseline.hash }, logger: t.context.logger });
+
+  t.is(result.length, 2);
+});

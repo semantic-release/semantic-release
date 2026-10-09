@@ -10,6 +10,7 @@ import {
   fetchNotes,
   getBranches,
   getBranchState,
+  getChangedFiles,
   getChangedFilesSinceRemote,
   getCommitsFiles,
   getGitHead,
@@ -689,4 +690,27 @@ test("Report only the destination of a move between the local head and the remot
   await gitAddConfig("diff.renames", "false", { cwd });
 
   t.deepEqual(await getChangedFilesSinceRemote(repositoryUrl, "master", { cwd }), ["packages/other/a.js"]);
+});
+
+test("Get the files changed on a revision range", async (t) => {
+  const { cwd } = await gitRepo();
+  const first = await gitCommitFiles({ "packages/ui/a.js": "ui", "packages/other/b.js": "other" }, "chore: init", {
+    cwd,
+  });
+  await gitCommitFiles({ "packages/ui/a.js": "ui2", "packages/other/b.js": "other2" }, "feat: change both", { cwd });
+
+  t.deepEqual((await getChangedFiles(first.hash, "HEAD", { cwd })).sort(), ["packages/other/b.js", "packages/ui/a.js"]);
+});
+
+test("Report only the destination of a file moved out of a path", async (t) => {
+  const { cwd } = await gitRepo();
+  const first = await gitCommitFiles({ "packages/ui/a.js": "ui", "packages/other/b.js": "other" }, "chore: init", {
+    cwd,
+  });
+  await execa("git", ["mv", "packages/ui/a.js", "packages/other/a.js"], { cwd });
+  await execa("git", ["commit", "-m", "refactor: move out of ui", "--no-gpg-sign"], { cwd });
+
+  // A diff limited to `packages/ui` would report the source as a deletion instead, which is why this helper
+  // takes no paths and callers match the result with the same rule as for commits
+  t.deepEqual(await getChangedFiles(first.hash, "HEAD", { cwd }), ["packages/other/a.js"]);
 });
