@@ -1,4 +1,4 @@
-import { format, parse } from "node:url";
+import { format } from "node:url";
 import test from "ava";
 import { repeat } from "lodash-es";
 import hideSensitive from "../lib/hide-sensitive.js";
@@ -87,7 +87,7 @@ test("Exclude environment variables with value shorter than SECRET_MIN_SIZE from
 // `lib/get-git-auth-url.js` embeds credentials in the repository URL with `url.format()`, which
 // encodes the `auth` field like `encodeURIComponent()` except that `:` separators are kept as is.
 // Build the URLs asserted below the same way, so they match what a failing git command prints.
-const gitAuthUrl = (auth) => format({ ...parse("https://host.com/owner/repo.git"), auth });
+const gitAuthUrl = (auth) => format({ protocol: "https", host: "host.com", pathname: "/owner/repo.git", auth });
 
 for (const character of ["@", "/", "?", "&", "=", "#", " "]) {
   test(`Mask GIT_CREDENTIALS containing "${character}" in a git authentication URL`, (t) => {
