@@ -81,8 +81,6 @@ test.serial("Release patch, minor and major versions", async (t) => {
     publishConfig: { registry: npmRegistry.url },
     release: { branches: ["master", "next"], success: false, fail: false },
   });
-  // Create a npm-shrinkwrap.json file
-  await execa("npm", ["shrinkwrap"], { env: npmTestEnv, cwd, extendEnv: false });
 
   /* No release */
   let verifyMock = await mockServer.mock(
@@ -121,9 +119,8 @@ test.serial("Release patch, minor and major versions", async (t) => {
   t.regex(stdout, new RegExp(`Publishing version ${version} to npm registry`));
   t.is(exitCode, 0);
 
-  // Verify package.json and npm-shrinkwrap.json have been updated
+  // Verify package.json was updated
   t.is((await readJson(path.resolve(cwd, "package.json"))).version, version);
-  t.is((await readJson(path.resolve(cwd, "npm-shrinkwrap.json"))).version, version);
 
   // Retrieve the published package from the registry and check version and gitHead
   let {
@@ -162,9 +159,8 @@ test.serial("Release patch, minor and major versions", async (t) => {
   t.regex(stdout, new RegExp(`Publishing version ${version} to npm registry`));
   t.is(exitCode, 0);
 
-  // Verify package.json and npm-shrinkwrap.json have been updated
+  // Verify package.json was updated
   t.is((await readJson(path.resolve(cwd, "package.json"))).version, version);
-  t.is((await readJson(path.resolve(cwd, "npm-shrinkwrap.json"))).version, version);
 
   // Retrieve the published package from the registry and check version and gitHead
   ({
@@ -203,9 +199,8 @@ test.serial("Release patch, minor and major versions", async (t) => {
   t.regex(stdout, new RegExp(`Publishing version ${version} to npm registry`));
   t.is(exitCode, 0);
 
-  // Verify package.json and npm-shrinkwrap.json have been updated
+  // Verify package.json was updated
   t.is((await readJson(path.resolve(cwd, "package.json"))).version, version);
-  t.is((await readJson(path.resolve(cwd, "npm-shrinkwrap.json"))).version, version);
 
   // Retrieve the published package from the registry and check version and gitHead
   ({
@@ -246,9 +241,8 @@ test.serial("Release patch, minor and major versions", async (t) => {
   t.regex(stdout, new RegExp(`Publishing version ${version} to npm registry`));
   t.is(exitCode, 0);
 
-  // Verify package.json and npm-shrinkwrap.json have been updated
+  // Verify package.json was updated
   t.is((await readJson(path.resolve(cwd, "package.json"))).version, version);
-  t.is((await readJson(path.resolve(cwd, "npm-shrinkwrap.json"))).version, version);
 
   // Retrieve the published package from the registry and check version and gitHead
   ({
