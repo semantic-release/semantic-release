@@ -21,7 +21,7 @@ Help us keep **semantic-release** open and inclusive. Please read and follow our
 
 ### Improve documentation
 
-As a **semantic-release** user, you are the perfect candidate to help us improve our documentation: typo corrections, clarifications, more examples, new [recipes](https://github.com/semantic-release/docs/tree/main/docs/recipes/), etc.
+As a **semantic-release** user, you are the perfect candidate to help us improve our documentation: typo corrections, clarifications, more examples, new [recipes](https://github.com/semantic-release/docs/tree/main/src/content/docs/recipes), etc.
 
 Check out the [documentation issues that need help](https://github.com/semantic-release/docs/issues) in the [semantic-release/docs](https://github.com/semantic-release/docs) repository.
 
@@ -43,7 +43,7 @@ Post a comment on an issue to indicate you would like to work on it and to reque
 ## Using the issue tracker
 
 The issue tracker is the channel for [bug reports](#bug-report), [feature requests](#feature-request) and [submitting pull requests](#submitting-a-pull-request) only.
-Please use the [Support](https://semantic-release.org/support/) and [Get help](README.md#get-help) sections for support, troubleshooting and questions.
+Please use the [Support](https://semantic-release.org/support/faq/) and [Get help](README.md#get-help) sections for support, troubleshooting and questions.
 
 Before opening an issue or a Pull Request, please use the [GitHub issue search](https://github.com/issues?utf8=%E2%9C%93&q=user%3Asemantic-release) to make sure the bug or feature request hasn't been already reported or fixed.
 
