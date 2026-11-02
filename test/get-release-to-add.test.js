@@ -280,3 +280,72 @@ test("Exclude versions number less than the latest version already released on t
 
   t.is(result, undefined);
 });
+
+test("Promote channel from configured higher branch when that git branch was deleted", (t) => {
+  // Reproduces #4203: `next` merged into master then auto-deleted before the master release job.
+  // Live expanded branches only contain master; options.branches still lists next.
+  const result = getReleaseToAdd({
+    branch: {
+      name: "master",
+      tags: [
+        { gitTag: "v1.0.0", version: "1.0.0", channels: [null, "next"] },
+        { gitTag: "v1.1.0", version: "1.1.0", channels: ["next"] },
+      ],
+    },
+    branches: [{ name: "master" }],
+    options: {
+      tagFormat: `v\${version}`,
+      branches: [
+        "+([0-9])?(.{+([0-9]),x}).x",
+        "master",
+        "main",
+        "next",
+        "next-major",
+        { name: "beta", prerelease: true },
+        { name: "alpha", prerelease: true },
+      ],
+    },
+  });
+
+  t.deepEqual(result, {
+    lastRelease: {
+      version: "1.0.0",
+      channels: [null, "next"],
+      gitTag: "v1.0.0",
+      name: "v1.0.0",
+      gitHead: "v1.0.0",
+    },
+    currentRelease: {
+      type: "minor",
+      version: "1.1.0",
+      channels: ["next"],
+      gitTag: "v1.1.0",
+      name: "v1.1.0",
+      gitHead: "v1.1.0",
+    },
+    nextRelease: {
+      type: "minor",
+      version: "1.1.0",
+      channel: null,
+      gitTag: "v1.1.0",
+      name: "v1.1.0",
+      gitHead: "v1.1.0",
+    },
+  });
+});
+
+test("Do not promote prerelease-configured channels from options when branch is gone", (t) => {
+  const result = getReleaseToAdd({
+    branch: {
+      name: "master",
+      tags: [{ gitTag: "v2.0.0-beta.1", version: "2.0.0-beta.1", channels: ["beta"] }],
+    },
+    branches: [{ name: "master" }],
+    options: {
+      tagFormat: `v\${version}`,
+      branches: ["master", { name: "beta", prerelease: true }],
+    },
+  });
+
+  t.is(result, undefined);
+});
