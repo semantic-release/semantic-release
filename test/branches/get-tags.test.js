@@ -155,6 +155,62 @@ test('Get the highest valid tag corresponding to the "tagFormat"', async (t) => 
   ]);
 });
 
+test('Match the "tagFormat" against the whole tag, not only a prefix of it', async (t) => {
+  const { cwd } = await gitRepo();
+  await gitCommits(["First"], { cwd });
+
+  await gitTagVersion("v1.0.0-sonar-dotnet-10", undefined, { cwd });
+  await gitTagVersion("v1.0.0-sonar-dotnet-10-action", undefined, { cwd });
+
+  // The shorter `tagFormat` must not consume the longer tag that merely starts with the same characters
+  t.deepEqual(await getTags({ cwd, options: { tagFormat: `v\${version}-sonar-dotnet-10` } }, [{ name: "master" }]), [
+    { name: "master", tags: [{ gitTag: "v1.0.0-sonar-dotnet-10", version: "1.0.0", channels: [null] }] },
+  ]);
+
+  // The longer `tagFormat` matches only its own tag
+  t.deepEqual(
+    await getTags({ cwd, options: { tagFormat: `v\${version}-sonar-dotnet-10-action` } }, [{ name: "master" }]),
+    [
+      {
+        name: "master",
+        tags: [{ gitTag: "v1.0.0-sonar-dotnet-10-action", version: "1.0.0", channels: [null] }],
+      },
+    ]
+  );
+});
+
+test('Do not match a tag that only starts with the "tagFormat" template', async (t) => {
+  const { cwd } = await gitRepo();
+  await gitCommits(["First"], { cwd });
+
+  await gitTagVersion("v1.0.0", undefined, { cwd });
+  await gitTagVersion("v1.0.0-rc1", undefined, { cwd });
+
+  // `v1.0.0-rc1` is a valid prerelease of `1.0.0` and is matched by the `v${version}` template
+  t.deepEqual(await getTags({ cwd, options: { tagFormat: `v\${version}` } }, [{ name: "master" }]), [
+    {
+      name: "master",
+      tags: [
+        { gitTag: "v1.0.0", version: "1.0.0", channels: [null] },
+        { gitTag: "v1.0.0-rc1", version: "1.0.0-rc1", channels: [null] },
+      ],
+    },
+  ]);
+});
+
+test('Do not match a tag with an extra suffix against the "tagFormat" template', async (t) => {
+  const { cwd } = await gitRepo();
+  await gitCommits(["First"], { cwd });
+
+  await gitTagVersion("foo-1.0.0-bar", undefined, { cwd });
+  await gitTagVersion("foo-1.0.0-bar-extra", undefined, { cwd });
+
+  // `foo-1.0.0-bar-extra` is not a tag matching the `foo-${version}-bar` template
+  t.deepEqual(await getTags({ cwd, options: { tagFormat: `foo-\${version}-bar` } }, [{ name: "master" }]), [
+    { name: "master", tags: [{ gitTag: "foo-1.0.0-bar", version: "1.0.0", channels: [null] }] },
+  ]);
+});
+
 test.serial('Do not execute template evaluation syntax in "tagFormat" when building the tag regexp', async (t) => {
   const { cwd } = await gitRepo();
   await gitCommits(["First"], { cwd });
