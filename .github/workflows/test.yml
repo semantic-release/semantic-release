@@ -25,9 +25,8 @@ jobs:
     strategy:
       matrix:
         node-version:
-          - 22.22.2
-          - 24.15
-          - 24
+          - 26.13.0
+          - 26
 
     runs-on: ubuntu-latest
     timeout-minutes: 5
