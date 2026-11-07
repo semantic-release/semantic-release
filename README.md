@@ -90,8 +90,8 @@ After running the tests, the command `semantic-release` will execute the followi
 | Analyze commits   | Determine the type of release based on the commits added since the last release.                                                |
 | Verify release    | Verify the release conformity.                                                                                                  |
 | Generate notes    | Generate release notes for the commits added since the last release.                                                            |
-| Create Git tag    | Create a Git tag corresponding to the new release version.                                                                      |
 | Prepare           | Prepare the release.                                                                                                            |
+| Create Git tag    | Create a Git tag corresponding to the new release version.                                                                      |
 | Publish           | Publish the release.                                                                                                            |
 | Notify            | Notify of new releases or errors.                                                                                               |
 
