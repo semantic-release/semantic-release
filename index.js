@@ -1,5 +1,5 @@
 import { createRequire } from "node:module";
-import { pick } from "lodash-es";
+import { isString, pick } from "lodash-es";
 import * as marked from "marked";
 import envCi from "env-ci";
 import { hookStd } from "hook-std";
@@ -69,10 +69,11 @@ async function run(context, plugins) {
   context.branch = context.branches.find(({ name }) => name === ciBranch);
 
   if (!context.branch) {
+    const releaseBranches = context.branches.map(({ name }) => name).join(", ");
+    const configuredBranches = options.branches.map((branch) => (isString(branch) ? branch : branch.name)).join(", ");
     logger.log(
-      `This test run was triggered on the branch ${ciBranch}, while semantic-release is configured to only publish from ${context.branches
-        .map(({ name }) => name)
-        .join(", ")}, therefore a new version won’t be published.`
+      `This test run was triggered on the branch ${ciBranch}, while semantic-release is configured to only publish from ${releaseBranches}, therefore a new version won’t be published. ` +
+        `Those are the branches on the remote repository that match the configured \`branches\` option: ${configuredBranches}.`
     );
     return false;
   }
