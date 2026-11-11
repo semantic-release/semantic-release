@@ -1658,9 +1658,47 @@ test.serial("Returns false if not running from the configured branch", async (t)
   );
   t.is(
     t.context.log.args[1][0],
-    "This test run was triggered on the branch other-branch, while semantic-release is configured to only publish from master, therefore a new version won’t be published."
+    "This test run was triggered on the branch other-branch, while semantic-release is configured to only publish from master, therefore a new version won’t be published. Those are the branches on the remote repository that match the configured `branches` option: master."
   );
 });
+
+test.serial(
+  "Returns false and lists the configured branches if not running from a branch matching the configuration",
+  async (t) => {
+    // Create a git repository, set the current working directory at the root of the repo
+    const { cwd, repositoryUrl } = await gitRepo(true);
+    const options = {
+      branches: ["+([0-9])?(.{+([0-9]),x}).x", "master", "next", { name: "beta", prerelease: true }],
+      repositoryUrl,
+      verifyConditions: stub().resolves(),
+      analyzeCommits: stub().resolves(),
+      verifyRelease: stub().resolves(),
+      generateNotes: stub().resolves(),
+      addChannel: stub().resolves(),
+      prepare: stub().resolves(),
+      publish: stub().resolves(),
+      success: stub().resolves(),
+      fail: stub().resolves(),
+    };
+
+    await td.replaceEsm("../lib/get-logger.js", null, () => t.context.logger);
+    await td.replaceEsm("env-ci", null, () => ({ isCi: true, branch: "v1.x", isPr: false }));
+    const semanticRelease = (await import("../index.js")).default;
+
+    t.false(
+      await semanticRelease(options, {
+        cwd,
+        env: {},
+        stdout: new WritableStreamBuffer(),
+        stderr: new WritableStreamBuffer(),
+      })
+    );
+    t.is(
+      t.context.log.args[1][0],
+      "This test run was triggered on the branch v1.x, while semantic-release is configured to only publish from master, therefore a new version won’t be published. Those are the branches on the remote repository that match the configured `branches` option: +([0-9])?(.{+([0-9]),x}).x, master, next, beta."
+    );
+  }
+);
 
 test.serial("Returns false if there is no relevant changes", async (t) => {
   // Create a git repository, set the current working directory at the root of the repo
