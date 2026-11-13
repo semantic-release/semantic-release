@@ -402,7 +402,10 @@ test.serial("Plugins are called with expected values", async (t) => {
     nextRelease: { ...nextRelease, notes: `${notes1}\n\n${notes2}\n\n${notes3}` },
     releases,
   });
-  t.deepEqual(resultCommits.map(({ gitTags, ...commit }) => commit), [omit(commits[0], "gitTags")]);
+  t.deepEqual(
+    resultCommits.map(({ gitTags, ...commit }) => commit),
+    [omit(commits[0], "gitTags")]
+  );
 
   // Verify the tag has been created on the local and remote repo and reference the gitHead
   t.is(await gitTagHead(nextRelease.gitTag, { cwd }), nextRelease.gitHead);
