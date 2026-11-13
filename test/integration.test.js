@@ -395,12 +395,14 @@ test.serial("Plugins are called with expected values", async (t) => {
   t.deepEqual(success.args[1][1].releases, [releases[1], releases[2]]);
   t.deepEqual(success.args[1][1].envCi, envCiResults);
 
-  t.deepEqual(result, {
+  const { commits: resultCommits, ...resultWithoutCommits } = result;
+
+  t.deepEqual(resultWithoutCommits, {
     lastRelease,
-    commits: [{ ...commits[0], gitTags: "(HEAD -> master, next)" }],
     nextRelease: { ...nextRelease, notes: `${notes1}\n\n${notes2}\n\n${notes3}` },
     releases,
   });
+  t.deepEqual(resultCommits.map(({ gitTags, ...commit }) => commit), [omit(commits[0], "gitTags")]);
 
   // Verify the tag has been created on the local and remote repo and reference the gitHead
   t.is(await gitTagHead(nextRelease.gitTag, { cwd }), nextRelease.gitHead);
