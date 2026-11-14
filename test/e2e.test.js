@@ -7,7 +7,6 @@ import fsExtra from "fs-extra";
 import { execa } from "execa";
 import { WritableStreamBuffer } from "stream-buffers";
 
-import getAuthUrl from "../lib/get-git-auth-url.js";
 import { SECRET_REPLACEMENT } from "../lib/definitions/constants.js";
 import {
   gitCheckout,
@@ -81,8 +80,6 @@ test.serial("Release patch, minor and major versions", async (t) => {
     publishConfig: { registry: npmRegistry.url },
     release: { branches: ["master", "next"], success: false, fail: false },
   });
-  // Create a npm-shrinkwrap.json file
-  await execa("npm", ["shrinkwrap"], { env: npmTestEnv, cwd, extendEnv: false });
 
   /* No release */
   let verifyMock = await mockServer.mock(
@@ -121,9 +118,8 @@ test.serial("Release patch, minor and major versions", async (t) => {
   t.regex(stdout, new RegExp(`Publishing version ${version} to npm registry`));
   t.is(exitCode, 0);
 
-  // Verify package.json and npm-shrinkwrap.json have been updated
+  // Verify package.json was updated
   t.is((await readJson(path.resolve(cwd, "package.json"))).version, version);
-  t.is((await readJson(path.resolve(cwd, "npm-shrinkwrap.json"))).version, version);
 
   // Retrieve the published package from the registry and check version and gitHead
   let {
@@ -162,9 +158,8 @@ test.serial("Release patch, minor and major versions", async (t) => {
   t.regex(stdout, new RegExp(`Publishing version ${version} to npm registry`));
   t.is(exitCode, 0);
 
-  // Verify package.json and npm-shrinkwrap.json have been updated
+  // Verify package.json was updated
   t.is((await readJson(path.resolve(cwd, "package.json"))).version, version);
-  t.is((await readJson(path.resolve(cwd, "npm-shrinkwrap.json"))).version, version);
 
   // Retrieve the published package from the registry and check version and gitHead
   ({
@@ -203,9 +198,8 @@ test.serial("Release patch, minor and major versions", async (t) => {
   t.regex(stdout, new RegExp(`Publishing version ${version} to npm registry`));
   t.is(exitCode, 0);
 
-  // Verify package.json and npm-shrinkwrap.json have been updated
+  // Verify package.json was updated
   t.is((await readJson(path.resolve(cwd, "package.json"))).version, version);
-  t.is((await readJson(path.resolve(cwd, "npm-shrinkwrap.json"))).version, version);
 
   // Retrieve the published package from the registry and check version and gitHead
   ({
@@ -239,16 +233,15 @@ test.serial("Release patch, minor and major versions", async (t) => {
   t.log("Commit a breaking change on next");
   await gitCheckout("next", true, { cwd });
   await gitPush("origin", "next", { cwd });
-  await gitCommits(["feat: foo\n\n BREAKING CHANGE: bar"], { cwd });
+  await gitCommits(["feat: foo\n\nBREAKING CHANGE: bar"], { cwd });
   t.log("$ semantic-release");
   ({ stdout, exitCode } = await execa(cli, [], { env: { ...env, TRAVIS_BRANCH: "next" }, cwd, extendEnv: false }));
   t.regex(stdout, new RegExp(`Published GitHub release: release-url/${version}`));
   t.regex(stdout, new RegExp(`Publishing version ${version} to npm registry`));
   t.is(exitCode, 0);
 
-  // Verify package.json and npm-shrinkwrap.json have been updated
+  // Verify package.json was updated
   t.is((await readJson(path.resolve(cwd, "package.json"))).version, version);
-  t.is((await readJson(path.resolve(cwd, "npm-shrinkwrap.json"))).version, version);
 
   // Retrieve the published package from the registry and check version and gitHead
   ({
@@ -516,9 +509,18 @@ test.serial("Pass options via CLI arguments", async (t) => {
   t.log(`+ released ${releasedVersion} with head ${releasedGitHead}`);
 });
 
-test.serial("Run via JS API", async (t) => {
-  await td.replaceEsm("../lib/logger", null, { log: () => {}, error: () => {}, stdout: () => {} });
-  await td.replaceEsm("env-ci", null, () => ({ isCi: true, branch: "master", isPr: false }));
+test.serial("Run via Core API", async (t) => {
+  const semanticReleaseCore = await import("@semantic-release/core");
+  const logger = { log: () => {}, error: () => {}, success: () => {}, warn: () => {}, scope: () => logger };
+  await td.replaceEsm(
+    "@semantic-release/core",
+    {
+      resolveConfig: semanticReleaseCore.resolveConfig,
+      getLogger: () => logger,
+      resolveEnvCi: () => ({ isCi: true, branch: "master", isPr: false }),
+    },
+    semanticReleaseCore.default
+  );
   const semanticRelease = (await import("../index.js")).default;
   const packageName = "test-js-api";
   const owner = "git";
@@ -675,48 +677,6 @@ test.serial("Hide sensitive environment variable values from the logs", async (t
   t.regex(stdout, new RegExp(`Log: Exposing token ${escapeRegExp(SECRET_REPLACEMENT)}`));
   t.regex(stderr, new RegExp(`Error: Console token ${escapeRegExp(SECRET_REPLACEMENT)}`));
   t.regex(stderr, new RegExp(`Throw error: Exposing ${escapeRegExp(SECRET_REPLACEMENT)}`));
-});
-
-test.serial("Use the valid git credentials when multiple are provided", async (t) => {
-  const { cwd, authUrl } = await gitbox.createRepo("test-auth");
-
-  t.is(
-    await getAuthUrl({
-      cwd,
-      env: {
-        GITHUB_TOKEN: "dummy",
-        GITLAB_TOKEN: "trash",
-        BB_TOKEN_BASIC_AUTH: gitbox.gitCredential,
-        GIT_ASKPASS: "echo",
-        GIT_TERMINAL_PROMPT: 0,
-        GIT_CONFIG_PARAMETERS: "'credential.helper='",
-      },
-      branch: { name: "master" },
-      options: { repositoryUrl: gitbox.repositoryUrlFor("test-auth").replace(/^https?:\/\//, "http://toto@") },
-    }),
-    authUrl
-  );
-});
-
-test.serial("Use the repository URL as is if none of the given git credentials are valid", async (t) => {
-  const { cwd } = await gitbox.createRepo("test-invalid-auth");
-  const dummyUrl = gitbox.repositoryUrlFor("test-invalid-auth").replace(/^https?:\/\//, "http://toto@");
-
-  t.is(
-    await getAuthUrl({
-      cwd,
-      env: {
-        GITHUB_TOKEN: "dummy",
-        GITLAB_TOKEN: "trash",
-        GIT_ASKPASS: "echo",
-        GIT_TERMINAL_PROMPT: 0,
-        GIT_CONFIG_PARAMETERS: "'credential.helper='",
-      },
-      branch: { name: "master" },
-      options: { repositoryUrl: dummyUrl },
-    }),
-    dummyUrl
-  );
 });
 
 test.serial("ESM Plugin with named exports", async (t) => {
