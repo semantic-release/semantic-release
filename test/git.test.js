@@ -1,6 +1,9 @@
 import { existsSync } from "node:fs";
+import { writeFile } from "node:fs/promises";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import test from "ava";
+import { execa } from "execa";
 import { temporaryDirectory } from "tempy";
 import {
   addNote,
@@ -15,6 +18,7 @@ import {
   isGitRepo,
   isRefExists,
   push,
+  pushNotes,
   repoUrl,
   tag,
   verifyTagName,
@@ -390,6 +394,107 @@ test("Overwrite a commit note", async (t) => {
   await addNote({ note: "note2" }, commits[0].hash, { cwd });
 
   t.is(await gitGetNote(commits[0].hash, { cwd }), '{"note":"note2"}');
+});
+
+test("Push channel notes through a conventional-commit push rule without rewriting history", async (t) => {
+  const { cwd, repositoryUrl } = await gitRepo(true);
+  await gitTagVersion("v1.0.0", undefined, { cwd });
+  const noteRef = "refs/notes/semantic-release-v1.0.0";
+  const remoteCwd = fileURLToPath(repositoryUrl);
+  await writeFile(
+    path.join(remoteCwd, "hooks", "pre-receive"),
+    `#!/bin/sh
+set -eu
+while read old new ref; do
+  case "$ref" in refs/notes/*) ;; *) continue ;; esac
+  if git cat-file -e "$old^{commit}" 2>/dev/null; then
+    commits=$(git rev-list "$old..$new")
+  else
+    commits=$(git rev-list "$new")
+  fi
+  for commit in $commits; do
+    subject=$(git show -s --format=%s "$commit")
+    case "$subject" in
+      "chore(release): "*) ;;
+      *) echo 'Notes commit violates commit-message rule' >&2; exit 1 ;;
+    esac
+  done
+done
+`,
+    { mode: 0o755 }
+  );
+
+  await addNote({ channels: [null] }, "v1.0.0", { cwd });
+  await t.notThrowsAsync(pushNotes(repositoryUrl, "v1.0.0", { cwd }));
+  const first = (await execa("git", ["rev-parse", noteRef], { cwd })).stdout;
+
+  await addNote({ channels: [null, "next"] }, "v1.0.0", { cwd });
+  await t.notThrowsAsync(pushNotes(repositoryUrl, "v1.0.0", { cwd }));
+  const second = (await execa("git", ["rev-parse", noteRef], { cwd })).stdout;
+  t.not(first, second);
+  t.is((await execa("git", ["rev-parse", `${noteRef}^`], { cwd })).stdout, first);
+
+  await addNote({ channels: [null, "next"] }, "v1.0.0", { cwd });
+  t.is((await execa("git", ["rev-parse", noteRef], { cwd })).stdout, second);
+  await t.notThrowsAsync(pushNotes(repositoryUrl, "v1.0.0", { cwd }));
+  t.deepEqual((await getTagsNotes({ cwd })).get("v1.0.0"), { channels: [null, "next"] });
+  t.is((await execa("git", ["rev-parse", noteRef], { cwd: remoteCwd })).stdout, second);
+});
+
+test("Adding channel notes preserves the release checkout, index and other notes", async (t) => {
+  const { cwd } = await gitRepo();
+  await gitCommits(["feat: first release"], { cwd });
+  await gitTagVersion("v1.0.0", undefined, { cwd });
+  await gitTagVersion("v2.0.0", undefined, { cwd });
+  await gitAddNote('{"channels":["legacy"]}', "v2.0.0", { cwd });
+  const legacyRef = "refs/notes/semantic-release-v2.0.0";
+  const legacy = (await execa("git", ["rev-parse", legacyRef], { cwd })).stdout;
+  const head = await getGitHead({ cwd });
+  await writeFile(path.join(cwd, "staged.txt"), "staged\n");
+  await execa("git", ["add", "staged.txt"], { cwd });
+  await writeFile(path.join(cwd, "staged.txt"), "unstaged\n");
+  const status = (await execa("git", ["status", "--porcelain"], { cwd })).stdout;
+  const index = (await execa("git", ["write-tree"], { cwd })).stdout;
+
+  await addNote({ channels: [null] }, "v1.0.0", { cwd });
+
+  t.is(await getGitHead({ cwd }), head);
+  t.is((await execa("git", ["rev-parse", "v1.0.0"], { cwd })).stdout, head);
+  t.is((await execa("git", ["status", "--porcelain"], { cwd })).stdout, status);
+  t.is((await execa("git", ["write-tree"], { cwd })).stdout, index);
+  t.is((await execa("git", ["rev-parse", legacyRef], { cwd })).stdout, legacy);
+  t.is(await gitGetNote("v2.0.0", { cwd }), '{"channels":["legacy"]}');
+  t.is(
+    (await execa("git", ["for-each-ref", "--format=%(refname)", "refs/notes/semantic-release-tmp-*"], { cwd })).stdout,
+    ""
+  );
+});
+
+test("Updating legacy channel notes preserves their existing history", async (t) => {
+  const { cwd } = await gitRepo();
+  await gitCommits(["feat: first release"], { cwd });
+  await gitTagVersion("v1.0.0", undefined, { cwd });
+  await gitAddNote('{"channels":[null]}', "v1.0.0", { cwd });
+  const noteRef = "refs/notes/semantic-release-v1.0.0";
+  const previous = (await execa("git", ["rev-parse", noteRef], { cwd })).stdout;
+
+  await addNote({ channels: [null, "next"] }, "v1.0.0", { cwd });
+
+  t.is((await execa("git", ["rev-parse", `${noteRef}^`], { cwd })).stdout, previous);
+  t.is((await execa("git", ["show", "-s", "--format=%s", previous], { cwd })).stdout, "Notes added by 'git notes add'");
+  t.is(await gitGetNote("v1.0.0", { cwd }), '{"channels":[null,"next"]}');
+});
+
+test("Invalid note targets leave existing notes untouched", async (t) => {
+  const { cwd } = await gitRepo();
+  await gitCommits(["feat: first release"], { cwd });
+  await gitTagVersion("v1.0.0", undefined, { cwd });
+  await addNote({ channels: [null] }, "v1.0.0", { cwd });
+  const refs = (await execa("git", ["show-ref"], { cwd })).stdout;
+
+  await t.throwsAsync(addNote({ channels: ["next"] }, "missing-tag", { cwd }));
+
+  t.is((await execa("git", ["show-ref"], { cwd })).stdout, refs);
 });
 
 test("Unshallow and fetch repository with notes", async (t) => {
