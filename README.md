@@ -44,11 +44,11 @@ If you want to build a custom CLI or compose your own plugin stack directly, use
 - Notify maintainers and users of new releases
 - Use formalized commit message convention to document changes in the codebase
 - Publish on different distribution channels (such as [npm dist-tags](https://docs.npmjs.com/cli/dist-tag)) based on git merges
-- Integrate with your [continuous integration workflow](https://semantic-release.org/recipes/ci-configurations/#ci-configurations)
+- Integrate with your [continuous integration workflow](https://semantic-release.org/recipes/ci-configurations/)
 - Avoid potential errors associated with manual releases
-- Support any [package managers and languages](https://semantic-release.org/recipes/release-workflow/#package-managers-and-languages) via [plugins](https://semantic-release.org/foundation/plugins/)
+- Support any [package managers and languages](https://semantic-release.org/extending/plugins-list/) via [plugins](https://semantic-release.org/foundation/plugins/)
 - Simple and reusable configuration via [shareable configurations](https://semantic-release.org/foundation/shareable-configurations/)
-- Support for [npm package provenance](https://github.com/semantic-release/npm#npm-provenance) that promotes increased supply-chain security via signed attestations on GitHub Actions
+- Support for [npm package provenance](https://github.com/semantic-release/npm#official-registry) that promotes increased supply-chain security via signed attestations on GitHub Actions
 
 ## How does it work?
 
@@ -82,9 +82,9 @@ For each new commit added to one of the release branches (for example: `master`,
 **semantic-release** offers various ways to control the timing, the content and the audience of published releases.
 See example workflows in the following recipes:
 
-- [Using distribution channels](https://semantic-release.org/recipes/release-workflow/distribution-channels/#publishing-on-distribution-channels)
-- [Maintenance releases](https://semantic-release.org/recipes/release-workflow/maintenance-releases/#publishing-maintenance-releases)
-- [Pre-releases](https://semantic-release.org/recipes/release-workflow/pre-releases/#publishing-pre-releases)
+- [Using distribution channels](https://semantic-release.org/recipes/release-workflow/distribution-channels/)
+- [Maintenance releases](https://semantic-release.org/recipes/release-workflow/maintenance-releases/)
+- [Pre-releases](https://semantic-release.org/recipes/release-workflow/pre-releases/)
 
 ### Release steps
 
