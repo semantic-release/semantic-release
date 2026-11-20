@@ -44,7 +44,7 @@
   "devDependencies": {
     "@semantic-release/error": "4.0.0",
     "@types/node": "24.13.4",
-    "aggregate-error": "5.0.0",
+    "aggregate-error": "5.1.0",
     "ava": "8.0.1",
     "c8": "12.0.0",
     "cz-conventional-changelog": "3.3.0",
