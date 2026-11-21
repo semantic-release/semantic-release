@@ -61,7 +61,7 @@
     "npm-run-all2": "9.0.4",
     "p-each-series": "3.0.0",
     "p-retry": "8.0.1",
-    "prettier": "3.8.5",
+    "prettier": "3.10.1",
     "publint": "0.3.25",
     "sinon": "22.1.0",
     "stream-buffers": "3.0.3",
