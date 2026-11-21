@@ -1,7 +1,13 @@
 import util from "node:util";
+import { createRequire } from "node:module";
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
 import hideSensitive from "./lib/hide-sensitive.js";
+
+const require = createRequire(import.meta.url);
+// Read our own version explicitly: yargs guesses it from the entry point's nearest package.json, which fails
+// (and prints "unknown") when semantic-release is run through an npm bin link or `npx`.
+const { version: pkgVersion } = require("./package.json");
 
 const stringList = {
   type: "string",
@@ -37,6 +43,7 @@ Usage:
     .option("debug", { describe: "Output debugging information", type: "boolean", group: "Options" })
     .option("d", { alias: "dry-run", describe: "Skip publishing", type: "boolean", group: "Options" })
     .option("h", { alias: "help", group: "Options" })
+    .version(pkgVersion)
     .strict(false)
     .exitProcess(false);
 

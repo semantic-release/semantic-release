@@ -1,3 +1,4 @@
+import { readFile } from "node:fs/promises";
 import test from "ava";
 import { escapeRegExp } from "lodash-es";
 import * as td from "testdouble";
@@ -232,6 +233,21 @@ test.serial("Display help", async (t) => {
 
   t.regex(t.context.logs, /Run automated package publishing/);
   t.is(exitCode, 0);
+});
+
+test.serial("Display semantic-release version", async (t) => {
+  const { version } = JSON.parse(await readFile(new URL("../package.json", import.meta.url)));
+  const run = stub().resolves(true);
+  const argv = ["", "", "--version"];
+  await td.replaceEsm("../index.js", null, run);
+  process.argv = argv;
+  const cli = (await import("../cli.js")).default;
+
+  const exitCode = await cli();
+
+  t.is(t.context.logs.trim(), version);
+  t.is(exitCode, 0);
+  t.false(run.called);
 });
 
 test.serial("Return error exitCode and prints help if called with a command", async (t) => {
