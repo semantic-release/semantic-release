@@ -67,7 +67,7 @@
     "stream-buffers": "3.0.3",
     "tempy": "3.2.0",
     "testcontainers": "12.1.0",
-    "testdouble": "3.20.2"
+    "testdouble": "3.23.0"
   },
   "engines": {
     "node": ">=26.13"
