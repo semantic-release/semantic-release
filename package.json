@@ -45,7 +45,7 @@
     "@semantic-release/error": "4.0.0",
     "@types/node": "24.19.2",
     "aggregate-error": "5.1.0",
-    "ava": "8.0.1",
+    "ava": "8.4.0",
     "c8": "12.0.0",
     "cz-conventional-changelog": "3.3.0",
     "env-ci": "11.2.0",
