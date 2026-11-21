@@ -53,7 +53,7 @@
     "fs-extra": "11.4.1",
     "get-stream": "6.0.1",
     "git-log-parser": "1.2.1",
-    "got": "16.0.0",
+    "got": "16.2.0",
     "js-yaml": "4.3.2",
     "lockfile-lint": "5.0.1",
     "ls-engines": "0.10.1",
