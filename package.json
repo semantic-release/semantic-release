@@ -66,7 +66,7 @@
     "sinon": "22.1.0",
     "stream-buffers": "3.0.3",
     "tempy": "3.2.0",
-    "testcontainers": "12.1.0",
+    "testcontainers": "12.2.1",
     "testdouble": "3.20.2"
   },
   "engines": {
