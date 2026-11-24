@@ -40,7 +40,7 @@ test.serial("wrapper forwards environment params and delegates to core", async (
   const [callArg] = args;
   const { context, plugins: receivedPlugins } = callArg;
 
-  const [{ args: resolveConfigArgs }] = td.explain(core.resolveConfig).calls;
+  const [{ args: resolveConfigArgs }] = td.explain(core.resolveConfig).calls.slice(-1);
   const [, , configOptions] = resolveConfigArgs;
 
   t.deepEqual(receivedPlugins, plugins);
@@ -69,7 +69,7 @@ test.serial("wrapper computes dry-run policy upstream before calling core", asyn
   td.when(core.getLogger(td.matchers.isA(Object))).thenReturn(logger);
   td.when(core.resolveConfig(td.matchers.isA(Object), td.matchers.isA(Object), td.matchers.isA(Object))).thenResolve({
     plugins: {},
-    options: { repositoryUrl: "https://example.com/repo.git", dryRun: true },
+    options: { repositoryUrl: "https://example.com/repo.git" },
   });
 
   const semanticRelease = (await import("../index.js")).default;
@@ -81,4 +81,24 @@ test.serial("wrapper computes dry-run policy upstream before calling core", asyn
 
   t.false("skipRelease" in context);
   td.verify(logger.warn("This run was not triggered in a known CI environment, running in dry-run mode."));
+});
+
+test.serial("`ci: false` from the configuration file disables the dry-run and pull request checks", async (t) => {
+  const core = await td.replaceEsm("@semantic-release/core");
+  const logger = { log: td.func("log"), warn: td.func("warn") };
+
+  td.when(core.default(td.matchers.isA(Object))).thenResolve(true);
+  td.when(core.resolveEnvCi(td.matchers.isA(Object))).thenReturn({ isCi: false, branch: "next", isPr: false });
+  td.when(core.getLogger(td.matchers.isA(Object))).thenReturn(logger);
+  td.when(core.resolveConfig(td.matchers.isA(Object), td.matchers.isA(Object), td.matchers.isA(Object))).thenResolve({
+    plugins: {},
+    options: { repositoryUrl: "https://example.com/repo.git", noCi: true },
+  });
+
+  const semanticRelease = (await import("../index.js")).default;
+  await semanticRelease({});
+
+  t.is(td.explain(logger.warn).calls.length, 0);
+  t.is(td.explain(core.default).calls.length, 1);
+  t.true(td.explain(core.resolveConfig).calls.length > 0);
 });

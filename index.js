@@ -22,11 +22,6 @@ export default async (
   const envCiResult = resolveEnvCi({ env, cwd });
   const { isCi, branch, prBranch, isPr } = envCiResult;
   const ciBranch = isPr ? prBranch : branch;
-  const noCi = Boolean(cliOptions.noCi || cliOptions.ci === false);
-
-  const shouldAutoDryRun = !isCi && !cliOptions.dryRun && !noCi;
-  const effectiveCliOptions = shouldAutoDryRun ? { ...cliOptions, dryRun: true } : cliOptions;
-  const shouldSkipRelease = isCi && isPr && !noCi;
 
   const context = {
     cwd,
@@ -39,6 +34,19 @@ export default async (
   context.logger = getLogger(context);
 
   context.logger.log(`Running ${pkg.name} version ${pkg.version}`);
+
+  // Resolve the options without building the plugins, so that settings coming from
+  // the configuration file (such as `ci: false`) are known before the dry-run and
+  // pull request decisions are taken.
+  const { options: initialOptions } = await resolveConfig(context, cliOptions, {
+    baseConfig: SEMANTIC_RELEASE_DEFAULT_CONFIG,
+  });
+
+  const noCi = Boolean(initialOptions.noCi);
+  const shouldAutoDryRun = !isCi && !initialOptions.dryRun && !noCi;
+  const effectiveCliOptions = shouldAutoDryRun ? { ...cliOptions, dryRun: true } : cliOptions;
+  const shouldSkipRelease = isCi && isPr && !noCi;
+
   if (shouldAutoDryRun) {
     context.logger.warn("This run was not triggered in a known CI environment, running in dry-run mode.");
   }
