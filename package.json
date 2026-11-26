@@ -37,7 +37,7 @@
     "find-versions": "^6.0.0",
     "lodash-es": "^4.17.21",
     "marked": "^15.0.0",
-    "marked-terminal": "^7.3.0",
+    "marked-terminal": "^8.0.0",
     "semver": "^7.3.2",
     "yargs": "^18.0.0"
   },
